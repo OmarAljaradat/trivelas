@@ -1,12 +1,3 @@
-/* Hide body scrollbar to prevent double scrollbars on the left in RTL mode */
-body {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE and Edge */
-}
-body::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari, Opera */
-}
-
 :root{
   /* Game palette (from FIFA hero art) */
   --tri-indigo:      #4b46c5;
