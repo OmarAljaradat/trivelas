@@ -1,10 +1,10 @@
-/* Hide browser default scrollbar on viewport to keep background clean */
-html {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+/* Hide body scrollbar to prevent double scrollbars on the left in RTL mode */
+body {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
 }
-html::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+body::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
 }
 
 :root{
