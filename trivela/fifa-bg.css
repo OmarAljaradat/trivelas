@@ -25,15 +25,10 @@
 }
 
 /* ---------- Scene wrapper (behind everything) ---------- */
-.fifa-scene,
-.fifa-scene *,
-.fifa-spotlight {
-  pointer-events: none !important;
-}
-
-.fifa-scene {
+.fifa-scene{
   position:fixed; inset:0;
   z-index:0;
+  pointer-events:none;
   overflow:hidden;
   contain:strict;
 }
