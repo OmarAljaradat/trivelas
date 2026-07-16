@@ -288,6 +288,10 @@ function loadDynamicCoaching() {
     const found = activeCoachingServices.find(s => s.id === serviceParam);
     if (found) {
       selectCoaching(serviceParam);
+      setTimeout(() => {
+        const el = document.getElementById('stepBlock3');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 400);
     }
   }
 }

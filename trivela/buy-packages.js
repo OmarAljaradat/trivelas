@@ -298,6 +298,10 @@ function loadDynamicPackages() {
         if (foundIndex !== -1) {
           currentPage = Math.floor(foundIndex / PACKAGES_PER_PAGE) + 1;
           selectedPackageId = serviceParam;
+          setTimeout(() => {
+            const el = document.getElementById('stepBlock3');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 400);
         }
       }
 

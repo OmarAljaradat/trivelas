@@ -191,6 +191,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (window.selectFutRank) {
         window.selectFutRank('qualify', 0);
       }
+      setTimeout(() => {
+        const el = document.getElementById('stepBlock3');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 350);
     }, 100);
   });
 

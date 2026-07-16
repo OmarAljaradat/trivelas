@@ -93,6 +93,10 @@ function loadChallengeDetails() {
       }
       
       renderChallengeUI();
+      setTimeout(() => {
+        const el = document.getElementById('stepBlock3');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 400);
     })
     .catch(err => {
       console.error("Error loading challenge:", err);

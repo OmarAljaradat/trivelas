@@ -114,6 +114,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check loyalty points and load dynamic players
     loadUserLoyalty();
     loadDynamicPlayers();
+    
+    setTimeout(() => {
+      const el = document.getElementById('stepBlock3');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 450);
   });
 });
 
