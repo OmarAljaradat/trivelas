@@ -1,7 +1,11 @@
-/* =========================================================
-   TRIVELA — Cinematic FIFA Background & Motion System v2
-   Palette: indigo → royal-blue → teal → emerald  (light theme)
-   ========================================================= */
+/* Hide browser default scrollbar on viewport to keep background clean */
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
 
 :root{
   /* Game palette (from FIFA hero art) */
