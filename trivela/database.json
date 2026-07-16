@@ -6194,7 +6194,7 @@
     }
   ],
   "analytics": {
-    "totalVisits": 9208,
+    "totalVisits": 9239,
     "daily": {
       "2026-07-02": 85,
       "2026-07-03": 92,
@@ -6209,22 +6209,22 @@
       "2026-07-12": 4977,
       "2026-07-13": 789,
       "2026-07-15": 221,
-      "2026-07-16": 89
+      "2026-07-16": 120
     },
     "devices": {
       "mobile": 983,
-      "desktop": 8185,
+      "desktop": 8216,
       "tablet": 40
     },
     "referrers": {
-      "direct": 444,
+      "direct": 447,
       "google": 180,
       "tiktok": 341,
       "snapchat": 120,
       "instagram": 90,
-      "twitter": 47,
+      "twitter": 48,
       "whatsapp": 110,
-      "other": 358
+      "other": 360
     },
     "countries": {
       "sa": 560,
@@ -6235,7 +6235,7 @@
       "om": 50,
       "eg": 110,
       "jo": 45,
-      "other": 57
+      "other": 63
     },
     "hours": {
       "0": 12,
@@ -6249,8 +6249,8 @@
       "8": 22,
       "9": 30,
       "10": 45,
-      "11": 65,
-      "12": 55,
+      "11": 67,
+      "12": 59,
       "13": 48,
       "14": 42,
       "15": 77,
@@ -6264,8 +6264,8 @@
       "23": 83
     },
     "pages": {
-      "home": 1571,
-      "coins": 703,
+      "home": 1575,
+      "coins": 705,
       "sbc": 420,
       "rivals": 380,
       "champions": 320,
@@ -6274,8 +6274,8 @@
       "packages": 190
     },
     "visitorTypes": {
-      "new": 737,
-      "returning": 933
+      "new": 738,
+      "returning": 938
     },
     "clicks": {
       "coins": 318,

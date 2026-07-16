@@ -6,14 +6,16 @@
   window.__TRIVELA_FX_LOADED__ = true;
 
   const CARDS = [
-    { rating: 92, pos: 'ST',  name: 'TRIVELA', ver: 'HERO',   cls: 'gold', icon: 'fa-futbol' },
-    { rating: 95, pos: 'CAM', name: 'ICON',    ver: 'PRIME',  cls: 'icon', icon: 'fa-trophy' },
-    { rating: 94, pos: 'GK',  name: 'TOTS',    ver: 'BEST',   cls: 'tots', icon: 'fa-shield-halved' },
-    { rating: 91, pos: 'LW',  name: 'RARE',    ver: 'GOLD',   cls: 'rare', icon: 'fa-bolt' },
-    { rating: 90, pos: 'CB',  name: 'TOTT',    ver: 'WEEK',   cls: 'tott', icon: 'fa-medal' },
-    { rating: 89, pos: 'RW',  name: 'FUT27',   ver: 'RARE',   cls: 'gold', icon: 'fa-star' },
-    { rating: 88, pos: 'CM',  name: 'SBC',     ver: 'CHAL',   cls: 'tots', icon: 'fa-crosshairs' },
-    { rating: 93, pos: 'ST',  name: 'ELITE',   ver: 'CHAMP',  cls: 'icon', icon: 'fa-crown' },
+    // Left column (top → bottom)
+    { rating: 92, pos: 'ST',  name: 'TRIVELA', ver: 'HERO',   cls: 'indigo',  icon: 'fa-futbol',        slot: 'slot-l1' },
+    { rating: 94, pos: 'GK',  name: 'TOTS',    ver: 'BEST',   cls: 'blue',    icon: 'fa-shield-halved', slot: 'slot-l2' },
+    { rating: 91, pos: 'LW',  name: 'RARE',    ver: 'GOLD',   cls: 'emerald', icon: 'fa-bolt',          slot: 'slot-l3' },
+    { rating: 89, pos: 'CM',  name: 'SBC',     ver: 'CHAL',   cls: 'gold',    icon: 'fa-crosshairs',    slot: 'slot-l4' },
+    // Right column (top → bottom)
+    { rating: 95, pos: 'CAM', name: 'ICON',    ver: 'PRIME',  cls: 'teal',    icon: 'fa-trophy',        slot: 'slot-r1' },
+    { rating: 93, pos: 'ST',  name: 'ELITE',   ver: 'CHAMP',  cls: 'indigo',  icon: 'fa-crown',         slot: 'slot-r2' },
+    { rating: 90, pos: 'CB',  name: 'TOTT',    ver: 'WEEK',   cls: 'emerald', icon: 'fa-medal',         slot: 'slot-r3' },
+    { rating: 88, pos: 'RW',  name: 'FUT27',   ver: 'RARE',   cls: 'blue',    icon: 'fa-star',          slot: 'slot-r4' },
   ];
 
   // ---------- 1. Build the scene ----------
@@ -27,6 +29,8 @@
     scene.innerHTML = `
       <div class="fifa-pitch"></div>
       <div class="fifa-glow"></div>
+      <div class="fifa-beam"></div>
+      <div class="fifa-beam beam-2"></div>
       <div class="fifa-ring big r1"></div>
       <div class="fifa-ring med r2"></div>
       <div class="fifa-ring small r3"></div>
@@ -36,7 +40,7 @@
 
     CARDS.forEach(c => {
       const card = document.createElement('div');
-      card.className = `fifa-card ${c.cls}`;
+      card.className = `fifa-card ${c.cls} ${c.slot}`;
       card.innerHTML = `
         <div class="rating">${c.rating}</div>
         <div class="pos">${c.pos}</div>
@@ -65,7 +69,7 @@
       })();
     }
 
-    // Parallax on scroll
+    // Parallax on scroll — subtle, side-only cards drift slightly
     const cards = scene.querySelectorAll('.fifa-card');
     const rings = scene.querySelectorAll('.fifa-ring');
     let latestY = 0, ticking = false;
@@ -74,12 +78,15 @@
       if (!ticking) {
         requestAnimationFrame(() => {
           cards.forEach((c, i) => {
-            const speed = (i % 2 === 0 ? -1 : 1) * (0.04 + i * 0.008);
-            c.style.setProperty('--py', (latestY * speed).toFixed(1) + 'px');
+            const dir = c.classList.contains('slot-l1') ||
+                        c.classList.contains('slot-l2') ||
+                        c.classList.contains('slot-l3') ||
+                        c.classList.contains('slot-l4') ? -1 : 1;
+            const speed = dir * (0.02 + (i % 4) * 0.008);
             c.style.translate = `0 ${(latestY * speed).toFixed(1)}px`;
           });
           rings.forEach((r, i) => {
-            const speed = (i % 2 === 0 ? 0.06 : -0.05);
+            const speed = (i % 2 === 0 ? 0.04 : -0.035);
             r.style.translate = `0 ${(latestY * speed).toFixed(1)}px`;
           });
           ticking = false;
