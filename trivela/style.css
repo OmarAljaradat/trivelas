@@ -1513,8 +1513,9 @@ body.dark-mode .support-card-ig:hover {
 .footer {
   background:var(--gray-900);
   color:rgba(255,255,255,0.7);
-  padding:72px 0 32px;
+  padding:72px 0 100px;
 }
+
 .footer-top {
   display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;
   margin-bottom:56px;
