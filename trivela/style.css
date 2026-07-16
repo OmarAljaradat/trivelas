@@ -386,7 +386,7 @@ h1, h2, h3, h4, h5, h6, input, select, textarea, button, .buy-main-title, .step-
 .navbar {
   position:fixed;
   top:0;left:0;right:0;
-  z-index:900;
+  z-index:9999 !important;
   padding:14px 0;
   background:rgba(240,247,255,0.7);
   backdrop-filter:blur(16px);
