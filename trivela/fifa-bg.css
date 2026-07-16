@@ -234,7 +234,16 @@
 }
 
 /* ---------- Layering fix ---------- */
-body > :not(.fifa-scene){ position:relative; z-index:1; }
+body > :not(.fifa-scene):not(.sticky-summary-bar){ position:relative; z-index:1; }
+
+/* Ensure sticky bar is always fixed to viewport */
+.sticky-summary-bar {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999 !important;
+}
 
 /* ---------- Light body background inspired by game art ---------- */
 body{
