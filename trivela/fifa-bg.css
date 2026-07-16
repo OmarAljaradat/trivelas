@@ -56,35 +56,6 @@
   animation-delay:-14s;
 }
 
-/* Diagonal light beam like the reference image */
-.fifa-scene .fifa-beam{
-  position:absolute;
-  top:-20%; left:30%;
-  width:35vmax; height:180vh;
-  transform: rotate(18deg);
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(107,228,177,.12) 45%,
-    rgba(255,255,255,.28) 50%,
-    rgba(107,228,177,.12) 55%,
-    transparent 100%);
-  filter: blur(30px);
-  opacity:.55;
-  animation: fifa-beam 18s ease-in-out infinite alternate;
-}
-.fifa-scene .fifa-beam.beam-2{
-  left:auto; right:20%;
-  transform: rotate(-14deg);
-  height:160vh;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(107,178,255,.10) 45%,
-    rgba(255,255,255,.22) 50%,
-    rgba(107,178,255,.10) 55%,
-    transparent 100%);
-  animation-delay:-9s;
-}
-
 /* Very faint pitch grid — mask to center */
 .fifa-scene .fifa-pitch{
   position:absolute; inset:0;
@@ -218,35 +189,27 @@
 }
 .fifa-card.gold .name{ border-color:rgba(61,43,6,.35); }
 
-/* ---------- Card placements: ONLY along left & right edges ---------- */
-/* Left column (4 cards) */
-.fifa-card.slot-l1{ top:10%;  left:2.5%; transform:rotate(-9deg); animation-delay:-2s;  animation-duration:22s; }
-.fifa-card.slot-l2{ top:34%;  left:1%;   transform:rotate(6deg);  animation-delay:-7s;  animation-duration:26s; }
-.fifa-card.slot-l3{ top:58%;  left:3%;   transform:rotate(-6deg); animation-delay:-4s;  animation-duration:24s; }
-.fifa-card.slot-l4{ top:82%;  left:1.5%; transform:rotate(8deg);  animation-delay:-10s; animation-duration:28s; }
+/* ---------- Card placements: 2 per side, varied positions ---------- */
+/* Left side (2 cards — one high-left, one low-mid-left) */
+.fifa-card.slot-l1{ top:12%;  left:2.5%; transform:rotate(-9deg); animation-delay:-2s;  animation-duration:24s; }
+.fifa-card.slot-l2{ top:65%;  left:4%;   transform:rotate(7deg);  animation-delay:-10s; animation-duration:28s; }
 
-/* Right column (4 cards) */
-.fifa-card.slot-r1{ top:8%;   right:2.5%; transform:rotate(9deg);  animation-delay:-5s;  animation-duration:25s; }
-.fifa-card.slot-r2{ top:32%;  right:1%;   transform:rotate(-7deg); animation-delay:-11s; animation-duration:23s; }
-.fifa-card.slot-r3{ top:56%;  right:3%;   transform:rotate(5deg);  animation-delay:-3s;  animation-duration:27s; }
-.fifa-card.slot-r4{ top:80%;  right:1.5%; transform:rotate(-8deg); animation-delay:-8s;  animation-duration:22s; }
+/* Right side (2 cards — one mid-right, one bottom-right) */
+.fifa-card.slot-r1{ top:28%;  right:3%;   transform:rotate(9deg);  animation-delay:-5s;  animation-duration:26s; }
+.fifa-card.slot-r2{ top:78%;  right:2%;   transform:rotate(-8deg); animation-delay:-13s; animation-duration:30s; }
 
-/* Ring placements — also along edges (no center overlap) */
-.fifa-ring.r1{ top:2%;   left:-4%;   }
-.fifa-ring.r2{ top:20%;  right:-6%;  }
-.fifa-ring.r3{ top:50%;  left:-8%;   }
-.fifa-ring.r4{ top:66%;  right:-4%;  }
-.fifa-ring.r5{ top:88%;  left:-2%;   }
+/* Ring placements — along outer edges */
+.fifa-ring.r1{ top:4%;   left:-6%;   }
+.fifa-ring.r2{ top:52%;  right:-8%;  }
+.fifa-ring.r3{ top:86%;  left:-4%;   }
+.fifa-ring.r4{ display:none; }
+.fifa-ring.r5{ display:none; }
 
 /* ---------- Rotation vars for float ---------- */
 .fifa-card.slot-l1{ --rot:-9deg; }
-.fifa-card.slot-l2{ --rot:6deg;  }
-.fifa-card.slot-l3{ --rot:-6deg; }
-.fifa-card.slot-l4{ --rot:8deg;  }
+.fifa-card.slot-l2{ --rot:7deg;  }
 .fifa-card.slot-r1{ --rot:9deg;  }
-.fifa-card.slot-r2{ --rot:-7deg; }
-.fifa-card.slot-r3{ --rot:5deg;  }
-.fifa-card.slot-r4{ --rot:-8deg; }
+.fifa-card.slot-r2{ --rot:-8deg; }
 
 /* ---------- Keyframes ---------- */
 @keyframes fifa-float{
@@ -268,10 +231,6 @@
 @keyframes fifa-shine{
   0%,60%{ left:-60%; }
   100%  { left:120%; }
-}
-@keyframes fifa-beam{
-  0%,100%{ transform: rotate(18deg) translateX(0); opacity:.45; }
-  50%    { transform: rotate(20deg) translateX(4vw); opacity:.65; }
 }
 
 /* ---------- Layering fix ---------- */
@@ -479,11 +438,9 @@ nav.navbar{
   .fifa-card .icon{ font-size:16px; }
   .fifa-card .name{ font-size:9px; }
   .fifa-card .ver{ font-size:7px; }
-  /* Show only 2 cards per side on mobile */
-  .fifa-card.slot-l2, .fifa-card.slot-l4,
-  .fifa-card.slot-r2, .fifa-card.slot-r4{ display:none; }
+  /* On mobile keep only 1 card per side */
+  .fifa-card.slot-l2, .fifa-card.slot-r2{ display:none; }
   .fifa-ring.big{ width:280px; height:280px; }
   .fifa-ring.med{ width:200px; height:200px; }
   .fifa-spotlight{ display:none; }
-  .fifa-scene .fifa-beam{ opacity:.30; }
 }

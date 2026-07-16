@@ -6,16 +6,12 @@
   window.__TRIVELA_FX_LOADED__ = true;
 
   const CARDS = [
-    // Left column (top → bottom)
-    { rating: 92, pos: 'ST',  name: 'TRIVELA', ver: 'HERO',   cls: 'indigo',  icon: 'fa-futbol',        slot: 'slot-l1' },
-    { rating: 94, pos: 'GK',  name: 'TOTS',    ver: 'BEST',   cls: 'blue',    icon: 'fa-shield-halved', slot: 'slot-l2' },
-    { rating: 91, pos: 'LW',  name: 'RARE',    ver: 'GOLD',   cls: 'emerald', icon: 'fa-bolt',          slot: 'slot-l3' },
-    { rating: 89, pos: 'CM',  name: 'SBC',     ver: 'CHAL',   cls: 'gold',    icon: 'fa-crosshairs',    slot: 'slot-l4' },
-    // Right column (top → bottom)
-    { rating: 95, pos: 'CAM', name: 'ICON',    ver: 'PRIME',  cls: 'teal',    icon: 'fa-trophy',        slot: 'slot-r1' },
-    { rating: 93, pos: 'ST',  name: 'ELITE',   ver: 'CHAMP',  cls: 'indigo',  icon: 'fa-crown',         slot: 'slot-r2' },
-    { rating: 90, pos: 'CB',  name: 'TOTT',    ver: 'WEEK',   cls: 'emerald', icon: 'fa-medal',         slot: 'slot-r3' },
-    { rating: 88, pos: 'RW',  name: 'FUT27',   ver: 'RARE',   cls: 'blue',    icon: 'fa-star',          slot: 'slot-r4' },
+    // Left side (2 cards)
+    { rating: 92, pos: 'ST',  name: 'TRIVELA', ver: 'HERO',   cls: 'indigo',  icon: 'fa-futbol',  slot: 'slot-l1' },
+    { rating: 91, pos: 'LW',  name: 'RARE',    ver: 'GOLD',   cls: 'emerald', icon: 'fa-bolt',    slot: 'slot-l2' },
+    // Right side (2 cards)
+    { rating: 95, pos: 'CAM', name: 'ICON',    ver: 'PRIME',  cls: 'teal',    icon: 'fa-trophy',  slot: 'slot-r1' },
+    { rating: 93, pos: 'ST',  name: 'ELITE',   ver: 'CHAMP',  cls: 'gold',    icon: 'fa-crown',   slot: 'slot-r2' },
   ];
 
   // ---------- 1. Build the scene ----------
@@ -29,13 +25,9 @@
     scene.innerHTML = `
       <div class="fifa-pitch"></div>
       <div class="fifa-glow"></div>
-      <div class="fifa-beam"></div>
-      <div class="fifa-beam beam-2"></div>
       <div class="fifa-ring big r1"></div>
       <div class="fifa-ring med r2"></div>
       <div class="fifa-ring small r3"></div>
-      <div class="fifa-ring med r4"></div>
-      <div class="fifa-ring big r5"></div>
     `;
 
     CARDS.forEach(c => {
