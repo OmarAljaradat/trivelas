@@ -721,6 +721,12 @@ function switchCoinsTab(tabId) {
 function openDetailsModal() {
   const modal = document.getElementById('coinsDetailsModal');
   if (modal) {
+    modal.style.setProperty('position', 'fixed', 'important');
+    modal.style.setProperty('z-index', '99999', 'important');
+    modal.style.setProperty('top', '0', 'important');
+    modal.style.setProperty('left', '0', 'important');
+    modal.style.setProperty('right', '0', 'important');
+    modal.style.setProperty('bottom', '0', 'important');
     modal.style.display = 'flex';
   }
 }

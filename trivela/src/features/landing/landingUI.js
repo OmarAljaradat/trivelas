@@ -392,6 +392,18 @@ export function selectModalPlatform(platform) {
   if (pcPkgBtn) pcPkgBtn.classList.toggle('active', platform === 'PC');
 }
 
+function forceModalFixed(modalId) {
+  const el = document.getElementById(modalId);
+  if (el) {
+    el.style.setProperty('position', 'fixed', 'important');
+    el.style.setProperty('z-index', '99999', 'important');
+    el.style.setProperty('top', '0', 'important');
+    el.style.setProperty('left', '0', 'important');
+    el.style.setProperty('right', '0', 'important');
+    el.style.setProperty('bottom', '0', 'important');
+  }
+}
+
 export function openStaticCoachingBooking(packageName, priceSAR) {
   document.getElementById('modalCoachingTitle').textContent = `حجز باقة: ${packageName}`;
   document.getElementById('modalCoachingPrice').textContent = `${priceSAR} ر.س`;
@@ -417,6 +429,7 @@ export function openStaticCoachingBooking(packageName, priceSAR) {
     }
   }).catch(() => {});
 
+  forceModalFixed('coachingModalOverlay');
   document.getElementById('coachingModalOverlay').classList.add('open');
 }
 
@@ -440,6 +453,7 @@ export function openStaticPackageBooking(packageName, priceSAR) {
   document.getElementById('modalBackup2').value = '';
   document.getElementById('modalBackup3').value = '';
   
+  forceModalFixed('packageModalOverlay');
   document.getElementById('packageModalOverlay').classList.add('open');
 }
 
@@ -466,6 +480,7 @@ export function openBookingModal(id, category) {
       }
     }).catch(() => {});
 
+    forceModalFixed('coachingModalOverlay');
     document.getElementById('coachingModalOverlay').classList.add('open');
   } else {
     document.getElementById('modalPackageTitle').textContent = `شراء ${service.name}`;
@@ -477,6 +492,7 @@ export function openBookingModal(id, category) {
     document.getElementById('modalBackup2').value = '';
     document.getElementById('modalBackup3').value = '';
     
+    forceModalFixed('packageModalOverlay');
     document.getElementById('packageModalOverlay').classList.add('open');
   }
 }
