@@ -291,6 +291,7 @@ html {
   font-size:16px;
   overflow-x: hidden;
   max-width: 100%;
+  direction: ltr;
 }
 body {
   font-family: 'Thmanyah', 'Cairo', 'IBM Plex Sans Arabic', system-ui, sans-serif;
@@ -299,6 +300,7 @@ body {
   overflow-x: hidden;
   max-width: 100%;
   -webkit-font-smoothing: antialiased;
+  direction: rtl;
 }
 a { text-decoration:none; color:inherit; }
 ul { list-style:none; }
