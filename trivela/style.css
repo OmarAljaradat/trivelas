@@ -1513,7 +1513,7 @@ body.dark-mode .support-card-ig:hover {
 .footer {
   background:var(--gray-900);
   color:rgba(255,255,255,0.7);
-  padding:72px 0 100px;
+  padding:72px 0 32px;
 }
 
 .footer-top {
