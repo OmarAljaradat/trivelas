@@ -396,8 +396,7 @@
           "amount": 2900,
           "reason": "تست"
         }
-      ],
-      "rawPasswordPlaintext": "pass1234"
+      ]
     },
     {
       "id": "user_102",
@@ -422,8 +421,7 @@
           "amount": 2000,
           "reason": "بونص الشراء السنوي للنخبة البلاتينية"
         }
-      ],
-      "rawPasswordPlaintext": "pass1234"
+      ]
     },
     {
       "id": "user_103",
@@ -443,8 +441,7 @@
           "amount": 400,
           "reason": "نقاط إتمام تحديات SBC"
         }
-      ],
-      "rawPasswordPlaintext": "pass1234"
+      ]
     },
     {
       "id": "user_104",
@@ -464,8 +461,7 @@
           "amount": 50,
           "reason": "شحن نقاط خدمة Rivals Division 3"
         }
-      ],
-      "rawPasswordPlaintext": "pass1234"
+      ]
     },
     {
       "id": "user_105",
@@ -485,8 +481,7 @@
           "amount": 100,
           "reason": "نقاط شحن كوينز 500 ألف"
         }
-      ],
-      "rawPasswordPlaintext": "pass1234"
+      ]
     },
     {
       "id": "user_106",
@@ -495,8 +490,7 @@
       "email": "sultan.mutairi@example.com",
       "password": "70730637c42f51a84a929b289ffcf6a7:0ea6a6abd77fa60cd3284bec4b3805ca5ee8176d84fb0482f75bd617f0d72e8d25c7820b54be97c2817b11bfa4a083d7f3979cbff27ff943a73b1aa95b72c9b1",
       "points": 0,
-      "history": [],
-      "rawPasswordPlaintext": "pass1234"
+      "history": []
     },
     {
       "id": "user_107",
@@ -516,8 +510,7 @@
           "amount": 600,
           "reason": "شحن نقاط باقة تدريب مباشر PRO"
         }
-      ],
-      "rawPasswordPlaintext": "pass1234"
+      ]
     },
     {
       "id": "user_108",
@@ -526,8 +519,7 @@
       "email": "sara.harbi@example.com",
       "password": "065eca3ce7f9d42f5f701f398028733e:fc4bbb5d134a6896bc3fc9f5618b4d1dfd9e74f117ddc0d4ab24e6d4feae8c4efc73e210a276e59bf7903b1389d8920a52d1832b01d0a04c7b0b8e035b1a63f1",
       "points": 0,
-      "history": [],
-      "rawPasswordPlaintext": "pass1234"
+      "history": []
     },
     {
       "id": "1783813762128",
@@ -552,8 +544,7 @@
           "amount": -500,
           "reason": "استبدال نقاط بكوبون خصم 25% (TRV-L9X4MX)"
         }
-      ],
-      "rawPasswordPlaintext": "omar1234"
+      ]
     },
     {
       "id": "1783879551496",
@@ -574,8 +565,7 @@
           "amount": 5,
           "reason": "كسب نقاط تلقائية عند إتمام الطلب #17838771 (استشارة: باقة استشارة فنية: برو (5 تشكيلات))"
         }
-      ],
-      "rawPasswordPlaintext": "omar1234"
+      ]
     },
     {
       "id": "1783879665716",
@@ -591,8 +581,7 @@
           "amount": 0,
           "reason": "إنشاء الحساب بنجاح"
         }
-      ],
-      "rawPasswordPlaintext": "pass1234"
+      ]
     },
     {
       "id": "test_user_marketing_integration",
@@ -607,8 +596,7 @@
           "amount": 500,
           "reason": "نقاط اختبار تكامل التسويق"
         }
-      ],
-      "rawPasswordPlaintext": "password123"
+      ]
     },
     {
       "id": "1783899008629",
@@ -621,6 +609,91 @@
       "history": [
         {
           "date": "2026-07-12T23:30:08.629Z",
+          "amount": 0,
+          "reason": "إنشاء الحساب بنجاح"
+        }
+      ]
+    },
+    {
+      "id": "admin_1784204488832",
+      "name": "Trivela Admin",
+      "phone": "966500000001",
+      "email": "admin@trivela.local",
+      "password": "119eb23af5a5582be29c6b652cf925a9:ce43727bf0ad9fdb18cfd30082ca80ac1ec4009c010d0ae91f054017ea8586c50e5af124dcf7670eccf04ab51e56b326e42c65afed8bcbe1aabd264fa6e74eef",
+      "isAdmin": true,
+      "points": 0,
+      "referredBy": null,
+      "history": [
+        {
+          "date": "2026-07-16T12:21:28.833Z",
+          "amount": 0,
+          "reason": "حساب المشرف تم إنشاؤه تلقائياً"
+        }
+      ]
+    },
+    {
+      "id": "1784204749131",
+      "name": "QA Tester",
+      "phone": "966584204749",
+      "email": "qatester_1784204749_6e32ba@trivela.test",
+      "password": "af90ab6880586b8540a50cd4aff395a2:0eb9dcbdf1808c349c248bd60dc10a11f9762dff36c8112773f85e9704581ab2973e1b48b6e90ecb65869b53b2e4d34d9bcbae3ebc90dd610d0edc2b50bbbf70",
+      "isAdmin": false,
+      "points": 0,
+      "referredBy": null,
+      "history": [
+        {
+          "date": "2026-07-16T12:25:49.131Z",
+          "amount": 0,
+          "reason": "إنشاء الحساب بنجاح"
+        }
+      ]
+    },
+    {
+      "id": "1784204753506",
+      "name": "QA Tester",
+      "phone": "966584204753",
+      "email": "qatester_1784204753_7a7d97@trivela.test",
+      "password": "4fef6ad08e64b26e21fe81d1b3e25fb9:abb02062b862d864fa828948aa47e36078a18ea6b0bdb1c38641cb3059ce930c83239f3ea54d6f1b1beac9e2b1aac4e662e1db49f185915a9aec84e156e1f305",
+      "isAdmin": false,
+      "points": 0,
+      "referredBy": null,
+      "history": [
+        {
+          "date": "2026-07-16T12:25:53.506Z",
+          "amount": 0,
+          "reason": "إنشاء الحساب بنجاح"
+        }
+      ]
+    },
+    {
+      "id": "1784204862757",
+      "name": "QA Tester",
+      "phone": "966584204862",
+      "email": "qatester_1784204862_defc13@trivela.test",
+      "password": "c78a5f57cd6d20fa6a8b290ebebbb044:c56a14d7f438ae82d77f42bce7a5f11238041e8d862b4219d896bc6a46a0395d6bb5438b3fab4409e8b6506aff16c8ef47c498c3c44bf8aa03da481dd26c23d3",
+      "isAdmin": false,
+      "points": 0,
+      "referredBy": null,
+      "history": [
+        {
+          "date": "2026-07-16T12:27:42.757Z",
+          "amount": 0,
+          "reason": "إنشاء الحساب بنجاح"
+        }
+      ]
+    },
+    {
+      "id": "1784205099529",
+      "name": "QA UI Tester",
+      "phone": "+966584205097",
+      "email": "uifetest_1784205097@trivela.test",
+      "password": "b93d94ca3ee6de99fa423674827f6fe2:7f9534d83b9aebaa6943e0a6c77c1b856cf08bd03293375fca3fc72e2daf658410bd1868cc2d9b18e55d042ef3e937a2dc17d816c8d37107d42dfe3977bdb22c",
+      "isAdmin": false,
+      "points": 0,
+      "referredBy": null,
+      "history": [
+        {
+          "date": "2026-07-16T12:31:39.529Z",
           "amount": 0,
           "reason": "إنشاء الحساب بنجاح"
         }
@@ -929,6 +1002,38 @@
     ]
   },
   "orders": [
+    {
+      "id": "order_1784204862628_674",
+      "timestamp": "2026-07-16T12:27:42.628Z",
+      "customerName": "Guest QA",
+      "customerPhone": "966504204862",
+      "service": "شحن 1000K كوينز",
+      "platform": "PS",
+      "priceSAR": 50,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": null,
+      "eaPassword": null,
+      "backupCode1": null,
+      "backupCode2": null,
+      "backupCode3": null,
+      "sonyEmail": null,
+      "sonyPassword": null,
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
     {
       "id": "order_1783881800598_823",
       "timestamp": "2026-07-12T18:43:20.598Z",
@@ -1783,6 +1888,16 @@
     }
   ],
   "logs": [
+    {
+      "id": "log_1784204862634_kmk9e",
+      "timestamp": "2026-07-16T12:27:42.634Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842048 من Guest QA — شحن 1000K كوينز",
+      "details": {
+        "orderId": "order_1784204862628_674"
+      }
+    },
     {
       "id": "log_1783963256423_z005r",
       "timestamp": "2026-07-13T17:20:56.423Z",
@@ -5233,16 +5348,6 @@
         "category": "packages",
         "priceSAR": 120
       }
-    },
-    {
-      "id": "log_1783438868261_nkfyu",
-      "timestamp": "2026-07-07T15:41:08.261Z",
-      "action": "DELETE_REVIEW",
-      "operator": "المشرف",
-      "message": "تم حذف تقييم العميل: \"سلمان العبدالله\"",
-      "details": {
-        "revId": "rev_1783438868253"
-      }
     }
   ],
   "faqs": [
@@ -6194,7 +6299,7 @@
     }
   ],
   "analytics": {
-    "totalVisits": 9261,
+    "totalVisits": 9492,
     "daily": {
       "2026-07-02": 85,
       "2026-07-03": 92,
@@ -6209,22 +6314,22 @@
       "2026-07-12": 4977,
       "2026-07-13": 789,
       "2026-07-15": 221,
-      "2026-07-16": 142
+      "2026-07-16": 373
     },
     "devices": {
       "mobile": 983,
-      "desktop": 8238,
+      "desktop": 8469,
       "tablet": 40
     },
     "referrers": {
-      "direct": 449,
+      "direct": 468,
       "google": 180,
       "tiktok": 341,
       "snapchat": 120,
       "instagram": 90,
-      "twitter": 48,
+      "twitter": 50,
       "whatsapp": 110,
-      "other": 362
+      "other": 363
     },
     "countries": {
       "sa": 560,
@@ -6235,7 +6340,7 @@
       "om": 50,
       "eg": 110,
       "jo": 45,
-      "other": 67
+      "other": 89
     },
     "hours": {
       "0": 12,
@@ -6250,7 +6355,7 @@
       "9": 30,
       "10": 45,
       "11": 67,
-      "12": 63,
+      "12": 85,
       "13": 48,
       "14": 42,
       "15": 77,
@@ -6264,18 +6369,18 @@
       "23": 83
     },
     "pages": {
-      "home": 1579,
-      "coins": 705,
+      "home": 1595,
+      "coins": 710,
       "sbc": 420,
       "rivals": 380,
       "champions": 320,
-      "objectives": 276,
+      "objectives": 277,
       "coaching": 150,
       "packages": 190
     },
     "visitorTypes": {
-      "new": 739,
-      "returning": 941
+      "new": 750,
+      "returning": 952
     },
     "clicks": {
       "coins": 318,

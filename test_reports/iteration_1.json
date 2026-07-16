@@ -1,0 +1,76 @@
+{
+  "summary": "First testing pass on Trivela security hardening + UI polish. Backend: 33/33 pytest checks pass (public flows, register/login/me, admin-token unlocks, no-token→401, non-admin-token→403, no password field leakage in /api/admin/users, and login rate-limit 429). Frontend: home, all 7 buy-* pages, login/register→profile, admin login→admin.html dashboard, mobile responsiveness at 390x844, and fifa-bg regression injection all work. Two MINOR frontend issues (see below): admin guard on no-token redirects to login.html instead of showing the 🔒 block; and a pageerror on /buy-objectives.html because `togglePointsDiscount` is referenced but never defined.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "admin.html + admin-mobile.html no-token guard",
+        "issue": "When token is absent, the extra legacy scripts (src/features/admin/adminUI.js:33, src/core/auth.js:18, admin-mobile.js:27) immediately `window.location.href = 'login.html'`, so users are redirected to the login form instead of seeing the 🔒 block that the new inline guard in admin.html:29/admin-mobile.html:26 would show. Security IS still enforced (panel never renders and no admin data is fetched without a token). This is a spec-compliance/UX gap, not a security hole. The non-admin-token case correctly displays the 🔒 block.",
+        "selector": "admin.html <script> at line 8-40 (guard) vs adminUI.js:33 / core/auth.js:18 / admin-mobile.js:27 (legacy redirect)",
+        "priority": "LOW"
+      },
+      {
+        "component": "buy-objectives.html (objectivesUI.js)",
+        "issue": "Uncaught ReferenceError on page load: `togglePointsDiscount is not defined`. In /app/trivela/src/features/objectives/objectivesUI.js line 676 the code assigns `window.togglePointsDiscount = togglePointsDiscount;` but `togglePointsDiscount` is never declared in that file (search confirms only that assignment). Similar function IS defined in buy-sbc-detail.js. This throws at script-load and halts subsequent statements in that script block on /buy-objectives.html.",
+        "selector": "/app/trivela/src/features/objectives/objectivesUI.js:676",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "Admin dashboard header (admin.html)",
+        "issue": "Hardcoded label shows `admin@trivela.com` in the header even after login as `admin@trivela.local`. Cosmetic only.",
+        "selector": "admin.html header user block",
+        "priority": "LOW"
+      },
+      {
+        "component": "Home hero CTAs",
+        "issue": "`ابدأ الشحن الآن` uses href=\"#coins-device\" and `كل الخدمات` uses href=\"#other-products\" — both are same-page anchor scrolls, not navigation to /buy-coins.html as review spec requested. Behavior works (scrolls to section) but does not match the requested URL routing.",
+        "selector": "index.html lines 291-292",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Mobile 390x844 (/, /buy-coins.html, /buy-sbc.html, /login.html)",
+        "issues": ["No horizontal overflow (scrollWidth == innerWidth == 390)", "Only slot-l1 and slot-r1 visible; slot-l2 and slot-r2 hidden as expected", "Hero title readable, primary CTA visible without horizontal scroll", "All good — reported as PASS"]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/trivela_backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Fix `togglePointsDiscount is not defined` in /app/trivela/src/features/objectives/objectivesUI.js (line 676) — either define the function or remove the window binding. This causes a ReferenceError on /buy-objectives.html.",
+    "(Optional / spec-only) Reconcile the admin guard: either delete the legacy `window.location.href='login.html'` in src/features/admin/adminUI.js:33, src/core/auth.js:18, and admin-mobile.js:27 so the new 🔒 block from admin.html:8-40 wins, OR update the spec to accept redirect-to-login as the no-token behavior. (Non-admin-token → 🔒 block already works correctly.)",
+    "(Cosmetic) Replace hardcoded `admin@trivela.com` in admin.html header with the real logged-in user's email.",
+    "(Spec) Decide whether home hero CTAs should scroll to same-page sections (#coins-device / #other-products) or navigate to /buy-coins.html — both work but current behavior is anchor-scroll only."
+  ],
+  "critical_code_review_comments": [
+    "server.js is 2113 lines — should be split into routers (auth, admin, orders, public, players).",
+    "authenticateToken and requireAdmin both base64-decode a userId directly as the token. That is a plain, non-signed identifier — anyone who guesses/steals a userId gets full session access. Consider signed JWTs or opaque server-side sessions.",
+    "requireAdmin accepts the token via `req.query.token` as fallback (line 607) — tokens in URL query strings end up in server logs, browser history, and Referer headers. Recommend removing the query-string fallback.",
+    "In-memory _loginAttempts map (line 624) resets on every process restart and is not distributed — fine for a single-instance MVP, not for horizontal scaling.",
+    "Password reset endpoints (if any) not covered by this test pass.",
+    "objectivesUI.js:676 references undefined `togglePointsDiscount` — real ReferenceError at runtime."
+  ],
+  "updated_files": [
+    "/app/backend/tests/trivela_backend_test.py (new — 33 test cases covering security + auth + public flows)"
+  ],
+  "success_rate": {
+    "backend": "100% (33/33)",
+    "frontend": "~90% (all critical navigation, auth, admin login, mobile responsiveness, and fifa-bg regression pass; only minor guard-block deviation and one JS ReferenceError on /buy-objectives.html)"
+  },
+  "test_credentials": "Admin: admin@trivela.local / Trivela@Admin2026. Non-admin: auto-registered per-run with prefix `qatester_<ts>@trivela.test` (backend) and `uifetest_<ts>@trivela.test` (frontend).",
+  "seed_data_creation": "Registered ephemeral test users via /api/auth/register (no DB seed modification beyond appending new users). Created one guest order via POST /api/orders which is visible in admin dashboard.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend rate-limit test consumes 8-12 login attempts against the same IP; if you re-run, restart frontend supervisor (which runs the Node process holding the in-memory counter) before the admin-token fixture: `sudo supervisorctl restart frontend`. Run pytest with `-n 0` to force serial execution (the pytest.ini pins xdist -n 2 loadscope, which lets the rate-limit test race the admin fixture across workers). The buy-objectives.html JS ReferenceError is the only real functional frontend bug — everything else is spec-compliance or cosmetic.",
+  "rca of the issue": {
+    "admin_guard_no_token_redirects_to_login_html": "admin.html:8-40 injects an inline guard that calls showBlock() to overwrite documentElement.innerHTML with the 🔒 message. However, when /admin.html loads without a token, module scripts loaded AFTER the inline guard — specifically /app/trivela/src/features/admin/adminUI.js:33 (`window.location.href = 'login.html'`) and /app/trivela/src/core/auth.js:18 — execute and navigate the page away before the block is visible. Fix: either short-circuit those legacy redirects when the guard has already run (e.g., set a `window.__adminGuardShown` flag), or delete the legacy redirects entirely and rely on the inline guard.",
+    "togglePointsDiscount_referror": "In /app/trivela/src/features/objectives/objectivesUI.js line 676 the module does `window.togglePointsDiscount = togglePointsDiscount;` but the identifier `togglePointsDiscount` is not defined anywhere in that file (grep confirms). The similarly-named function exists only in /app/trivela/buy-sbc-detail.js which is not loaded on /buy-objectives.html. Fix: either import it from buy-sbc-detail.js, redefine it locally, or remove the window binding if the objectives page does not need it."
+  }
+}

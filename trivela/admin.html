@@ -6,6 +6,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>لوحة التحكم | Trivela Admin</title>
   <script>
+    // === ADMIN GUARD & AUTH INJECTION (runs BEFORE any other admin scripts) ===
+    (function(){
+      var TOKEN = localStorage.getItem('trivela_token');
+      // Wrap fetch so every /api/admin/* call auto-attaches the token
+      var _origFetch = window.fetch;
+      window.fetch = function(input, init){
+        try{
+          var url = typeof input === 'string' ? input : (input && input.url) || '';
+          if (url.indexOf('/api/admin') === 0 || url.indexOf('/api/admin') === (location.origin+'').length) {
+            init = init || {};
+            init.headers = init.headers || {};
+            var t = localStorage.getItem('trivela_token');
+            if (t && !(init.headers['Authorization'] || init.headers['authorization'])) {
+              init.headers['Authorization'] = 'Bearer ' + t;
+            }
+          }
+        }catch(e){}
+        return _origFetch.call(this, input, init);
+      };
+      // Verify admin session before rendering the panel
+      function showBlock(msg){
+        document.documentElement.innerHTML = '<body style="font-family:Cairo,sans-serif;background:#0f172a;color:#f1f5f9;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;direction:rtl"><div style="max-width:520px"><div style="font-size:48px;margin-bottom:16px">🔒</div><h1 style="margin:0 0 12px;font-size:22px">'+msg+'</h1><p style="color:#94a3b8;margin:0 0 20px">يرجى تسجيل الدخول بحساب المشرف للمتابعة.</p><a href="/login.html?redirect=/admin.html" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#4b46c5,#12a08a);color:#fff;border-radius:10px;text-decoration:none;font-weight:800">تسجيل الدخول</a></div></body>';
+      }
+      if (!TOKEN) { showBlock('غير مصرح لك بالدخول'); return; }
+      fetch('/api/auth/me', { headers: { 'Authorization': 'Bearer ' + TOKEN } })
+        .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+        .then(function(me){
+          if (!me || !me.isAdmin) { showBlock('حساب غير مخوّل بصلاحيات المشرف'); }
+        })
+        .catch(function(){ showBlock('انتهت جلسة الدخول'); });
+    })();
+  </script>
+  <script>
     window.addEventListener('error', function(e) {
       var div = document.getElementById('debug-err-banner');
       if (!div) {

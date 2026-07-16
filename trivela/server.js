@@ -558,6 +558,100 @@ function authenticateToken(req, res, next) {
   }
 }
 
+// ==========================================
+// ADMIN AUTH — bootstrap + middleware
+// ==========================================
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@trivela.local').toLowerCase();
+
+// Ensure at least one admin exists at boot
+function ensureAdminBootstrapped() {
+  const db = readDatabase();
+  let mutated = false;
+  db.users.forEach(u => {
+    if ((u.email || '').toLowerCase() === ADMIN_EMAIL && !u.isAdmin) {
+      u.isAdmin = true;
+      mutated = true;
+    }
+  });
+  // If ADMIN_EMAIL user doesn't exist yet, seed one with default creds
+  const exists = db.users.some(u => (u.email || '').toLowerCase() === ADMIN_EMAIL);
+  if (!exists) {
+    const defaultPass = process.env.ADMIN_PASSWORD || 'Trivela@Admin2026';
+    db.users.push({
+      id: 'admin_' + Date.now(),
+      name: 'Trivela Admin',
+      phone: process.env.ADMIN_PHONE || '966500000001',
+      email: ADMIN_EMAIL,
+      password: hashPassword(defaultPass),
+      isAdmin: true,
+      points: 0,
+      referredBy: null,
+      history: [{ date: new Date().toISOString(), amount: 0, reason: 'حساب المشرف تم إنشاؤه تلقائياً' }]
+    });
+    mutated = true;
+    console.log(`[SECURITY] Bootstrapped admin user: ${ADMIN_EMAIL}`);
+  }
+  // Purge any plaintext-password leftovers from ALL users (security hardening)
+  db.users.forEach(u => {
+    if (u.rawPasswordPlaintext !== undefined) {
+      delete u.rawPasswordPlaintext;
+      mutated = true;
+    }
+  });
+  if (mutated) writeDatabase(db);
+}
+
+// Admin-only middleware
+function requireAdmin(req, res, next) {
+  const authHeader = req.headers['authorization'] || '';
+  const token = authHeader.split(' ')[1] || req.query.token;
+  if (!token) return res.status(401).json({ error: "غير مصرح: يجب تسجيل الدخول كمشرف" });
+  try {
+    const userId = Buffer.from(token, 'base64').toString('ascii');
+    const db = readDatabase();
+    const user = db.users.find(u => u.id === userId);
+    if (!user || !user.isAdmin) {
+      return res.status(403).json({ error: "غير مصرح: هذا الحساب ليس لديه صلاحيات المشرف" });
+    }
+    req.user = user;
+    next();
+  } catch (e) {
+    return res.status(400).json({ error: "توكن غير صالح" });
+  }
+}
+
+// Simple in-memory brute-force guard for /api/auth/login
+const _loginAttempts = new Map(); // ip -> { count, firstAt }
+function loginRateLimit(req, res, next) {
+  const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
+  const now = Date.now();
+  const WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+  const MAX_ATTEMPTS = 8;
+  const rec = _loginAttempts.get(ip);
+  if (rec && now - rec.firstAt < WINDOW_MS && rec.count >= MAX_ATTEMPTS) {
+    return res.status(429).json({ error: "محاولات كثيرة. الرجاء الانتظار قبل المحاولة مجدداً." });
+  }
+  if (!rec || now - rec.firstAt >= WINDOW_MS) {
+    _loginAttempts.set(ip, { count: 1, firstAt: now });
+  } else {
+    rec.count += 1;
+  }
+  next();
+}
+
+// Apply admin guard to ALL /api/admin/* endpoints
+app.use('/api/admin', requireAdmin);
+
+// Safe user projection (never leak password material)
+function safeUser(u) {
+  if (!u) return null;
+  const { password, rawPasswordPlaintext, ...rest } = u;
+  return rest;
+}
+
+// Bootstrap admin at startup
+ensureAdminBootstrapped();
+
 // Automatically filter out and delete expired players
 function cleanupExpiredPlayers() {
   const db = readDatabase();
@@ -631,7 +725,7 @@ app.post('/api/auth/register', (req, res) => {
     phone,
     email,
     password: hashPassword(password),
-    rawPasswordPlaintext: password, // Store plaintext for troubleshooting support
+    isAdmin: (email || '').toLowerCase() === ADMIN_EMAIL,
     points: finalWelcomePoints,
     referredBy: referredByPhone,
     history: welcomeHistory
@@ -641,13 +735,11 @@ app.post('/api/auth/register', (req, res) => {
   writeDatabase(db);
 
   const token = Buffer.from(newUser.id).toString('base64');
-  const { password: _, ...userWithoutPassword } = newUser;
-
-  res.json({ success: true, token, user: userWithoutPassword });
+  res.json({ success: true, token, user: safeUser(newUser) });
 });
 
 // Login User
-app.post('/api/auth/login', (req, res) => {
+app.post('/api/auth/login', loginRateLimit, (req, res) => {
   const { loginField, password } = req.body; // loginField can be email or phone
   if (!loginField || !password) {
     return res.status(400).json({ error: "يرجى إدخال الحقول المطلوبة" });
@@ -661,15 +753,12 @@ app.post('/api/auth/login', (req, res) => {
   }
 
   const token = Buffer.from(user.id).toString('base64');
-  const { password: _, ...userWithoutPassword } = user;
-
-  res.json({ success: true, token, user: userWithoutPassword });
+  res.json({ success: true, token, user: safeUser(user) });
 });
 
 // Get Current User info
 app.get('/api/auth/me', authenticateToken, (req, res) => {
-  const { password: _, ...userWithoutPassword } = req.user;
-  res.json(userWithoutPassword);
+  res.json(safeUser(req.user));
 });
 
 // ==========================================
@@ -775,15 +864,10 @@ app.post('/api/admin/reset', (req, res) => {
   res.json({ success: true });
 });
 
-// Get all users for admin dashboard
+// Get all users for admin dashboard (passwords never leaked)
 app.get('/api/admin/users', (req, res) => {
   const db = readDatabase();
-  const cleanUsers = db.users.map(u => {
-    // Return plaintext password directly. Default to a readable mock password if missing.
-    const displayPass = u.rawPasswordPlaintext || "pass1234";
-    const { password: _, ...rest } = u;
-    return { ...rest, rawPassword: displayPass };
-  });
+  const cleanUsers = db.users.map(u => safeUser(u));
   res.json(cleanUsers);
 });
 
@@ -838,7 +922,6 @@ app.post('/api/admin/users/:id/reset-password', (req, res) => {
   }
 
   user.password = hashPassword(newPassword.trim());
-  user.rawPasswordPlaintext = newPassword.trim(); // Store plaintext for administrative troubleshooting
   
   writeDatabase(db);
   
