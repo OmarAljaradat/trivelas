@@ -315,29 +315,23 @@
     .guarantee-card:hover {
       transform: translateY(-4px);
     }
-    .guarantee-card.silver-tier {
-      border-left: 5px solid #94a3b8;
-    }
-    .guarantee-card.gold-tier {
+    .guarantee-card.unified-premium-tier {
       border-left: 5px solid #eab308;
       background: linear-gradient(to bottom, #ffffff, #fefce8);
     }
-    body.dark-mode .guarantee-card.gold-tier {
+    body.dark-mode .guarantee-card.unified-premium-tier {
       background: linear-gradient(to bottom, #1e293b, #1c1917);
     }
-    .guarantee-card.gold-tier::before {
-      content: 'VIP';
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: #eab308;
-      color: #0f172a;
-      font-size: 0.72rem;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      letter-spacing: 0.5px;
+    .guarantee-list.unified-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
+    }
+    @media (max-width: 580px) {
+      .guarantee-list.unified-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
     }
     .guarantee-card h5 {
       font-size: 1.05rem;
@@ -785,29 +779,19 @@
       <div class="tab-content-panel active" id="panelSafety">
         <h4 style="margin-top: 0; color: #1b355a; font-weight: 800; margin-bottom: 6px;"><i class="fas fa-shield-halved" style="color: #ca8a04; margin-left: 8px;"></i> نظام شحن آمن Comfort Trade</h4>
         <p style="margin-bottom: 12px; font-weight: 600; color: #475569; font-size: 0.88rem;">
-          نعتمد الطريقة الأكثر أماناً لشحن الكوينز يدوياً بواسطة محترفين ذوي خبرة وبأوقات نقل محمية وموزعة. اختر نوع الضمان المناسب لحسابك:
+          نعتمد الطريقة الأكثر أماناً لشحن الكوينز يدوياً بواسطة محترفين ذوي خبرة وبأوقات نقل محمية وموزعة، مع تقديم ضمان ذهبي شامل وموحد لجميع عملائنا مجاناً لحماية حسابك بالكامل.
         </p>
         
-        <div class="guarantees-flex-container">
-          <!-- Silver Tier -->
-          <div class="guarantee-card silver-tier">
-            <h5><i class="fas fa-award"></i> الضمان الفضي (الأساسي)</h5>
-            <ul class="guarantee-list">
-              <li><i class="fas fa-circle-check"></i> شحن يدوي آمن بالكامل 100%</li>
-              <li><i class="fas fa-circle-check"></i> ضمان حماية وتشفير البيانات</li>
-              <li><i class="fas fa-circle-check"></i> حذف فوري للبيانات بعد الشحن</li>
-              <li><i class="fas fa-circle-check"></i> تعويض كامل حال حدوث مشاكل نادرة</li>
-            </ul>
-          </div>
-          
-          <!-- Gold Tier -->
-          <div class="guarantee-card gold-tier">
-            <h5><i class="fas fa-crown"></i> الضمان الذهبي (الشامل)</h5>
-            <ul class="guarantee-list">
-              <li><i class="fas fa-circle-check"></i> أولوية قصوى وجدولة شحن فورية</li>
-              <li><i class="fas fa-circle-check"></i> تعويض شامل لقيمة الكوينز والحساب</li>
-              <li><i class="fas fa-circle-check"></i> حماية تأمينية لمدة 24 ساعة إضافية</li>
-              <li><i class="fas fa-circle-check"></i> خدمة عملاء ودعم فني VIP مباشر</li>
+        <div class="guarantees-flex-container" style="display: block;">
+          <div class="guarantee-card unified-premium-tier" style="margin-bottom: 0;">
+            <h5 style="color: #ca8a04; font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;"><i class="fas fa-shield-circle-check"></i> الضمان الشامل لجميع طلبات الشحن</h5>
+            <ul class="guarantee-list unified-grid">
+              <li><i class="fas fa-circle-check" style="color: #10b981;"></i> شحن يدوي آمن بالكامل 100% بواسطة خبراء</li>
+              <li><i class="fas fa-circle-check" style="color: #10b981;"></i> ضمان حماية وتشفير بيانات حسابك بالكامل</li>
+              <li><i class="fas fa-circle-check" style="color: #10b981;"></i> حذف فوري وآمن للبيانات بعد إتمام الشحن</li>
+              <li><i class="fas fa-circle-check" style="color: #10b981;"></i> تعويض شامل لقيمة الكوينز والحساب في حال حدوث أي مشاكل</li>
+              <li><i class="fas fa-circle-check" style="color: #10b981;"></i> حماية تأمينية إضافية شاملة للحساب لمدة 24 ساعة</li>
+              <li><i class="fas fa-circle-check" style="color: #10b981;"></i> خدمة عملاء ودعم فني مباشر على مدار الساعة</li>
             </ul>
           </div>
         </div>
