@@ -32,7 +32,7 @@
 }
 
 .fifa-scene {
-  position:fixed; inset:0;
+  position:fixed; inset:-10px;
   z-index:0;
   overflow:hidden;
   contain:strict;
