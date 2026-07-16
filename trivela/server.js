@@ -108,20 +108,14 @@ app.use((req, res, next) => {
     if (!html.includes('fifa-bg.css')) {
       html = html.replace(
         /<link\s+rel="stylesheet"\s+href="style\.css"[^>]*>/i,
-        (m) => `${m}\n  <link rel="stylesheet" href="fifa-bg.css?v=2.6"/>`
+        (m) => `${m}\n  <link rel="stylesheet" href="fifa-bg.css"/>`
       );
-    } else {
-      // update version if already present
-      html = html.replace(/href="fifa-bg\.css[^"]*"/g, 'href="fifa-bg.css?v=2.6"');
     }
     if (!html.includes('fifa-bg.js')) {
       html = html.replace(
         /<\/body>/i,
-        `<script src="fifa-bg.js?v=2.6"></script>\n</body>`
+        `<script src="fifa-bg.js"></script>\n</body>`
       );
-    } else {
-      // update version if already present
-      html = html.replace(/src="fifa-bg\.js[^"]*"/g, 'src="fifa-bg.js?v=2.6"');
     }
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
