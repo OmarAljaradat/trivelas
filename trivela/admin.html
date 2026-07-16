@@ -906,6 +906,14 @@
             <button class="filter-btn" onclick="setStatsTimeRange(14, this)">آخر 14 يوم</button>
             <button class="filter-btn" onclick="setStatsTimeRange(7, this)">آخر 7 أيام</button>
           </div>
+
+          <div class="custom-range-group" style="display: flex; align-items: center; gap: 8px; background: #ffffff; padding: 6px 14px; border-radius: 50px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-gray);">من:</span>
+            <input type="date" id="statsStartDate" style="border: 0; outline: none; font-size: 0.8rem; font-family: inherit; font-weight: 600; color: var(--text-dark); background: transparent;" onchange="applyCustomDateRange()">
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-gray);">إلى:</span>
+            <input type="date" id="statsEndDate" style="border: 0; outline: none; font-size: 0.8rem; font-family: inherit; font-weight: 600; color: var(--text-dark); background: transparent;" onchange="applyCustomDateRange()">
+            <button class="filter-btn" id="btnCustomDateClear" onclick="clearCustomDateRange()" style="padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; display: none; background: #f1f5f9; color: var(--text-dark); border: 1px solid var(--border-color);">إلغاء</button>
+          </div>
           
           <button class="header-action-btn icon-only" onclick="loadQuickStats(); loadOrdersList(); loadAdminLogs();" title="تحديث البيانات" style="background: #ffffff; color: var(--text-dark); border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02); display: flex; align-items: center; justify-content: center;"><i class="fas fa-redo"></i></button>
           
