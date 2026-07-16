@@ -836,7 +836,7 @@ app.get('/api/admin/stats', (req, res) => {
 
 // Reset store analytics/data
 app.post('/api/admin/reset', (req, res) => {
-  const { type } = req.body;
+  const { type, password } = req.body;
   const db = readDatabase();
   
   if (type === 'visits') {
@@ -857,6 +857,24 @@ app.post('/api/admin/reset', (req, res) => {
     db.logs = [];
     writeDatabase(db);
     addAdminLog("RESET_ALL", "إعادة تعيين شاملة للمتجر (تصفير الزيارات والطلبات والسجلات)");
+  } else if (type === 'system_factory_reset') {
+    if (password !== 'Trivela@Reset2026') {
+      return res.status(401).json({ success: false, error: "كلمة مرور إعادة ضبط المصنع غير صحيحة!" });
+    }
+    
+    // System factory reset: clear everything but retain admin users
+    db.analytics = { totalVisits: 0, daily: {} };
+    db.orders = [];
+    db.expenses = [];
+    db.players = [];
+    db.logs = [];
+    db.coupons = [
+      { code: "TRIVELA", percent: 10, maxUses: 100, usedCount: 0, expiryDate: "2027-12-31" }
+    ];
+    db.users = db.users.filter(u => u.isAdmin); // Keep only admin accounts
+    
+    writeDatabase(db);
+    addAdminLog("SYSTEM_FACTORY_RESET", "إعادة ضبط المصنع بالكامل (تصفير العملاء والطلبات والكوبونات والمصاريف والسجلات والزيارات)");
   } else {
     return res.status(400).json({ success: false, error: "نوع غير معروف لإعادة التعيين" });
   }

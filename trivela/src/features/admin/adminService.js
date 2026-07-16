@@ -7,8 +7,8 @@ class AdminService {
     return await api.get(url);
   }
 
-  async resetStoreData(type) {
-    return await api.post('/admin/reset', { type });
+  async resetStoreData(type, password = '') {
+    return await api.post('/admin/reset', { type, password });
   }
 
   // Settings & Maintenance

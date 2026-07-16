@@ -2412,6 +2412,7 @@ window.triggerReset = async function(type, event) {
   else if (type === 'orders') typeText = 'جميع الطلبات والمبيعات';
   else if (type === 'logs') typeText = 'سجل عمليات لوحة التحكم';
   else if (type === 'all') typeText = 'كل بيانات الموقع (زيارات، طلبات، وسجلات)';
+  else if (type === 'system_factory_reset') typeText = 'إعادة ضبط مصنع النظام بالكامل (حذف العملاء، الطلبات، الكوبونات، السجلات، والمصاريف)';
 
   const confirm1 = confirm(`🚨 تحذير هام:\nهل أنت متأكد تماماً أنك تريد مسح وإعادة تعيين (${typeText}) بالكامل؟\nلا يمكن التراجع عن هذه الخطوة.`);
   if (!confirm1) return;
@@ -2424,10 +2425,19 @@ window.triggerReset = async function(type, event) {
     return;
   }
 
+  let password = '';
+  if (type === 'system_factory_reset') {
+    password = prompt(`🔑 إجراء أمان فائق:\nيرجى إدخال كلمة مرور إعادة ضبط المصنع لتأكيد تهيئة النظام بالكامل:`);
+    if (!password) {
+      alert("❌ لم يتم إدخال كلمة المرور. تم إلغاء العملية.");
+      return;
+    }
+  }
+
   try {
-    const res = await adminService.resetStoreData(type);
+    const res = await adminService.resetStoreData(type, password);
     if (res.success) {
-      showStatus("🔄 تم إعادة تعيين البيانات بنجاح!", "success");
+      showStatus("🔄 تم إعادة ضبط النظام بالكامل بنجاح!", "success");
       loadQuickStats();
       loadOrdersList();
       loadAdminLogs();
