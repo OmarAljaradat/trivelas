@@ -85,6 +85,46 @@ app.use((req, res, next) => {
   next();
 });
 
+// Inject FIFA cinematic background CSS/JS into all public HTML pages
+app.use((req, res, next) => {
+  const isHtmlPath = req.method === 'GET' && (
+    req.url === '/' ||
+    /^\/[a-zA-Z0-9_-]+\.html(\?.*)?$/.test(req.url) ||
+    (!req.url.includes('.') && !req.url.startsWith('/api'))
+  );
+  if (!isHtmlPath) return next();
+
+  // Skip admin & maintenance pages
+  const lowered = req.url.toLowerCase();
+  if (lowered.includes('admin') || lowered.includes('maintenance')) return next();
+
+  let filePath = req.url === '/' ? '/index.html' : req.url.split('?')[0];
+  if (!filePath.endsWith('.html')) filePath += '.html';
+  const abs = path.join(__dirname, filePath);
+  if (!fs.existsSync(abs)) return next();
+
+  try {
+    let html = fs.readFileSync(abs, 'utf8');
+    if (!html.includes('fifa-bg.css')) {
+      html = html.replace(
+        /<link\s+rel="stylesheet"\s+href="style\.css"[^>]*>/i,
+        (m) => `${m}\n  <link rel="stylesheet" href="fifa-bg.css"/>`
+      );
+    }
+    if (!html.includes('fifa-bg.js')) {
+      html = html.replace(
+        /<\/body>/i,
+        `<script src="fifa-bg.js"></script>\n</body>`
+      );
+    }
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    return res.send(html);
+  } catch (e) {
+    return next();
+  }
+});
+
 app.use(express.static(__dirname));
 
 // Read players & users from database
