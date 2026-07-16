@@ -6528,43 +6528,157 @@ body.dark-mode .dropdown-content li a:hover {
   .coaching-bg { background: linear-gradient(135deg, #14b8a6, #0f766e); }
   .pkgs-bg { background: linear-gradient(135deg, #f43f5e, #e11d48); }
 
-  /* Device Selection Grid mobile optimization */
+  /* Device Selection Grid mobile optimization (Side-By-Side Row) */
   .device-grid {
-    grid-template-columns: 1fr !important;
-    gap: 14px !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
     padding: 0 16px;
   }
   .device-card {
-    min-height: auto !important;
-    padding: 16px 20px !important;
-    flex-direction: row !important;
+    min-height: 130px !important;
+    padding: 16px 8px !important;
+    flex-direction: column !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 20px !important;
-    border-radius: 16px !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    border-radius: 20px !important;
+    text-align: center !important;
   }
   .device-card .console-icons,
   .device-card .device-icon-wrap {
     margin-bottom: 0 !important;
   }
   .device-icon-wrap {
-    width: 50px !important;
-    height: 50px !important;
+    width: 44px !important;
+    height: 44px !important;
   }
   .console-icons {
-    gap: 10px !important;
+    height: auto !important;
+    width: auto !important;
+    gap: 8px !important;
   }
   .console-badge {
-    width: 42px !important;
-    height: 42px !important;
-    border-radius: 10px !important;
-    font-size: 1.3rem !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    font-size: 1.1rem !important;
+    position: static !important;
+    transform: none !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
   }
   .device-title {
-    font-size: 1.15rem !important;
+    font-size: 0.92rem !important;
     margin: 0 !important;
+    text-align: center !important;
+    flex: none;
+    font-weight: 800;
+  }
+
+  /* Products Grid mobile optimization (Horizontal Swipe) */
+  .products-grid.grid-4-cols {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 16px !important;
+    padding: 10px 20px 24px 20px !important;
+    margin: 0 -20px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+  .products-grid.grid-4-cols::-webkit-scrollbar {
+    display: none !important;
+  }
+  .products-grid.grid-4-cols .product-card {
+    flex: 0 0 240px !important;
+    min-height: 260px !important;
+    padding: 24px 16px !important;
+    scroll-snap-align: center !important;
+    border-radius: 20px !important;
+  }
+
+  /* Coaching Pricing Grid mobile optimization (Horizontal Swipe) */
+  .premium-pricing-grid {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 16px !important;
+    padding: 10px 20px 24px 20px !important;
+    margin: 0 -20px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+  .premium-pricing-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+  .premium-pricing-grid .premium-pricing-card {
+    flex: 0 0 270px !important;
+    scroll-snap-align: center !important;
+    margin: 0 !important;
+    padding: 24px 20px !important;
+  }
+
+  /* Packages Grid mobile optimization (Horizontal Swipe) */
+  #packagesGrid {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 16px !important;
+    padding: 10px 20px 24px 20px !important;
+    margin: 0 -20px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+  #packagesGrid::-webkit-scrollbar {
+    display: none !important;
+  }
+  #packagesGrid .pkg-bundle-card {
+    flex: 0 0 270px !important;
+    scroll-snap-align: center !important;
+  }
+
+  /* How Steps mobile timeline layout */
+  .how-steps {
+    flex-direction: column !important;
+    gap: 20px !important;
+    align-items: stretch !important;
+  }
+  .how-connector {
+    display: none !important;
+  }
+  .how-step {
+    flex-direction: row !important;
     text-align: right !important;
-    flex: 1;
+    gap: 16px !important;
+    align-items: center !important;
+  }
+  .step-num {
+    margin: 0 !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1.15rem !important;
+    flex-shrink: 0 !important;
+  }
+  .how-step h3 {
+    margin-bottom: 4px !important;
+    font-size: 1.05rem !important;
+  }
+  .how-step p {
+    font-size: 0.82rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* General Page Space reductions for mobile app feel */
+  .section-h2 {
+    font-size: 1.6rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 8px !important;
+  }
+  .section-sub {
+    font-size: 0.88rem !important;
+    margin-bottom: 24px !important;
+  }
+  .device-section, .products-section, .coaching-section-home, .packages-section-home, .features-section, .how-section, .reviews-section, .faq-section, .order-section {
+    padding: 36px 0 !important;
   }
 }
 
