@@ -1064,12 +1064,12 @@
       "sonyBackupCode3": null,
       "discordHandle": null,
       "orderNotes": null,
-      "status": "pending",
-      "amountPaid": 0,
-      "supplierCost": 0,
+      "status": "in_progress",
+      "amountPaid": 49.9875,
+      "supplierCost": 3.75,
       "profit": 0,
-      "paidAt": null,
-      "startedAt": null,
+      "paidAt": "2026-07-16T17:05:46.762Z",
+      "startedAt": "2026-07-16T17:05:56.665Z",
       "completedAt": null,
       "cancelledAt": null
     },
@@ -6368,7 +6368,7 @@
     }
   ],
   "analytics": {
-    "totalVisits": 9913,
+    "totalVisits": 9963,
     "daily": {
       "2026-07-02": 85,
       "2026-07-03": 92,
@@ -6383,26 +6383,26 @@
       "2026-07-12": 4977,
       "2026-07-13": 789,
       "2026-07-15": 221,
-      "2026-07-16": 794
+      "2026-07-16": 844
     },
     "devices": {
       "mobile": 987,
-      "desktop": 8886,
+      "desktop": 8936,
       "tablet": 40
     },
     "referrers": {
-      "direct": 498,
+      "direct": 499,
       "google": 180,
       "tiktok": 341,
       "snapchat": 120,
       "instagram": 90,
       "twitter": 54,
       "whatsapp": 110,
-      "other": 374
+      "other": 375
     },
     "countries": {
       "sa": 560,
-      "ae": 770,
+      "ae": 772,
       "kw": 140,
       "qa": 95,
       "bh": 65,
@@ -6432,13 +6432,13 @@
       "17": 143,
       "18": 134,
       "19": 163,
-      "20": 206,
+      "20": 208,
       "21": 125,
       "22": 111,
       "23": 83
     },
     "pages": {
-      "home": 1631,
+      "home": 1633,
       "coins": 715,
       "sbc": 420,
       "rivals": 380,
@@ -6449,7 +6449,7 @@
     },
     "visitorTypes": {
       "new": 759,
-      "returning": 988
+      "returning": 990
     },
     "clicks": {
       "coins": 318,

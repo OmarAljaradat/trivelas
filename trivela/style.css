@@ -3071,7 +3071,19 @@ body.dark-mode .support-card-ig:hover {
 .sticky-summary-bar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  z-index: 100;
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.97);
+  border-top: 2px solid rgba(48, 83, 136, 0.10);
+  box-shadow: 0 -6px 32px rgba(48, 83, 136, 0.12),
+              0 -2px 8px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: stickyBarSlideUp 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes stickyBarSlideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 .summary-inner {
@@ -3116,20 +3128,30 @@ body.dark-mode .support-card-ig:hover {
 
 .summary-complete-btn {
   border: 0;
-  border-radius: 12px;
-  padding: 12px 28px;
-  font-family: 'Cairo', sans-serif;
+  border-radius: 14px;
+  padding: 14px 32px;
+  font-family: 'Cairo', 'Thmanyah', sans-serif;
   font-weight: 800;
-  font-size: 0.95rem;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+  white-space: nowrap;
 }
 
 .summary-complete-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.5);
+  background: linear-gradient(135deg, #0ea572 0%, #047857 100%);
+}
+
+.summary-complete-btn:active {
+  transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
