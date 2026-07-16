@@ -245,6 +245,14 @@ body > :not(.fifa-scene):not(.sticky-summary-bar){ position:relative; z-index:1;
   z-index: 9999 !important;
 }
 
+/* On mobile, push sticky bar above the 65px bottom navigation bar */
+@media (max-width: 768px) {
+  .sticky-summary-bar {
+    bottom: 65px !important;
+  }
+}
+
+
 /* ---------- Light body background inspired by game art ---------- */
 body{
   background:
