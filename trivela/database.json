@@ -621,13 +621,18 @@
       "email": "admin@trivela.local",
       "password": "119eb23af5a5582be29c6b652cf925a9:ce43727bf0ad9fdb18cfd30082ca80ac1ec4009c010d0ae91f054017ea8586c50e5af124dcf7670eccf04ab51e56b326e42c65afed8bcbe1aabd264fa6e74eef",
       "isAdmin": true,
-      "points": 0,
+      "points": 10000,
       "referredBy": null,
       "history": [
         {
           "date": "2026-07-16T12:21:28.833Z",
           "amount": 0,
           "reason": "حساب المشرف تم إنشاؤه تلقائياً"
+        },
+        {
+          "date": "2026-07-16T16:40:15.097Z",
+          "amount": 10000,
+          "reason": "admin"
         }
       ]
     },
@@ -1954,6 +1959,18 @@
     }
   ],
   "logs": [
+    {
+      "id": "log_1784220015109_rwa3q",
+      "timestamp": "2026-07-16T16:40:15.109Z",
+      "action": "ADD_POINTS",
+      "operator": "المشرف",
+      "message": "تم شحن 10000 نقطة للعميل \"Trivela Admin\" (966500000001). السبب: \"admin\"",
+      "details": {
+        "userId": "admin_1784204488832",
+        "pointsChange": 10000,
+        "reason": "admin"
+      }
+    },
     {
       "id": "log_1784205634411_pp61e",
       "timestamp": "2026-07-16T12:40:34.411Z",
@@ -5400,17 +5417,6 @@
         "supplierCost": 90,
         "profit": 60
       }
-    },
-    {
-      "id": "log_1783438868277_1bu27",
-      "timestamp": "2026-07-07T15:41:08.277Z",
-      "action": "DELETE_PLAYER",
-      "operator": "المشرف",
-      "message": "تم حذف كارت اللاعب \"حزمة التحديات الذهبية\" من تصنيف \"packages\"",
-      "details": {
-        "playerId": "pkg_test",
-        "category": "packages"
-      }
     }
   ],
   "faqs": [
@@ -6362,7 +6368,7 @@
     }
   ],
   "analytics": {
-    "totalVisits": 9805,
+    "totalVisits": 9893,
     "daily": {
       "2026-07-02": 85,
       "2026-07-03": 92,
@@ -6377,26 +6383,26 @@
       "2026-07-12": 4977,
       "2026-07-13": 789,
       "2026-07-15": 221,
-      "2026-07-16": 686
+      "2026-07-16": 774
     },
     "devices": {
       "mobile": 987,
-      "desktop": 8778,
+      "desktop": 8866,
       "tablet": 40
     },
     "referrers": {
-      "direct": 493,
+      "direct": 497,
       "google": 180,
       "tiktok": 341,
       "snapchat": 120,
       "instagram": 90,
       "twitter": 54,
       "whatsapp": 110,
-      "other": 370
+      "other": 373
     },
     "countries": {
       "sa": 560,
-      "ae": 761,
+      "ae": 768,
       "kw": 140,
       "qa": 95,
       "bh": 65,
@@ -6425,15 +6431,15 @@
       "16": 166,
       "17": 143,
       "18": 134,
-      "19": 154,
+      "19": 161,
       "20": 206,
       "21": 125,
       "22": 111,
       "23": 83
     },
     "pages": {
-      "home": 1623,
-      "coins": 714,
+      "home": 1629,
+      "coins": 715,
       "sbc": 420,
       "rivals": 380,
       "champions": 320,
@@ -6443,7 +6449,7 @@
     },
     "visitorTypes": {
       "new": 759,
-      "returning": 979
+      "returning": 986
     },
     "clicks": {
       "coins": 318,
