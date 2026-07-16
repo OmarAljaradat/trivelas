@@ -1,0 +1,19 @@
+{
+  "short_name": "تريفيلا أدمن",
+  "name": "تريفيلا أدمن — Trivela Admin",
+  "icons": [
+    {
+      "src": "logo-official.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/admin-mobile.html",
+  "background_color": "#0D1E39",
+  "theme_color": "#0D1E39",
+  "display": "standalone",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar"
+}

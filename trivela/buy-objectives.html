@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <link rel="icon" type="image/png" href="logo-official.png"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>خطوات شراء خدمات المهام | Trivela</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ═══════════ OBJECTIVES TABS SYSTEM ═══════════ */
+
+    .obj-tabs-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      background: #f1f5f9;
+      padding: 6px;
+      border-radius: 16px;
+      flex-wrap: wrap;
+    }
+
+    .obj-tab-btn {
+      flex: 1;
+      min-width: 110px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 11px;
+      background: transparent;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.87rem;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .obj-tab-btn i { font-size: 0.9rem; }
+
+    .obj-tab-btn:hover {
+      background: #e2e8f0;
+      color: #305388;
+    }
+
+    .obj-tab-btn.active {
+      background: #305388;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(48,83,136,0.28);
+    }
+
+    /* Green badge showing selected count */
+    .obj-tab-badge {
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      background: #10b981;
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s ease;
+    }
+    .obj-tab-badge.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Tab Panels */
+    .obj-tab-panel { display: none; animation: fadeTabIn 0.22s ease; }
+    .obj-tab-panel.active { display: block; }
+
+    @keyframes fadeTabIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Objectives Grid */
+    .objectives-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .objective-checkbox-card {
+      background: #ffffff;
+      border: 2px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 20px 20px 16px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+    }
+
+    .objective-checkbox-card:hover {
+      border-color: #305388;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(48,83,136,0.1);
+    }
+
+    .objective-checkbox-card.active {
+      border-color: #305388;
+      background: linear-gradient(135deg, #f0f6ff 0%, #e8f0fd 100%);
+      box-shadow: 0 6px 20px rgba(48,83,136,0.14);
+    }
+
+    /* Custom circle checkbox indicator */
+    .card-check-indicator {
+      position: absolute;
+      top: 13px;
+      left: 13px;
+      width: 22px;
+      height: 22px;
+      border: 2px solid #cbd5e1;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+    }
+
+    .objective-checkbox-card.active .card-check-indicator {
+      background: #305388;
+      border-color: #305388;
+    }
+
+    .card-check-indicator i {
+      color: white;
+      font-size: 0.6rem;
+      opacity: 0;
+      transform: scale(0.3);
+      transition: all 0.2s ease;
+    }
+
+    .objective-checkbox-card.active .card-check-indicator i {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .objective-checkbox-card input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .obj-card-details { display: flex; flex-direction: column; gap: 5px; }
+
+    .obj-card-title {
+      font-size: 0.97rem;
+      font-weight: 800;
+      color: #182A47;
+      padding-left: 30px;
+      line-height: 1.4;
+    }
+
+    .obj-card-desc {
+      font-size: 0.78rem;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    .obj-card-price {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #10b981;
+      font-family: 'Montserrat', sans-serif;
+      margin-top: 4px;
+      align-self: flex-start;
+      background: rgba(16,185,129,0.09);
+      padding: 3px 10px;
+      border-radius: 8px;
+    }
+
+    .tab-empty-msg {
+      text-align: center;
+      padding: 40px 20px;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .tab-empty-msg i { font-size: 2rem; display: block; margin-bottom: 10px; opacity: 0.4; }
+
+    /* Credentials sections */
+    .form-credentials-section {
+      background: #f9fafb;
+      border: 1px solid #f3f4f6;
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .section-title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    .section-title-wrapper i { font-size: 1.3rem; color: #305388; }
+    .section-title-wrapper h4 { margin: 0; font-size: 1.1rem; font-weight: 800; color: #182A47; }
+    .credentials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .credentials-grid.full-width { grid-template-columns: 1fr; }
+
+    /* PlayStation-only disabled */
+    .inline-device-btn.disabled-btn {
+      background: #f3f4f6;
+      border: 2px dashed #d1d5db;
+      color: #9ca3af;
+      cursor: not-allowed;
+      opacity: 0.6;
+      pointer-events: none;
+      position: relative;
+    }
+    .inline-device-btn.disabled-btn::after {
+      content: 'غير متوفر';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ef4444;
+      color: white;
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 50px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body class="buy-coins-body light-theme">
+
+  <!-- ══════════ TOP BAR ══════════ -->
+  <header class="buy-header">
+    <div class="buy-header-inner">
+      <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+      <div class="buy-logo">
+        <img src="logo-official.png" alt="Trivela" />
+        <span>Trivela</span>
+      </div>
+      
+      <!-- Unified Global Currency Picker -->
+      <div class="global-currency-picker">
+        <i class="fas fa-globe"></i>
+        <select id="currencySelect">
+          <option value="SAR">SAR — ريال سعودي</option>
+          <option value="USD">USD — دولار أمريكي</option>
+          <option value="AED">AED — درهم إماراتي</option>
+          <option value="KWD">KWD — دينار كويتي</option>
+          <option value="BHD">BHD — دينار بحريني</option>
+          <option value="QAR">QAR — ريال قطري</option>
+          <option value="OMR">OMR — ريال عماني</option>
+          <option value="JOD">JOD — دينار أردني</option>
+          <option value="EGP">EGP — جنيه مصري</option>
+        </select>
+      </div>
+
+      <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="تغيير المظهر">
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ══════════ MAIN CONTENT ══════════ -->
+  <main class="buy-main-container">
+    <div class="buy-card">
+      <!-- Premium Gaming Hero Banner -->
+      <div class="catalog-hero-banner" style="margin-bottom: 25px;">
+        <div class="catalog-hero-content">
+          <div class="catalog-hero-text">
+            <h1 class="catalog-hero-title" id="cms_objectivesTitle">خدمات المهام والأهداف (Objectives)</h1>
+            <p class="catalog-hero-desc" id="cms_objectivesDesc">نوفر لك إنجاز مهام اللاعبين، الترقيات، والمهام الأسبوعية في حسابك بطريقة آمنة وسريعة 100%.</p>
+          </div>
+          
+          <div class="catalog-hero-controls">
+            <!-- Buying Hint Badge -->
+            <div class="catalog-hero-hint">
+              <i class="far fa-lightbulb"></i>
+              <span id="cms_objectivesHint">اختر المهام المطلوبة، واملأ بياناتك لإتمام الطلب</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form id="purchaseForm" onsubmit="handlePurchaseSubmit(event)">
+
+        <!-- STEP 1: SELECT DEVICE -->
+        <div class="buy-step-block">
+          <div class="step-badge-title">
+            <span class="step-number">01</span>
+            <div class="step-info-text">
+              <h3>اختيار الجهاز</h3>
+              <p>منصة اللعب المدعومة لخدمة المهام</p>
+            </div>
+          </div>
+
+          <div class="step-content">
+            <div class="inline-device-picker">
+              <button type="button" class="inline-device-btn active" id="btnConsole" style="border-color: #305388; cursor: default;">
+                <div class="console-inline-icons">
+                  <i class="fab fa-playstation"></i>
+                </div>
+                <span>بلايستيشن (PlayStation)</span>
+              </button>
+
+              <button type="button" class="inline-device-btn disabled-btn" disabled>
+                <div class="console-inline-icons">
+                  <i class="fab fa-xbox"></i>
+                </div>
+                <span>اكس بوكس</span>
+              </button>
+
+              <button type="button" class="inline-device-btn disabled-btn" disabled>
+                <i class="fas fa-desktop" style="font-size: 1.3rem; margin-bottom: 6px;"></i>
+                <span>بي سي (PC)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <hr class="step-divider"/>
+
+        <!-- STEP 2: SELECT OBJECTIVES WITH TABS -->
+        <div class="buy-step-block">
+          <div class="step-badge-title">
+            <span class="step-number">02</span>
+            <div class="step-info-text">
+              <h3>الخدمة المطلوبة</h3>
+              <p>اختر مهمة واحدة أو أكثر ترغب في تفويضنا لإتمامها (يمكنك اختيار خيارات متعددة)</p>
+            </div>
+          </div>
+
+          <div class="step-content">
+
+
+            <!-- ═══ CATEGORY TABS ═══ -->
+            <div class="obj-tabs-bar" id="objTabsBar">
+              <button type="button" class="obj-tab-btn active" id="tabWeekly" onclick="switchObjTab('weekly', this)">
+                <span class="obj-tab-badge" id="badgeWeekly"></span>
+                <i class="fas fa-calendar-week"></i>
+                مهام أسبوعية
+              </button>
+              <button type="button" class="obj-tab-btn" id="tabEvo" onclick="switchObjTab('evo', this)">
+                <span class="obj-tab-badge" id="badgeEvo"></span>
+                <i class="fas fa-arrow-trend-up"></i>
+                تطوير Evolution
+              </button>
+              <button type="button" class="obj-tab-btn" id="tabChallenges" onclick="switchObjTab('challenges', this)">
+                <span class="obj-tab-badge" id="badgeChallenges"></span>
+                <i class="fas fa-trophy"></i>
+                تحديات
+              </button>
+              <button type="button" class="obj-tab-btn" id="tabCustom" onclick="switchObjTab('custom', this)">
+                <span class="obj-tab-badge" id="badgeCustom"></span>
+                <i class="fas fa-star"></i>
+                مميزة
+              </button>
+            </div>
+
+            <!-- Panel: مهام أسبوعية -->
+            <div class="obj-tab-panel active" id="panelWeekly">
+              <div class="objectives-grid" id="weeklyObjectivesGrid">
+
+                <div class="objective-checkbox-card" id="cardObj1" onclick="toggleObjectiveCard('cardObj1')">
+                  <input type="checkbox" name="staticObjective" value="مهام الـ Rush الأسبوعية" data-price="15" data-tab="weekly"/>
+                  <div class="card-check-indicator"><i class="fas fa-check"></i></div>
+                  <div class="obj-card-details">
+                    <span class="obj-card-title">مهام الـ Rush الأسبوعية</span>
+                    <span class="obj-card-desc">إنهاء كامل لجميع أهداف الـ Rush الأسبوعية للحصول على حزم ونقاط الخبرة بالكامل.</span>
+                  </div>
+                  <div class="obj-card-price" data-usd="15">$15</div>
+                </div>
+
+                <div class="objective-checkbox-card" id="cardObj5" onclick="toggleObjectiveCard('cardObj5')">
+                  <input type="checkbox" name="staticObjective" value="تحديات الكأس الودية (Cup)" data-price="18" data-tab="weekly"/>
+                  <div class="card-check-indicator"><i class="fas fa-check"></i></div>
+                  <div class="obj-card-details">
+                    <span class="obj-card-title">تحديات الكأس الودية</span>
+                    <span class="obj-card-desc">تحقيق كافة الانتصارات المطلوبة في الكأس الودية النشطة للحصول على جوائز إضافية.</span>
+                  </div>
+                  <div class="obj-card-price" data-usd="18">$18</div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Panel: تطوير Evolution -->
+            <div class="obj-tab-panel" id="panelEvo">
+              <div class="objectives-grid" id="evoObjectivesGrid">
+
+                <div class="objective-checkbox-card" id="cardObj3" onclick="toggleObjectiveCard('cardObj3')">
+                  <input type="checkbox" name="staticObjective" value="تطوير Evolution (المستوى 1)" data-price="20" data-tab="evo"/>
+                  <div class="card-check-indicator"><i class="fas fa-check"></i></div>
+                  <div class="obj-card-details">
+                    <span class="obj-card-title">تطوير Evolution (المستوى 1)</span>
+                    <span class="obj-card-desc">إتمام متطلبات التطوير بالكامل للمستوى الأول لترقية لاعبك المختار.</span>
+                  </div>
+                  <div class="obj-card-price" data-usd="20">$20</div>
+                </div>
+
+                <div class="objective-checkbox-card" id="cardObj4" onclick="toggleObjectiveCard('cardObj4')">
+                  <input type="checkbox" name="staticObjective" value="تطوير Evolution (المستوى 2)" data-price="30" data-tab="evo"/>
+                  <div class="card-check-indicator"><i class="fas fa-check"></i></div>
+                  <div class="obj-card-details">
+                    <span class="obj-card-title">تطوير Evolution (المستوى 2)</span>
+                    <span class="obj-card-desc">إتمام كامل متطلبات التطوير المتقدمة للمستوى الثاني للحصول على كرت خارق.</span>
+                  </div>
+                  <div class="obj-card-price" data-usd="30">$30</div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Panel: تحديات -->
+            <div class="obj-tab-panel" id="panelChallenges">
+              <div class="objectives-grid" id="challengesObjectivesGrid">
+
+                <div class="objective-checkbox-card" id="cardObj2" onclick="toggleObjectiveCard('cardObj2')">
+                  <input type="checkbox" name="staticObjective" value="تحديات المايلستون (Milestones)" data-price="25" data-tab="challenges"/>
+                  <div class="card-check-indicator"><i class="fas fa-check"></i></div>
+                  <div class="obj-card-details">
+                    <span class="obj-card-title">تحديات المايلستون</span>
+                    <span class="obj-card-desc">إنهاء التحديات الكبرى للمواسم والحصول على بطاقات وحزم أسطورية نادرة.</span>
+                  </div>
+                  <div class="obj-card-price" data-usd="25">$25</div>
+                </div>
+
+                <div class="objective-checkbox-card" id="cardObj6" onclick="toggleObjectiveCard('cardObj6')">
+                  <input type="checkbox" name="staticObjective" value="مهام الأبطال (FUT Champions)" data-price="35" data-tab="challenges"/>
+                  <div class="card-check-indicator"><i class="fas fa-check"></i></div>
+                  <div class="obj-card-details">
+                    <span class="obj-card-title">مهام الأبطال</span>
+                    <span class="obj-card-desc">تحقيق أهداف الفوز واللعب الخاصة بـ Champions لزيادة جوائز الفوت والباكات.</span>
+                  </div>
+                  <div class="obj-card-price" data-usd="35">$35</div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Panel: مميزة (Dynamic cards from API) -->
+            <div class="obj-tab-panel" id="panelCustom">
+              <div class="objectives-grid" id="allObjectivesGrid">
+                <!-- Dynamic player cards appended here by objectivesUI.js -->
+                <div class="tab-empty-msg" id="customEmptyMsg">
+                  <i class="fas fa-star"></i>
+                  سيتم عرض المهام المميزة هنا عند توفرها
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- STEP: DISCOUNTS & GIFTS -->
+        <div class="buy-step-block" id="loyaltyPointsBlock" style="display: none; margin-top: 20px;">
+          <div class="step-badge-title">
+            <span class="step-number"><i class="fas fa-gift"></i></span>
+            <div class="step-info-text">
+              <h3>الخصومات والهدايا</h3>
+              <p>اختر وسيلة الخصم المناسبة لطلبك</p>
+            </div>
+          </div>
+          <div class="step-content">
+            <div class="discounts-gifts-card">
+              <!-- Option 1: Coupon Code -->
+              <div class="discount-option-row">
+                <label class="discount-radio-label">
+                  <input type="radio" name="discountType" value="coupon" id="radCoupon" checked onchange="handleDiscountTypeChange()"/>
+                  <span class="custom-radio-circle"></span>
+                  <span class="discount-label-text">تفعيل كوبون الخصم</span>
+                </label>
+                <div class="discount-input-wrapper" id="couponInputWrapper">
+                  <div class="coupon-field-group">
+                    <div class="coupon-input-relative">
+                      <input type="text" id="couponCodeInput" placeholder="كوبون الهدية / الخصم؟"/>
+                      <i class="fas fa-percent coupon-icon"></i>
+                    </div>
+                    <button type="button" class="coupon-btn" id="btnApplyCoupon" onclick="applyCouponCode()">تفعيل</button>
+                  </div>
+                  <div id="couponStatusMessage" class="coupon-status-msg"></div>
+                </div>
+              </div>
+
+              <div class="discount-divider" id="loyaltyPointsDivider" style="display: none;"></div>
+
+              <!-- Option 2: Loyalty Points -->
+              <div class="discount-option-row" id="loyaltyOptionRow" style="display: none;">
+                <label class="discount-radio-label">
+                  <input type="radio" name="discountType" value="points" id="radPoints" onchange="handleDiscountTypeChange()"/>
+                  <span class="custom-radio-circle"></span>
+                  <span class="discount-label-text"><span id="lblLoyaltyPointsBalance">0</span> نقطة رصيدك من نقاط الولاء</span>
+                </label>
+                <div class="discount-input-wrapper" id="pointsInputWrapper" style="display: none;">
+                  <p class="points-helper-text" style="font-size: 0.82rem; color: #64748b; margin-top: 8px;">
+                    <i class="fas fa-info-circle"></i>
+                    يمكنك الاستفادة من رصيدك بقيمة خصم <strong id="lblPointsDiscountSAR" style="color: #ca8a04;">0.00</strong>، <a href="#" onclick="togglePointsUsage(event)" id="btnApplyPoints" class="points-action-link" style="color: #ca8a04; font-weight: 700; text-decoration: none; margin-right: 4px;">اضغط هنا للتفعيل</a>
+                  </p>
+
+                  <!-- Redeem Points Section -->
+                  <div class="redeem-rewards-section" style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed rgba(48,83,136,0.15);">
+                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--blue-600); display: block; margin-bottom: 8px;">🎁 أو استبدل نقاطك بكوبونات خصم فوري:</span>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px;">
+                      <button type="button" class="redeem-reward-btn" id="btnRedeemSar10" onclick="redeemPointsForCoupon('sar10')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
+                        <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.95rem;">خصم 5%</span>
+                        <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 100 نقطة</span>
+                      </button>
+                      <button type="button" class="redeem-reward-btn" id="btnRedeemSar30" onclick="redeemPointsForCoupon('sar30')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
+                        <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.95rem;">خصم 12%</span>
+                        <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 250 نقطة</span>
+                      </button>
+                      <button type="button" class="redeem-reward-btn" id="btnRedeemSar70" onclick="redeemPointsForCoupon('sar70')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
+                        <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.95rem;">خصم 25%</span>
+                        <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 500 نقطة</span>
+                      </button>
+                    </div>
+                    <div id="redeemStatusMessage" style="margin-top: 8px; font-size: 0.75rem; font-weight: 700; text-align: center;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="step-divider" id="loyaltyDivider" style="display: none;"/>
+        <hr class="step-divider"/>
+
+        <!-- STEP 3: CREDENTIALS -->
+        <div class="buy-step-block">
+          <div class="step-badge-title">
+            <span class="step-number">03</span>
+            <div class="step-info-text">
+              <h3>بيانات الحسابات والتواصل</h3>
+              <p>يرجى ملء البيانات التالية بدقة لنتمكن من التواصل معك وإنجاز الخدمة</p>
+            </div>
+          </div>
+
+          <div class="step-content">
+
+            <!-- SECTION 1: CONTACT -->
+            <div class="form-credentials-section">
+              <div class="section-title-wrapper">
+                <i class="fas fa-address-book"></i>
+                <h4>القسم الأول: بيانات العميل والتواصل</h4>
+              </div>
+              <div class="credentials-grid">
+                <div class="ea-input-group">
+                  <div class="input-with-icon">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="customerName" placeholder="الاسم الكامل" required/>
+                  </div>
+                </div>
+                <div class="ea-input-group">
+                  <div class="input-with-icon">
+                    <i class="fab fa-whatsapp input-icon"></i>
+                    <input type="tel" id="customerPhone" placeholder="رقم الواتساب للتواصل (مع رمز الدولة)" required/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 2: SONY PSN -->
+            <div class="form-credentials-section">
+              <div class="section-title-wrapper">
+                <i class="fab fa-playstation"></i>
+                <h4>القسم الثاني: بيانات حساب السوني (PSN)</h4>
+              </div>
+              <div class="credentials-grid">
+                <div class="ea-input-group">
+                  <div class="input-with-icon">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" id="sonyEmail" placeholder="ايميل حساب السوني (PSN)" required/>
+                  </div>
+                  <a href="https://wa.me/966555555555?text=أحتاج%20مساعدة%20في%20استخراج%20ايميل%20السوني" target="_blank" class="helper-link">لمعرفة كيفية استخراج ايميل السوني. <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
+                </div>
+                <div class="ea-input-group">
+                  <div class="input-with-icon">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="sonyPassword" placeholder="كلمة مرور حساب السوني (PSN)" required/>
+                  </div>
+                  <a href="https://wa.me/966555555555?text=أحتاج%20مساعدة%20في%20استخراج%20كلمة%20مرور%20السوني" target="_blank" class="helper-link">لمعرفة كيفية استخراج كلمة المرور. <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
+                </div>
+              </div>
+              <div class="ea-input-group" style="margin-top: 15px; width: 100%;">
+                <label class="input-label-tag" style="font-weight: 700; color: #1e3a8a; margin-bottom: 8px; display: block;">الرموز الاحتياطية لحساب السوني (مهم جداً للتحقق الثنائي)</label>
+                <div class="backup-codes-row">
+                  <input type="text" class="backup-code-box" id="sonyBackup1" placeholder="رمز 1" maxlength="8" required/>
+                  <input type="text" class="backup-code-box" id="sonyBackup2" placeholder="رمز 2" maxlength="8" required/>
+                  <input type="text" class="backup-code-box" id="sonyBackup3" placeholder="رمز 3" maxlength="8" required/>
+                </div>
+                <a href="https://wa.me/966555555555?text=أحتاج%20مساعدة%20في%20استخراج%20الرموز%20الاحتياطية%20لحساب%20السوني" target="_blank" class="helper-link">كيفية استخراج الرموز الاحتياطية للسوني. <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
+              </div>
+            </div>
+
+            <!-- SECTION 3: EA -->
+            <div class="form-credentials-section">
+              <div class="section-title-wrapper">
+                <i class="fas fa-gamepad"></i>
+                <h4>القسم الثالث: بيانات حساب الـ EA (الويب آب / الألتيمت تيم)</h4>
+              </div>
+              <div class="credentials-grid">
+                <div class="ea-input-group">
+                  <div class="input-with-icon">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" id="eaEmail" placeholder="بريد حساب الـ EA / Origin" required/>
+                  </div>
+                  <a href="https://wa.me/966555555555?text=أحتاج%20مساعدة%20في%20معرفة%20ايميل%20الـEA" target="_blank" class="helper-link">مساعدة في معرفة بريد EA. <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
+                </div>
+                <div class="ea-input-group">
+                  <div class="input-with-icon">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="eaPassword" placeholder="كلمة مرور حساب الـ EA" required/>
+                  </div>
+                  <a href="https://wa.me/966555555555?text=أحتاج%20مساعدة%20في%20استرجاع%20كلمة%20مرور%20الـEA" target="_blank" class="helper-link">نسيت كلمة مرور EA؟ <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
+                </div>
+              </div>
+              <div class="ea-input-group" style="margin-top: 15px; width: 100%;">
+                <label class="input-label-tag" style="font-weight: 700; color: #1e3a8a; margin-bottom: 8px; display: block;">الرموز الاحتياطية لحساب الـ EA (Origin Backup Codes)</label>
+                <div class="backup-codes-row">
+                  <input type="text" class="backup-code-box" id="eaBackup1" placeholder="رمز 1" maxlength="8" required/>
+                  <input type="text" class="backup-code-box" id="eaBackup2" placeholder="رمز 2" maxlength="8" required/>
+                  <input type="text" class="backup-code-box" id="eaBackup3" placeholder="رمز 3" maxlength="8" required/>
+                </div>
+                <a href="https://wa.me/966555555555?text=أحتاج%20مساعدة%20في%20استخراج%20رموز%20الـEA" target="_blank" class="helper-link">كيفية استخراج الرموز الاحتياطية لحساب الـ EA. <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
+              </div>
+
+              <!-- Terms Checkbox -->
+              <div class="ea-input-group full-width terms-row" style="margin-top: 20px;">
+                <label class="terms-label">
+                  <input type="checkbox" id="sonyConfirmCheck" required/>
+                  <span>أقر بصحة البيانات المكتوبة وأنه تم تفعيل التحقق بخطوتين وتوفير رموز احتياطية صالحة لحسابي السوني والـ EA</span>
+                </label>
+              </div>
+
+              <!-- Trust Seals -->
+              <div class="ea-input-group full-width trust-seals-grid" style="margin-top: 20px;">
+                <div class="trust-seal-item"><i class="fas fa-shield-halved"></i><span>تشفير آمن لبياناتك 256-bit</span></div>
+                <div class="trust-seal-item"><i class="fas fa-rotate-left"></i><span>ضمان استرجاع الأموال 100%</span></div>
+                <div class="trust-seal-item"><i class="fas fa-user-lock"></i><span>حماية كاملة للملف التعريفي</span></div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">
+          <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
+          <span class="logo-main">Trivela</span>
+        </div>
+        <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>الخدمات</h4>
+        <a href="index.html#coins-device">💰 الكوينز</a>
+        <a href="buy-sbc.html">🧩 SBC</a>
+        <a href="buy-objectives.html">📋 المهام</a>
+        <a href="buy-rivals.html">⚔️ الرايفلز</a>
+        <a href="buy-champions.html">🎮 FUT Champions</a>
+      </div>
+      <div class="footer-col">
+        <h4>سياسات متجر Trivela</h4>
+        <a href="policies.html#privacy">سياسة الخصوصية</a>
+        <a href="policies.html#terms">شروط الاستخدام</a>
+        <a href="policies.html#refund">سياسة الاسترجاع</a>
+        <a href="policies.html#warranty">سياسة الضمان</a>
+        <a href="index.html#faq">الأسئلة الشائعة</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Trivela — جميع الحقوق محفوظة</span>
+      <span>هذا الموقع غير مرتبط بـ EA Sports</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════ STICKY BOTTOM BAR ══════════ -->
+  <div class="sticky-summary-bar">
+    <div class="summary-inner">
+      <div class="summary-right-details">
+        <div class="summary-total-price" id="summaryPrice">0.00 ر.س</div>
+        <div class="summary-divider-line"></div>
+        <div class="summary-coins">
+          <i class="fas fa-list-check font-gold"></i>
+          <span id="summaryServiceText">لم يتم اختيار أي مهمة بعد</span>
+        </div>
+      </div>
+      <button type="submit" form="purchaseForm" class="summary-complete-btn">
+        <span>اتمام العملية</span>
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs Switching Logic -->
+  <script>
+    function switchObjTab(tabId, btn) {
+      // Deactivate all panels and buttons
+      document.querySelectorAll('.obj-tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.obj-tab-btn').forEach(b => b.classList.remove('active'));
+
+      // Activate selected
+      const panelMap = { weekly: 'panelWeekly', evo: 'panelEvo', challenges: 'panelChallenges', custom: 'panelCustom' };
+      document.getElementById(panelMap[tabId]).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function updateTabBadges() {
+      const badgeMap  = { weekly: 'badgeWeekly', evo: 'badgeEvo', challenges: 'badgeChallenges', custom: 'badgeCustom' };
+      const gridMap   = { weekly: 'weeklyObjectivesGrid', evo: 'evoObjectivesGrid', challenges: 'challengesObjectivesGrid', custom: 'allObjectivesGrid' };
+
+      Object.keys(badgeMap).forEach(tab => {
+        const gridId = gridMap[tab];
+        const total = document.querySelectorAll(`#${gridId} .objective-checkbox-card.active`).length;
+
+        const badge = document.getElementById(badgeMap[tab]);
+        if (badge) {
+          badge.textContent = total;
+          badge.classList.toggle('visible', total > 0);
+        }
+      });
+    }
+  </script>
+
+  <script src="src/core/global-currency.js"></script>
+  <script type="module" src="src/features/objectives/objectivesUI.js"></script>
+</body>
+</html>

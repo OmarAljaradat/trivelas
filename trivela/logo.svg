@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none" stroke="#305388" stroke-width="14">
+  <!-- Top arc from left to right ending in circle -->
+  <path d="M 40,80 Q 90,60 140,75" stroke-linecap="square" />
+  <circle cx="155" cy="80" r="14" />
+  
+  <!-- Vertical stem curving down -->
+  <path d="M 85,85 Q 50,130 80,170" stroke-linecap="square" />
+</svg>

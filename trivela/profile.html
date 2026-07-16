@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <link rel="icon" type="image/png" href="logo-official.png"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>حسابي ونقاط الولاء | Trivela</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* Profile specific layout styling (Light Mode matching) */
+    .profile-body {
+      background: var(--blue-50, #F4F9FF);
+      color: var(--blue-800, #0D1E39);
+    }
+    .profile-container {
+      max-width: 900px;
+      margin: 40px auto 100px auto;
+      padding: 0 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .profile-header-card {
+      background: #ffffff;
+      border: 1px solid var(--blue-100, #E4EBF7);
+      border-radius: 24px;
+      padding: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      box-shadow: 0 10px 30px rgba(48,83,136,0.03);
+    }
+    .user-info-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .user-info-meta h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin: 0;
+    }
+    .user-info-meta span {
+      font-size: 0.9rem;
+      color: var(--gray-500, #64748b);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .profile-logout-btn {
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      color: #ef4444;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+    .profile-logout-btn:hover {
+      background: #fee2e2;
+      transform: scale(0.98);
+    }
+    .loyalty-summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 768px) {
+      .loyalty-summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .points-balance-card {
+      background: linear-gradient(135deg, var(--blue-600, #24406B) 0%, var(--blue-800, #0D1E39) 100%);
+      color: #ffffff;
+      border-radius: 24px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(13, 30, 57, 0.15);
+    }
+    .points-balance-card::before {
+      content: '';
+      position: absolute;
+      top: -50px; left: -50px;
+      width: 150px; height: 150px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 50%;
+    }
+    .pbc-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.85;
+      margin-bottom: 8px;
+    }
+    .pbc-value {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 3rem;
+      line-height: 1;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .pbc-value span {
+      font-size: 1.25rem;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+    }
+    .pbc-cashback {
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.1);
+      padding: 6px 14px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pbc-cashback i {
+      color: #ffd700;
+    }
+    .earning-rules-card {
+      background: #ffffff;
+      border: 1px solid var(--blue-100, #E4EBF7);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 10px 30px rgba(48,83,136,0.03);
+    }
+    .earning-rules-card h3 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin: 0 0 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .earning-rules-card h3 i {
+      color: #10b981;
+    }
+    .rules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .rule-item i {
+      color: #10b981;
+      margin-top: 4px;
+    }
+    .history-card {
+      background: #ffffff;
+      border: 1px solid var(--blue-100, #E4EBF7);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 10px 30px rgba(48,83,136,0.03);
+    }
+    .history-card h3 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin: 0 0 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .history-table-wrapper {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--blue-100, #E4EBF7);
+    }
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: right;
+      font-size: 0.9rem;
+    }
+    .history-table th {
+      background: var(--blue-50, #F4F9FF);
+      padding: 14px 16px;
+      font-weight: 700;
+      color: var(--blue-800, #0D1E39);
+      border-bottom: 1px solid var(--blue-100, #E4EBF7);
+    }
+    .history-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--blue-50, #F4F9FF);
+      color: var(--blue-800, #0D1E39);
+    }
+    .points-tag {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+      display: inline-block;
+      font-size: 0.85rem;
+    }
+    .points-tag.plus {
+      background: #ecfdf5;
+      color: #10b981;
+    }
+    .points-tag.minus {
+      background: #fef2f2;
+      color: #ef4444;
+    }
+    .empty-history {
+      padding: 32px;
+      text-align: center;
+      color: var(--gray-400, #94A3B8);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body class="profile-body light-theme">
+
+  <!-- ══════════ TOP BAR ══════════ -->
+  <header class="buy-header">
+    <div class="buy-header-inner">
+      <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+      <div class="buy-logo">
+        <img src="logo-official.png" alt="Trivela" />
+        <span>Trivela</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════ PROFILE CONTENT ══════════ -->
+  <main class="profile-container">
+
+    <!-- Header Card: Info & Logout -->
+    <div class="profile-header-card" id="profileHeader">
+      <div class="user-info-meta">
+        <h2 id="userName">جاري تحميل الاسم...</h2>
+        <span id="userMetaDetails"><i class="fab fa-whatsapp"></i> <span id="userPhone">...</span> | <i class="far fa-envelope"></i> <span id="userEmail">...</span></span>
+      </div>
+      <button class="profile-logout-btn" onclick="handleLogout()">
+        <i class="fas fa-right-from-bracket"></i>
+        <span>تسجيل الخروج</span>
+      </button>
+    </div>
+
+    <!-- Summary Grid: Points and Rules -->
+    <div class="loyalty-summary-grid">
+      
+      <!-- Balance Card -->
+      <div class="points-balance-card">
+        <div class="pbc-title">نقاط الولاء النشطة</div>
+        <div class="pbc-value" id="pointsBalance">0 <span>نقطة</span></div>
+        <div class="pbc-cashback">
+          <i class="fas fa-coins"></i>
+          <span>تساوي خصم بقيمة: </span>
+          <strong id="pointsValue">0.00 ر.س</strong>
+        </div>
+      </div>
+
+      <!-- Earning Rules -->
+      <div class="earning-rules-card">
+        <h3><i class="fas fa-circle-info"></i> كيف تكسب وتستخدم النقاط؟</h3>
+        <div class="rules-list">
+          <div class="rule-item">
+            <i class="fas fa-check-circle"></i>
+            <span>احصل على **10 نقاط لكل 100K كوينز** تقوم بشحنها.</span>
+          </div>
+          <div class="rule-item">
+            <i class="fas fa-check-circle"></i>
+            <span>احصل على **نقاط ترحيبية** فور التسجيل بالمتجر.</span>
+          </div>
+          <div class="rule-item">
+            <i class="fas fa-check-circle"></i>
+            <span>استبدل نقاطك بخصم فوري (كل **10 نقاط تساوي خصم بقيمة 1 ريال**).</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Referral Invite Program -->
+    <div class="history-card">
+      <h3><i class="fas fa-users-viewfinder" style="color: var(--blue-500); margin-left: 8px;"></i> برنامج الإحالة والتسويق "شارك واكسب"</h3>
+      <p style="font-family: 'Cairo', sans-serif; font-size: 0.88rem; color: var(--gray-500); margin-top: -10px; margin-bottom: 20px; line-height: 1.6;">
+        كافئ نفسك بنقاط مجانية دون شراء! شارك رابط الإحالة الخاص بك مع أصدقائك أو متابعيك؛ وسيحصل كل صديق يسجل ويشتري من رابطك على <strong>خصم فوري</strong>، بينما تحصل أنت على <strong>50 نقطة ولاء مجاناً</strong> تضاف لرصيدك مباشرة عند إتمامه لطلبه الأول!
+      </p>
+      
+      <div style="background: var(--blue-50); border: 1px solid var(--blue-100); padding: 24px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.01);">
+        <div style="flex: 1; min-width: 280px;">
+          <span style="font-family: 'Cairo'; font-size: 0.8rem; color: var(--blue-600); font-weight:700; display:block; margin-bottom:8px;"><i class="fas fa-link"></i> رابط المشاركة والإحالة الخاص بك:</span>
+          <input type="text" id="referralLinkInput" readonly style="width:100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--blue-100); font-family: Montserrat; font-size: 0.88rem; color: var(--blue-600); font-weight:700; background: #fff; box-sizing: border-box; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);" value="http://localhost:3000/login.html?ref=" />
+        </div>
+        <button onclick="copyReferralLink()" class="cta-primary" style="height: 48px; margin: 0; padding: 0 24px; border-radius: 12px; font-family: 'Cairo'; font-weight:700; display:flex; align-items:center; gap:8px; cursor: pointer; border: 0; background: var(--blue-500); color: #fff; transition: all 0.2s;" id="copyRefBtn">
+          <i class="far fa-copy"></i> <span>نسخ رابط الإحالة</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loyalty Rewards Redemption Shop -->
+    <div class="history-card">
+      <h3><i class="fas fa-gift" style="color: #ca8a04; margin-left: 8px;"></i> متجر مكافآت واستبدال النقاط</h3>
+      <p style="font-family: 'Cairo', sans-serif; font-size: 0.88rem; color: var(--gray-500); margin-top: -10px; margin-bottom: 24px; line-height: 1.6;">
+        حول نقاط الولاء الخاصة بك الآن إلى كوبونات خصم نشطة فورياً ومجهزة للاستخدام في جميع أقسام وخدمات المتجر!
+      </p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;" id="rewardsGrid">
+        <!-- Card 1 -->
+        <div style="background: var(--blue-50); border: 1px solid var(--blue-100); border-radius: 24px; padding: 28px 24px; text-align: center; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.01); transition: transform 0.25s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+          <div style="font-size: 2.5rem; color: #ca8a04;"><i class="fas fa-ticket-simple"></i></div>
+          <h4 style="margin: 0; font-family: 'Cairo'; font-weight: 800; font-size: 1.2rem; color: var(--blue-800);">خصم بقيمة 5%</h4>
+          <span style="font-family: 'Cairo'; font-size: 0.8rem; color: var(--gray-500);">كوبون خصم فوري صالح لكافة الخدمات</span>
+          <div style="font-family: 'Montserrat'; font-weight: 900; font-size: 1.5rem; color: #10b981; margin: 4px 0;">100 <span style="font-family: 'Cairo'; font-size: 0.85rem; font-weight: 700; color: var(--blue-600);">نقطة</span></div>
+          <button onclick="redeemReward('sar10', 100)" class="cta-primary" style="height: 44px; font-family: 'Cairo'; font-size: 0.88rem; font-weight: 700; width: 100%; border-radius: 12px; margin: 0; cursor: pointer; border: 0; background: var(--blue-500); color: #fff;">استبدال النقاط الآن</button>
+        </div>
+
+        <!-- Card 2 -->
+        <div style="background: var(--blue-50); border: 1px solid var(--blue-100); border-radius: 24px; padding: 28px 24px; text-align: center; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.01); transition: transform 0.25s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+          <div style="font-size: 2.5rem; color: #ca8a04;"><i class="fas fa-tags"></i></div>
+          <h4 style="margin: 0; font-family: 'Cairo'; font-weight: 800; font-size: 1.2rem; color: var(--blue-800);">خصم بقيمة 12%</h4>
+          <span style="font-family: 'Cairo'; font-size: 0.8rem; color: var(--gray-500);">كوبون خصم فوري صالح لكافة الخدمات</span>
+          <div style="font-family: 'Montserrat'; font-weight: 900; font-size: 1.5rem; color: #10b981; margin: 4px 0;">250 <span style="font-family: 'Cairo'; font-size: 0.85rem; font-weight: 700; color: var(--blue-600);">نقطة</span></div>
+          <button onclick="redeemReward('sar30', 250)" class="cta-primary" style="height: 44px; font-family: 'Cairo'; font-size: 0.88rem; font-weight: 700; width: 100%; border-radius: 12px; margin: 0; cursor: pointer; border: 0; background: var(--blue-500); color: #fff;">استبدال النقاط الآن</button>
+        </div>
+
+        <!-- Card 3 -->
+        <div style="background: var(--blue-50); border: 1px solid var(--blue-100); border-radius: 24px; padding: 28px 24px; text-align: center; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.01); transition: transform 0.25s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+          <div style="font-size: 2.5rem; color: #ca8a04;"><i class="fas fa-award"></i></div>
+          <h4 style="margin: 0; font-family: 'Cairo'; font-weight: 800; font-size: 1.2rem; color: var(--blue-800);">خصم بقيمة 25%</h4>
+          <span style="font-family: 'Cairo'; font-size: 0.8rem; color: var(--gray-500);">كوبون خصم فوري صالح لكافة الخدمات</span>
+          <div style="font-family: 'Montserrat'; font-weight: 900; font-size: 1.5rem; color: #10b981; margin: 4px 0;">500 <span style="font-family: 'Cairo'; font-size: 0.85rem; font-weight: 700; color: var(--blue-600);">نقطة</span></div>
+          <button onclick="redeemReward('sar70', 500)" class="cta-primary" style="height: 44px; font-family: 'Cairo'; font-size: 0.88rem; font-weight: 700; width: 100%; border-radius: 12px; margin: 0; cursor: pointer; border: 0; background: var(--blue-500); color: #fff;">استبدال النقاط الآن</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Points History -->
+    <div class="history-card">
+      <h3><i class="fas fa-clock-rotate-left"></i> سجل حركات النقاط</h3>
+      <div class="history-table-wrapper">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>التاريخ</th>
+              <th>العملية</th>
+              <th>السبب / الخدمة</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            <tr>
+              <td colspan="3" class="empty-history">جاري تحميل سجل النقاط...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">
+          <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
+          <span class="logo-main">Trivela</span>
+        </div>
+        <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>الخدمات</h4>
+        <a href="index.html#coins-device">💰 الكوينز</a>
+        <a href="buy-sbc.html">🧩 SBC</a>
+        <a href="buy-objectives.html">📋 المهام</a>
+        <a href="buy-rivals.html">⚔️ الرايفلز</a>
+        <a href="buy-champions.html">🎮 FUT Champions</a>
+      </div>
+      <div class="footer-col">
+        <h4>سياسات متجر Trivela</h4>
+        <a href="policies.html#privacy">سياسة الخصوصية</a>
+        <a href="policies.html#terms">شروط الاستخدام</a>
+        <a href="policies.html#refund">سياسة الاسترجاع</a>
+        <a href="policies.html#warranty">سياسة الضمان</a>
+        <a href="index.html#faq">الأسئلة الشائعة</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Trivela — جميع الحقوق محفوظة</span>
+      <span>هذا الموقع غير مرتبط بـ EA Sports</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('trivela_token');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      fetch('/api/auth/me', {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
+      .then(user => {
+        renderProfile(user);
+      })
+      .catch(err => {
+        localStorage.removeItem('trivela_token');
+        window.location.href = 'login.html';
+      });
+    });
+
+    function renderProfile(user) {
+      document.getElementById('userName').textContent = `أهلاً، ${user.name}`;
+      document.getElementById('userPhone').textContent = user.phone;
+      document.getElementById('userEmail').textContent = user.email;
+      
+      // Points Balance
+      const points = user.points || 0;
+      document.getElementById('pointsBalance').innerHTML = `${points} <span>نقطة</span>`;
+      
+      // Value in SAR (10 points = 1 SAR)
+      const cashVal = (points / 10).toFixed(2);
+      document.getElementById('pointsValue').textContent = `${cashVal} ر.س`;
+
+      // Set referral link
+      const referralLinkInput = document.getElementById('referralLinkInput');
+      if (referralLinkInput && user.phone) {
+        const cleanPhone = user.phone.replace(/[\s\+\-]/g, '').trim();
+        referralLinkInput.value = `${window.location.origin}/login.html?ref=${cleanPhone}`;
+      }
+
+      // Render history
+      const tbody = document.getElementById('historyTableBody');
+      tbody.innerHTML = '';
+
+      if (!user.history || user.history.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="empty-history">لا توجد عمليات سابقة بعد.</td></tr>`;
+        return;
+      }
+
+      // Show newest first
+      const sortedHistory = [...user.history].reverse();
+      sortedHistory.forEach(h => {
+        const row = document.createElement('tr');
+        
+        // Date
+        const dateStr = new Date(h.date).toLocaleDateString('ar-SA', {
+          year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        
+        // Points Badge
+        let tagClass = 'plus';
+        let valPrefix = '+';
+        if (h.amount < 0) {
+          tagClass = 'minus';
+          valPrefix = '';
+        }
+        const badgeHTML = `<span class="points-tag ${tagClass}">${valPrefix}${h.amount}</span>`;
+
+        row.innerHTML = `
+          <td>${dateStr}</td>
+          <td>${badgeHTML}</td>
+          <td>${h.reason}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('trivela_token');
+      window.location.href = 'index.html';
+    }
+
+    function copyReferralLink() {
+      const input = document.getElementById('referralLinkInput');
+      if (!input) return;
+      
+      input.select();
+      input.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(input.value);
+      
+      const copyBtn = document.getElementById('copyRefBtn');
+      const origHTML = copyBtn.innerHTML;
+      copyBtn.style.background = '#10b981';
+      copyBtn.innerHTML = `<i class="fas fa-check"></i> <span>تم النسخ!</span>`;
+      
+      setTimeout(() => {
+        copyBtn.style.background = 'var(--blue-500)';
+        copyBtn.innerHTML = origHTML;
+      }, 2000);
+    }
+
+    function redeemReward(rewardType, costPoints) {
+      const token = localStorage.getItem('trivela_token');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (confirm(`هل أنت متأكد من استبدال ${costPoints} نقطة ولاء للحصول على هذا الكوبون خصم؟`)) {
+        fetch('/api/public/redeem-points', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ rewardType })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert(`فشل: ${data.error}`);
+          } else {
+            // Show modal coupon
+            alert(`🎉 تهانينا! تم توليد كوبون الخصم بنجاح!\n\nكود الكوبون: ${data.couponCode}\nقيمة الخصم: ${data.label}\n\nانسخ الكود وضعه في حقل الكوبون بصفحة الشراء للاستفادة منه فوراً! (صالح لمدة 30 يوم)`);
+            
+            // Reload user profile info
+            fetch('/api/auth/me', {
+              method: 'GET',
+              headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(user => {
+              renderProfile(user);
+            });
+          }
+        })
+        .catch(err => {
+          alert("خطأ في الاتصال بالخادم أثناء استبدال النقاط.");
+        });
+      }
+    }
+  </script>
+</body>
+</html>

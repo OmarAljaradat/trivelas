@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <link rel="icon" type="image/png" href="logo-official.png"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سياسات المتجر والشروط والأحكام — Trivela</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--blue-50);
+      color: var(--blue-600);
+    }
+    
+    .policies-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 120px 20px 80px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+    }
+
+    /* Sticky Sidebar Navigation */
+    .policies-sidebar {
+      position: sticky;
+      top: 100px;
+      height: fit-content;
+      background: #ffffff;
+      border: 1.5px solid var(--blue-100);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(48,83,136,0.04);
+    }
+
+    .policies-sidebar h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--blue-800);
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid var(--blue-100);
+    }
+
+    .policy-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      color: var(--blue-600);
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-bottom: 4px;
+    }
+
+    .policy-nav-link i {
+      font-size: 1rem;
+      color: var(--blue-500);
+      width: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .policy-nav-link:hover, .policy-nav-link.active {
+      background: var(--blue-50);
+      color: var(--blue-700);
+    }
+
+    .policy-nav-link:hover i, .policy-nav-link.active i {
+      color: var(--blue-700);
+      transform: scale(1.1);
+    }
+
+    /* Policy Content Cards */
+    .policies-content {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .policy-card {
+      background: #ffffff;
+      border: 1.5px solid var(--blue-100);
+      border-radius: 24px;
+      padding: 35px;
+      box-shadow: 0 4px 20px rgba(48,83,136,0.04);
+      scroll-margin-top: 100px; /* Offset for smooth scroll */
+      transition: all 0.3s ease;
+    }
+
+    .policy-card:hover {
+      box-shadow: 0 10px 30px rgba(48,83,136,0.06);
+    }
+
+    .policy-card h2 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--blue-800);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1.5px solid var(--blue-50);
+      padding-bottom: 12px;
+    }
+
+    .policy-card h2 i {
+      color: var(--blue-500);
+    }
+
+    .policy-card p {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--blue-600);
+      margin-bottom: 16px;
+      text-align: justify;
+    }
+
+    .policy-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .policy-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 16px 0;
+    }
+
+    .policy-card ul li {
+      position: relative;
+      padding-right: 24px;
+      margin-bottom: 10px;
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .policy-card ul li::before {
+      content: '\f058';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      right: 0;
+      top: 2px;
+      color: #10b981;
+      font-size: 1rem;
+    }
+
+    .policy-card h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--blue-700);
+      margin: 25px 0 12px 0;
+    }
+
+    .policy-card h3 i {
+      margin-left: 6px;
+      color: #eab308;
+    }
+
+    .policy-card .highlight-box {
+      background: var(--blue-50);
+      border-right: 4px solid var(--blue-500);
+      padding: 15px 20px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--blue-700);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .policies-container {
+        grid-template-columns: 1fr;
+        padding-top: 100px;
+      }
+      .policies-sidebar {
+        position: relative;
+        top: 0;
+        margin-bottom: 20px;
+      }
+      .policy-card {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar solid" id="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 8px;">
+        <img src="logo-official.png" alt="Trivela Logo" style="height: 32px; width: auto;">
+        <div class="logo-text"><span class="logo-main" style="font-family: 'Montserrat', sans-serif; font-weight: 800; letter-spacing: 1px; color: var(--blue-800); text-transform: uppercase;">Trivela</span></div>
+      </a>
+      <a href="index.html" class="cta-primary"><i class="fas fa-arrow-right" style="margin-left: 6px;"></i> العودة للرئيسية</a>
+    </div>
+  </nav>
+
+  <!-- MAIN POLICIES SECTION -->
+  <div class="policies-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="policies-sidebar">
+      <h3>أقسام السياسات</h3>
+      <a href="#privacy" class="policy-nav-link" id="link-privacy"><i class="fas fa-user-lock"></i> سياسة الخصوصية</a>
+      <a href="#terms" class="policy-nav-link" id="link-terms"><i class="fas fa-file-contract"></i> شروط الاستخدام</a>
+      <a href="#refund" class="policy-nav-link" id="link-refund"><i class="fas fa-undo-alt"></i> سياسة الاسترجاع</a>
+      <a href="#warranty" class="policy-nav-link" id="link-warranty"><i class="fas fa-shield-alt"></i> سياسة الضمان</a>
+      <a href="#cashback" class="policy-nav-link" id="link-cashback"><i class="fas fa-coins"></i> كاش باك ومحفظة</a>
+      <a href="#cookies" class="policy-nav-link" id="link-cookies"><i class="fas fa-cookie-bite"></i> ملفات الارتباط</a>
+      <a href="#payment-confirmation" class="policy-nav-link" id="link-payment-confirmation"><i class="fas fa-receipt"></i> تأكيد الدفع</a>
+    </aside>
+
+    <!-- Policies Details -->
+    <main class="policies-content">
+      
+      <!-- سياسة الخصوصية -->
+      <section class="policy-card" id="privacy">
+        <h2><i class="fas fa-user-lock"></i> سياسة الخصوصية</h2>
+        <p class="highlight-box"><i class="fas fa-shield"></i> خصوصية بياناتك وأمن حسابك هي أولويتنا القصوى في متجر تريفيلا.</p>
+        <p>نحتفظ بالحق في إضافة أو تعديل أو حذف أو تغيير هذه السياسة من وقت لآخر عن طريق تحديث هذه الصفحة. يجب عليك مراجعة هذه الصفحة من وقت لآخر للتأكد من رضاك عن أي تغييرات.</p>
+        <p>استمرار استخدامك لـ متجر تريفيلا (Trivela) الإلكتروني والخدمات يشكل موافقتك على سياسة الخصوصية هذه، بصيغتها المعدلة من وقت لآخر.</p>
+        
+        <h3><i class="fas fa-eye-slash"></i> حماية وسرية البيانات:</h3>
+        <ul>
+          <li>لا نسمح بأي أفراد أو مؤسسات غير مصرح لها ؛ سواء أكان أعضاء آخرون أو زوارًا أو أي شخص ليس بخلاف فريق متجرنا لاستخدام أي معلومات تم جمعها منك.</li>
+          <li>يرجى ملاحظة ان متجر تريفيلا (Trivela) لن يطلب منك مطلقًا، تحت أي ظرف من الظروف، كلمة المرور الخاصة بك عبر البريد الإلكتروني أو الرسائل القصيرة أو الهاتف أو الفاكس أو أي وسيلة اتصال أخرى خارج واجهة الحجز الآمنة للموقع. يُنصح المستخدمون بعدم الرد على أي رسائل بريد إلكتروني تطلب هذه المعلومات.</li>
+          <li>لن يتم تخزين أو بيع أو مشاركة أو تأجير أو تأجير فرعي لأي من تفاصيل البطاقات الائتمانية/الخصم أو أي معلومات شخصية مع أي طرف ثالث.</li>
+          <li>متجر تريفيلا (Trivela) لن يمرر أي تفاصيل خاصة بالبطاقات الائتمانية/الخصم إلى أي طرف ثالث.</li>
+          <li>يتخذ متجر تريفيلا (Trivela) الخطوات المناسبة لضمان خصوصية البيانات وأمنها… ومع ذلك لا يمكنه ضمان أمان أي معلومات يتم الكشف عنها عبر الإنترنت.</li>
+        </ul>
+
+        <h3><i class="fas fa-info-circle"></i> نظرة عامة:</h3>
+        <p>نحن نتفهم قلقك بشأن المعلومات الشخصية التي تقدمها على موقعنا. نحن نقدر ثقتك بنا ولن نسيء استخدام معلوماتك الشخصية بأي شكل من الأشكال. يوضح هذا المستند لك كل جانب من جوانب سياسة الخصوصية الخاصة بنا. ستخضع زيارتك والإجراءات التي تقوم بها على موقعنا للسياسة التالية.</p>
+
+        <h3><i class="fas fa-user-edit"></i> تعديل المعلومات:</h3>
+        <p>يمكنك تعديل بياناتك الشخصية عن طريق الوصول إلى خيار "حسابي" في أي وقت من موقعنا.</p>
+
+        <h3><i class="fas fa-database"></i> جمع المعلومات:</h3>
+        <p>لتمكينك من تقديم طلب على موقعنا، نحتاج إلى الحصول على المعلومات الأساسية التالية عنك: اسمك، العنوان، المدينة، رقم التواصل، البريد الالكتروني. كما تجمع أنظمتنا تفاصيل معينة حول اتصال الإنترنت بجهاز الكمبيوتر الخاص بك مثل عنوان IP الخاص بك عندما تزور موقعنا. عنوان IP الخاص بك لا يعرّفك شخصيًا. نستخدم هذه المعلومات لتسليم صفحات الويب الخاصة بنا إليك عند الطلب، ولتخصيص موقعنا حسب اهتماماتك، وحساب عدد الزوار على موقعنا ومعرفة المواقع الجغرافية لزوارنا.</p>
+
+        <h3><i class="fas fa-bullhorn"></i> استخدام المعلومات:</h3>
+        <p>أهم عنصر يتم استخدامه من المعلومات التي تم جمعها عنك هو بريدك الإلكتروني وهاتفك المحمول، والذي يستخدم لإبلاغك بتأكيد طلبك. كما يتم استخدام بريدك الإلكتروني والجوال كوسيلة اتصال لخدمة العملاء والاستفسارات والرسائل الإخبارية. يتم تخزين جميع المعلومات الأخرى التي يتم جمعها بشكل سري ولن يتم الكشف عنها إلا إذا لزم الأمر وفقًا لمتطلبات السلطات القانونية أو في حالة وجود أي نزاعات.</p>
+
+        <h3><i class="fas fa-share-alt"></i> مشاركة المعلومات:</h3>
+        <p>من المحتمل أن يكون السؤال الأهم الذي تفكر فيه كعميل هو "مع من يتم جمع معلوماتك الشخصية؟". الإجابة على هذا السؤال هي أننا لا نؤجر أو نبيع أو نقايض أو نعطي معلوماتك لاي شخص. يجب نقل المعلومات إلى شركات البريد السريع وشركات معالجة بطاقات الائتمان والبائعين، وما إلى ذلك لتمكينهم من أداء وظائفهم المتعلقة بتنفيذ طلبك. بصرف النظر عن متطلبات العمل العادية، قد تكون هناك حاجة أيضًا إلى مشاركة المعلومات مع السلطات القانونية، للكشف عن الاحتيال، ولسلامة موقعنا والموظفين والإدارة والمستخدمين والأعضاء والأطراف الأخرى المرتبطة بنا.</p>
+
+        <h3><i class="fas fa-link"></i> روابط مع مواقع أخرى:</h3>
+        <p>قد يحتوي موقعنا على روابط قد تقودك إلى مواقع أخرى قد يكون لها سياسة الخصوصية الخاصة بها والتي لا نتحكم فيها. يرجى تفهم أنه بمجرد مغادرة موقعنا، لن يتم تطبيق سياسة الخصوصية الخاصة بنا.</p>
+
+        <h3><i class="fas fa-key"></i> حماية الحساب:</h3>
+        <p>كلمة المرور هي المفتاح إلى حسابك. استخدم أرقامًا وأحرفًا مميزه. إذا كنت تشارك كلمة المرور الخاصة بك أو معلوماتك الشخصية مع الآخرين، فتذكر أنك مسؤول عن جميع الإجراءات المتخذة باسم حسابك. إذا فقدت السيطرة على كلمة المرور الخاصة بك، فقد تفقد قدرًا كبيرًا من التحكم في معلوماتك الشخصية وقد تخضع لإجراءات ملزمة قانونًا يتم اتخاذها نيابة عنك. لذلك، إذا تم اختراق كلمة المرور الخاصة بك لأي سبب من الأسباب، يجب عليك إخطارنا على الفور من خلال متجر تريفيلا (Trivela) وتغيير كلمة المرور الخاصة بك.</p>
+
+        <h3><i class="fas fa-child"></i> الأطفال:</h3>
+        <p>متجر تريفيلا (Trivela) لا يبيع المنتجات ليشتريها الأطفال. نبيع منتجات الأطفال ليشتريها الكبار. إذا كان عمرك أقل من 18 عامًا، يمكنك استخدام منتجات متجر تريفيلا (Trivela) فقط بمشاركة أحد الوالدين.</p>
+      </section>
+
+      <!-- شروط الاستخدام -->
+      <section class="policy-card" id="terms">
+        <h2><i class="fas fa-file-contract"></i> شروط الاستخدام</h2>
+        <p>إن شروط الاستخدام هذه والوثائق القانونية خاضعة للتعديل من قبلنا في متجر تريفيلا (Trivela) في أي وقت. إن استمرار استخدامك للموقع بعد نشر أي تغيير يعني موافقتك على شروط الاستخدام هذه والوثائق القانونية التي تم تعديلها.</p>
+        <p>يعد هذا الموقع متجراً إلكترونياً يتيح للمستخدمين شراء مجموعة متنوعة من الكوينز والبطاقات والخدمات الرقمية وألعاب وحسابات فيفا. مدة التسليم المتوقعة للخدمات الرقمية من 10 دقائق إلى 24 ساعة (وقد تصل إلى 7 أيام في حالات نادرة أو ضغط عمل التحديات الكبرى).</p>
+        <p>يحتفظ متجر تريفيلا (Trivela) بحق تقديم خدمات جديدة وتحديث أي من الخدمات أو سحبها، وفقاً لتقديرنا الخاص دون أية مسؤولية.</p>
+        <p>الموقع يتم تغيير الأسعار فيه بشكل يومي/اسبوعي/شهري ولا يحق للعميل مطالبة الفرق لان هناك عروض يوميا ربما ارتفاع وربما انخفاض في الاسعار، وليس ملزومين بدفع او تثبيت السعر لاختلاف الموردين المتعاملين معهم واختلاف اسعارهم.</p>
+        <p>لمعرفة طريقة الاسترجاع يرجى التوجه لصفحة سياسة الاسترجاع.</p>
+      </section>
+
+      <!-- سياسة الاسترجاع -->
+      <section class="policy-card" id="refund">
+        <h2><i class="fas fa-undo-alt"></i> سياسة الاسترجاع</h2>
+        <ul>
+          <li>المنتجات الرقمية والقسائم الإلكترونية والخدمات الالكترونية (مثل شحن الكوينز وبناء التشكيلات والمهام وغيرها) التي تم إدراجها في حسابك أو تم إيصالها عبر البريد الإلكتروني أو رسالة على الجوال ليست قابلة للاسترداد أو التبديل أو الالغاء نهائياً ما لم يكن بها خلل من الشركة الموفرة.</li>
+          <li>جميع الخدمات الرقمية والحلول مثل خدمات SBC واللعب بالنيابة غير قابلة للاسترداد أو الالغاء أو التبديل بعد بدء تنفيذها.</li>
+          <li>في حال وجود مشكلة بعد تسليم المنتج الرقمي أو الخدمة الرقمية يجب تبليغ الدعم الفني خلال 24 ساعة من إنشاء الطلب، ولا يحق للمستخدم المطالبة بأي مبالغ للطلبات الناجحة أو رفع نزاعات بعد مرور 24 ساعة من تسليم المنتج.</li>
+          <li>يتم اعادة المبلغ الكترونيا في حالات استثنائية فقط مثل عدم توفر المنتج أو عدم القدرة على تقديمه للعميل.</li>
+          <li>لا يتحمل المتجر أي مسؤولية لمشتريات خاطئة قمت بها، بسبب الإهمال أو إدخال معلومات خاطئة (مثل إيميل خاطئ أو كلمة مرور حساب خاطئة أو كود احتياطي مستعمل)، مما قد يؤدي إلى أضرار من خلال شراء أي قسيمة إلكترونية أو بطاقة.</li>
+          <li>في حال رغبة العميل باسترجاع المبلغ للطلبات التالية (طلب ملغي أو في حال عدم توفر المنتج) يرجى التواصل معنا مباشرة عبر واتس اب الدعم الفني قبل إرسال المنتج أو تقديم الخدمة الرقمية لإعادة المبلغ حيث نقدم الدعم الفني على مدار الساعة 24/7 لمساعدة العملاء.</li>
+          <li>المدفوعات التي تتم عن طريق بوابة الدفع "فيزا"، "مدى"، "أبل باي"، "ماستر كارد": مدة إرجاع المبلغ إلى حساب العميل في حال إلغاء الطلب وقبل استلام المنتج أو بدء الخدمة هي من يوم واحد إلى 15 يوم عمل كحد أقصى حسب البنك الخاص بالعميل وسياسات البنوك الأخرى المختلفة (مع مراعاة وجود رسوم استرداد بقيمة 2.7% لبوابة الدفع).</li>
+          <li>في حال عدم استطاعة العميل من استلام المنتج أو الخدمة بسبب فشل في طلبه سوف يتم التواصل مع العميل بضرورة تعديل طلبه وفي حال عدم الرد او طلب اعادة مبلغ خلال مدة أقصاها يوم واحد يتم اضافة المبلغ كرصيد الى المحفظة الإلكترونية بحساب العميل بالموقع ولا يحق للعميل طلب استرداد عكسي لمبلغ رصيد محفظته.</li>
+          <li>صلاحية رصيد المحفظة الإلكترونية بموقع وتطبيق متجر تريفيلا (Trivela) صالح لمدة سنة كاملة من تاريخ إنشاء الطلب، ولا يحق للعميل المطالبة بإرجاع مبلغ المحفظة نقداً أو عن طريق التحويل البنكي أو الاسترداد العكسي للبطاقة الائتمانية أو بأي طريقة أخرى.</li>
+          <li>لا يحق للعميل المطالبة بإرجاع قيمة مبلغ بطاقة الضمان الكامل للنادي نقدا او عن طريق التحويل البنكي أو الاسترداد العكسي للبطاقة الائتمانية او بأي طريقة أخرى، و لا يحق له المطالبة بتحويلها لرصيد المحفظة.</li>
+        </ul>
+      </section>
+
+      <!-- سياسة الضمان -->
+      <section class="policy-card" id="warranty">
+        <h2><i class="fas fa-shield-alt"></i> سياسة الضمان</h2>
+        
+        <h3><i class="fas fa-crown"></i> ضمان النادي كامل لحاملي بطاقة الضمان الكامل:</h3>
+        <ul>
+          <li>مدة الضمان لباند سوق الانتقالات 5 أيام من آخر شحنة.</li>
+          <li>يتم تعويضك بشحن كوينز بقيمة النادي كامل في حال حدوث باند سوق الانتقالات في حسابك.</li>
+          <li>مدة الضمان في حال التصفير 48 ساعة من انتهاء الشحن ويجب استخدام الكمية مباشرة وعدم ترك أي كوينز بالحساب.</li>
+          <li>في حال تصفرت كمية الطلب المشحونة قبل استخدامها خلال مدة الضمان يتم تعويضك بشحن كوينز نفس كمية طلبك الاخيرة بحسابك مرة اخرى.</li>
+        </ul>
+
+        <h3><i class="fas fa-shield-halved"></i> الضمان العادي لغير حاملي بطاقة الضمان الكامل لمدة 24 ساعة من آخر شحنة:</h3>
+        <ul>
+          <li>في حال حدوث باند سوق الانتقالات يتم التعويض بشحن كوينز نفس كمية طلبك الأخير بحساب آخر لديك أو إعادة مبلغ آخر طلب.</li>
+          <li>في حال حدوث تصفير لكمية الطلب المشحونة قبل استخدامها خلال مدة الضمان يتم تعويضك بشحن نفس كمية الطلب بحسابك مرة أخرى.</li>
+        </ul>
+
+        <div class="highlight-box" style="border-right-color: #ef4444; background: #fef2f2; color: #991b1b;">
+          <i class="fas fa-exclamation-triangle"></i> يصبح بطاقة الضمان الكامل والضمان العادي ملغياً في الحالات التالية:
+          إذا قمت بشراء من مصدر غير آمن أو أي متجر آخر أو نقل الكوينز من حسابك إلى حساب آخر.
+        </div>
+        <p style="font-weight: 700; color: var(--blue-800);"><i class="fas fa-key text-gold"></i> تنويه هام: يرجى تغيير كلمة السر لحساب فيفا/EA بعد الشحن مباشرة لضمان أمان حسابك.</p>
+      </section>
+
+      <!-- كاش باك ومحفظة -->
+      <section class="policy-card" id="cashback">
+        <h2><i class="fas fa-coins"></i> الشروط والأحكام للكاش باك والمحفظة</h2>
+        <ul>
+          <li>يتم إضافة مبلغ الكاش باك مباشرة إلى رصيد محفظتك الخاصة في الموقع الإلكتروني بعد نجاح الطلب.</li>
+          <li>صلاحية رصيد الكاش باك لمدة 3 أشهر من تاريخ إنشاء الطلب.</li>
+          <li>يمكنك الاستفادة من عروض الكاش باك عند الدفع عبر جميع طرق الدفع المتاحة لدينا ما عدا الدفع عبر رصيد "المحفظة" الخاصة بك في المتجر.</li>
+          <li>يمكن استخدام رصيد الكاش باك المتاح في محفظتك لشراء المنتجات المتاحة لدينا في الموقع والتطبيق فقط.</li>
+          <li>لا يمكن استرداد مبلغ الكاش باك نقداً أو عبر التحويل البنكي أو الاسترداد العكسي للبطاقة الائتمانية أو بأي طريقة أخرى.</li>
+          <li>لا يحق للعميل المطالبة بإرجاع مبلغ الكاش باك نقداً أو عن طريق التحويل البنكي أو الاسترداد العكسي للبطاقة الائتمانية أو بأي طريقة أخرى في حالة عدم نجاح الطلب.</li>
+          <li>في حالة الاسترجاع أو الاسترداد الكلي أو الجزئي للطلب، سيتم خصم قيمة الكاش باك المكتسبة لهذا الطلب من رصيد محفظتك في حال تم استخدام مبلغ الكاش باك من قبل العميل.</li>
+          <li>تحتفظ إدارة متجر تريفيلا (Trivela) بالحق في تغيير الشروط والأحكام لعروض الكاش باك في أي وقت دون إشعار مسبق للعميل.</li>
+          <li>يتم تطبيق عروض الكاش باك على المبلغ الإجمالي للمشتريات قبل خصم رسوم شركة الدفع.</li>
+          <li>نرجو منك قراءة الشروط والأحكام بعناية قبل الاستفادة من عروض الكاش باك.</li>
+        </ul>
+      </section>
+
+      <!-- ملفات الارتباط -->
+      <section class="policy-card" id="cookies">
+        <h2><i class="fas fa-cookie-bite"></i> سياسة الكوكيز (Cookies)</h2>
+        <ul>
+          <li><strong>استخدام ملفات الارتباط:</strong> قد يستخدم موقعنا بعض ملفات الارتباط الأساسية لضمان عمل الموقع بالشكل الصحيح وتحسين تجربة المستخدم.</li>
+          <li><strong>عدم تخزين أي بيانات شخصية:</strong> لا تقوم هذه الملفات بتخزين أي معلومات شخصية أو مالية أو بيانات يمكن التعرف على المستخدم من خلالها.</li>
+          <li><strong>إدارة ملفات الارتباط:</strong> يمكنك إيقاف ملفات الارتباط من إعدادات المتصفح، ولكن قد تتأثر بعض وظائف الموقع عند تعطيلها.</li>
+          <li><strong>تحديث السياسة:</strong> قد نقوم بتحديث سياسة الكوكيز من وقت لآخر، وسيتم تطبيق أي تحديث فور نشره في هذه الصفحة.</li>
+        </ul>
+      </section>
+
+      <!-- تأكيد الدفع -->
+      <section class="policy-card" id="payment-confirmation">
+        <h2><i class="fas fa-receipt"></i> تأكيد الدفع الإلكتروني</h2>
+        <p>بمجرد إجراء الدفع الإلكتروني بنجاح، سيتم إرسال إشعار التأكيد وتحديث حالة الطلب إلى العميل عبر البريد الإلكتروني أو رسالة نصية/واتساب في غضون 24 ساعة من الاستلام وتأكيد الطلب.</p>
+        
+        <h3><i class="fas fa-gavel"></i> الشروط والأحكام العامة:</h3>
+        <ul>
+          <li>متجر تريفيلا (Trivela) يدير موقعه الإلكتروني الرسمي.</li>
+          <li>المملكة العربية السعودية ودول الخليج العربي والشرق الأوسط هي النطاق الجغرافي الأساسي لعملائنا، وننص على أن القوانين المعمول بها محلياً هي القوانين الحاكمة.</li>
+          <li>أي عملية شراء أو نزاع أو مطالبة تنشأ عن هذا الموقع الإلكتروني أو تتعلق به تخضع للقوانين ذات الصلة وتُفسَّر وفقًا لها.</li>
+          <li>سيتم قبول بطاقات الخصم والائتمان من فيزا وماستركارد ومدى وأبل باي بالعملات المحلية المعتمدة للدفع.</li>
+          <li>السعر والعملة المعروضان في صفحة الدفع هما نفس السعر والعملة المطبوعة على إيصال المعاملة، وسيُعرَض المبلغ المخصوم على البطاقة بعملة بطاقتك.</li>
+          <li>لن نتعامل مع أو نقدم أي خدمات لأي أفراد أو كيانات خاضعة للعقوبات الدولية أو المحلية.</li>
+          <li>يجب على حامل البطاقة الاحتفاظ بنسخة من سجلات المعاملات وسياسات وقواعد متجر تريفيلا (Trivela).</li>
+          <li>يتحمل المستخدم مسؤولية الحفاظ على سرية حسابه وبياناته.</li>
+        </ul>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">
+          <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
+          <span class="logo-main">Trivela</span>
+        </div>
+        <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>الخدمات</h4>
+        <a href="index.html#coins-device">💰 الكوينز</a>
+        <a href="buy-sbc.html">🧩 SBC</a>
+        <a href="buy-objectives.html">📋 المهام</a>
+        <a href="buy-rivals.html">⚔️ الرايفلز</a>
+        <a href="buy-champions.html">🎮 FUT Champions</a>
+      </div>
+      <div class="footer-col">
+        <h4>سياسات متجر Trivela</h4>
+        <a href="policies.html#privacy">سياسة الخصوصية</a>
+        <a href="policies.html#terms">شروط الاستخدام</a>
+        <a href="policies.html#refund">سياسة الاسترجاع</a>
+        <a href="policies.html#warranty">سياسة الضمان</a>
+        <a href="index.html#faq">الأسئلة الشائعة</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Trivela — جميع الحقوق محفوظة</span>
+      <span>هذا الموقع غير مرتبط بـ EA Sports</span>
+    </div>
+  </div>
+</footer>
+
+  <!-- Script to highlight active menu section on scroll and handle incoming hash links -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sections = document.querySelectorAll('.policy-card');
+      const navLinks = document.querySelectorAll('.policy-nav-link');
+
+      // Highlight active nav item on scroll
+      window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(sec => {
+          const top = sec.offsetTop - 120;
+          if (pageYOffset >= top) {
+            current = sec.getAttribute('id');
+          }
+        });
+
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href').substring(1) === current) {
+            link.classList.add('active');
+          }
+        });
+      });
+
+      // Smooth scroll adjustment for hash links
+      if (window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        if (target) {
+          setTimeout(() => {
+            window.scrollTo({
+              top: target.offsetTop - 100,
+              behavior: 'smooth'
+            });
+          }, 100);
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

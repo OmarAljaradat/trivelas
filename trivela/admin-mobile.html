@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Trivela Admin Mobile — تريفيلا أدمن</title>
+  
+  <!-- Manifest & PWA Configuration -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0D1E39">
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Internal styling (highly optimized for standalone mobile) -->
+  <style>
+    :root {
+      --bg-dark: #070B13;
+      --card-bg: #0D1424;
+      --blue-primary: #305388;
+      --gold-primary: #ca8a04;
+      --green-primary: #10b981;
+      --red-primary: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(48, 83, 136, 0.15);
+      --font-cairo: 'Cairo', sans-serif;
+      --font-monts: 'Montserrat', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-cairo);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding-bottom: 75px; /* space for bottom nav */
+    }
+
+    /* ══════════ HEADER ══════════ */
+    .app-header {
+      background: linear-gradient(to bottom, #0d1e39, var(--bg-dark));
+      padding: 16px 16px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .brand-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot-indicator {
+      width: 8px;
+      height: 8px;
+      background-color: var(--green-primary);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px var(--green-primary);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--red-primary);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    /* ══════════ STATS CAROUSEL ══════════ */
+    .stats-container {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .stat-value {
+      font-family: var(--font-monts);
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--gold-primary);
+      margin-bottom: 2px;
+    }
+
+    .stat-value.green {
+      color: var(--green-primary);
+    }
+
+    .stat-value.blue {
+      color: #3b82f6;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* ══════════ TABS CONTENT ══════════ */
+    .tab-view {
+      display: none;
+      padding: 0 16px 16px;
+    }
+
+    .tab-view.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .view-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .refresh-badge {
+      font-size: 0.75rem;
+      background: rgba(48, 83, 136, 0.15);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    /* ══════════ CARD LIST ══════════ */
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mobile-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .mobile-card.border-pending { border-right: 4px solid var(--gold-primary); }
+    .mobile-card.border-paid { border-right: 4px solid #3b82f6; }
+    .mobile-card.border-in_progress { border-right: 4px solid #a855f7; }
+    .mobile-card.border-completed { border-right: 4px solid var(--green-primary); }
+    .mobile-card.border-cancelled { border-right: 4px solid var(--red-primary); }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .card-title-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .card-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 8px;
+    }
+
+    .badge-pending { background: rgba(202, 138, 4, 0.15); color: var(--gold-primary); }
+    .badge-paid { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .badge-in_progress { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+    .badge-completed { background: rgba(16, 185, 129, 0.15); color: var(--green-primary); }
+    .badge-cancelled { background: rgba(239, 68, 68, 0.15); color: var(--red-primary); }
+
+    .card-body-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-size: 0.8rem;
+    }
+
+    .body-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .body-item-label {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .body-item-val {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .body-item-val.monts {
+      font-family: var(--font-monts);
+      font-weight: 800;
+    }
+
+    /* Action buttons grid */
+    .card-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: stretch;
+    }
+
+    .btn-action {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      font-family: var(--font-cairo);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .btn-details {
+      background: var(--blue-primary);
+    }
+
+    .btn-whatsapp {
+      background: #10b981;
+    }
+
+    .btn-whatsapp i {
+      font-size: 0.95rem;
+    }
+
+    .btn-state-change {
+      background: #475569;
+    }
+
+    /* ══════════ POPUP MODALS ══════════ */
+    .overlay-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      display: flex;
+      align-items: flex-end; /* slides up from bottom */
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .overlay-modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      width: 100%;
+      background: var(--card-bg);
+      border-top: 2px solid var(--blue-primary);
+      border-radius: 20px 20px 0 0;
+      padding: 20px;
+      transform: translateY(100%);
+      transition: all 0.3s ease;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .overlay-modal.open .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--gold-primary);
+    }
+
+    .btn-close-modal {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .modal-body-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .modal-body-item {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body-label {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .modal-body-val {
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 0.88rem;
+      user-select: text; /* Allow copying password codes */
+    }
+
+    .modal-body-val.code {
+      font-family: var(--font-monts);
+      font-size: 0.92rem;
+      background: rgba(255,255,255,0.05);
+      padding: 3px 8px;
+      border-radius: 5px;
+      border: 1px dashed rgba(255,255,255,0.1);
+    }
+
+    /* Modal Form components */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .form-input {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-color);
+      padding: 12px;
+      border-radius: 10px;
+      color: white;
+      font-family: var(--font-cairo);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--blue-primary);
+    }
+
+    .btn-submit-modal {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      background: var(--green-primary);
+      color: white;
+      font-family: var(--font-cairo);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    /* ══════════ BOTTOM NAVIGATION ══════════ */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #0D1424;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+      z-index: 500;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .nav-item i {
+      font-size: 1.15rem;
+      margin-bottom: 3px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item.active {
+      color: var(--gold-primary);
+    }
+
+    .nav-item.active i {
+      transform: translateY(-2px);
+    }
+
+    /* ══════════ REVIEWS MODERATION STYLE ══════════ */
+    .review-text-bubble {
+      background: rgba(0,0,0,0.15);
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 8px 0;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    .btn-approve { background: var(--green-primary); }
+    .btn-delete { background: var(--red-primary); }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      color: var(--blue-primary);
+    }
+
+    .empty-state-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .empty-state-desc {
+      font-size: 0.78rem;
+    }
+
+    /* Skeleton Loading pulses */
+    .skeleton {
+      background: linear-gradient(90deg, #0d1424 25%, #18233c 50%, #0d1424 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 12px;
+      height: 120px;
+      margin-bottom: 12px;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════ APP HEADER ══════════ -->
+  <header class="app-header">
+    <div class="brand-section">
+      <img src="logo-official.png" alt="Trivela" class="brand-logo" />
+      <span class="brand-title">أدمن تريفيلا <span class="live-dot-indicator"></span></span>
+    </div>
+    
+    <button class="btn-logout" onclick="logoutAdmin()" title="تسجيل الخروج">
+      <i class="fas fa-sign-out-alt"></i>
+    </button>
+  </header>
+
+  <!-- ══════════ STATS HIGHLIGHT CAROUSEL ══════════ -->
+  <section class="stats-container">
+    <div class="stat-card">
+      <span class="stat-value green" id="statTodaySales">0</span>
+      <span class="stat-label">مبيعات اليوم</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value blue" id="statActiveOrders">0</span>
+      <span class="stat-label">طلبات نشطة</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="statPendingReviews">0</span>
+      <span class="stat-label">تقييمات معلقة</span>
+    </div>
+  </section>
+
+  <!-- ══════════ TAB VIEW 1: ACTIVE ORDERS ══════════ -->
+  <main class="tab-view active" id="viewOrders">
+    <div class="view-title">
+      <span>الطلبات الواردة</span>
+      <span class="refresh-badge"><i class="fas fa-sync fa-spin"></i> تحديث تلقائي 15ث</span>
+    </div>
+    
+    <div class="card-list" id="ordersContainer">
+      <!-- Skeletons placeholder on load -->
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </main>
+
+  <!-- ══════════ TAB VIEW 2: REVIEWS MODERATION ══════════ -->
+  <main class="tab-view" id="viewReviews">
+    <div class="view-title">
+      <span>تقييمات بانتظار المراجعة</span>
+      <span class="refresh-badge" onclick="loadReviews()"><i class="fas fa-redo"></i> تحديث</span>
+    </div>
+    
+    <div class="card-list" id="reviewsContainer">
+      <div class="empty-state">
+        <i class="fas fa-star-half-stroke"></i>
+        <div class="empty-state-title">لا توجد تقييمات معلقة</div>
+        <div class="empty-state-desc">سيظهر هنا أي تقييم يرسله العميل للموافقة والتعديل قبل النشر.</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══════════ POPUP MODAL: ORDER DETAILS ══════════ -->
+  <div class="overlay-modal" id="detailsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-title"><i class="fas fa-file-invoice"></i> تفاصيل الحساب والطلب</span>
+        <button class="btn-close-modal" onclick="closeDetailsModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body-list" id="detailsModalBody">
+        <!-- populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ POPUP MODAL: UPDATE STATUS ══════════ -->
+  <div class="overlay-modal" id="statusModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-title" id="statusModalTitle"><i class="fas fa-edit"></i> تعديل حالة الطلب</span>
+        <button class="btn-close-modal" onclick="closeStatusModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="statusForm" onsubmit="submitStatusUpdate(event)">
+        <input type="hidden" id="statusOrderId" value="" />
+        <input type="hidden" id="targetStatusVal" value="" />
+        
+        <div class="form-group" id="groupSupplierCost">
+          <label class="form-label" for="supplierCostInput">تكلفة المورد (دولار USD):</label>
+          <input type="number" id="supplierCostInput" class="form-input" placeholder="مثال: 12.50" step="0.01" />
+        </div>
+        
+        <div class="form-group" id="groupAmountPaid">
+          <label class="form-label" for="amountPaidInput">المبلغ المستلم الفعلي (دولار USD):</label>
+          <input type="number" id="amountPaidInput" class="form-input" placeholder="المبلغ الفعلي المدفوع" step="0.01" />
+        </div>
+        
+        <button type="submit" class="btn-submit-modal" id="btnSubmitStatus">تأكيد وتحديث الحالة</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════ BOTTOM NAVIGATION BAR ══════════ -->
+  <nav class="bottom-nav">
+    <a class="nav-item active" onclick="switchTab('orders', this)">
+      <i class="fas fa-clipboard-list"></i>
+      <span>الطلبات</span>
+    </a>
+    <a class="nav-item" onclick="switchTab('reviews', this)">
+      <i class="fas fa-star"></i>
+      <span>التقييمات</span>
+    </a>
+  </nav>
+
+  <!-- PWA service worker registration & Logic script -->
+  <script type="module" src="admin-mobile.js"></script>
+</body>
+</html>

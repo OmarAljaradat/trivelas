@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <link rel="icon" type="image/png" href="logo-official.png"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تقييمات ومراجعات العملاء | Trivela</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* Custom page adjustments */
+    .reviews-page-header {
+      text-align: center;
+      margin-top: 130px;
+      margin-bottom: 50px;
+    }
+    
+    .reviews-page-title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--blue-700);
+      margin-bottom: 12px;
+    }
+    
+    body.dark-mode .reviews-page-title {
+      color: #ffffff;
+    }
+    
+    .reviews-page-sub {
+      font-size: 1rem;
+      color: var(--text-gray);
+      font-weight: 600;
+    }
+
+    /* Grid layout for full reviews list */
+    .reviews-grid-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 50px;
+    }
+
+    /* Modern Pagination Styles */
+    .pagination-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 80px;
+      flex-wrap: wrap;
+    }
+
+    .pag-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--blue-100);
+      background: #fff;
+      color: var(--blue-600);
+      font-family: 'Montserrat', 'Cairo', sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    }
+
+    .pag-btn:hover {
+      background: var(--blue-50);
+      border-color: var(--blue-200);
+      transform: translateY(-2px);
+    }
+
+    .pag-btn.active {
+      background: linear-gradient(135deg, var(--blue-500) 0%, var(--blue-700) 100%);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 15px rgba(48,83,136,0.25);
+    }
+
+    .pag-btn.nav-step {
+      width: auto;
+      padding: 0 20px;
+      border-radius: 30px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+    }
+
+    .pag-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    body.dark-mode .pag-btn {
+      background: #111a2e;
+      border-color: rgba(255,255,255,0.08);
+      color: #94a3b8;
+    }
+
+    body.dark-mode .pag-btn:hover {
+      background: rgba(255,255,255,0.04);
+      color: #ffffff;
+    }
+
+    body.dark-mode .pag-btn.active {
+      background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+      color: #000;
+      box-shadow: 0 4px 15px rgba(234, 179, 8, 0.25);
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      .reviews-page-header {
+        margin-top: 90px;
+        margin-bottom: 30px;
+      }
+      .reviews-page-title {
+        font-size: 1.8rem;
+      }
+      .pag-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 0.85rem;
+      }
+      .pag-btn.nav-step {
+        padding: 0 14px;
+        font-size: 0.8rem;
+      }
+      body {
+        padding-bottom: 0px !important; /* No bottom-nav padding required here */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════ TOP BAR ══════════ -->
+  <header class="buy-header">
+    <div class="buy-header-inner">
+      <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+      <div class="buy-logo">
+        <img src="logo-official.png" alt="Trivela" />
+        <span>Trivela</span>
+      </div>
+      
+      <!-- Dummy selector to occupy space and center elements -->
+      <div style="width: 50px;"></div>
+
+      <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="تغيير المظهر">
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ══════════ MAIN CONTENT ══════════ -->
+  <main class="container">
+    <div class="reviews-page-header">
+      <h1 class="reviews-page-title">مراجعات وتقييمات العملاء</h1>
+      <p class="reviews-page-sub">تقييمات حقيقية مسجلة من عملائنا بعد إتمام شحن الكوينز والخدمات</p>
+    </div>
+
+    <!-- Reviews Grid Container -->
+    <div class="reviews-grid-list" id="reviewsContainer">
+      <!-- Loaded dynamically via JS -->
+    </div>
+
+    <!-- Pagination controls -->
+    <div class="pagination-wrap" id="paginationControls">
+      <!-- Built dynamically via JS -->
+    </div>
+  </main>
+
+  <script type="module">
+    import { api } from './src/core/api.js';
+
+    let allReviews = [];
+    let currentPage = 1;
+    const REVIEWS_PER_PAGE = 6;
+
+    // Load theme setting
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const themeToggleBtn = document.getElementById('themeToggleBtn');
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.body.classList.add('dark-mode');
+        if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+      } else {
+        document.body.classList.remove('dark-mode');
+        if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+      }
+
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('dark-mode');
+          const isDark = document.body.classList.contains('dark-mode');
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          themeToggleBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        });
+      }
+    }
+
+    // Load data from public content API
+    async function loadReviewsData() {
+      try {
+        const data = await api.get('/public/content');
+        allReviews = data.reviews || [];
+        renderReviews();
+        buildPagination();
+      } catch (err) {
+        console.error("Failed to load reviews:", err);
+        const container = document.getElementById('reviewsContainer');
+        if (container) {
+          container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: red; font-weight: 700; padding: 40px;">فشل تحميل التقييمات. الرجاء إعادة المحاولة لاحقاً.</div>`;
+        }
+      }
+    }
+
+    // Render current page reviews
+    function renderReviews() {
+      const container = document.getElementById('reviewsContainer');
+      if (!container) return;
+
+      if (allReviews.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #64748b; font-weight: 700; padding: 40px;">لا توجد تقييمات مسجلة حالياً.</div>`;
+        return;
+      }
+
+      const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
+      const endIndex = startIndex + REVIEWS_PER_PAGE;
+      const currentReviews = allReviews.slice(startIndex, endIndex);
+
+      container.innerHTML = currentReviews.map(r => {
+        const initial = r.name ? r.name.charAt(0) : '🔑';
+        const badgeHTML = r.badge ? `<span class="rc-badge" style="background: rgba(48,83,136,0.06); color: var(--blue-500); padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; margin-left: 6px;">${r.badge}</span>` : '';
+        return `
+          <div class="rc">
+            <div class="rc-top">
+              <div class="rc-avatar">${initial}</div>
+              <div class="rc-info">
+                <strong>${r.name}</strong>
+                <span>${r.badge ? r.badge + ' · ' : ''}${r.platform}</span>
+              </div>
+            </div>
+            <div class="rc-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
+            <p class="rc-text">${r.text}</p>
+            <span class="rc-platform">FIFA 27 FUT — ${r.platform}</span>
+          </div>
+        `;
+      }).join('');
+      
+      // Scroll smoothly to top of main content
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Build pagination controls dynamically
+    function buildPagination() {
+      const controls = document.getElementById('paginationControls');
+      if (!controls) return;
+
+      const totalPages = Math.ceil(allReviews.length / REVIEWS_PER_PAGE);
+      if (totalPages <= 1) {
+        controls.innerHTML = '';
+        return;
+      }
+
+      let html = '';
+
+      // Previous button
+      html += `<button class="pag-btn nav-step" ${currentPage === 1 ? 'disabled' : ''} onclick="window.changeReviewPage(${currentPage - 1})"><i class="fas fa-chevron-right" style="margin-left: 6px;"></i> السابق</button>`;
+
+      // Page numbers (smart ellipsis paging)
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          html += `<button class="pag-btn ${currentPage === i ? 'active' : ''}" onclick="window.changeReviewPage(${i})">${i}</button>`;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          html += `<span style="padding: 0 5px; color: var(--text-gray); font-weight: 700;">...</span>`;
+        }
+      }
+
+      // Next button
+      html += `<button class="pag-btn nav-step" ${currentPage === totalPages ? 'disabled' : ''} onclick="window.changeReviewPage(${currentPage + 1})">التالي <i class="fas fa-chevron-left" style="margin-right: 6px;"></i></button>`;
+
+      controls.innerHTML = html;
+    }
+
+    // Expose page changer globally
+    window.changeReviewPage = function(pageNumber) {
+      currentPage = pageNumber;
+      renderReviews();
+      buildPagination();
+    };
+
+    // Load initial configurations
+    initTheme();
+    loadReviewsData();
+  </script>
+</body>
+</html>

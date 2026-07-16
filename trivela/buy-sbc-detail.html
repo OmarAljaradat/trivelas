@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <link rel="icon" type="image/png" href="logo-official.png"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تفاصيل التحدي والشراء | Trivela</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* Premium layout design for SBC detailed checkout */
+    /* Premium layout design for SBC detailed checkout */
+    .detail-container-grid {
+      display: block;
+      width: 100%;
+      margin-top: 30px;
+    }
+
+    /* SBC Top Banner Styling (Option 1) */
+    .sbc-detail-header-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, rgba(48, 83, 136, 0.04) 0%, rgba(202, 138, 4, 0.04) 100%);
+      border: 1.5px solid #cbd5e7;
+      border-radius: 24px;
+      padding: 24px 32px;
+      margin-bottom: 35px;
+      gap: 30px;
+    }
+
+    .sbc-detail-header-banner .buy-main-title::after {
+      display: none;
+    }
+
+    .sbc-detail-header-banner .buy-main-title {
+      font-size: 2.1rem;
+      font-weight: 900;
+      color: #182A47;
+      margin: 0;
+      padding: 0;
+      border-bottom: 0;
+    }
+
+    .sbc-banner-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sbc-banner-image-wrap {
+      width: 220px;
+      height: 270px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sbc-banner-image-wrap img {
+      height: 100%;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.18));
+      animation: floatCard 4s ease-in-out infinite;
+    }
+
+    /* Premium Price Tags Container */
+    .sbc-prices-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .sbc-price-tag {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+      transition: all 0.25s ease;
+    }
+
+    .sbc-price-tag:hover {
+      border-color: #ca8a04;
+      transform: translateY(-1px);
+    }
+
+    .sbc-price-tag .tag-icon {
+      font-size: 1.25rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: #f1f5f9;
+      border-radius: 8px;
+    }
+
+    .sbc-price-tag.console:hover .tag-icon {
+      color: #305388;
+      background: rgba(48, 83, 136, 0.08);
+    }
+
+    .sbc-price-tag.pc:hover .tag-icon {
+      color: #ca8a04;
+      background: rgba(202, 138, 4, 0.08);
+    }
+
+    .sbc-price-tag .tag-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-align: right;
+    }
+
+    .sbc-price-tag .tag-title {
+      font-size: 0.75rem;
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    .sbc-price-tag .tag-value {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #10b981;
+    }
+
+    .sbc-currency-select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 8px 14px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    }
+
+    .sbc-currency-select-wrap label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .sbc-currency-select-wrap select {
+      border: 0;
+      background: transparent;
+      outline: none;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: #182A47;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .sbc-detail-header-banner {
+        flex-direction: column-reverse;
+        text-align: center;
+        padding: 20px;
+      }
+      .sbc-banner-image-wrap {
+        width: 170px;
+        height: 210px;
+      }
+      .sbc-prices-container {
+        justify-content: center;
+      }
+    }
+
+    /* Hide old floating card column */
+    .detail-card-column {
+      display: none;
+    }
+
+    .sbc-info-sidebar-card {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 4px 20px rgba(48,83,136,0.04);
+      text-align: right;
+    }
+
+    .sbc-sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: #182A47;
+      font-size: 0.95rem;
+      border-bottom: 1.5px solid #f1f5f9;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .sbc-sidebar-header i {
+      color: #ca8a04;
+      font-size: 1.15rem;
+    }
+
+    .sbc-sidebar-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sbc-sidebar-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .sbc-sidebar-item i {
+      font-size: 1.25rem;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .sbc-sidebar-item i.text-green { color: #10b981; }
+    .sbc-sidebar-item i.text-gold { color: #ca8a04; }
+    .sbc-sidebar-item i.text-blue { color: #305388; }
+
+    .item-text strong {
+      display: block;
+      font-size: 0.88rem;
+      color: #182A47;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .item-text p {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .detail-large-card-wrap {
+      background: radial-gradient(circle at center, rgba(16, 185, 129, 0.05) 0%, rgba(0,0,0,0) 70%);
+      padding: 12px;
+      border-radius: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+    .detail-large-card-wrap img {
+      max-height: 550px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 15px 30px rgba(0,0,0,0.22));
+      animation: floatCard 4s ease-in-out infinite;
+    }
+
+    /* Tabs buttons header style */
+    .detail-tabs-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 25px;
+      border: 1px solid #cbd5e1;
+    }
+    .detail-tab-toggle-btn {
+      border: 0;
+      background: transparent;
+      padding: 12px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #64748b;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .detail-tab-toggle-btn.active {
+      background: #ca8a04; /* Custom gold color matching the image design */
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(202, 138, 4, 0.2);
+    }
+
+    /* Form platform buttons */
+    .platform-selector-box {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .platform-btn-option {
+      flex: 1;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: #64748b;
+      transition: all 0.2s ease;
+    }
+    .platform-btn-option img, .platform-btn-option i {
+      font-size: 1.15rem;
+    }
+    .platform-btn-option:hover {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .platform-btn-option.active {
+      border-color: #ca8a04;
+      background: rgba(202, 138, 4, 0.05);
+      color: #ca8a04;
+    }
+
+    /* Custom inline EA forms */
+    .detail-ea-label {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin-top: 6px;
+      display: block;
+      font-weight: bold;
+    }
+    .detail-ea-link {
+      color: #ca8a04;
+      text-decoration: none;
+      font-weight: 700;
+      margin-right: 4px;
+    }
+    .detail-ea-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Club Count Picker style */
+    .club-count-picker {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .club-count-btn {
+      border: 0;
+      background: #f1f5f9;
+      color: #64748b;
+      padding: 8px 20px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .club-count-btn.active {
+      background: #ca8a04;
+      color: #ffffff;
+    }
+
+    /* Checkbox list styling */
+    .agreement-check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    .agreement-check-row input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+    .agreement-check-row span {
+      font-size: 0.88rem;
+      color: #64748b;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    /* Bottom action checkout section */
+    .checkout-action-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+      border-top: 2px dashed #e2e8f0;
+      padding-top: 20px;
+    }
+    .action-price-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+    .action-price-label {
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: bold;
+    }
+    .action-price-val {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #10b981;
+    }
+
+    .detail-submit-action-btn {
+      background: #ca8a04;
+      color: #ffffff;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 35px;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(202, 138, 4, 0.25);
+      transition: all 0.25s ease;
+    }
+    .detail-submit-action-btn:hover {
+      box-shadow: 0 4px 18px rgba(202, 138, 4, 0.4);
+      transform: translateY(-1px);
+      background: #b47804;
+    }
+
+    /* Tab Contents Toggle */
+    .tab-content-panel {
+      display: none;
+    }
+    .tab-content-panel.active {
+      display: block;
+    }    @media (max-width: 600px) {
+      .platform-selector-box {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .platform-btn-option {
+        width: 100%;
+        padding: 12px 20px;
+        justify-content: space-between;
+      }
+    }
+
+    /* Dark Mode Banner Adaptations */
+    body.dark-mode .sbc-detail-header-banner {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%);
+      border-color: #24406B;
+    }
+    body.dark-mode .banner-price-badge {
+      background: #0D1E39;
+      border-color: #24406B;
+      color: #cbd5e1;
+    }
+    body.dark-mode .sbc-info-sidebar-card {
+      background: #0D1E39;
+      border-color: #24406B;
+    }
+  </style>
+</head>
+<body class="buy-coins-body light-theme">
+
+  <!-- ══════════ TOP BAR ══════════ -->
+  <header class="buy-header">
+    <div class="buy-header-inner">
+      <a href="buy-sbc.html" class="back-link"><i class="fas fa-arrow-right"></i> العودة لقائمة التحديات</a>
+      <div class="buy-logo">
+        <img src="logo-official.png" alt="Trivela" />
+        <span>Trivela</span>
+      </div>
+      
+      <!-- Unified Global Currency Picker -->
+      <div class="global-currency-picker">
+        <i class="fas fa-globe"></i>
+        <select id="currencySelect">
+          <option value="SAR">SAR — ريال سعودي</option>
+          <option value="USD">USD — دولار أمريكي</option>
+          <option value="AED">AED — درهم إماراتي</option>
+          <option value="KWD">KWD — دينار كويتي</option>
+          <option value="BHD">BHD — دينار بحريني</option>
+          <option value="QAR">QAR — ريال قطري</option>
+          <option value="OMR">OMR — ريال عماني</option>
+          <option value="JOD">JOD — دينار أردني</option>
+          <option value="EGP">EGP — جنيه مصري</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════ MAIN CONTENT ══════════ -->
+  <main class="buy-main-container" style="max-width: 1200px; padding-bottom: 60px;">
+    <div class="buy-card" style="position: relative;">
+      
+      <!-- Premium SBC Header Banner (Option 1) -->
+      <div class="sbc-detail-header-banner">
+        <div class="sbc-banner-content">
+          <h1 class="buy-main-title" id="detailChallengeTitle">Marcus Rashford</h1>
+          
+          <div class="sbc-prices-container">
+            
+            <!-- Console Price tag -->
+            <div class="sbc-price-tag console">
+              <div class="tag-icon">
+                <i class="fab fa-playstation"></i>
+              </div>
+              <div class="tag-details">
+                <span class="tag-title">كونسول (PS/Xbox)</span>
+                <span class="tag-value" id="priceBadgeConsole">0.00 ر.س</span>
+              </div>
+            </div>
+
+            <!-- PC Price tag -->
+            <div class="sbc-price-tag pc">
+              <div class="tag-icon">
+                <i class="fas fa-desktop"></i>
+              </div>
+              <div class="tag-details">
+                <span class="tag-title">كمبيوتر (PC)</span>
+                <span class="tag-value" id="priceBadgePC">0.00 ر.س</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sbc-banner-image-wrap">
+          <img src="hero_coins.jpg" id="detailPlayerImage" alt="Player Challenge"/>
+        </div>
+      </div>
+
+      <!-- Detail Grid Container (Form & Card side-by-side) -->
+      <div class="detail-container-grid">
+        
+        <!-- Column 1: Checkout Form Panels -->
+        <div class="detail-form-column">
+          <!-- Navigation Tabs -->
+          <div class="detail-tabs-header">
+            <button type="button" class="detail-tab-toggle-btn active" id="btnTabOptions" onclick="switchTab('options')">الخيارات</button>
+            <button type="button" class="detail-tab-toggle-btn" id="btnTabDetails" onclick="switchTab('details')">التفاصيل</button>
+          </div>
+
+          <form id="purchaseForm" onsubmit="handlePurchaseSubmit(event)">
+            
+            <!-- PANEL 1: OPTIONS TAB -->
+            <div class="tab-content-panel active" id="panelOptions">
+              
+              <!-- STEP 1: SELECT DEVICE -->
+              <div class="buy-step-block" style="padding-top: 0;">
+                <div class="step-badge-title" style="margin-bottom: 12px;">
+                  <span class="step-number" style="background: rgba(202,138,4,0.15); color: #ca8a04;">01</span>
+                  <div class="step-info-text">
+                    <h3 style="color: #1b355a;">اختيار الجهاز</h3>
+                    <p>سارع في اختيار الجهاز المناسب واستمتع باللعب</p>
+                  </div>
+                </div>
+                
+                <div class="step-content">
+                  <div class="platform-selector-box">
+                    <button type="button" class="platform-btn-option active" id="btnPlatformConsole" onclick="selectPlatform('Console')">
+                      <span>بلايستيشن واكس بوكس (Console)</span>
+                      <div style="display: flex; gap: 4px; align-items: center; font-size: 1.1rem;">
+                        <i class="fab fa-playstation"></i>
+                        <i class="fab fa-xbox"></i>
+                      </div>
+                    </button>
+                    <button type="button" class="platform-btn-option" id="btnPlatformPC" onclick="selectPlatform('PC')">
+                      <span>بي سي (PC)</span>
+                      <i class="fas fa-desktop"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="step-divider"/>
+
+              <!-- STEP 2: CONTACT DETAILS -->
+              <div class="buy-step-block">
+                <div class="step-badge-title" style="margin-bottom: 12px;">
+                  <span class="step-number" style="background: rgba(202,138,4,0.15); color: #ca8a04;">02</span>
+                  <div class="step-info-text">
+                    <h3 style="color: #1b355a;">بيانات التواصل</h3>
+                    <p>يرجى إدخال اسمك ورقم الواتساب للتواصل وتأكيد الطلب</p>
+                  </div>
+                </div>
+                
+                <div class="step-content">
+                  <div class="ea-form-grid" style="display: flex; flex-direction: column; gap: 16px;">
+                    
+                    <!-- Customer Name -->
+                    <div class="ea-input-group">
+                      <div class="input-with-icon">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="customerName" placeholder="الاسم الكامل" required/>
+                      </div>
+                    </div>
+
+                    <!-- Customer Phone -->
+                    <div class="ea-input-group">
+                      <div class="input-with-icon">
+                        <i class="fab fa-whatsapp input-icon"></i>
+                        <input type="tel" id="customerPhone" placeholder="رقم الواتساب للتواصل (مثال: +9665xxxxxxxx)" required/>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <hr class="step-divider"/>
+
+              <!-- STEP 3: EA CREDENTIALS -->
+              <div class="buy-step-block">
+                <div class="step-badge-title" style="margin-bottom: 12px;">
+                  <span class="step-number" style="background: rgba(202,138,4,0.15); color: #ca8a04;">03</span>
+                  <div class="step-info-text">
+                    <h3 style="color: #1b355a;">بيانات حساب الـ EA</h3>
+                    <p>يرجى ملء البيانات الخاصة بحسابك لحل التحديات</p>
+                  </div>
+                </div>
+                
+                <div class="step-content">
+                  <div class="ea-form-grid" style="display: flex; flex-direction: column; gap: 16px;">
+
+                    <!-- Email -->
+                    <div class="ea-input-group">
+                      <div class="input-with-icon">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="eaEmail" placeholder="ایميل الاورجين" required/>
+                      </div>
+                      <span class="detail-ea-label">لمعرفة كيفية استخراج ايميل الاورجين - <a href="https://ea.com" class="detail-ea-link" target="_blank">👈 من هنا</a></span>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="ea-input-group">
+                      <div class="input-with-icon">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="eaPassword" placeholder="كلمة المرور" required/>
+                        <button type="button" class="eye-toggle" onclick="togglePasswordVisibility()"><i class="fas fa-eye" id="eyeIcon"></i></button>
+                      </div>
+                      <span class="detail-ea-label">لمعرفة كيفية استخراج كلمة المرور - <a href="https://ea.com" class="detail-ea-link" target="_blank">👈 من هنا</a></span>
+                    </div>
+
+                    <!-- Backup codes -->
+                    <div class="ea-input-group full-width">
+                      <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a; margin-bottom: 8px; display: block;">الرموز الاحتياطية</label>
+                      <div class="backup-codes-row">
+                        <input type="text" class="backup-code-box" id="backup1" placeholder="رمز 1" maxlength="8" required/>
+                        <input type="text" class="backup-code-box" id="backup2" placeholder="رمز 2" maxlength="8"/>
+                        <input type="text" class="backup-code-box" id="backup3" placeholder="رمز 3" maxlength="8"/>
+                      </div>
+                      <span class="detail-ea-label">لمعرفة كيفية استخراج الرموز الاحتياطية - <a href="https://ea.com" class="detail-ea-link" target="_blank">👈 من هنا</a></span>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <hr class="step-divider"/>
+
+              <!-- STEP 4: CLUB COUNT & AGREEMENT -->
+              <div class="buy-step-block">
+                <div class="step-badge-title" style="margin-bottom: 12px;">
+                  <span class="step-number" style="background: rgba(202,138,4,0.15); color: #ca8a04;">04</span>
+                  <div class="step-info-text">
+                    <h3 style="color: #1b355a;">حالة النادي والموافقة</h3>
+                    <p>يرجى تحديد حالة نواديك والموافقة على الشروط</p>
+                  </div>
+                </div>
+                <div class="step-content">
+                  <!-- Clubs Count selection -->
+                  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 15px;">
+                    <label style="font-weight: 700; font-size: 0.9rem; color: #1b355a;">كم نادي لديك؟</label>
+                    <div class="club-count-picker">
+                      <button type="button" class="club-count-btn active" id="clubBtn1" onclick="selectClubCount(1)">واحد</button>
+                      <button type="button" class="club-count-btn" id="clubBtn2" onclick="selectClubCount(2)">اثنين وأكثر</button>
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Club Name Input -->
+                  <div class="ea-input-group full-width" id="clubNameGroup" style="display: none; margin-bottom: 20px; width: 100%;">
+                    <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a; margin-bottom: 8px; display: block;" for="eaClubName">اسم النادي</label>
+                    <div class="input-with-icon">
+                      <i class="fas fa-shield input-icon"></i>
+                      <input type="text" id="eaClubName" placeholder="أدخل اسم النادي هنا..."/>
+                    </div>
+                  </div>
+
+                  <!-- Web App open agreement checkbox -->
+                  <label class="agreement-check-row">
+                    <input type="checkbox" id="webAppCheck" required/>
+                    <span>من الضروري أن يكون سوق الانتقالات مفتوح بحسابك في تطبيق ويب آب، تحقق قبل الشراء</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- STEP 4.5: DISCOUNTS & GIFTS -->
+              <div class="buy-step-block" id="loyaltyPointsBlock" style="display: none; margin-top: 20px;">
+                <div class="step-badge-title">
+                  <span class="step-number"><i class="fas fa-gift"></i></span>
+                  <div class="step-info-text">
+                    <h3 style="color: #1b355a;">الخصومات والهدايا</h3>
+                    <p>اختر وسيلة الخصم المناسبة لطلبك</p>
+                  </div>
+                </div>
+                
+                <div class="step-content">
+                  <div class="discounts-gifts-card">
+                    
+                    <!-- Option 1: Coupon Code -->
+                    <div class="discount-option-row">
+                      <label class="discount-radio-label">
+                        <input type="radio" name="discountType" value="coupon" id="radCoupon" checked onchange="handleDiscountTypeChange()"/>
+                        <span class="custom-radio-circle"></span>
+                        <span class="discount-label-text">تفعيل كوبون الخصم</span>
+                      </label>
+                      
+                      <div class="discount-input-wrapper" id="couponInputWrapper">
+                        <div class="coupon-field-group">
+                          <div class="coupon-input-relative">
+                            <input type="text" id="couponCodeInput" placeholder="كوبون الهدية / الخصم؟"/>
+                            <i class="fas fa-percent coupon-icon"></i>
+                          </div>
+                          <button type="button" class="coupon-btn" id="btnApplyCoupon" onclick="applyCouponCode()">تفعيل</button>
+                        </div>
+                        <div id="couponStatusMessage" class="coupon-status-msg"></div>
+                      </div>
+                    </div>
+
+                    <div class="discount-divider" id="loyaltyPointsDivider" style="display: none;"></div>
+
+                    <!-- Option 2: Loyalty Points -->
+                    <div class="discount-option-row" id="loyaltyOptionRow" style="display: none;">
+                      <label class="discount-radio-label">
+                        <input type="radio" name="discountType" value="points" id="radPoints" onchange="handleDiscountTypeChange()"/>
+                        <span class="custom-radio-circle"></span>
+                        <span class="discount-label-text"><span id="lblLoyaltyPointsBalance">0</span> نقطة رصيدك من نقاط الولاء</span>
+                      </label>
+                      
+                      <div class="discount-input-wrapper" id="pointsInputWrapper" style="display: none;">
+                        <p class="points-helper-text" style="font-size: 0.82rem; color: #64748b; margin-top: 8px;">
+                          <i class="fas fa-info-circle"></i>
+                          يمكنك الاستفادة من رصيدك بقيمة خصم <strong id="lblPointsDiscountSAR" style="color: #ca8a04;">0.00</strong>، <a href="#" onclick="togglePointsUsage(event)" id="btnApplyPoints" class="points-action-link" style="color: #ca8a04; font-weight: 700; text-decoration: none; margin-right: 4px;">اضغط هنا للتفعيل</a>
+                        </p>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- ══════════ STICKY SUMMARY BAR ══════════ -->
+              <div class="sticky-summary-bar">
+                <div class="summary-inner">
+                  <!-- Right: Price and Service info -->
+                  <div class="summary-right-details">
+                    <div class="summary-total-price" id="finalPriceText">0.00 ر.س</div>
+                    <div class="summary-divider-line"></div>
+                    <div class="summary-coins">
+                      <i class="fas fa-puzzle-piece font-gold"></i>
+                      <span style="margin-right: 6px;">حل تحدي SBC</span>
+                    </div>
+                  </div>
+                  
+                  <!-- Left: Action button -->
+                  <button type="submit" class="summary-complete-btn" id="btnSubmitOrder">
+                    <span>إتمام العملية</span>
+                    <i class="fas fa-arrow-left"></i>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- PANEL 2: DETAILS TAB -->
+            <div class="tab-content-panel" id="panelDetails">
+              <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 16px; padding: 24px; color: #0f172a; line-height: 1.7;">
+                <h3 style="margin-top: 0; color: #1b355a; font-weight: 800; margin-bottom: 12px;"><i class="fas fa-shield-halved font-gold" style="color:#ca8a04; margin-left:8px;"></i> حماية تامة وموثوقية مضمونة</h3>
+                <p style="margin-bottom: 16px;">
+                  نحن نتبع أشد الأساليب أماناً لحل تحديات بناء التشكيلة في حسابك. لا نستخدم أي برمجيات خارجية أو طرق غير شرعية قد تعرض حسابك للحظر أو التحقيق.
+                </p>
+                
+                <h4 style="color: #1b355a; font-weight: 700; margin-bottom: 8px;"><i class="far fa-clock" style="margin-left: 6px;"></i> مدة التنفيذ المقدرة:</h4>
+                <p style="margin-bottom: 16px;">
+                  يتم البدء في حل التحدي خلال ساعة واحدة من استلام الطلب وتأكيده عبر الواتساب. متوسط وقت إتمام التحدي يستغرق من 2 إلى 6 ساعات فقط حسب حجم التحديات المطلوبة.
+                </p>
+
+                <h4 style="color: #1b355a; font-weight: 700; margin-bottom: 8px;"><i class="fas fa-rotate-left" style="margin-left: 6px;"></i> شروط وقواعد هامة:</h4>
+                <ul style="padding-right: 20px; list-style-type: disc;">
+                  <li>يجب أن تكون قد قمت بفتح سوق الانتقالات في تطبيق الويب آب (Web App) الخاص بحسابك.</li>
+                  <li>يرجى عدم تسجيل الدخول إلى اللعبة أثناء تنفيذ الخدمة لضمان استمرارية وبسرعة الحل.</li>
+                  <li>نقوم بمراسلتك فوراً عبر الواتساب لإعلامك فور انتهاء حل التحدي لتعود للعب وتستمتع بلاعبك الجديد!</li>
+                </ul>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">
+          <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
+          <span class="logo-main">Trivela</span>
+        </div>
+        <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>الخدمات</h4>
+        <a href="index.html#coins-device">💰 الكوينز</a>
+        <a href="buy-sbc.html">🧩 SBC</a>
+        <a href="buy-objectives.html">📋 المهام</a>
+        <a href="buy-rivals.html">⚔️ الرايفلز</a>
+        <a href="buy-champions.html">🎮 FUT Champions</a>
+      </div>
+      <div class="footer-col">
+        <h4>سياسات متجر Trivela</h4>
+        <a href="policies.html#privacy">سياسة الخصوصية</a>
+        <a href="policies.html#terms">شروط الاستخدام</a>
+        <a href="policies.html#refund">سياسة الاسترجاع</a>
+        <a href="policies.html#warranty">سياسة الضمان</a>
+        <a href="index.html#faq">الأسئلة الشائعة</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Trivela — جميع الحقوق محفوظة</span>
+      <span>هذا الموقع غير مرتبط بـ EA Sports</span>
+    </div>
+  </div>
+</footer>
+
+<script src="src/core/global-currency.js"></script>
+  <script src="buy-sbc-detail.js"></script>
+</body>
+</html>

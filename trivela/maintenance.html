@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <link rel="icon" type="image/png" href="logo-official.png"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صيانة مؤقتة — متجر Trivela</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts (Cairo & Montserrat) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@400;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --dark-bg: #090e17;
+      --card-bg: #121b2d;
+      --gold-primary: #eab308;
+      --gold-dark: #ca8a04;
+      --text-white: #ffffff;
+      --text-gray: #94a3b8;
+      --gold-glow: rgba(234, 179, 8, 0.15);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--dark-bg);
+      color: var(--text-white);
+      font-family: 'Cairo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ambient Background Glows */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(234,179,8,0.1) 0%, rgba(0,0,0,0) 70%);
+      top: -100px;
+      left: -100px;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(48,83,136,0.1) 0%, rgba(0,0,0,0) 70%);
+      bottom: -150px;
+      right: -150px;
+      pointer-events: none;
+    }
+
+    .maintenance-container {
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      padding: 50px 30px;
+      background: var(--card-bg);
+      border: 1px solid rgba(234, 179, 8, 0.2);
+      border-radius: 28px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 30px var(--gold-glow);
+      z-index: 10;
+      position: relative;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-container {
+      margin-bottom: 30px;
+    }
+
+    .logo-img {
+      height: 60px;
+      width: auto;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+    }
+
+    .icon-container {
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(234,179,8,0.2) 0%, rgba(234,179,8,0.05) 100%);
+      border: 2.5px solid var(--gold-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 30px auto;
+      box-shadow: 0 0 20px var(--gold-glow);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 20px var(--gold-glow); }
+      50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(234, 179, 8, 0.3); }
+      100% { transform: scale(1); box-shadow: 0 0 20px var(--gold-glow); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 20px var(--gold-glow); }
+      50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(234, 179, 8, 0.3); }
+      100% { transform: scale(1); box-shadow: 0 0 20px var(--gold-glow); }
+    }
+
+    /* Wrench rotation animation */
+    .anim-wrench {
+      animation: spin-wrench 3s infinite ease-in-out;
+    }
+    @keyframes spin-wrench {
+      0% { transform: rotate(0deg); }
+      20% { transform: rotate(45deg); }
+      40% { transform: rotate(-15deg); }
+      60% { transform: rotate(0deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* Warning triangle pulsing animation */
+    .anim-warning {
+      animation: pulse-warning 1s infinite alternate ease-in-out;
+    }
+    @keyframes pulse-warning {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(1.12); opacity: 1; }
+    }
+
+    /* Gamepad drifting animation */
+    .anim-gamepad {
+      animation: drift-gamepad 4s infinite ease-in-out;
+    }
+    @keyframes drift-gamepad {
+      0% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-5px) rotate(4deg); }
+      50% { transform: translateY(0) rotate(-4deg); }
+      75% { transform: translateY(-3px) rotate(2deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    /* Countdown Clock Styles */
+    .cd-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 60px;
+    }
+    .cd-num {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.8rem;
+      color: var(--gold-primary);
+      text-shadow: 0 0 10px var(--gold-glow);
+      line-height: 1.2;
+    }
+    .cd-label {
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.72rem;
+      color: var(--text-gray);
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .cd-colon {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.6rem;
+      color: var(--gold-primary);
+      align-self: center;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .icon-container i {
+      font-size: 3rem;
+      color: var(--gold-primary);
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      margin: 0 0 15px 0;
+      line-height: 1.4;
+      background: linear-gradient(135deg, #ffffff 60%, #ffe082 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      color: var(--text-gray);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin: 0 0 35px 0;
+    }
+
+    .divider {
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.3), transparent);
+      margin: 30px 0;
+    }
+
+    .urgent-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 15px;
+    }
+
+    .channels-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .channel-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-radius: 16px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .channel-link:hover {
+      transform: translateY(-3px);
+    }
+
+    .link-wa {
+      background: #25d366;
+    }
+    .link-wa:hover {
+      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.3);
+    }
+
+    .link-ig {
+      background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+    }
+    .link-ig:hover {
+      box-shadow: 0 6px 16px rgba(214, 36, 159, 0.3);
+    }
+
+    .channel-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .channel-info i {
+      font-size: 1.4rem;
+    }
+
+    .footer-note {
+      margin-top: 40px;
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.3);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="maintenance-container">
+    <div class="logo-container">
+      <img src="logo-official.png" alt="Trivela" class="logo-img">
+    </div>
+    
+    <div class="icon-container" id="maintenanceIconContainer">
+      <i id="maintenanceIcon" class="fas fa-screwdriver-wrench anim-wrench"></i>
+    </div>
+    
+    <h1 id="maintenanceTitle">أعمال صيانة مؤقتة</h1>
+    <p id="maintenanceDesc">نحن نقوم ببعض التحسينات والتحديثات الهامة لنوفر لك تجربة شراء كوينز وتحديات أسرع وأكثر أماناً. سنعود للعمل قريباً جداً، شكراً لتفهمك!</p>
+    
+    <!-- Countdown Timer Container -->
+    <div id="countdownContainer" style="display: none; margin: 30px auto; max-width: 420px; background: rgba(0,0,0,0.2); padding: 18px 24px; border-radius: 20px; border: 1px dashed rgba(255,255,255,0.15);">
+      <div class="urgent-title" style="margin-bottom: 12px; font-size: 0.82rem; opacity: 0.8;">الوقت المتبقي على الافتتاح:</div>
+      <div style="display: flex; justify-content: center; gap: 15px; direction: ltr;">
+        <div class="cd-box">
+          <span id="cdSeconds" class="cd-num">00</span>
+          <span class="cd-label">ثانية</span>
+        </div>
+        <span class="cd-colon">:</span>
+        <div class="cd-box">
+          <span id="cdMinutes" class="cd-num">00</span>
+          <span class="cd-label">دقيقة</span>
+        </div>
+        <span class="cd-colon">:</span>
+        <div class="cd-box">
+          <span id="cdHours" class="cd-num">00</span>
+          <span class="cd-label">ساعة</span>
+        </div>
+        <span class="cd-colon" id="cdDaysColon" style="display: none;">:</span>
+        <div class="cd-box" id="cdDaysBox" style="display: none;">
+          <span id="cdDays" class="cd-num">00</span>
+          <span class="cd-label">يوم</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    
+    <div class="urgent-title">هل لديك طلب عاجل؟ تواصل معنا مباشرة:</div>
+    
+    <div class="channels-list">
+      <a href="https://wa.me/966500000000" class="channel-link link-wa" target="_blank">
+        <div class="channel-info">
+          <i class="fab fa-whatsapp"></i>
+          <span>محادثة واتساب الفورية</span>
+        </div>
+        <i class="fas fa-chevron-left"></i>
+      </a>
+      
+      <a href="https://instagram.com/Trivela" class="channel-link link-ig" target="_blank">
+        <div class="channel-info">
+          <i class="fab fa-instagram"></i>
+          <span>إنستجرام المتجر الرسمي</span>
+        </div>
+        <i class="fas fa-chevron-left"></i>
+      </a>
+
+      <!-- Telegram Support Channel -->
+      <a id="linkTelegram" href="https://t.me/Trivela" class="channel-link" style="display: none; background: #0088cc; box-shadow: 0 6px 16px rgba(0, 136, 204, 0.25);" target="_blank">
+        <div class="channel-info">
+          <i class="fab fa-telegram"></i>
+          <span>قناة التليجرام الرسمية</span>
+        </div>
+        <i class="fas fa-chevron-left"></i>
+      </a>
+    </div>
+    
+    <div class="footer-note">TRIVELA © 2026 — ALL RIGHTS RESERVED</div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/api/public/content')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.settings) {
+            const s = data.settings;
+
+            // 1. Title and Description
+            if (s.maintenanceTitleText) {
+              document.getElementById('maintenanceTitle').textContent = s.maintenanceTitleText;
+            }
+            if (s.maintenanceMessage) {
+              document.getElementById('maintenanceDesc').textContent = s.maintenanceMessage;
+            }
+
+            // 2. Custom Glow/Theme Color
+            if (s.maintenanceGlowColor) {
+              document.documentElement.style.setProperty('--gold-primary', s.maintenanceGlowColor);
+              document.documentElement.style.setProperty('--gold-glow', s.maintenanceGlowColor + '26'); // hex alpha 15%
+              document.documentElement.style.setProperty('--gold-dark', s.maintenanceGlowColor);
+            }
+
+            // 3. Custom Icon and Animation Style
+            const iconEl = document.getElementById('maintenanceIcon');
+            if (iconEl && s.maintenanceIconStyle) {
+              iconEl.className = ''; // clear class
+              if (s.maintenanceIconStyle === 'wrench') {
+                iconEl.className = 'fas fa-screwdriver-wrench anim-wrench';
+              } else if (s.maintenanceIconStyle === 'warning') {
+                iconEl.className = 'fas fa-triangle-exclamation anim-warning';
+              } else if (s.maintenanceIconStyle === 'gamepad') {
+                iconEl.className = 'fas fa-gamepad anim-gamepad';
+              } else {
+                iconEl.className = 'fas fa-screwdriver-wrench anim-wrench';
+              }
+            }
+
+            // 4. Countdown Timer logic
+            if (s.maintenanceCountdownActive && s.maintenanceCountdownEndTime) {
+              const endTime = new Date(s.maintenanceCountdownEndTime).getTime();
+              const countdownContainer = document.getElementById('countdownContainer');
+              
+              if (countdownContainer && !isNaN(endTime)) {
+                countdownContainer.style.display = 'block';
+
+                function updateTimer() {
+                  const now = new Date().getTime();
+                  const diff = endTime - now;
+
+                  if (diff <= 0) {
+                    clearInterval(timerInterval);
+                    countdownContainer.innerHTML = `
+                      <div style="font-family: Cairo, sans-serif; font-weight: 800; color: var(--gold-primary); font-size: 1.1rem; text-align: center; animation: pulse-warning 1s infinite alternate ease-in-out;">
+                        <i class="fas fa-circle-notch fa-spin"></i> جاري فتح المتجر ونقلكم للرئيسية...
+                      </div>
+                    `;
+                    setTimeout(() => {
+                      window.location.href = '/';
+                    }, 2500);
+                    return;
+                  }
+
+                  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                  if (days > 0) {
+                    document.getElementById('cdDaysBox').style.display = 'flex';
+                    document.getElementById('cdDaysColon').style.display = 'inline-block';
+                    document.getElementById('cdDays').textContent = String(days).padStart(2, '0');
+                  } else {
+                    document.getElementById('cdDaysBox').style.display = 'none';
+                    document.getElementById('cdDaysColon').style.display = 'none';
+                  }
+
+                  document.getElementById('cdHours').textContent = String(hours).padStart(2, '0');
+                  document.getElementById('cdMinutes').textContent = String(minutes).padStart(2, '0');
+                  document.getElementById('cdSeconds').textContent = String(seconds).padStart(2, '0');
+                }
+
+                updateTimer();
+                const timerInterval = setInterval(updateTimer, 1000);
+              }
+            }
+
+            // 5. Contact Support Channels
+            if (s.whatsappPhone) {
+              const waLink = document.querySelector('.link-wa');
+              if (waLink) waLink.href = `https://wa.me/${s.whatsappPhone.replace(/[\s\+\-]/g, '')}`;
+            }
+            if (s.instagramUrl) {
+              const igLink = document.querySelector('.link-ig');
+              if (igLink) igLink.href = s.instagramUrl;
+            }
+            
+            // Telegram Channel Link Toggle
+            const tgLink = document.getElementById('linkTelegram');
+            if (tgLink) {
+              if (s.maintenanceTelegramActive && s.settingTelegram) {
+                tgLink.href = s.settingTelegram;
+                tgLink.style.display = 'flex';
+              } else {
+                tgLink.style.display = 'none';
+              }
+            }
+          }
+        })
+        .catch(err => console.error("Error loading public settings:", err));
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <link rel="icon" type="image/png" href="logo-official.png"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trivela | كوينز FIFA 27 — SBC — رايفلز — مهام — أسرع وأأمن</title>
+  <meta name="description" content="Trivela - أفضل متجر لخدمات FIFA 27 Ultimate Team: كوينز لجميع المنصات، SBC، رايفلز، مهام، وأكثر. توصيل سريع وأمان تام."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <!-- JSON-LD Schema Markup (Google SEO Product & Store Snippet) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "Trivela",
+    "image": "logo-official.png",
+    "description": "أفضل متجر عربي لشراء كوينز FIFA 27 وتفويض تحديات SBC ومباريات Rivals و FUT Champions بأمان تام وضمان ضد الحظر.",
+    "telephone": "+966500000000",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "SA"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "1250"
+    }
+  }
+  </script>
+  
+  <style>
+    /* Homepage custom section styles */
+    .coaching-section-home, .packages-section-home {
+      padding: 60px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .coaching-card-home, .package-card-home {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 24px;
+      padding: 24px;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+    .coaching-card-home:hover {
+      transform: translateY(-4px);
+      border-color: #14b8a6;
+      box-shadow: 0 12px 24px rgba(20, 184, 166, 0.08);
+    }
+    .package-card-home:hover {
+      transform: translateY(-4px);
+      border-color: #eab308;
+      box-shadow: 0 12px 24px rgba(234, 179, 8, 0.08);
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(9, 14, 23, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    
+    .modal-content-wrap {
+      background: #ffffff;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 550px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      position: relative;
+      animation: modalScaleUp 0.3s ease-out;
+      border: 1px solid rgba(27, 53, 90, 0.1);
+      color: #0f172a;
+      text-align: right;
+    }
+    @keyframes modalScaleUp {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .modal-close-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: #f1f5f9;
+      border: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #64748b;
+      transition: all 0.2s ease;
+    }
+    .modal-close-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #1b355a;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    .modal-desc {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+    
+    .modal-price-tag {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #10b981;
+      margin-bottom: 20px;
+    }
+
+    /* Modal Form fields */
+    .modal-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .modal-input {
+      width: 100%;
+      border-radius: 10px;
+      border: 1.5px solid #cbd5e1;
+      padding: 11px 14px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      box-sizing: border-box;
+      outline: none;
+      transition: all 0.25s ease;
+      background: #ffffff;
+      color: #0f172a;
+    }
+    .modal-input:focus {
+      border-color: #1b355a;
+      box-shadow: 0 0 8px rgba(27, 53, 90, 0.15);
+    }
+    
+    /* Device toggler inside modal */
+    .modal-platform-picker {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .modal-platform-btn {
+      flex: 1;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 10px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #64748b;
+      transition: all 0.25s ease;
+    }
+    .modal-platform-btn:hover {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .modal-platform-btn.active {
+      border-color: #1b355a;
+      background: rgba(27, 53, 90, 0.05);
+      color: #1b355a;
+    }
+    
+    .modal-submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+    .modal-submit-btn:hover {
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+      transform: translateY(-1px);
+    }
+    
+    .backup-codes-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
+      <span class="logo-main">Trivela</span>
+    </a>
+    <ul class="nav-menu" id="navMenu">
+      <li><a href="#coins-device">🪙 شحن الكوينز</a></li>
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropdown-toggle">الخدمات <i class="fas fa-chevron-down" style="font-size:0.7rem; margin-right:4px;"></i></a>
+        <ul class="dropdown-content">
+          <li><a href="buy-sbc.html">🧩 تحديات الـ SBC</a></li>
+          <li><a href="buy-objectives.html">📋 المهام (Objectives)</a></li>
+          <li><a href="buy-rivals.html">🏆 Rivals</a></li>
+          <li><a href="buy-champions.html">🥇 Champions</a></li>
+        </ul>
+      </li>
+      <li><a href="#coaching-section">🎓 الاستشارات</a></li>
+      <li><a href="#packages-section">📦 الباقات</a></li>
+      <li><a href="#features">مميزاتنا</a></li>
+      <li><a href="#faq">الأسئلة الشائعة</a></li>
+      <li><a href="login.html"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</a></li>
+    </ul>
+    <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="تغيير المظهر">
+      <i class="fas fa-moon"></i>
+    </button>
+    <button class="nav-hamburger" id="hamburger" aria-label="القائمة">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero" id="home">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="grid-overlay"></div>
+
+  <div class="hero-layout">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <span class="pulse-ring"></span>
+        <span>متاح الآن ✦</span>
+      </div>
+      <h1 class="hero-h1" id="cms_heroTitle">
+        طريقك الأسرع
+        <span class="gradient-word">لبناء تشكيلة أحلامك</span><br/>
+        وبأمان كامل
+      </h1>
+      <p class="hero-desc" id="cms_heroSubTitle">
+        متجر <strong>Trivela</strong> المعتمد والأول لشحن كوينز وتفويض تحديات SBC ومباريات Rivals و FUT Champions. خدمات احترافية وسريعة بأعلى معايير الأمان وضمان ضد الحظر.
+      </p>
+      <div class="hero-trust-row">
+        <div class="trust-chip"><i class="fas fa-shield-halved"></i><span id="cms_statSecurityLabel">أمان 100%</span></div>
+        <div class="trust-chip"><i class="fas fa-bolt"></i><span>توصيل خلال دقائق</span></div>
+        <div class="trust-chip"><i class="fas fa-headset"></i><span>دعم 24/7</span></div>
+      </div>
+      <div class="hero-actions">
+        <a href="#coins-device" class="cta-primary"><i class="fas fa-bolt"></i> ابدأ الشحن الآن</a>
+        <a href="#other-products" class="cta-ghost"><i class="fas fa-grid-2"></i> كل الخدمات</a>
+      </div>
+      <div class="hero-numbers">
+        <div class="hn-item"><strong class="counter" id="cms_statOrdersCount" data-to="15000">0</strong><sup>+</sup><span id="cms_statOrdersLabel">عملية ناجحة</span></div>
+        <div class="hn-sep"></div>
+        <div class="hn-item"><strong class="counter" id="cms_statDeliveryTime" data-to="10">0</strong><sup id="cms_statDeliveryLabel">دقائق توصيل</sup></div>
+        <div class="hn-sep"></div>
+        <div class="hn-item"><strong>4.9</strong><sup>⭐</sup><span>تقييم العملاء</span></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-brand-display">
+        <div class="brand-deco deco-top-left"></div>
+        <div class="brand-deco deco-bottom-right"></div>
+        <div class="brand-logo-box">
+          <img src="logo-official.png" alt="Trivela Logo" class="main-logo-img"/>
+        </div>
+        <div class="brand-pill">TRIVELA &bull; متجرك الأول</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><div class="sh-dot"></div></div>
+</section>
+
+<!-- ══════════ TICKER ══════════ -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span>🪙 كوينز PS5</span><span class="tk-dot">•</span>
+    <span>🪙 كوينز PS4</span><span class="tk-dot">•</span>
+    <span>🪙 كوينز Xbox</span><span class="tk-dot">•</span>
+    <span>🪙 كوينز PC</span><span class="tk-dot">•</span>
+    <span>🛡️ أمان 100%</span><span class="tk-dot">•</span>
+    <span>⚡ توصيل خلال دقائق</span><span class="tk-dot">•</span>
+    <span>🧩 SBC فوري</span><span class="tk-dot">•</span>
+    <span>⚔️ رايفلز احترافي</span><span class="tk-dot">•</span>
+    <span>📋 إنهاء مهام</span><span class="tk-dot">•</span>
+    <span>🎮 FUT Champions</span><span class="tk-dot">•</span>
+    <span>🪙 كوينز PS5</span><span class="tk-dot">•</span>
+    <span>🪙 كوينز PS4</span><span class="tk-dot">•</span>
+  </div>
+</div>
+
+<!-- ══════════ COINS DEVICE SELECTION ══════════ -->
+<section class="device-section" id="coins-device">
+  <div class="container">
+    <div class="device-header">
+      <h2 class="section-h2 text-center" id="cms_platformTitle">ابدأ شحن الكوينز لحسابك الآن — اختر منصتك للبدء</h2>
+      <p class="section-sub text-center" id="cms_platformSubTitle">توصيل فوري وآمن بنسبة 100% لكافة المنصات والأجهزة</p>
+    </div>
+    
+    <div class="device-grid-container">
+      <div class="device-grid">
+        <!-- Console Card (PlayStation & Xbox) -->
+        <a href="buy-coins.html?platform=console" class="device-card console-card">
+          <div class="device-glow"></div>
+          <div class="console-icons">
+            <div class="console-badge ps-badge">
+              <i class="fab fa-playstation"></i>
+            </div>
+            <div class="console-badge xbox-badge">
+              <i class="fab fa-xbox"></i>
+            </div>
+          </div>
+          <h3 class="device-title">بلايستيشن واكس بوكس</h3>
+        </a>
+
+        <!-- PC Card -->
+        <a href="buy-coins.html?platform=pc" class="device-card pc-card">
+          <div class="device-glow"></div>
+          <div class="device-icon-wrap">
+            <svg class="pc-custom-logo" viewBox="0 0 120 80" fill="currentColor">
+              <!-- Stylized Cyber PC Logo -->
+              <path d="M15 15 H55 C65 15 70 23 70 32 C70 42 63 48 53 48 H33 V75 H15 Z M33 28 V35 H52 C55 35 55 28 52 28 Z" />
+              <path d="M105 28 C100 20 90 15 78 15 C60 15 50 30 50 48 C50 65 60 80 78 80 C90 80 100 75 105 67 L95 58 C90 63 85 67 78 67 C68 67 63 58 63 48 C63 37 68 28 78 28 C85 28 90 32 95 37 Z" />
+            </svg>
+          </div>
+          <h3 class="device-title">بي سي</h3>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mobile Categories Quick Navigation Bar -->
+<div class="mobile-categories-bar">
+  <a href="buy-coins.html" class="m-cat-card">
+    <div class="m-cat-icon coins-bg"><i class="fas fa-coins"></i></div>
+    <span>الكوينز</span>
+  </a>
+  <a href="buy-sbc.html" class="m-cat-card">
+    <div class="m-cat-icon sbc-bg"><i class="fas fa-puzzle-piece"></i></div>
+    <span>SBC</span>
+  </a>
+  <a href="buy-objectives.html" class="m-cat-card">
+    <div class="m-cat-icon obj-bg"><i class="fas fa-tasks"></i></div>
+    <span>المهام</span>
+  </a>
+  <a href="buy-rivals.html" class="m-cat-card">
+    <div class="m-cat-icon rivals-bg"><i class="fas fa-trophy"></i></div>
+    <span>Rivals</span>
+  </a>
+  <a href="buy-champions.html" class="m-cat-card">
+    <div class="m-cat-icon champs-bg"><i class="fas fa-award"></i></div>
+    <span>Champions</span>
+  </a>
+  <a href="#coaching-section" class="m-cat-card">
+    <div class="m-cat-icon coaching-bg"><i class="fas fa-graduation-cap"></i></div>
+    <span>الاستشارات</span>
+  </a>
+  <a href="#packages-section" class="m-cat-card">
+    <div class="m-cat-icon pkgs-bg"><i class="fas fa-box-open"></i></div>
+    <span>الباقات</span>
+  </a>
+</div>
+
+<!-- ══════════ OTHER PRODUCTS ══════════ -->
+<section class="products-section" id="other-products">
+  <div class="container">
+    <h2 class="section-h2 text-center header-spacing" id="cms_catalogTitle">خدمات احترافية متكاملة لـ FIFA 27 Ultimate Team</h2>
+    
+    <div class="products-grid grid-4-cols">
+      <!-- Objectives (المهام) -->
+      <a href="buy-objectives.html" class="product-card obj-card">
+        <div class="prod-img-wrap">
+          <div class="prod-art obj-art">
+            <div class="pack pack-bronze"></div>
+            <div class="pack pack-silver"></div>
+            <div class="pack pack-gold"></div>
+            <div class="xp-badge">XP</div>
+          </div>
+        </div>
+        <h3 class="product-title">المهام (Objectives)</h3>
+      </a>
+      
+      <!-- Rivals (الرايفلز) -->
+      <a href="buy-rivals.html" class="product-card rivals-card">
+        <div class="prod-img-wrap">
+          <div class="prod-art rivals-art">
+            <div class="rivals-crest">
+              <i class="fas fa-shield-halved"></i>
+              <div class="crest-emblem"><i class="fas fa-crown"></i></div>
+            </div>
+          </div>
+        </div>
+        <h3 class="product-title">الرايفلز (Rivals)</h3>
+      </a>
+      
+      <!-- FUT Champions (فوت تشامبيون) -->
+      <a href="buy-champions.html" class="product-card champions-card">
+        <div class="prod-img-wrap">
+          <div class="prod-art champions-art">
+            <div class="champions-crest">
+              <i class="fas fa-trophy"></i>
+              <div class="laurel-leaves">
+                <i class="fas fa-leaf left-leaf"></i>
+                <i class="fas fa-leaf right-leaf"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3 class="product-title">فوت تشامبيون (FUT Champions)</h3>
+      </a>
+
+      <!-- SBC (تحديات التشكيلة) -->
+      <a href="buy-sbc.html" class="product-card sbc-card">
+        <div class="prod-img-wrap">
+          <div class="prod-art sbc-art">
+            <div class="sbc-puzzle">
+              <i class="fas fa-puzzle-piece"></i>
+              <div class="puzzle-glow"><i class="fas fa-bolt"></i></div>
+            </div>
+          </div>
+        </div>
+        <h3 class="product-title">تحديات الـ SBC</h3>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SQUAD BUILDING & COACHING SECTION ══════════ -->
+<section class="coaching-section-home" id="coaching-section" style="background: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 80px 0;">
+  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div class="section-tag text-center" id="cms_guaranteeBadge" style="margin: 0 auto 12px auto; display: block; width: fit-content;">استشارات فنية</div>
+    <h2 class="section-h2 text-center" id="cms_guaranteeTitle" style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; text-align: center; color: #1b355a;">كوّن فريقك باحتراف</h2>
+    <p class="section-sub text-center" id="cms_guaranteeSubTitle" style="font-size: 1.15rem; color: #64748b; margin: 0 auto 48px auto; max-width: 750px; text-align: center; line-height: 1.6;">نحلل ميزانيتك ونقترح لك أفضل تشكيلة ممكنة تناسب أسلوب لعبك وسوق اللاعبين الفعلي.</p>
+    
+    <!-- Premium 3-Package Pricing Grid -->
+    <div class="premium-pricing-grid">
+      
+      <!-- Card 1: Basic (اساسي) -->
+      <div class="premium-pricing-card">
+        <div class="pkg-header">
+          <div class="pkg-icon-wrap"><i class="fas fa-seedling"></i></div>
+          <h3 class="pkg-name">أساسي</h3>
+          <div class="pkg-price-row">
+            <span class="pkg-price-sar">15</span>
+            <span class="pkg-curr">ر.س</span>
+            <span class="pkg-price-usd">($4)</span>
+          </div>
+          <p class="pkg-desc">جرب بناء تشكيلتك الأولى واختبر أساسيات البناء الفني.</p>
+        </div>
+        <div class="pkg-features">
+          <div class="pkg-features-title">المميزات الأساسية:</div>
+          <ul class="pkg-features-list">
+            <li><i class="fas fa-check-circle"></i><span>بناء <strong>3 تشكيلات</strong> أساسية متناسقة.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>9 خيارات مقترحة</strong> لتناسب أقل ميزانية.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>صلاحية ودعم فني لمدة <strong>3 أيام</strong>.</span></li>
+          </ul>
+        </div>
+        <div class="pkg-action">
+          <button type="button" class="pkg-btn btn-secondary" onclick="openStaticCoachingBooking('اساسي', 15)">اطلب الآن</button>
+        </div>
+      </div>
+
+      <!-- Card 2: Pro (برو) - Featured Package -->
+      <div class="premium-pricing-card featured">
+        <div class="featured-badge">الأكثر طلباً 🔥</div>
+        <div class="pkg-header">
+          <div class="pkg-icon-wrap"><i class="fas fa-fire-flame-simple"></i></div>
+          <h3 class="pkg-name">برو (Pro)</h3>
+          <div class="pkg-price-row">
+            <span class="pkg-price-sar">25</span>
+            <span class="pkg-curr">ر.س</span>
+            <span class="pkg-price-usd">($6.67)</span>
+          </div>
+          <p class="pkg-desc">احصل على خيارات أوسع وتكتيكات مطورة لتطوير تشكيلتك فوراً.</p>
+        </div>
+        <div class="pkg-features">
+          <div class="pkg-features-title">المميزات المتقدمة:</div>
+          <ul class="pkg-features-list">
+            <li><i class="fas fa-check-circle"></i><span>بناء <strong>5 تشكيلات</strong> مصممة خصيصاً لك.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>15 تشكيلة مقترحة</strong> بتقييم عالي حسب ميزانيتك.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>فلاتر إضافية</strong> لتخصيص التكتيك واللعب.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>صلاحية ومتابعة فنية لمدة <strong>7 أيام</strong>.</span></li>
+          </ul>
+        </div>
+        <div class="pkg-action">
+          <button type="button" class="pkg-btn btn-primary" onclick="openStaticCoachingBooking('برو', 25)">اطلب الآن</button>
+        </div>
+      </div>
+
+      <!-- Card 3: Pro Plus (برو بلس) -->
+      <div class="premium-pricing-card">
+        <div class="pkg-header">
+          <div class="pkg-icon-wrap"><i class="fas fa-crown"></i></div>
+          <h3 class="pkg-name">برو بلس (Pro Plus)</h3>
+          <div class="pkg-price-row">
+            <span class="pkg-price-sar">39</span>
+            <span class="pkg-curr">ر.س</span>
+            <span class="pkg-price-usd">($10.4)</span>
+          </div>
+          <p class="pkg-desc">استراتيجيات متقدمة، وتوصيات فائقة الدقة، وتحكم كامل بالذكاء الاصطناعي.</p>
+        </div>
+        <div class="pkg-features">
+          <div class="pkg-features-title">المميزات الكاملة:</div>
+          <ul class="pkg-features-list">
+            <li><i class="fas fa-check-circle"></i><span>بناء <strong>10 تشكيلات أساسية</strong> قوية بالذكاء الاصطناعي.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>30 تشكيلة مقترحة</strong> بتقييمات فائقة الدقة.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>فلاتر وتكتيكات متقدمة</strong> وحصرية بالكامل.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>صلاحية ومتابعة فنية كاملة لمدة <strong>15 يوماً</strong>.</span></li>
+          </ul>
+        </div>
+        <div class="pkg-action">
+          <button type="button" class="pkg-btn btn-secondary" onclick="openStaticCoachingBooking('برو بلس', 39)">اطلب الآن</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PACKAGES & BUNDLES SECTION ══════════ -->
+<section class="packages-section-home" id="packages-section" style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 80px 0;">
+  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div class="section-tag text-center" style="margin: 0 auto 12px auto; display: block; width: fit-content;">الباقات المميزة</div>
+    <h2 class="section-h2 text-center" style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; text-align: center; color: #1b355a;">كوينز + لاعب مميز — بسعر واحد</h2>
+    <p class="section-sub text-center" style="font-size: 1.15rem; color: #64748b; margin: 0 auto 48px auto; max-width: 750px; text-align: center; line-height: 1.6;">احصل على كوينز FUT وبطاقة لاعب بحزمة واحدة مخفضة — وفّر أكثر، العب أفضل.</p>
+
+    <!-- Packages Grid -->
+    <div id="homepagePackagesGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+      <!-- Loaded dynamically -->
+    </div>
+    <div id="noHomePackagesText" style="display: none; text-align: center; padding: 30px; color: #94a3b8; font-weight: bold;">
+      ⚠️ لا توجد باقات متوفرة حالياً في المتجر.
+    </div>
+
+    <!-- View All Link -->
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="buy-packages.html" style="display: inline-flex; align-items: center; gap: 8px; background: #f0f5ff; color: #305388; border: 2px solid #cde2fe; border-radius: 50px; padding: 12px 32px; font-family: Cairo, sans-serif; font-weight: 700; font-size: 1rem; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.background='#305388';this.style.color='#fff';" onmouseout="this.style.background='#f0f5ff';this.style.color='#305388';">
+        <i class="fas fa-box-open"></i>
+        عرض كل الباقات المتاحة
+        <i class="fas fa-arrow-left"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FEATURES ══════════ -->
+<section class="features-section" id="features">
+  <div class="container">
+    <div class="section-tag">لماذا نحن؟</div>
+    <h2 class="section-h2" id="cms_featuresTitle">مميزات <span class="blue-word">Trivela</span></h2>
+    <p class="section-sub" id="cms_featuresSubTitle">بنيناها لأجلك أنت كمشتري، مش لمجرد الإعلان</p>
+    <div class="bento-grid" id="cms_bentoGrid">
+      <div class="bento-card bento-big bento-blue">
+        <div class="bc-icon"><i class="fas fa-bolt"></i></div>
+        <h3>توصيل فوري — كوينز وخدمات</h3>
+        <p>كوينز تصلك خلال دقائق. SBC ومهام تنجز في ساعات. ويك إند ليج تنهيها قبل انتهاء الوقت.</p>
+        <div class="bento-deco"><span>⚡</span></div>
+        <div class="bc-stat"><strong>10</strong> دقائق متوسط توصيل الكوينز</div>
+      </div>
+      <div class="bento-card bento-white">
+        <div class="bc-icon bc-green"><i class="fas fa-shield-halved"></i></div>
+        <h3>حماية كاملة للحساب</h3>
+        <p>+15,000 عملية بدون أي حظر. نستخدم أسلوب Transfer Market الآمن بالكامل.</p>
+      </div>
+      <div class="bento-card bento-white">
+        <div class="bc-icon bc-orange"><i class="fas fa-rotate-left"></i></div>
+        <h3>ضمان استرجاع المال</h3>
+        <p>لو ما أُنجزت خدمتك لأي سبب — المبلغ يرجع لك فوراً، بدون جدال.</p>
+      </div>
+      <div class="bento-card bento-white">
+        <div class="bc-icon bc-purple"><i class="fas fa-headset"></i></div>
+        <h3>دعم بشري 24/7</h3>
+        <p>موظف حقيقي يرد عليك عبر واتساب لمساعدتك في أي استفسار، في أي وقت.</p>
+      </div>
+      <div class="bento-card bento-white">
+        <div class="bc-icon bc-blue"><i class="fas fa-tags"></i></div>
+        <h3>أسعار تنافسية وتحديث يومي</h3>
+        <p>نراقب السوق يومياً لنضمن لك الحصول على أفضل قيمة مقابل مالك. أسعارنا تتحدث عن نفسها.</p>
+      </div>
+      <div class="bento-card bento-white">
+        <div class="bc-icon bc-red"><i class="fas fa-ban"></i></div>
+        <h3>Anti-Ban مضمون</h3>
+        <p>طريقتنا مجربة على +15,000 عملية. لا حظر، لا تحقيق، لا مشاكل مع EA.</p>
+      </div>
+      <div class="bento-card bento-wide bento-blue-light">
+        <div class="bc-icon bc-blue"><i class="fas fa-gamepad"></i></div>
+        <h3>كل المنصات مدعومة</h3>
+        <div class="platform-icons-row">
+          <div class="pi"><i class="fab fa-playstation"></i><span>PS4</span></div>
+          <div class="pi"><i class="fab fa-playstation"></i><span>PS5</span></div>
+          <div class="pi"><i class="fab fa-xbox"></i><span>Xbox</span></div>
+          <div class="pi"><i class="fas fa-desktop"></i><span>PC</span></div>
+        </div>
+      </div>
+      <div class="bento-card bento-big bento-gradient-border">
+        <div class="bc-icon bc-blue"><i class="fas fa-lock"></i></div>
+        <h3>حماية تامة لمعلوماتك</h3>
+        <p>بياناتك وحساباتك في أيدٍ أمينة. نطبق أعلى معايير الخصوصية لضمان سرية معلوماتك.</p>
+        <div class="transparent-badges">
+          <span>✅ تشفير عالي</span>
+          <span>✅ سرية تامة</span>
+          <span>✅ أمان 100%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ HOW IT WORKS ══════════ -->
+<section class="how-section" id="how">
+  <div class="container">
+    <div class="section-tag">الطريقة</div>
+    <h2 class="section-h2" id="cms_howSectionTitle">3 خطوات <span class="blue-word">بس</span></h2>
+    <p class="section-sub" id="cms_howSectionSubTitle">أبسط عملية شراء ستجربها في حياتك</p>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="hs-num">01</div>
+        <div class="hs-icon"><i class="fas fa-gamepad"></i></div>
+        <h3 id="cms_landingStep1Title">حدد طلبك ومنصتك</h3>
+        <p id="cms_landingStep1Desc">اختر جهازك أو نوع الخدمة المطلوبة، وحدد كمية الكوينز أو التحدي المتاح.</p>
+      </div>
+      <div class="how-connector"><div class="hc-line"></div><i class="fas fa-arrow-left"></i></div>
+      <div class="how-step">
+        <div class="hs-num">02</div>
+        <div class="hs-icon"><i class="fab fa-whatsapp"></i></div>
+        <h3 id="cms_landingStep2Title">تأكيد الطلب والدفع</h3>
+        <p id="cms_landingStep2Desc">املأ بياناتك بأمان تام واضغط إتمام العملية ليتم توجيهك فوراً للواتساب لتأكيد الدفع.</p>
+      </div>
+      <div class="how-connector"><div class="hc-line"></div><i class="fas fa-arrow-left"></i></div>
+      <div class="how-step">
+        <div class="hs-num">03</div>
+        <div class="hs-icon"><i class="fas fa-trophy"></i></div>
+        <h3 id="cms_landingStep3Title">استلم الخدمة وانبسط!</h3>
+        <p id="cms_landingStep3Desc">يتم إنجاز تحدياتك أو شحن الكوينز لحسابك خلال دقائق معدودة بأمان وضمان 100%.</p>
+      </div>
+    </div>
+    <div class="how-note">
+      <i class="fas fa-circle-info"></i>
+      <span id="cms_landingStepsBottomNote">بعد الدفع مباشرة يتواصل معك المختص لإتمام الخدمة — لا انتظار، لا تأخير!</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ REVIEWS ══════════ -->
+<section class="reviews-section" id="reviews">
+  <div class="container">
+    <div class="section-tag">التقييمات</div>
+    <h2 class="section-h2">عملاؤنا <span class="blue-word">يتكلمون</span></h2>
+    <div class="reviews-summary">
+      <div class="rs-score">4.9</div>
+      <div class="rs-right">
+        <div class="rs-stars">★★★★½</div>
+        <div class="rs-count">تقييمات حقيقية من عملاء حقيقيين</div>
+        <div class="rs-bars">
+          <div class="rb-row"><span>5★</span><div class="rb-track"><div class="rb-fill" style="width:89%"></div></div><span>89%</span></div>
+          <div class="rb-row"><span>4★</span><div class="rb-track"><div class="rb-fill" style="width:8%"></div></div><span>8%</span></div>
+          <div class="rb-row"><span>3★</span><div class="rb-track"><div class="rb-fill" style="width:2%"></div></div><span>2%</span></div>
+          <div class="rb-row"><span>2★</span><div class="rb-track"><div class="rb-fill" style="width:1%"></div></div><span>1%</span></div>
+          <div class="rb-row"><span>1★</span><div class="rb-track"><div class="rb-fill" style="width:0%"></div></div><span>0%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="reviews-masonry" id="reviewsMasonry"></div>
+    <div style="text-align: center; margin-top: 35px;">
+      <a href="reviews.html" class="nav-order-btn" style="padding: 12px 36px; border-radius: 100px; text-decoration: none; font-size: 0.95rem; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s ease, box-shadow 0.25s ease; box-shadow: 0 4px 15px rgba(48,83,136,0.15);">
+        <span>مشاهدة المزيد من التقييمات</span>
+        <i class="fas fa-chevron-left" style="font-size: 0.8rem;"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FAQ ══════════ -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="faq-layout">
+      <div class="faq-left">
+        <div class="section-tag">أسئلة</div>
+        <h2 class="section-h2">أسئلة<br/><span class="blue-word">شائعة</span></h2>
+        <p>إذا ما لقيت جوابك تواصل معنا وسنرد خلال دقائق.</p>
+        <a href="https://wa.me/966500000000" class="cta-primary" target="_blank">
+          <i class="fab fa-whatsapp"></i> تواصل معنا
+        </a>
+      </div>
+      <div class="faq-right" id="faqList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ ORDER / CONTACT ══════════ -->
+<section class="order-section" id="order">
+  <div class="container" style="max-width: 800px; text-align: center;">
+    <div class="section-tag" style="margin: 0 auto 16px auto;">تواصل مباشر</div>
+    <h2 class="section-h2 text-center">لديك استفسار أو <span class="blue-word">طلب مخصص؟</span></h2>
+    <p class="section-sub text-center" style="margin-bottom: 40px; max-width: 600px;">يمكنك التواصل مع الدعم الفني مباشرة وسيقوم المختص بمساعدتك وتلبية طلبك فوراً.</p>
+    
+    <div class="support-grid">
+      <!-- WhatsApp Card -->
+      <a href="https://wa.me/966500000000" class="support-card support-card-wa" target="_blank">
+        <div class="support-card-content">
+          <div class="support-icon-wrapper wa-icon">
+            <i class="fab fa-whatsapp"></i>
+          </div>
+          <div class="support-details">
+            <h3>محادثة واتساب مباشرة</h3>
+            <span>نرد عليك خلال دقيقة</span>
+          </div>
+        </div>
+        <div class="support-arrow">
+          <i class="fas fa-chevron-left"></i>
+        </div>
+      </a>
+      
+      <!-- Instagram Card -->
+      <a href="https://instagram.com/Trivela" class="support-card support-card-ig" target="_blank">
+        <div class="support-card-content">
+          <div class="support-icon-wrapper ig-icon">
+            <i class="fab fa-instagram"></i>
+          </div>
+          <div class="support-details">
+            <h3>إنستقرام المتجر</h3>
+            <span>@Trivela</span>
+          </div>
+        </div>
+        <div class="support-arrow">
+          <i class="fas fa-chevron-left"></i>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">
+          <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
+          <span class="logo-main">Trivela</span>
+        </div>
+        <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>الخدمات</h4>
+        <a href="index.html#coins-device">💰 الكوينز</a>
+        <a href="buy-sbc.html">🧩 SBC</a>
+        <a href="buy-objectives.html">📋 المهام</a>
+        <a href="buy-rivals.html">⚔️ الرايفلز</a>
+        <a href="buy-champions.html">🎮 FUT Champions</a>
+      </div>
+      <div class="footer-col">
+        <h4>سياسات متجر Trivela</h4>
+        <a href="policies.html#privacy">سياسة الخصوصية</a>
+        <a href="policies.html#terms">شروط الاستخدام</a>
+        <a href="policies.html#refund">سياسة الاسترجاع</a>
+        <a href="policies.html#warranty">سياسة الضمان</a>
+        <a href="index.html#faq">الأسئلة الشائعة</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Trivela — جميع الحقوق محفوظة</span>
+      <span>هذا الموقع غير مرتبط بـ EA Sports</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════ FLOATING WHATSAPP ══════════ -->
+<a href="https://wa.me/966500000000" class="floating-wa" target="_blank" aria-label="تواصل عبر واتساب">
+  <i class="fab fa-whatsapp"></i>
+  <span class="floating-wa-label">اطلب الآن</span>
+</a>
+
+<!-- ══════════ MODALS FOR CHECKOUT ══════════ -->
+<!-- Coaching Booking Modal -->
+<div class="modal-overlay" id="coachingModalOverlay">
+  <div class="modal-content-wrap">
+    <button class="modal-close-btn" type="button" onclick="closeModal('coachingModalOverlay')"><i class="fas fa-times"></i></button>
+    <h3 class="modal-title" id="modalCoachingTitle">حجز خدمة استشارية</h3>
+    <p class="modal-desc">يرجى ملء البيانات لتأكيد حجز الخدمة والتواصل معك فوراً</p>
+    <div class="modal-price-tag" id="modalCoachingPrice">0.00 ر.س</div>
+    
+    <form id="coachingModalForm" onsubmit="handleCoachingModalSubmit(event)">
+      <!-- Platform selector -->
+      <div class="modal-form-group">
+        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">منصة اللعب:</label>
+        <div class="modal-platform-picker">
+          <button type="button" class="modal-platform-btn active" id="modalPlatformConsole" onclick="selectModalPlatform('Console')">
+            <i class="fab fa-playstation"></i> / <i class="fab fa-xbox"></i> بلايستيشن واكس بوكس
+          </button>
+          <button type="button" class="modal-platform-btn" id="modalPlatformPC" onclick="selectModalPlatform('PC')">
+            <i class="fas fa-desktop"></i> بي سي (PC)
+          </button>
+        </div>
+      </div>
+      
+      <!-- Full Name -->
+      <div class="modal-form-group">
+        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">الاسم بالكامل:</label>
+        <input type="text" id="modalContactName" class="modal-input" placeholder="أدخل اسمك الكريم" required/>
+      </div>
+      
+      <!-- WhatsApp Phone -->
+      <div class="modal-form-group">
+        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">رقم الواتساب للتواصل (مع رمز الدولة):</label>
+        <input type="tel" id="modalContactPhone" class="modal-input" placeholder="مثال: +9665xxxxxxxx" required/>
+      </div>
+      
+      <!-- Notes -->
+      <div class="modal-form-group">
+        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">ملاحظات وتفاصيل التشكيلة / الميزانية:</label>
+        <textarea id="modalCoachingNotes" class="modal-input" rows="3" placeholder="ميزانيتي الحالية وتفاصيل اللاعبين الذين أود بقاءهم في التشكيلة..."></textarea>
+      </div>
+      
+      <button type="submit" class="modal-submit-btn">
+        <span>تأكيد وإرسال الطلب</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Package Purchase Modal -->
+<div class="modal-overlay" id="packageModalOverlay">
+  <div class="modal-content-wrap">
+    <button class="modal-close-btn" type="button" onclick="closeModal('packageModalOverlay')"><i class="fas fa-times"></i></button>
+    <h3 class="modal-title" id="modalPackageTitle">شراء باقة مميزة</h3>
+    <p class="modal-desc">يرجى إدخال معلومات EA المطلوبة لشحن وتفعيل الباقة مباشرة في حسابك</p>
+    <div class="modal-price-tag" id="modalPackagePrice">0.00 ر.س</div>
+    
+    <form id="packageModalForm" onsubmit="handlePackageModalSubmit(event)">
+      <!-- Platform selector -->
+      <div class="modal-form-group">
+        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">منصة اللعب:</label>
+        <div class="modal-platform-picker">
+          <button type="button" class="modal-platform-btn active" id="modalPlatformConsolePkg" onclick="selectModalPlatform('Console')">
+            <i class="fab fa-playstation"></i> / <i class="fab fa-xbox"></i> بلايستيشن واكس بوكس
+          </button>
+          <button type="button" class="modal-platform-btn" id="modalPlatformPCPkg" onclick="selectModalPlatform('PC')">
+            <i class="fas fa-desktop"></i> بي سي (PC)
+          </button>
+        </div>
+      </div>
+      
+      <!-- Name -->
+      <div class="modal-form-group">
+        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">الاسم بالكامل:</label>
+        <input type="text" id="modalEaName" class="modal-input" placeholder="أدخل اسمك الكريم" required/>
+      </div>
+      
+      <!-- WhatsApp Phone -->
+      <div class="modal-form-group">
+        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">رقم الواتساب للتواصل (مثال: +9665xxxxxxxx):</label>
+        <input type="tel" id="modalEaPhone" class="modal-input" placeholder="+9665xxxxxxxx" required/>
+      </div>
+
+      <!-- EA Email -->
+      <div class="modal-form-group">
+        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">البريد الإلكتروني لحساب EA:</label>
+        <input type="email" id="modalEaEmail" class="modal-input" placeholder="الايميل الخاص بـ EA" required/>
+      </div>
+      
+      <!-- EA Password -->
+      <div class="modal-form-group">
+        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">كلمة مرور حساب EA:</label>
+        <input type="password" id="modalEaPassword" class="modal-input" placeholder="كلمة المرور الخاصة بـ EA" required/>
+      </div>
+      
+      <!-- Backup Codes -->
+      <div class="modal-form-group">
+        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">الرموز الاحتياطية (ثلاثة رموز):</label>
+        <div class="backup-codes-row">
+          <input type="text" id="modalBackup1" class="modal-input" placeholder="رمز 1" maxlength="8" required/>
+          <input type="text" id="modalBackup2" class="modal-input" placeholder="رمز 2" maxlength="8" required/>
+          <input type="text" id="modalBackup3" class="modal-input" placeholder="رمز 3" maxlength="8" required/>
+        </div>
+      </div>
+      
+      <button type="submit" class="modal-submit-btn" style="background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color: #000; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2);">
+        <span>إتمام العملية</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Sticky Bottom Navigation Bar for Mobile -->
+<div class="bottom-nav">
+  <a href="#home" class="bottom-nav-item active" onclick="document.getElementById('home').scrollIntoView({behavior: 'smooth'})">
+    <i class="fas fa-home"></i>
+    <span>الرئيسية</span>
+  </a>
+  <a href="#coins-device" class="bottom-nav-item" onclick="document.getElementById('coins-device').scrollIntoView({behavior: 'smooth'})">
+    <i class="fas fa-coins"></i>
+    <span>الكوينز</span>
+  </a>
+  <a href="#other-products" class="bottom-nav-item" onclick="document.getElementById('other-products').scrollIntoView({behavior: 'smooth'})">
+    <i class="fas fa-cubes"></i>
+    <span>الخدمات</span>
+  </a>
+  <a href="#packages-section" class="bottom-nav-item" onclick="document.getElementById('packages-section').scrollIntoView({behavior: 'smooth'})">
+    <i class="fas fa-box-open"></i>
+    <span>الباقات</span>
+  </a>
+  <a href="profile.html" class="bottom-nav-item">
+    <i class="fas fa-user-circle"></i>
+    <span>حسابي</span>
+  </a>
+</div>
+
+<script src="src/core/global-currency.js"></script>
+<script type="module" src="src/features/landing/landingUI.js?v=2.5"></script>
+</body>
+</html>

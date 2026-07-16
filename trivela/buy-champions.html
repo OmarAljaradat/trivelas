@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <link rel="icon" type="image/png" href="logo-official.png"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>خطوات شراء خدمات فوت تشامبيون | Trivela</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="buy-coins-body light-theme">
+
+  <!-- ══════════ TOP BAR ══════════ -->
+  <header class="buy-header">
+    <div class="buy-header-inner">
+      <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+      <div class="buy-logo">
+        <img src="logo-official.png" alt="Trivela" />
+        <span>Trivela</span>
+      </div>
+      
+      <!-- Unified Global Currency Picker -->
+      <div class="global-currency-picker">
+        <i class="fas fa-globe"></i>
+        <select id="currencySelect">
+          <option value="SAR">SAR — ريال سعودي</option>
+          <option value="USD">USD — دولار أمريكي</option>
+          <option value="AED">AED — درهم إماراتي</option>
+          <option value="KWD">KWD — دينار كويتي</option>
+          <option value="BHD">BHD — دينار بحريني</option>
+          <option value="QAR">QAR — ريال قطري</option>
+          <option value="OMR">OMR — ريال عماني</option>
+          <option value="JOD">JOD — دينار أردني</option>
+          <option value="EGP">EGP — جنيه مصري</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════ MAIN CONTENT ══════════ -->
+  <main class="buy-main-container">
+    <div class="buy-card">
+      <!-- Premium Gaming Hero Banner -->
+      <div class="catalog-hero-banner" style="margin-bottom: 25px;">
+        <div class="catalog-hero-content" style="display: block; text-align: center;">
+          <div class="catalog-hero-text" style="display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; text-align: center;">
+            <h1 class="catalog-hero-title" id="cms_championsTitle" style="text-align: center; border-bottom: 0; padding-bottom: 0;">تحدي بطولة فوت تشامبيونز (FIFA 27)</h1>
+            <p class="catalog-hero-desc" id="cms_championsDesc" style="text-align: center; margin: 0 auto; max-width: 800px;">احجز ترتيبك في بطولة الـ Champions، ودع محترفينا يقودون حسابك لأعلى تصنيف وتحقيق الجوائز الأفضل.</p>
+            <div class="catalog-hero-hint" style="margin-top: 6px; justify-content: center; width: fit-content; display: inline-flex;">
+              <i class="far fa-lightbulb"></i>
+              <span id="cms_championsHint">املأ حقول الطلب لتسجيل نقاط التأهيل وبدء حل البطولة</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <form id="purchaseForm" onsubmit="handlePurchaseSubmit(event)">
+        
+        <!-- STEP 1: SELECT DEVICE -->
+        <div class="buy-step-block">
+          <div class="step-badge-title">
+            <span class="step-number">01</span>
+            <div class="step-info-text">
+              <h3>اختيار الجهاز</h3>
+              <p>حدد منصة اللعب الخاصة بك للمتابعة</p>
+            </div>
+          </div>
+          
+          <div class="step-content">
+            <div class="inline-device-picker">
+              <button type="button" class="inline-device-btn active" id="btnConsole" onclick="selectPlatform('Console')">
+                <div class="console-inline-icons">
+                  <i class="fab fa-playstation"></i>
+                  <i class="fab fa-xbox"></i>
+                </div>
+                <span>بلايستيشن واكس بوكس</span>
+              </button>
+              <button type="button" class="inline-device-btn" id="btnPC" onclick="selectPlatform('PC')">
+                <svg class="pc-inline-logo" viewBox="0 0 120 80" fill="currentColor">
+                  <path d="M15 15 H55 C65 15 70 23 70 32 C70 42 63 48 53 48 H33 V75 H15 Z M33 28 V35 H52 C55 35 55 28 52 28 Z" />
+                  <path d="M105 28 C100 20 90 15 78 15 C60 15 50 30 50 48 C50 65 60 80 78 80 C90 80 100 75 105 67 L95 58 C90 63 85 67 78 67 C68 67 63 58 63 48 C63 37 68 28 78 28 C85 28 90 32 95 37 Z" />
+                </svg>
+                <span>بي سي</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <hr class="step-divider"/>
+
+        <!-- STEP 2: SELECT CHAMPIONS OPTION -->
+        <div class="buy-step-block">
+          <div class="step-badge-title">
+            <span class="step-number">02</span>
+            <div class="step-info-text">
+              <h3>الخدمة المطلوبة</h3>
+              <p>اختر باقة الفوت تشامبيون التي ترغب في شحنها لحسابك</p>
+            </div>
+          </div>
+          
+          <div class="step-content">
+
+
+            <!-- Active Player Challenges Grid (Loaded dynamically if they exist) -->
+            <div id="dynamicPlayersSection" style="display: none; margin-bottom: 28px;">
+              <label style="font-weight: 800; font-size: 0.95rem; margin-bottom: 12px; display: block; color: var(--blue-800);"><i class="fas fa-fire font-gold" style="color: #eab308; margin-left: 6px;"></i> أو اختر أحد التحديات المتاحة للشحن الفوري:</label>
+              <div class="player-cards-grid" id="activePlayersGrid">
+                <!-- Dynamically loaded player cards -->
+              </div>
+            </div>
+
+            <!-- Hidden input to store selected rank for form submission -->
+            <input type="hidden" id="selectedRankInput" name="productService" value="qualify" />
+
+            <!-- Interactive FUT Champions Rank Slider -->
+            <div class="futs-slider-container">
+              <div class="futs-progress-track">
+                <div class="futs-progress-bar" id="futsProgressBar" style="width: 0%;"></div>
+              </div>
+              <div class="futs-steps-row">
+                <div class="futs-step-node active" id="node_qualify" onclick="selectFutRank('qualify', 0)">
+                  <div class="node-icon"><i class="fas fa-ticket"></i></div>
+                  <span class="node-label">التأهيل</span>
+                </div>
+                <div class="futs-step-node" id="node_rank5" onclick="selectFutRank('rank5', 20)">
+                  <div class="node-icon"><i class="fas fa-award"></i></div>
+                  <span class="node-label">الرتبة 5</span>
+                </div>
+                <div class="futs-step-node" id="node_rank4" onclick="selectFutRank('rank4', 40)">
+                  <div class="node-icon"><i class="fas fa-award"></i></div>
+                  <span class="node-label">الرتبة 4</span>
+                </div>
+                <div class="futs-step-node" id="node_rank3" onclick="selectFutRank('rank3', 60)">
+                  <div class="node-icon"><i class="fas fa-award"></i></div>
+                  <span class="node-label">الرتبة 3</span>
+                </div>
+                <div class="futs-step-node" id="node_rank2" onclick="selectFutRank('rank2', 80)">
+                  <div class="node-icon"><i class="fas fa-award"></i></div>
+                  <span class="node-label">الرتبة 2</span>
+                </div>
+                <div class="futs-step-node" id="node_rank1" onclick="selectFutRank('rank1', 100)">
+                  <div class="node-icon"><i class="fas fa-trophy"></i></div>
+                  <span class="node-label">الرتبة 1</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Rewards & Info Card -->
+            <div class="fut-rewards-card" id="futRewardsCard">
+              <div class="card-header">
+                <h3 id="lblRankName">تأهيل تصفيات فوت تشامبيونز (Playoffs)</h3>
+                <span class="badge" id="lblRankWins">4 انتصارات / 20 نقطة</span>
+              </div>
+              <div class="card-body">
+                <div class="rewards-list">
+                  <h4><i class="fas fa-gift"></i> الجوائز والمكافآت المتوقعة:</h4>
+                  <div class="fut-rewards-grid" id="lstRankRewards">
+                    <!-- Loaded dynamically via JS -->
+                  </div>
+                </div>
+                <div class="rewards-info-box" style="margin-top: 15px;">
+                  <i class="fas fa-info-circle"></i>
+                  <p>نقوم باللعب نيابة عنك عبر شبكة آمنة وسيرفرات مخصصة لضمان إتمام الخدمة بالكامل وبأقصى سرعة وأمان لحسابك.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP: DISCOUNTS & GIFTS -->
+        <div class="buy-step-block" id="loyaltyPointsBlock" style="display: none; margin-top: 20px;">
+          <div class="step-badge-title">
+            <span class="step-number"><i class="fas fa-gift"></i></span>
+            <div class="step-info-text">
+              <h3>الخصومات والهدايا</h3>
+              <p>اختر وسيلة الخصم المناسبة لطلبك</p>
+            </div>
+          </div>
+          <div class="step-content">
+            <div class="discounts-gifts-card">
+              <!-- Option 1: Coupon Code -->
+              <div class="discount-option-row">
+                <label class="discount-radio-label">
+                  <input type="radio" name="discountType" value="coupon" id="radCoupon" checked onchange="handleDiscountTypeChange()"/>
+                  <span class="custom-radio-circle"></span>
+                  <span class="discount-label-text">تفعيل كوبون الخصم</span>
+                </label>
+                <div class="discount-input-wrapper" id="couponInputWrapper">
+                  <div class="coupon-field-group">
+                    <div class="coupon-input-relative">
+                      <input type="text" id="couponCodeInput" placeholder="كوبون الهدية / الخصم؟"/>
+                      <i class="fas fa-percent coupon-icon"></i>
+                    </div>
+                    <button type="button" class="coupon-btn" id="btnApplyCoupon" onclick="applyCouponCode()">تفعيل</button>
+                  </div>
+                  <div id="couponStatusMessage" class="coupon-status-msg"></div>
+                </div>
+              </div>
+
+              <div class="discount-divider" id="loyaltyPointsDivider" style="display: none;"></div>
+
+              <!-- Option 2: Loyalty Points -->
+              <div class="discount-option-row" id="loyaltyOptionRow" style="display: none;">
+                <label class="discount-radio-label">
+                  <input type="radio" name="discountType" value="points" id="radPoints" onchange="handleDiscountTypeChange()"/>
+                  <span class="custom-radio-circle"></span>
+                  <span class="discount-label-text"><span id="lblLoyaltyPointsBalance">0</span> نقطة رصيدك من نقاط الولاء</span>
+                </label>
+                <div class="discount-input-wrapper" id="pointsInputWrapper" style="display: none;">
+                  <p class="points-helper-text" style="font-size: 0.82rem; color: #64748b; margin-top: 8px;">
+                    <i class="fas fa-info-circle"></i>
+                    يمكنك الاستفادة من رصيدك بقيمة خصم <strong id="lblPointsDiscountSAR" style="color: #ca8a04;">0.00</strong>، <a href="#" onclick="togglePointsUsage(event)" id="btnApplyPoints" class="points-action-link" style="color: #ca8a04; font-weight: 700; text-decoration: none; margin-right: 4px;">اضغط هنا للتفعيل</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="step-divider" id="loyaltyDivider" style="display: none;"/>
+
+        <hr class="step-divider"/>
+
+        <!-- STEP 3: SONY DATA -->
+        <div class="buy-step-block">
+          <div class="step-badge-title">
+            <span class="step-number">03</span>
+            <div class="step-info-text">
+              <h3>بيانات حساب السوني (PSN)</h3>
+              <p>يرجى ملء بيانات حساب السوني الخاص بك لنتمكن من الدخول وإنجاز الخدمة</p>
+            </div>
+          </div>
+          
+          <div class="step-content">
+            <div class="ea-form-grid">
+              
+              <!-- Customer Name -->
+              <div class="ea-input-group">
+                <div class="input-with-icon">
+                  <i class="fas fa-user input-icon"></i>
+                  <input type="text" id="customerName" placeholder="الاسم الكامل" required/>
+                </div>
+              </div>
+
+              <!-- Customer Phone -->
+              <div class="ea-input-group">
+                <div class="input-with-icon">
+                  <i class="fab fa-whatsapp input-icon"></i>
+                  <input type="tel" id="customerPhone" placeholder="رقم الواتساب للتواصل (مثال: +9665xxxxxxxx)" required/>
+                </div>
+              </div>
+
+              <!-- Email Input -->
+              <div class="ea-input-group">
+                <div class="input-with-icon">
+                  <i class="fas fa-envelope input-icon"></i>
+                  <input type="email" id="sonyEmail" placeholder="ايميل حساب السوني (PSN)" required/>
+                </div>
+                <a href="https://wa.me/966500000000?text=أحتاج%20مساعدة%20في%20استخراج%20ايميل%20السوني" target="_blank" class="helper-link">لمعرفة كيفية استخراج ايميل السوني. <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
+              </div>
+
+              <!-- Password Input -->
+              <div class="ea-input-group">
+                <div class="input-with-icon">
+                  <i class="fas fa-lock input-icon"></i>
+                  <input type="password" id="sonyPassword" placeholder="كلمة مرور حساب السوني (PSN)" required/>
+                  <button type="button" class="eye-toggle" onclick="togglePasswordVisibility()"><i class="fas fa-eye" id="eyeIcon"></i></button>
+                </div>
+                <a href="https://wa.me/966500000000?text=أحتاج%20مساعدة%20في%20استخراج%20كلمة%20مرور%20السوني" target="_blank" class="helper-link">لمعرفة كيفية استخراج كلمة المرور. <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
+              </div>
+
+              <!-- Backup Codes -->
+              <div class="ea-input-group full-width">
+                <label class="input-label-tag">الرموز الاحتياطية لحساب السوني</label>
+                <div class="backup-codes-row">
+                  <input type="text" class="backup-code-box" id="backup1" placeholder="رمز 1" maxlength="8" required/>
+                  <input type="text" class="backup-code-box" id="backup2" placeholder="رمز 2" maxlength="8" required/>
+                  <input type="text" class="backup-code-box" id="backup3" placeholder="رمز 3" maxlength="8" required/>
+                </div>
+                <a href="https://wa.me/966500000000?text=أحتاج%20مساعدة%20في%20استخراج%20الرموز%20الاحتياطية%20لحساب%20السوني" target="_blank" class="helper-link">لمعرفة كيفية استخراج الرموز الاحتياطية للسوني. <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
+              </div>
+
+              <!-- Terms Checkbox -->
+              <div class="ea-input-group full-width terms-row">
+                <label class="terms-label">
+                  <input type="checkbox" id="sonyConfirmCheck" required/>
+                  <span>أقر بصحة البيانات المكتوبة وأنه تم تفعيل التحقق بخطوتين وتوفير رموز احتياطية صالحة لحساب السوني</span>
+                </label>
+              </div>
+
+              <!-- Trust Seals -->
+              <div class="ea-input-group full-width trust-seals-grid">
+                <div class="trust-seal-item"><i class="fas fa-shield-halved"></i><span>تشفير آمن لبياناتك 256-bit</span></div>
+                <div class="trust-seal-item"><i class="fas fa-rotate-left"></i><span>ضمان استرجاع الأموال 100%</span></div>
+                <div class="trust-seal-item"><i class="fas fa-user-lock"></i><span>حماية كاملة للملف التعريفي</span></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">
+          <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
+          <span class="logo-main">Trivela</span>
+        </div>
+        <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>الخدمات</h4>
+        <a href="index.html#coins-device">💰 الكوينز</a>
+        <a href="buy-sbc.html">🧩 SBC</a>
+        <a href="buy-objectives.html">📋 المهام</a>
+        <a href="buy-rivals.html">⚔️ الرايفلز</a>
+        <a href="buy-champions.html">🎮 FUT Champions</a>
+      </div>
+      <div class="footer-col">
+        <h4>سياسات متجر Trivela</h4>
+        <a href="policies.html#privacy">سياسة الخصوصية</a>
+        <a href="policies.html#terms">شروط الاستخدام</a>
+        <a href="policies.html#refund">سياسة الاسترجاع</a>
+        <a href="policies.html#warranty">سياسة الضمان</a>
+        <a href="index.html#faq">الأسئلة الشائعة</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Trivela — جميع الحقوق محفوظة</span>
+      <span>هذا الموقع غير مرتبط بـ EA Sports</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════ STICKY BOTTOM BAR ══════════ -->
+  <div class="sticky-summary-bar">
+    <div class="summary-inner">
+      
+      <!-- Right: Summary info -->
+      <div class="summary-right-details">
+        <div class="summary-total-price" id="summaryPrice">0.00 ر.س</div>
+        <div class="summary-divider-line"></div>
+        <div class="summary-coins">
+          <i class="fas fa-trophy font-gold"></i>
+          <span id="summaryServiceText">فوت تشامبيون</span>
+        </div>
+      </div>
+      
+      <!-- Left: Action button -->
+      <button type="submit" form="purchaseForm" class="summary-complete-btn">
+        <span>اتمام العملية</span>
+        <i class="fas fa-arrow-left"></i>
+      </button>
+
+    </div>
+  </div>
+
+  <script src="src/core/global-currency.js"></script>
+  <script src="buy-champions.js"></script>
+</body>
+</html>

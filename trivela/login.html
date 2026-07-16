@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <link rel="icon" type="image/png" href="logo-official.png"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تسجيل الدخول / إنشاء حساب | Trivela</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* Premium Login & Register layout custom overrides */
+    .login-body {
+      background: var(--blue-50, #F4F9FF);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .login-logo-header {
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .login-logo-header img {
+      height: 48px;
+      width: auto;
+    }
+    .login-logo-header span {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.8rem;
+      color: var(--blue-800, #0D1E39);
+    }
+    .login-card {
+      background: #ffffff;
+      border: 1px solid var(--blue-100, #E4EBF7);
+      box-shadow: 0 12px 40px rgba(48, 83, 136, 0.05);
+      border-radius: 28px;
+      width: 100%;
+      max-width: 460px;
+      padding: 32px;
+      box-sizing: border-box;
+    }
+    .login-tabs {
+      display: flex;
+      border-bottom: 2px solid var(--blue-100, #E4EBF7);
+      margin-bottom: 24px;
+      gap: 8px;
+    }
+    .login-tab-btn {
+      flex: 1;
+      background: transparent;
+      border: 0;
+      padding: 12px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--gray-400, #94A3B8);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .login-tab-btn.active {
+      color: var(--blue-800, #0D1E39);
+    }
+    .login-tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--blue-500, #305388);
+      border-radius: 2px;
+    }
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .login-form.hidden {
+      display: none;
+    }
+    .login-error-msg {
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      color: #ef4444;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .login-success-msg {
+      background: #ecfdf5;
+      border: 1px solid #d1fae5;
+      color: #10b981;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body class="login-body light-theme">
+
+  <!-- Logo Link -->
+  <a href="index.html" class="login-logo-header">
+    <img src="logo-official.png" alt="Trivela"/>
+    <span>Trivela</span>
+  </a>
+
+  <!-- Main Login Card -->
+  <div class="login-card">
+    <div class="login-tabs">
+      <button class="login-tab-btn active" id="tabLoginBtn" onclick="switchTab('login')">تسجيل الدخول</button>
+      <button class="login-tab-btn" id="tabRegisterBtn" onclick="switchTab('register')">إنشاء حساب جديد</button>
+    </div>
+
+    <!-- Error/Success displays -->
+    <div class="login-error-msg" id="errorBox">
+      <i class="fas fa-circle-exclamation"></i>
+      <span id="errorText">خطأ في البيانات</span>
+    </div>
+    <div class="login-success-msg" id="successBox">
+      <i class="fas fa-circle-check"></i>
+      <span>تم تسجيل الدخول بنجاح! جاري التوجيه...</span>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+      <div class="fg">
+        <label>البريد الإلكتروني أو رقم الهاتف</label>
+        <div class="input-with-icon">
+          <i class="fas fa-user input-icon"></i>
+          <input type="text" id="loginField" placeholder="مثال: user@mail.com أو +966..." required/>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>كلمة المرور</label>
+        <div class="input-with-icon">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required/>
+          <button type="button" class="eye-toggle" onclick="togglePass('loginPassword', 'eyeIconLogin')">
+            <i class="fas fa-eye" id="eyeIconLogin"></i>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="cta-primary w-full" style="height: 52px; margin-top: 10px;">
+        <i class="fas fa-right-to-bracket"></i> تسجيل الدخول
+      </button>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form class="login-form hidden" id="registerForm" onsubmit="handleRegister(event)">
+      <div class="fg">
+        <label>الاسم الكامل</label>
+        <div class="input-with-icon">
+          <i class="fas fa-user input-icon"></i>
+          <input type="text" id="regName" placeholder="محمد الأحمد" required/>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>رقم الواتساب</label>
+        <div class="input-with-icon">
+          <i class="fab fa-whatsapp input-icon"></i>
+          <input type="tel" id="regPhone" placeholder="مثال: +966500000000" required/>
+        </div>
+        <span style="font-size: 0.75rem; color: var(--gray-400, #94A3B8);">يجب تضمين رمز الدولة (مثال: +9665...)</span>
+      </div>
+
+      <div class="fg">
+        <label>البريد الإلكتروني</label>
+        <div class="input-with-icon">
+          <i class="fas fa-envelope input-icon"></i>
+          <input type="email" id="regEmail" placeholder="user@mail.com" required/>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>كلمة المرور</label>
+        <div class="input-with-icon">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="regPassword" placeholder="اختر كلمة مرور قوية" required/>
+          <button type="button" class="eye-toggle" onclick="togglePass('regPassword', 'eyeIconReg')">
+            <i class="fas fa-eye" id="eyeIconReg"></i>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="cta-primary w-full" style="height: 52px; margin-top: 10px;">
+        <i class="fas fa-user-plus"></i> إنشاء حساب والبدء كسب النقاط
+      </button>
+    </form>
+  </div>
+
+  <script>
+    // Tab switcher
+    function switchTab(mode) {
+      const tabLoginBtn = document.getElementById('tabLoginBtn');
+      const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const errorBox = document.getElementById('errorBox');
+      const successBox = document.getElementById('successBox');
+
+      errorBox.style.display = 'none';
+      successBox.style.display = 'none';
+
+      if (mode === 'login') {
+        tabLoginBtn.classList.add('active');
+        tabRegisterBtn.classList.remove('active');
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+      } else {
+        tabRegisterBtn.classList.add('active');
+        tabLoginBtn.classList.remove('active');
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+      }
+    }
+
+    // Toggle password visibility helper
+    function togglePass(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+
+    // Form logic
+    function handleLogin(e) {
+      e.preventDefault();
+      const loginField = document.getElementById('loginField').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      const errorBox = document.getElementById('errorBox');
+      const successBox = document.getElementById('successBox');
+      errorBox.style.display = 'none';
+
+      fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ loginField, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          document.getElementById('errorText').textContent = data.error;
+          errorBox.style.display = 'flex';
+        } else {
+          localStorage.setItem('trivela_token', data.token);
+          successBox.style.display = 'flex';
+          setTimeout(() => {
+            const params = new URLSearchParams(window.location.search);
+            const redirect = params.get('redirect') || 'profile.html';
+            window.location.href = redirect;
+          }, 1200);
+        }
+      })
+      .catch(err => {
+        document.getElementById('errorText').textContent = "حدث خطأ في الاتصال بالخادم.";
+        errorBox.style.display = 'flex';
+      });
+    }
+
+    // Capture referral parameter on load
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref) {
+        sessionStorage.setItem('trivela_ref', ref);
+      }
+    });
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const referralCode = sessionStorage.getItem('trivela_ref') || null;
+
+      const errorBox = document.getElementById('errorBox');
+      const successBox = document.getElementById('successBox');
+      errorBox.style.display = 'none';
+
+      fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, email, password, referralCode })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          document.getElementById('errorText').textContent = data.error;
+          errorBox.style.display = 'flex';
+        } else {
+          // Clear used referral code
+          sessionStorage.removeItem('trivela_ref');
+          localStorage.setItem('trivela_token', data.token);
+          successBox.querySelector('span').textContent = "تم إنشاء الحساب بنجاح! جاري التوجيه...";
+          successBox.style.display = 'flex';
+          setTimeout(() => {
+            const params = new URLSearchParams(window.location.search);
+            const redirect = params.get('redirect') || 'profile.html';
+            window.location.href = redirect;
+          }, 1200);
+        }
+      })
+      .catch(err => {
+        document.getElementById('errorText').textContent = "حدث خطأ في الاتصال بالخادم.";
+        errorBox.style.display = 'flex';
+      });
+    }
+  </script>
+</body>
+</html>

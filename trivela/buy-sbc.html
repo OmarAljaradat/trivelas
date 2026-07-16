@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <link rel="icon" type="image/png" href="logo-official.png"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>حل تحديات الـ SBC | Trivela</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ═══════════ SBC TABS — Same system as Objectives ═══════════ */
+
+    .obj-tabs-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+      background: #f1f5f9;
+      padding: 6px;
+      border-radius: 16px;
+      flex-wrap: wrap;
+    }
+
+    .obj-tab-btn {
+      flex: 1;
+      min-width: 110px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 11px;
+      background: transparent;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.87rem;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .obj-tab-btn i { font-size: 0.9rem; }
+
+    .obj-tab-btn:hover {
+      background: #e2e8f0;
+      color: #305388;
+    }
+
+    .obj-tab-btn.active {
+      background: #305388;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(48,83,136,0.28);
+    }
+
+    /* Count badge per tab */
+    .obj-tab-badge {
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      background: #10b981;
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s ease;
+    }
+    .obj-tab-badge.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ═══════════ SBC CARDS GRID ═══════════ */
+    .sbc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 columns for desktop to make cards huge and clear */
+      gap: 30px;
+      row-gap: 135px; /* large row-gap to accommodate even larger overlapping player cards */
+      margin-top: 130px; /* offset for first row card overlap */
+      animation: fadeTabIn 0.3s ease;
+    }
+
+    @keyframes fadeTabIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1200px) { 
+      .sbc-grid { 
+        grid-template-columns: repeat(3, 1fr); 
+        row-gap: 120px;
+        margin-top: 110px;
+      } 
+    }
+    @media (max-width: 900px)  { 
+      .sbc-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        row-gap: 110px;
+        margin-top: 95px;
+      } 
+    }
+    @media (max-width: 580px)  { 
+      .sbc-grid { 
+        grid-template-columns: 1fr; 
+        row-gap: 90px;
+        margin-top: 80px;
+      } 
+    }
+
+    .sbc-card-premium {
+      background: #eaecef; /* off-white/light-grey background */
+      border: 1.5px solid rgba(48, 83, 136, 0.08);
+      border-radius: 28px;
+      padding: 20px; /* More compact padding around text elements */
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(48, 83, 136, 0.02);
+      cursor: pointer;
+    }
+
+    .sbc-card-premium:hover {
+      transform: translateY(-10px);
+      background: #ffffff; /* Turns white on hover to stand out */
+      border-color: #ca8a04; /* Gold border on hover */
+      box-shadow: 0 25px 50px rgba(202, 138, 4, 0.15); /* Gold glow shadow */
+    }
+
+    .sbc-card-image-wrap {
+      height: 145px;
+      margin-top: -125px; /* Pull the player card up higher to accommodate larger scale */
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .sbc-card-image-wrap img {
+      height: 220px; /* ENLARGED player card image */
+      width: auto;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,0.22));
+    }
+
+    .sbc-card-premium:hover .sbc-card-image-wrap img {
+      transform: scale(1.08) translateY(-8px);
+    }
+
+    .sbc-card-rating {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #ca8a04;
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 8px;
+      z-index: 10;
+      box-shadow: 0 2px 6px rgba(202, 138, 4, 0.2);
+    }
+
+    .sbc-card-title {
+      font-size: 1.0rem; /* SHRUNK font size */
+      font-weight: 700;   /* Shrunk weight */
+      color: var(--blue-800);
+      line-height: 1.4;
+      margin: 20px 0 10px 0;
+      min-height: 40px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .sbc-card-prices-row {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      border-top: 1.5px solid #d1d5db;
+      padding-top: 14px;
+      margin-bottom: 14px;
+      gap: 10px;
+    }
+
+    .sbc-price-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .sbc-price-box.console-box {
+      border-left: 1.5px solid #cbd5e1; /* Vertical divider in the middle */
+    }
+
+    .sbc-price-platform-icons {
+      font-size: 1.05rem; /* SHRUNK icon size */
+      color: var(--blue-600);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+    }
+
+    .sbc-price-platform-icons .pc-text-logo {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.12rem; /* SHRUNK PC logo font */
+      color: var(--blue-600);
+      letter-spacing: 0.5px;
+    }
+
+    .sbc-price-val {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.15rem; /* SHRUNK price value */
+      font-weight: 800;
+      color: #ca8a04; /* Gold price color */
+    }
+
+    .sbc-buy-btn-overlay {
+      width: 100%;
+      background: var(--blue-800);
+      color: #ffffff;
+      border: 0;
+      border-radius: 14px; /* Shrunk radius */
+      padding: 11px;       /* Shrunk padding */
+      font-family: 'Cairo', sans-serif;
+      font-weight: 800;
+      font-size: 0.92rem;   /* SHRUNK button font */
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(13, 30, 57, 0.12);
+    }
+
+    .sbc-card-premium:hover .sbc-buy-btn-overlay {
+      background: #10b981; /* Green buy button on card hover/action */
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.25);
+    }
+
+    /* Empty / Loading states */
+    .sbc-empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 50px 20px;
+      color: #94a3b8;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .sbc-empty-state i {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 14px;
+      opacity: 0.35;
+    }
+
+    /* Skeleton loading cards */
+    .sbc-skeleton {
+      background: #f1f5f9;
+      border-radius: 20px;
+      height: 280px;
+      animation: skeletonPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes skeletonPulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body class="buy-coins-body light-theme">
+
+  <!-- ══════════ TOP BAR ══════════ -->
+  <header class="buy-header">
+    <div class="buy-header-inner">
+      <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+      <div class="buy-logo">
+        <img src="logo-official.png" alt="Trivela" />
+        <span>Trivela</span>
+      </div>
+      
+      <!-- Unified Global Currency Picker -->
+      <div class="global-currency-picker">
+        <i class="fas fa-globe"></i>
+        <select id="currencySelect">
+          <option value="SAR">SAR — ريال سعودي</option>
+          <option value="USD">USD — دولار أمريكي</option>
+          <option value="AED">AED — درهم إماراتي</option>
+          <option value="KWD">KWD — دينار كويتي</option>
+          <option value="BHD">BHD — دينار بحريني</option>
+          <option value="QAR">QAR — ريال قطري</option>
+          <option value="OMR">OMR — ريال عماني</option>
+          <option value="JOD">JOD — دينار أردني</option>
+          <option value="EGP">EGP — جنيه مصري</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════ MAIN CONTENT ══════════ -->
+  <main class="buy-main-container" style="max-width: 1200px; padding-bottom: 60px;">
+    <div class="buy-card">
+
+      <!-- Premium Gaming Hero Banner -->
+      <!-- Premium Gaming Hero Banner -->
+      <div class="catalog-hero-banner" style="margin-bottom: 25px;">
+        <div class="catalog-hero-content" style="display: block; text-align: center;">
+          <div class="catalog-hero-text" style="display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; text-align: center;">
+            <h1 class="catalog-hero-title" id="cms_sbcTitle" style="text-align: center; border-bottom: 0; padding-bottom: 0;">حل تحديات الـ SBC (تحديات بناء التشكيلة)</h1>
+            <p class="catalog-hero-desc" id="cms_sbcDesc" style="text-align: center; margin: 0 auto; max-width: 800px;">نوفر لك حلولاً كاملة وآمنة بنسبة 100% لتحديات اللاعبين والترقيات والفاونديشن بأفضل أسعار السوق.</p>
+            <div class="catalog-hero-hint" style="margin-top: 6px; justify-content: center; width: fit-content; display: inline-flex;">
+              <i class="far fa-lightbulb"></i>
+              <span id="cms_sbcHint">اضغط على التحدي لتعبئة البيانات وإتمام الشراء</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ CATEGORY TABS — Same style as Objectives ═══ -->
+      <div class="obj-tabs-bar">
+        <button type="button" class="obj-tab-btn active" id="tab-all" onclick="filterCategory('all', this)">
+          <span class="obj-tab-badge" id="badge-all"></span>
+          <i class="fas fa-border-all"></i>
+          الكل
+        </button>
+        <button type="button" class="obj-tab-btn" id="tab-players" onclick="filterCategory('players', this)">
+          <span class="obj-tab-badge" id="badge-players"></span>
+          <i class="fas fa-user-shield"></i>
+          تحديات اللاعبين
+        </button>
+        <button type="button" class="obj-tab-btn" id="tab-upgrades" onclick="filterCategory('upgrades', this)">
+          <span class="obj-tab-badge" id="badge-upgrades"></span>
+          <i class="fas fa-arrow-trend-up"></i>
+          الترقيات
+        </button>
+        <button type="button" class="obj-tab-btn" id="tab-foundation" onclick="filterCategory('foundation', this)">
+          <span class="obj-tab-badge" id="badge-foundation"></span>
+          <i class="fas fa-layer-group"></i>
+          الـ Foundation
+        </button>
+      </div>
+
+      <!-- Dynamic Grid -->
+      <div class="sbc-grid" id="catalogGrid">
+        <!-- Skeleton loaders while fetching -->
+        <div class="sbc-skeleton"></div>
+        <div class="sbc-skeleton"></div>
+        <div class="sbc-skeleton"></div>
+        <div class="sbc-skeleton"></div>
+        <div class="sbc-skeleton"></div>
+        <div class="sbc-skeleton"></div>
+        <div class="sbc-skeleton"></div>
+        <div class="sbc-skeleton"></div>
+      </div>
+
+    </div>
+  </main>
+
+  
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">
+          <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
+          <span class="logo-main">Trivela</span>
+        </div>
+        <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>الخدمات</h4>
+        <a href="index.html#coins-device">💰 الكوينز</a>
+        <a href="buy-sbc.html">🧩 SBC</a>
+        <a href="buy-objectives.html">📋 المهام</a>
+        <a href="buy-rivals.html">⚔️ الرايفلز</a>
+        <a href="buy-champions.html">🎮 FUT Champions</a>
+      </div>
+      <div class="footer-col">
+        <h4>سياسات متجر Trivela</h4>
+        <a href="policies.html#privacy">سياسة الخصوصية</a>
+        <a href="policies.html#terms">شروط الاستخدام</a>
+        <a href="policies.html#refund">سياسة الاسترجاع</a>
+        <a href="policies.html#warranty">سياسة الضمان</a>
+        <a href="index.html#faq">الأسئلة الشائعة</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Trivela — جميع الحقوق محفوظة</span>
+      <span>هذا الموقع غير مرتبط بـ EA Sports</span>
+    </div>
+  </div>
+</footer>
+
+<script src="src/core/global-currency.js"></script>
+  <script src="buy-sbc.js"></script>
+</body>
+</html>
