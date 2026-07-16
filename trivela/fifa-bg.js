@@ -147,7 +147,34 @@
     });
   }
 
-  // ---------- 4. Boot ----------
+  // ---------- 4. Add Floating Scroll-to-Top Button ----------
+  function addScrollToTopButton() {
+    if (document.getElementById('scroll-to-top')) return;
+
+    const btn = document.createElement('button');
+    btn.id = 'scroll-to-top';
+    btn.className = 'scroll-to-top-btn';
+    btn.setAttribute('aria-label', 'العودة للأعلى');
+    btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+    document.body.appendChild(btn);
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+
+    btn.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+
+  // ---------- 5. Boot ----------
   function boot() {
     // Skip admin & maintenance pages
     const p = location.pathname.toLowerCase();
@@ -157,6 +184,7 @@
     buildScene();
     splitHeroTitles();
     initReveals();
+    addScrollToTopButton();
 
     // Re-scan after dynamic content mounts (landing UI lazy loads)
     let scans = 0;
