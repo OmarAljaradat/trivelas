@@ -2460,8 +2460,9 @@ body.dark-mode .support-card-ig:hover {
   align-items: center;
   justify-content: center;
   position: relative;
-  filter: drop-shadow(0 10px 20px rgba(255, 179, 0, 0.3));
+  box-shadow: 0 10px 20px rgba(255, 179, 0, 0.25);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: transform;
 }
 
 .rivals-crest::after {
@@ -2477,11 +2478,12 @@ body.dark-mode .support-card-ig:hover {
   font-size: 3.8rem;
   color: #ffb300;
   z-index: 2;
-  filter: drop-shadow(0 2px 8px rgba(255, 179, 0, 0.4));
+  text-shadow: 0 4px 10px rgba(255, 179, 0, 0.35);
   background: linear-gradient(135deg, #ffe57f, #ffb300);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   transition: transform 0.4s ease;
+  will-change: transform;
 }
 
 .crest-emblem {
@@ -2492,12 +2494,12 @@ body.dark-mode .support-card-ig:hover {
   z-index: 3;
   color: #fff;
   font-size: 1.2rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .product-card:hover .rivals-crest {
   transform: scale(1.1) translateY(-5px);
-  filter: drop-shadow(0 15px 30px rgba(255, 179, 0, 0.5));
+  box-shadow: 0 15px 30px rgba(255, 179, 0, 0.45);
 }
 
 /* Champions Wreath */
@@ -2511,6 +2513,7 @@ body.dark-mode .support-card-ig:hover {
   background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.01) 70%);
   border-radius: 50%;
   transition: all 0.4s ease;
+  will-change: transform;
 }
 
 .champions-crest::before {
@@ -2521,6 +2524,7 @@ body.dark-mode .support-card-ig:hover {
   border: 2px dashed rgba(239, 68, 68, 0.25);
   animation: rotateDashed 20s linear infinite;
   pointer-events: none;
+  will-change: transform;
 }
 
 @keyframes rotateDashed {
@@ -2535,8 +2539,9 @@ body.dark-mode .support-card-ig:hover {
   background: linear-gradient(135deg, #f59e0b, #d97706);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 12px rgba(217, 119, 6, 0.5));
+  text-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
   transition: transform 0.4s ease;
+  will-change: transform;
 }
 
 .laurel-leaves {
@@ -2552,7 +2557,7 @@ body.dark-mode .support-card-ig:hover {
 .laurel-leaves i {
   font-size: 1.8rem;
   color: #f59e0b;
-  filter: drop-shadow(0 2px 6px rgba(217, 119, 6, 0.3));
+  text-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
 }
 
 .left-leaf {
@@ -3392,12 +3397,13 @@ body.dark-mode .support-card-ig:hover {
   box-shadow: 0 8px 25px rgba(124, 58, 237, 0.3);
   border: 2px solid rgba(167, 139, 250, 0.4);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: transform;
 }
 
 .sbc-puzzle i {
   font-size: 3.8rem;
   color: #fff;
-  filter: drop-shadow(0 4px 10px rgba(76, 29, 149, 0.5));
+  text-shadow: 0 4px 10px rgba(76, 29, 149, 0.4);
 }
 
 .puzzle-glow {
