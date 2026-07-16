@@ -234,7 +234,7 @@
 }
 
 /* ---------- Layering fix ---------- */
-body > :not(.fifa-scene):not(.sticky-summary-bar){ position:relative; z-index:1; }
+body > :not(.fifa-scene):not(.sticky-summary-bar):not(.bottom-nav){ position:relative; z-index:1; }
 
 /* Ensure sticky bar is always fixed to viewport */
 .sticky-summary-bar {
@@ -242,6 +242,12 @@ body > :not(.fifa-scene):not(.sticky-summary-bar){ position:relative; z-index:1;
   bottom: 0 !important;
   left: 0 !important;
   right: 0 !important;
+  z-index: 9999 !important;
+}
+
+/* Ensure bottom-nav is always fixed to viewport on mobile */
+.bottom-nav {
+  position: fixed !important;
   z-index: 9999 !important;
 }
 
