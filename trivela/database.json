@@ -6362,7 +6362,7 @@
     }
   ],
   "analytics": {
-    "totalVisits": 9778,
+    "totalVisits": 9792,
     "daily": {
       "2026-07-02": 85,
       "2026-07-03": 92,
@@ -6377,26 +6377,26 @@
       "2026-07-12": 4977,
       "2026-07-13": 789,
       "2026-07-15": 221,
-      "2026-07-16": 659
+      "2026-07-16": 673
     },
     "devices": {
       "mobile": 987,
-      "desktop": 8751,
+      "desktop": 8765,
       "tablet": 40
     },
     "referrers": {
-      "direct": 490,
+      "direct": 491,
       "google": 180,
       "tiktok": 341,
       "snapchat": 120,
       "instagram": 90,
       "twitter": 54,
       "whatsapp": 110,
-      "other": 369
+      "other": 370
     },
     "countries": {
       "sa": 560,
-      "ae": 757,
+      "ae": 759,
       "kw": 140,
       "qa": 95,
       "bh": 65,
@@ -6425,14 +6425,14 @@
       "16": 166,
       "17": 143,
       "18": 134,
-      "19": 150,
+      "19": 152,
       "20": 206,
       "21": 125,
       "22": 111,
       "23": 83
     },
     "pages": {
-      "home": 1619,
+      "home": 1621,
       "coins": 714,
       "sbc": 420,
       "rivals": 380,
@@ -6443,7 +6443,7 @@
     },
     "visitorTypes": {
       "new": 759,
-      "returning": 975
+      "returning": 977
     },
     "clicks": {
       "coins": 318,

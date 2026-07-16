@@ -6160,6 +6160,16 @@ body.dark-mode .receipt-bottom-decoration {
   animation: fadeInDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.dropdown-content::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 0;
+  right: 0;
+  height: 15px;
+  background: transparent;
+}
+
 .dropdown:hover .dropdown-content {
   display: block;
 }
