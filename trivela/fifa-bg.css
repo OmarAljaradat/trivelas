@@ -204,9 +204,9 @@
 .fifa-card.slot-r2{ top:78%;  right:2%;   transform:rotate(-8deg); animation-delay:-13s; animation-duration:30s; }
 
 /* Ring placements — along outer edges */
-.fifa-ring.r1{ top:4%;   left:-6%;   }
+.fifa-ring.r1{ display:none !important; }
 .fifa-ring.r2{ top:52%;  right:-8%;  }
-.fifa-ring.r3{ top:86%;  left:-4%;   }
+.fifa-ring.r3{ display:none !important; }
 .fifa-ring.r4{ display:none; }
 .fifa-ring.r5{ display:none; }
 
