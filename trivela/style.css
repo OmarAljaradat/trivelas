@@ -291,7 +291,6 @@ html {
   font-size:16px;
   overflow-x: hidden;
   max-width: 100%;
-  direction: ltr;
 }
 body {
   font-family: 'Thmanyah', 'Cairo', 'IBM Plex Sans Arabic', system-ui, sans-serif;
@@ -300,10 +299,24 @@ body {
   overflow-x: hidden;
   max-width: 100%;
   -webkit-font-smoothing: antialiased;
-  direction: ltr;
-}
-body > :not(script):not(style) {
   direction: rtl;
+}
+
+/* Zero-width transparent scrollbar (keeps GPU scroll acceleration active while hiding scrollbars completely) */
+html, body {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+::-webkit-scrollbar {
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important; /* Chrome, Safari, Opera */
+}
+::-webkit-scrollbar-thumb {
+  background: transparent !important;
+}
+::-webkit-scrollbar-track {
+  background: transparent !important;
 }
 a { text-decoration:none; color:inherit; }
 ul { list-style:none; }
