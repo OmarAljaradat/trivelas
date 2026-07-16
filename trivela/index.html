@@ -364,10 +364,44 @@
         <a href="buy-coins.html?platform=pc" class="device-card pc-card">
           <div class="device-glow"></div>
           <div class="device-icon-wrap">
-            <svg class="pc-custom-logo" viewBox="0 0 120 80" fill="currentColor">
-              <!-- Stylized Cyber PC Logo -->
-              <path d="M15 15 H55 C65 15 70 23 70 32 C70 42 63 48 53 48 H33 V75 H15 Z M33 28 V35 H52 C55 35 55 28 52 28 Z" />
-              <path d="M105 28 C100 20 90 15 78 15 C60 15 50 30 50 48 C50 65 60 80 78 80 C90 80 100 75 105 67 L95 58 C90 63 85 67 78 67 C68 67 63 58 63 48 C63 37 68 28 78 28 C85 28 90 32 95 37 Z" />
+            <svg class="pc-gaming-rig" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100px; height: 100px;">
+              <defs>
+                <linearGradient id="cyberCyan" x1="0" y1="0" x2="100" y2="100">
+                  <stop offset="0%" stop-color="#00f2fe"/>
+                  <stop offset="100%" stop-color="#0072ff"/>
+                </linearGradient>
+                <linearGradient id="cyberPurple" x1="0" y1="0" x2="100" y2="100">
+                  <stop offset="0%" stop-color="#f355ff"/>
+                  <stop offset="100%" stop-color="#6e0df2"/>
+                </linearGradient>
+                <linearGradient id="metalDark" x1="0" y1="0" x2="0" y2="100">
+                  <stop offset="0%" stop-color="#1e293b"/>
+                  <stop offset="100%" stop-color="#0f172a"/>
+                </linearGradient>
+                <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                </filter>
+              </defs>
+              <circle cx="50" cy="50" r="38" fill="url(#cyberCyan)" opacity="0.06" filter="url(#neonGlow)"/>
+              <path d="M42 62 L35 78 H57 L50 62" fill="url(#metalDark)" stroke="#475569" stroke-width="1.5"/>
+              <rect x="30" y="78" width="32" height="4" rx="2" fill="url(#metalDark)" stroke="#475569" stroke-width="1.5"/>
+              <rect x="12" y="24" width="56" height="38" rx="6" fill="#0f172a" stroke="#475569" stroke-width="2"/>
+              <rect x="14" y="26" width="52" height="34" rx="4" fill="#0b0f19" stroke="url(#cyberCyan)" stroke-width="1.5" filter="url(#neonGlow)"/>
+              <polygon points="40,32 54,48 26,48" fill="url(#cyberCyan)" opacity="0.15"/>
+              <polygon points="40,36 48,46 32,46" fill="url(#cyberCyan)" opacity="0.3"/>
+              <circle cx="40" cy="40" r="2" fill="#00f2fe" filter="url(#neonGlow)"/>
+              <rect x="71" y="20" width="20" height="46" rx="4" fill="url(#metalDark)" stroke="#475569" stroke-width="2"/>
+              <rect x="73" y="23" width="16" height="40" rx="2" fill="#0f172a" stroke="url(#cyberPurple)" stroke-width="1.5" filter="url(#neonGlow)"/>
+              <circle cx="81" cy="32" r="5" stroke="url(#cyberPurple)" stroke-width="1.5" fill="#090d16" filter="url(#neonGlow)"/>
+              <line x1="81" y1="29" x2="81" y2="35" stroke="#f355ff" stroke-width="1"/>
+              <line x1="78" y1="32" x2="84" y2="32" stroke="#f355ff" stroke-width="1"/>
+              <circle cx="81" cy="46" r="5" stroke="url(#cyberCyan)" stroke-width="1.5" fill="#090d16" filter="url(#neonGlow)"/>
+              <line x1="81" y1="43" x2="81" y2="49" stroke="#00f2fe" stroke-width="1"/>
+              <line x1="78" y1="46" x2="84" y2="46" stroke="#00f2fe" stroke-width="1"/>
+              <circle cx="81" cy="58" r="3" stroke="#475569" stroke-width="1" fill="#090d16"/>
+              <rect x="22" y="68" width="36" height="3" rx="1" fill="url(#cyberCyan)" filter="url(#neonGlow)"/>
+              <rect x="61" y="68" width="5" height="3" rx="1.5" fill="url(#cyberPurple)" filter="url(#neonGlow)"/>
             </svg>
           </div>
           <h3 class="device-title">بي سي</h3>
