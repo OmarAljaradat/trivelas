@@ -6549,3 +6549,10 @@ body.dark-mode .dropdown-content li a:hover {
   color: var(--blue-500);
 }
 
+/* Fix for modals appearing at the bottom of the page due to body child positioning */
+.modal-overlay,
+.coins-modal-backdrop,
+.modal-bg {
+  position: fixed !important;
+}
+

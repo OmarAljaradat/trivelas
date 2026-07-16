@@ -444,3 +444,10 @@ nav.navbar{
   .fifa-ring.med{ width:200px; height:200px; }
   .fifa-spotlight{ display:none; }
 }
+
+/* Fix for modals appearing at the bottom of the page due to body child positioning */
+.modal-overlay,
+.coins-modal-backdrop,
+.modal-bg {
+  position: fixed !important;
+}
