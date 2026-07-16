@@ -300,6 +300,9 @@ body {
   overflow-x: hidden;
   max-width: 100%;
   -webkit-font-smoothing: antialiased;
+  direction: ltr;
+}
+body > :not(script):not(style) {
   direction: rtl;
 }
 a { text-decoration:none; color:inherit; }
