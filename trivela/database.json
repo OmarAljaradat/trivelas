@@ -1042,6 +1042,70 @@
   },
   "orders": [
     {
+      "id": "order_1784221587915_935",
+      "timestamp": "2026-07-16T17:06:27.915Z",
+      "customerName": "Trivela Admin",
+      "customerPhone": "966500000001",
+      "service": "شحن كوينز: 2.4M",
+      "platform": "console",
+      "priceSAR": 251.99999999999994,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": null,
+      "eaPassword": null,
+      "backupCode1": null,
+      "backupCode2": null,
+      "backupCode3": null,
+      "sonyEmail": null,
+      "sonyPassword": null,
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
+    {
+      "id": "order_1784221583045_203",
+      "timestamp": "2026-07-16T17:06:23.045Z",
+      "customerName": "Trivela Admin",
+      "customerPhone": "966500000001",
+      "service": "شحن كوينز: 2.4M",
+      "platform": "console",
+      "priceSAR": 251.99999999999994,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": null,
+      "eaPassword": null,
+      "backupCode1": null,
+      "backupCode2": null,
+      "backupCode3": null,
+      "sonyEmail": null,
+      "sonyPassword": null,
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
+    {
       "id": "order_1784205634405_767",
       "timestamp": "2026-07-16T12:40:34.405Z",
       "customerName": "Guest QA",
@@ -1959,6 +2023,26 @@
     }
   ],
   "logs": [
+    {
+      "id": "log_1784221587921_09szh",
+      "timestamp": "2026-07-16T17:06:27.921Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842215 من Trivela Admin — شحن كوينز: 2.4M",
+      "details": {
+        "orderId": "order_1784221587915_935"
+      }
+    },
+    {
+      "id": "log_1784221583053_lfeyz",
+      "timestamp": "2026-07-16T17:06:23.053Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842215 من Trivela Admin — شحن كوينز: 2.4M",
+      "details": {
+        "orderId": "order_1784221583045_203"
+      }
+    },
     {
       "id": "log_1784220015109_rwa3q",
       "timestamp": "2026-07-16T16:40:15.109Z",
@@ -5395,28 +5479,6 @@
       "details": {
         "revId": "rev_1783439063528"
       }
-    },
-    {
-      "id": "log_1783439063523_3hr06",
-      "timestamp": "2026-07-07T15:44:23.523Z",
-      "action": "DELETE_FAQ",
-      "operator": "المشرف",
-      "message": "تم حذف السؤال الشائع: \"كيف يتم شحن الكوينز؟\"",
-      "details": {
-        "faqId": "faq_1783439063516"
-      }
-    },
-    {
-      "id": "log_1783439063512_wsa81",
-      "timestamp": "2026-07-07T15:44:23.512Z",
-      "action": "COMPLETE_ORDER",
-      "operator": "المشرف",
-      "message": "تم تأكيد واكتمال الطلب order_1783439063506_208 (الخدمة: شحن كوينز: 500K) بتكلفة مورد 90 ر.س وأرباح 60 ر.س",
-      "details": {
-        "orderId": "order_1783439063506_208",
-        "supplierCost": 90,
-        "profit": 60
-      }
     }
   ],
   "faqs": [
@@ -6368,7 +6430,7 @@
     }
   ],
   "analytics": {
-    "totalVisits": 9963,
+    "totalVisits": 10001,
     "daily": {
       "2026-07-02": 85,
       "2026-07-03": 92,
@@ -6383,26 +6445,26 @@
       "2026-07-12": 4977,
       "2026-07-13": 789,
       "2026-07-15": 221,
-      "2026-07-16": 844
+      "2026-07-16": 882
     },
     "devices": {
       "mobile": 987,
-      "desktop": 8936,
+      "desktop": 8974,
       "tablet": 40
     },
     "referrers": {
-      "direct": 499,
+      "direct": 501,
       "google": 180,
       "tiktok": 341,
       "snapchat": 120,
       "instagram": 90,
       "twitter": 54,
       "whatsapp": 110,
-      "other": 375
+      "other": 379
     },
     "countries": {
       "sa": 560,
-      "ae": 772,
+      "ae": 778,
       "kw": 140,
       "qa": 95,
       "bh": 65,
@@ -6432,27 +6494,27 @@
       "17": 143,
       "18": 134,
       "19": 163,
-      "20": 208,
+      "20": 214,
       "21": 125,
       "22": 111,
       "23": 83
     },
     "pages": {
-      "home": 1633,
-      "coins": 715,
+      "home": 1635,
+      "coins": 718,
       "sbc": 420,
       "rivals": 380,
       "champions": 320,
-      "objectives": 281,
+      "objectives": 282,
       "coaching": 150,
       "packages": 190
     },
     "visitorTypes": {
       "new": 759,
-      "returning": 990
+      "returning": 996
     },
     "clicks": {
-      "coins": 318,
+      "coins": 321,
       "sbc": 180,
       "rivals": 120,
       "champions": 140,
