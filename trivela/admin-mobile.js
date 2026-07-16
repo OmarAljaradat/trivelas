@@ -22,9 +22,10 @@ const CURRENCY_SYMBOLS = {
 
 // Check admin auth immediately
 async function checkAuth() {
+  if (window.__adminGuardBlocked) return;
   const token = localStorage.getItem('trivela_token');
   if (!token) {
-    window.location.href = '/login.html?redirect=admin-mobile.html';
+    window.location.href = '/login.html?redirect=/admin-mobile.html';
     return;
   }
 }

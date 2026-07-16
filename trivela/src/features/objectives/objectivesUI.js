@@ -673,6 +673,8 @@ export async function handleOrderSubmit(event) {
 window.selectPlatform      = selectPlatform;
 window.toggleObjectiveCard  = toggleObjectiveCard;
 window.toggleCheckboxCard  = toggleObjectiveCard; // Keep old name as alias just in case
+// Toggle points-discount checkbox → simply recompute totals
+function togglePointsDiscount() { updatePriceAndSummary(); }
 window.togglePointsDiscount = togglePointsDiscount;
 window.updatePriceAndSummary = updatePriceAndSummary;
 window.handleOrderSubmit   = handleOrderSubmit;

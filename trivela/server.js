@@ -604,7 +604,7 @@ function ensureAdminBootstrapped() {
 // Admin-only middleware
 function requireAdmin(req, res, next) {
   const authHeader = req.headers['authorization'] || '';
-  const token = authHeader.split(' ')[1] || req.query.token;
+  const token = authHeader.split(' ')[1];
   if (!token) return res.status(401).json({ error: "غير مصرح: يجب تسجيل الدخول كمشرف" });
   try {
     const userId = Buffer.from(token, 'base64').toString('ascii');

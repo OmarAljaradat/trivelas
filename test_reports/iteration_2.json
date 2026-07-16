@@ -1,0 +1,56 @@
+{
+  "summary": "Iteration 2 retest of THREE targeted fixes + security regression + smoke. All PASS. Backend: 35/35 pytest (added new query-string-token rejection test — returns 401 as required, header-token still returns 200). Frontend: (1) /buy-objectives.html loads with typeof window.togglePointsDiscount === 'function' and direct invocation returns 'ok' — zero page errors, zero console errors; (2) /admin.html and /admin-mobile.html WITHOUT token show the 🔒 block and do NOT redirect to login.html; (3) with non-admin token both admin pages still show 🔒 block; (4) admin login → /admin.html renders full dashboard, GET /api/admin/stats returns 200; (5) query-string token rejected with 401 while header token unlocks (200); (6) no-token / non-admin-token / admin-token matrix across 10 admin endpoints still passes; no password/rawPasswordPlaintext/rawPassword leakage in /api/admin/users; login rate limit triggers after ≤12 attempts; mobile 390×844 scrollWidth == innerWidth == 390 on /, /buy-coins.html, /buy-sbc.html, /login.html (no horizontal overflow); desktop home + buy-coins CTAs render and are clickable.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Admin dashboard header (admin.html) — cosmetic carryover from iteration 1",
+        "issue": "Header still shows hardcoded `admin@trivela.com` label even though logged-in email is `admin@trivela.local`. Not part of the requested retest, but confirmed still present in screenshot.",
+        "selector": "admin.html header user block",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Mobile 390x844 (/, /buy-coins.html, /buy-sbc.html, /login.html)",
+        "issues": [
+          "All pages: scrollWidth == innerWidth == 390 (no horizontal overflow) — PASS"
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/trivela_backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "All three fixes from iteration 2 are verified working. No new action items. (Optional carryover: replace hardcoded admin@trivela.com in admin.html header with the logged-in user's email — LOW priority cosmetic.)"
+  ],
+  "critical_code_review_comments": [
+    "server.js is still 2113 lines — recommend router split (unchanged from iteration 1).",
+    "requireAdmin base64-decodes a raw userId as the token (line 610) — still not signed. Attackers who steal or guess a userId still get full session access. Recommend signed JWTs or opaque server-side sessions (unchanged from iteration 1).",
+    "In-memory _loginAttempts rate-limit map resets on process restart and is per-instance — fine for MVP, not distributed-safe (unchanged from iteration 1).",
+    "Iteration 2 fix confirmed: req.query.token fallback removed from requireAdmin (line 605-621) — token-in-URL attack vector closed."
+  ],
+  "updated_files": [
+    "/app/backend/tests/trivela_backend_test.py — appended 2 new tests: test_admin_token_in_query_string_is_rejected and test_admin_token_via_header_still_works_after_query_reject."
+  ],
+  "success_rate": {
+    "backend": "100% (35/35)",
+    "frontend": "100% on all iteration-2 retest items (buy-objectives ReferenceError gone; admin guards show 🔒 without redirect; admin login unlocks dashboard; mobile no overflow)"
+  },
+  "test_credentials": "Admin: admin@trivela.local / Trivela@Admin2026. Non-admin: ephemeral uifetest_<ts>@trivela.test / TestPass!123 registered per-run.",
+  "seed_data_creation": "None beyond registering one ephemeral non-admin user and one guest order via public API.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All three iteration-2 fixes verified. Backend has 35 tests total (33 from iter-1 + 2 new query-string-token tests). Run pytest with -n 0 to force serial (pytest.ini pins -n 2 --dist loadscope; rate-limit test can race the admin fixture across workers). If rate-limit was just exercised, restart frontend supervisor (`sudo supervisorctl restart frontend`) before rerunning admin fixture logins so the in-memory rate-limit counter is cleared. External URL: https://preview-project-13.preview.emergentagent.com.",
+  "rca of the issue": {
+    "resolved_togglePointsDiscount": "objectivesUI.js line 677 now declares `function togglePointsDiscount() { updatePriceAndSummary(); }` immediately before the `window.togglePointsDiscount = togglePointsDiscount` binding on line 678. Verified: typeof window.togglePointsDiscount === 'function' and a direct call returns without throwing.",
+    "resolved_admin_guard_no_redirect": "admin.html:30 and admin-mobile.html:30 now set `window.__adminGuardBlocked = true` inside showBlock() before overwriting documentElement.innerHTML. adminUI.js:30 and admin-mobile.js:25 short-circuit early when __adminGuardBlocked is truthy, so the legacy `window.location.href = '/login.html?redirect=…'` no longer fires when the 🔒 block has already been rendered. Verified: URL remains /admin.html and /admin-mobile.html after 2.5s wait with no token in localStorage.",
+    "resolved_query_string_token_reject": "server.js requireAdmin (line 605-621) now reads only `req.headers['authorization']` — the `req.query.token` fallback is gone. Verified: GET /api/admin/stats?token=<adminBase64> returns 401 while GET /api/admin/stats with Authorization: Bearer <adminBase64> returns 200."
+  }
+}

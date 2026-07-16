@@ -200,6 +200,22 @@ class TestAdminAuthGuard:
                     headers={"Authorization": f"Bearer {admin_token}"})
         assert r.status_code == 200
 
+    # Iteration 2 additional security check — token in query-string must NOT work
+    def test_admin_token_in_query_string_is_rejected(self, api, admin_token):
+        # No Authorization header, token in ?token= must return 401
+        r = api.get(f"{BASE_URL}/api/admin/stats?token={admin_token}")
+        assert r.status_code == 401, (
+            f"expected 401 when admin token is passed as query string, "
+            f"got {r.status_code}: {r.text[:200]}"
+        )
+
+    def test_admin_token_via_header_still_works_after_query_reject(self, api, admin_token):
+        r = api.get(
+            f"{BASE_URL}/api/admin/stats",
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
+        assert r.status_code == 200, r.text[:300]
+
 
 # --------------------------------------------------------------------------
 # Login rate-limiting (must run last; consumes attempts for this IP)

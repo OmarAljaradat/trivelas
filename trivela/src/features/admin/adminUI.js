@@ -26,11 +26,13 @@ let globalRivalsRanks = {};
 // DOM Content Loaded Initializer
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOMContentLoaded: Started loading...');
+  // Guard already displayed 🔒 block? do nothing further
+  if (window.__adminGuardBlocked) return;
   // Check auth credentials
   const token = localStorage.getItem('trivela_token');
   if (!token) {
     console.log('DOMContentLoaded: No token found, redirecting...');
-    window.location.href = 'login.html';
+    window.location.href = '/login.html?redirect=/admin.html';
     return;
   }
 

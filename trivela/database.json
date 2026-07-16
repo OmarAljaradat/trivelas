@@ -698,6 +698,40 @@
           "reason": "إنشاء الحساب بنجاح"
         }
       ]
+    },
+    {
+      "id": "1784205634476",
+      "name": "QA Tester",
+      "phone": "966584205634",
+      "email": "qatester_1784205634_84e389@trivela.test",
+      "password": "083904ca0585929521aacd82d1c38c7c:6263713ac6d07972519280b750aaef0685f363575c8c133d0a046e18349157743e478ef48960aae574e8b1a9f614913ff435ed1504cd1174c7637675542aa3fd",
+      "isAdmin": false,
+      "points": 0,
+      "referredBy": null,
+      "history": [
+        {
+          "date": "2026-07-16T12:40:34.476Z",
+          "amount": 0,
+          "reason": "إنشاء الحساب بنجاح"
+        }
+      ]
+    },
+    {
+      "id": "1784205759527",
+      "name": "UI Test",
+      "phone": "966501112233",
+      "email": "uifetest_1784205759@trivela.test",
+      "password": "1fbdf8c00059f50bbcaa9bf603558ca0:97a9e6c111b48c7eca3331656215429d02e4a047e77a21da8c5c0a9421facd66cf3fcd4cad1d5332ea20c5c10b1ee1e5bf331f5d05be33d9e1965460076046bb",
+      "isAdmin": false,
+      "points": 0,
+      "referredBy": null,
+      "history": [
+        {
+          "date": "2026-07-16T12:42:39.527Z",
+          "amount": 0,
+          "reason": "إنشاء الحساب بنجاح"
+        }
+      ]
     }
   ],
   "settings": {
@@ -1002,6 +1036,38 @@
     ]
   },
   "orders": [
+    {
+      "id": "order_1784205634405_767",
+      "timestamp": "2026-07-16T12:40:34.405Z",
+      "customerName": "Guest QA",
+      "customerPhone": "966504205634",
+      "service": "شحن 1000K كوينز",
+      "platform": "PS",
+      "priceSAR": 50,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": null,
+      "eaPassword": null,
+      "backupCode1": null,
+      "backupCode2": null,
+      "backupCode3": null,
+      "sonyEmail": null,
+      "sonyPassword": null,
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
     {
       "id": "order_1784204862628_674",
       "timestamp": "2026-07-16T12:27:42.628Z",
@@ -1888,6 +1954,16 @@
     }
   ],
   "logs": [
+    {
+      "id": "log_1784205634411_pp61e",
+      "timestamp": "2026-07-16T12:40:34.411Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842056 من Guest QA — شحن 1000K كوينز",
+      "details": {
+        "orderId": "order_1784205634405_767"
+      }
+    },
     {
       "id": "log_1784204862634_kmk9e",
       "timestamp": "2026-07-16T12:27:42.634Z",
@@ -5335,19 +5411,6 @@
         "playerId": "pkg_test",
         "category": "packages"
       }
-    },
-    {
-      "id": "log_1783438868270_3vpz9",
-      "timestamp": "2026-07-07T15:41:08.270Z",
-      "action": "ADD_PLAYER",
-      "operator": "المشرف",
-      "message": "تم إضافة/تحديث كارت اللاعب \"حزمة التحديات الذهبية\" (PACKAGES) بسعر 120 ر.س",
-      "details": {
-        "playerId": "pkg_test",
-        "name": "حزمة التحديات الذهبية",
-        "category": "packages",
-        "priceSAR": 120
-      }
     }
   ],
   "faqs": [
@@ -6299,7 +6362,7 @@
     }
   ],
   "analytics": {
-    "totalVisits": 9492,
+    "totalVisits": 9650,
     "daily": {
       "2026-07-02": 85,
       "2026-07-03": 92,
@@ -6314,15 +6377,15 @@
       "2026-07-12": 4977,
       "2026-07-13": 789,
       "2026-07-15": 221,
-      "2026-07-16": 373
+      "2026-07-16": 531
     },
     "devices": {
       "mobile": 983,
-      "desktop": 8469,
+      "desktop": 8627,
       "tablet": 40
     },
     "referrers": {
-      "direct": 468,
+      "direct": 488,
       "google": 180,
       "tiktok": 341,
       "snapchat": 120,
@@ -6340,7 +6403,7 @@
       "om": 50,
       "eg": 110,
       "jo": 45,
-      "other": 89
+      "other": 109
     },
     "hours": {
       "0": 12,
@@ -6355,7 +6418,7 @@
       "9": 30,
       "10": 45,
       "11": 67,
-      "12": 85,
+      "12": 105,
       "13": 48,
       "14": 42,
       "15": 77,
@@ -6369,18 +6432,18 @@
       "23": 83
     },
     "pages": {
-      "home": 1595,
-      "coins": 710,
+      "home": 1609,
+      "coins": 712,
       "sbc": 420,
       "rivals": 380,
       "champions": 320,
-      "objectives": 277,
+      "objectives": 281,
       "coaching": 150,
       "packages": 190
     },
     "visitorTypes": {
-      "new": 750,
-      "returning": 952
+      "new": 758,
+      "returning": 964
     },
     "clicks": {
       "coins": 318,
