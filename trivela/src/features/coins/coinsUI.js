@@ -109,6 +109,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   updateCheckoutProgress();
+
+  // ── Bind form submit listener directly (guaranteed to work in ES module context) ──
+  const purchaseForm = document.getElementById('purchaseForm');
+  if (purchaseForm) {
+    purchaseForm.addEventListener('submit', handlePurchaseSubmit);
+  }
 });
 
 // Load User profile & Points
