@@ -621,7 +621,7 @@
       "email": "admin@trivela.local",
       "password": "119eb23af5a5582be29c6b652cf925a9:ce43727bf0ad9fdb18cfd30082ca80ac1ec4009c010d0ae91f054017ea8586c50e5af124dcf7670eccf04ab51e56b326e42c65afed8bcbe1aabd264fa6e74eef",
       "isAdmin": true,
-      "points": 10000,
+      "points": 9500,
       "referredBy": null,
       "history": [
         {
@@ -633,6 +633,11 @@
           "date": "2026-07-16T16:40:15.097Z",
           "amount": 10000,
           "reason": "admin"
+        },
+        {
+          "date": "2026-07-16T17:22:19.997Z",
+          "amount": -500,
+          "reason": "استبدال نقاط بكوبون خصم 25% (TRV-357HH2)"
         }
       ]
     },
@@ -1041,6 +1046,134 @@
     ]
   },
   "orders": [
+    {
+      "id": "order_1784246763071_575",
+      "timestamp": "2026-07-17T00:06:03.071Z",
+      "customerName": "Omar Jaradat",
+      "customerPhone": "+962775585112",
+      "service": "شحن كوينز: 1M",
+      "platform": "console",
+      "priceSAR": 105,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": null,
+      "eaPassword": null,
+      "backupCode1": null,
+      "backupCode2": null,
+      "backupCode3": null,
+      "sonyEmail": null,
+      "sonyPassword": null,
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
+    {
+      "id": "order_1784246652037_294",
+      "timestamp": "2026-07-17T00:04:12.037Z",
+      "customerName": "Omar Jaradat",
+      "customerPhone": "+962775585112",
+      "service": "الرتبة الرابعة (Rank 4)",
+      "platform": "console",
+      "priceSAR": 131.25,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": null,
+      "eaPassword": null,
+      "backupCode1": "123",
+      "backupCode2": "123",
+      "backupCode3": "123",
+      "sonyEmail": "omarjaradat512@gmail.com",
+      "sonyPassword": "123",
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
+    {
+      "id": "order_1784246642193_383",
+      "timestamp": "2026-07-17T00:04:02.193Z",
+      "customerName": "Omar Jaradat",
+      "customerPhone": "+962775585112",
+      "service": "الرتبة الرابعة (Rank 4)",
+      "platform": "console",
+      "priceSAR": 131.25,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": null,
+      "eaPassword": null,
+      "backupCode1": "123",
+      "backupCode2": "123",
+      "backupCode3": "123",
+      "sonyEmail": "omarjaradat512@gmail.com",
+      "sonyPassword": "123",
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
+    {
+      "id": "order_1784246637502_645",
+      "timestamp": "2026-07-17T00:03:57.502Z",
+      "customerName": "Omar Jaradat",
+      "customerPhone": "+962775585112",
+      "service": "الرتبة الرابعة (Rank 4)",
+      "platform": "console",
+      "priceSAR": 131.25,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": null,
+      "eaPassword": null,
+      "backupCode1": "123",
+      "backupCode2": "123",
+      "backupCode3": "123",
+      "sonyEmail": "omarjaradat512@gmail.com",
+      "sonyPassword": "123",
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
     {
       "id": "order_1784221587915_935",
       "timestamp": "2026-07-16T17:06:27.915Z",
@@ -2023,6 +2156,46 @@
     }
   ],
   "logs": [
+    {
+      "id": "log_1784246763077_hanyk",
+      "timestamp": "2026-07-17T00:06:03.077Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842467 من Omar Jaradat — شحن كوينز: 1M",
+      "details": {
+        "orderId": "order_1784246763071_575"
+      }
+    },
+    {
+      "id": "log_1784246652047_00hd4",
+      "timestamp": "2026-07-17T00:04:12.047Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842466 من Omar Jaradat — الرتبة الرابعة (Rank 4)",
+      "details": {
+        "orderId": "order_1784246652037_294"
+      }
+    },
+    {
+      "id": "log_1784246642200_651wj",
+      "timestamp": "2026-07-17T00:04:02.200Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842466 من Omar Jaradat — الرتبة الرابعة (Rank 4)",
+      "details": {
+        "orderId": "order_1784246642193_383"
+      }
+    },
+    {
+      "id": "log_1784246637511_97151",
+      "timestamp": "2026-07-17T00:03:57.511Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842466 من Omar Jaradat — الرتبة الرابعة (Rank 4)",
+      "details": {
+        "orderId": "order_1784246637502_645"
+      }
+    },
     {
       "id": "log_1784221587921_09szh",
       "timestamp": "2026-07-16T17:06:27.921Z",
@@ -5433,52 +5606,6 @@
       "details": {
         "faqId": "faq_1783439248347"
       }
-    },
-    {
-      "id": "log_1783439248344_1btnz",
-      "timestamp": "2026-07-07T15:47:28.344Z",
-      "action": "COMPLETE_ORDER",
-      "operator": "المشرف",
-      "message": "تم تأكيد واكتمال الطلب order_1783439248337_875 (الخدمة: شحن كوينز: 500K) بتكلفة مورد 90 ر.س وأرباح 60 ر.س",
-      "details": {
-        "orderId": "order_1783439248337_875",
-        "supplierCost": 90,
-        "profit": 60
-      }
-    },
-    {
-      "id": "log_1783439063549_ymrqv",
-      "timestamp": "2026-07-07T15:44:23.549Z",
-      "action": "DELETE_PLAYER",
-      "operator": "المشرف",
-      "message": "تم حذف كارت اللاعب \"حزمة التحديات الذهبية\" من تصنيف \"packages\"",
-      "details": {
-        "playerId": "pkg_test",
-        "category": "packages"
-      }
-    },
-    {
-      "id": "log_1783439063543_fteuo",
-      "timestamp": "2026-07-07T15:44:23.543Z",
-      "action": "ADD_PLAYER",
-      "operator": "المشرف",
-      "message": "تم إضافة/تحديث كارت اللاعب \"حزمة التحديات الذهبية\" (PACKAGES) بسعر 120 ر.س",
-      "details": {
-        "playerId": "pkg_test",
-        "name": "حزمة التحديات الذهبية",
-        "category": "packages",
-        "priceSAR": 120
-      }
-    },
-    {
-      "id": "log_1783439063535_dq1gr",
-      "timestamp": "2026-07-07T15:44:23.535Z",
-      "action": "DELETE_REVIEW",
-      "operator": "المشرف",
-      "message": "تم حذف تقييم العميل: \"سلمان العبدالله\"",
-      "details": {
-        "revId": "rev_1783439063528"
-      }
     }
   ],
   "faqs": [
@@ -6430,7 +6557,7 @@
     }
   ],
   "analytics": {
-    "totalVisits": 10001,
+    "totalVisits": 10915,
     "daily": {
       "2026-07-02": 85,
       "2026-07-03": 92,
@@ -6445,39 +6572,40 @@
       "2026-07-12": 4977,
       "2026-07-13": 789,
       "2026-07-15": 221,
-      "2026-07-16": 882
+      "2026-07-16": 1500,
+      "2026-07-17": 296
     },
     "devices": {
-      "mobile": 987,
-      "desktop": 8974,
+      "mobile": 1088,
+      "desktop": 9787,
       "tablet": 40
     },
     "referrers": {
-      "direct": 501,
+      "direct": 532,
       "google": 180,
       "tiktok": 341,
       "snapchat": 120,
       "instagram": 90,
       "twitter": 54,
       "whatsapp": 110,
-      "other": 379
+      "other": 432
     },
     "countries": {
       "sa": 560,
-      "ae": 778,
+      "ae": 861,
       "kw": 140,
       "qa": 95,
       "bh": 65,
       "om": 50,
       "eg": 110,
       "jo": 45,
-      "other": 117
+      "other": 118
     },
     "hours": {
       "0": 12,
       "1": 39,
-      "2": 98,
-      "3": 20,
+      "2": 137,
+      "3": 33,
       "4": 1,
       "5": 3,
       "6": 7,
@@ -6494,14 +6622,14 @@
       "17": 143,
       "18": 134,
       "19": 163,
-      "20": 214,
-      "21": 125,
+      "20": 245,
+      "21": 126,
       "22": 111,
       "23": 83
     },
     "pages": {
-      "home": 1635,
-      "coins": 718,
+      "home": 1705,
+      "coins": 732,
       "sbc": 420,
       "rivals": 380,
       "champions": 320,
@@ -6510,11 +6638,11 @@
       "packages": 190
     },
     "visitorTypes": {
-      "new": 759,
-      "returning": 996
+      "new": 761,
+      "returning": 1078
     },
     "clicks": {
-      "coins": 321,
+      "coins": 322,
       "sbc": 180,
       "rivals": 120,
       "champions": 140,
@@ -6829,6 +6957,13 @@
       "maxUses": 1,
       "usedCount": 1,
       "expiryDate": "2026-08-11"
+    },
+    {
+      "code": "TRV-357HH2",
+      "percent": 25,
+      "maxUses": 1,
+      "usedCount": 0,
+      "expiryDate": "2026-08-15"
     }
   ],
   "emailCampaigns": [

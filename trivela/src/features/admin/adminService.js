@@ -2,8 +2,15 @@ import { api } from '../../core/api.js';
 
 class AdminService {
   // Stats
-  async getQuickStats(days = null) {
-    const url = days ? `/admin/stats?days=${days}` : '/admin/stats';
+  async getQuickStats(days = null, startDate = null, endDate = null) {
+    let url = '/admin/stats';
+    const params = [];
+    if (days) params.push(`days=${days}`);
+    if (startDate) params.push(`startDate=${startDate}`);
+    if (endDate) params.push(`endDate=${endDate}`);
+    if (params.length > 0) {
+      url += '?' + params.join('&');
+    }
     return await api.get(url);
   }
 

@@ -777,34 +777,60 @@ app.get('/api/admin/stats', (req, res) => {
   const todayStr = new Date().toISOString().split('T')[0];
   const visitsToday = db.analytics && db.analytics.daily ? (db.analytics.daily[todayStr] || 0) : 0;
   
-  // Dynamic day range filtering
-  const daysLimit = parseInt(req.query.days);
+  // Dynamic range filtering (custom date range or legacy days limit)
+  const { days, startDate, endDate } = req.query;
   let orders = db.orders || [];
   
-  if (!isNaN(daysLimit)) {
-    // 1. Filter visits by days range
+  if (startDate || endDate) {
+    // 1. Filter visits by custom range
     totalVisits = 0;
-    const now = new Date();
-    const allowedDates = new Set();
-    for (let i = 0; i < daysLimit; i++) {
-      const d = new Date();
-      d.setDate(now.getDate() - i);
-      allowedDates.add(d.toISOString().split('T')[0]);
-    }
     if (db.analytics && db.analytics.daily) {
       Object.entries(db.analytics.daily).forEach(([dateStr, count]) => {
-        if (allowedDates.has(dateStr)) {
+        let matches = true;
+        if (startDate && dateStr < startDate) matches = false;
+        if (endDate && dateStr > endDate) matches = false;
+        if (matches) {
           totalVisits += count;
         }
       });
     }
 
-    // 2. Filter orders by days range
-    const cutoffTime = Date.now() - (daysLimit * 24 * 60 * 60 * 1000);
+    // 2. Filter orders by custom range
     orders = orders.filter(o => {
-      const t = new Date(o.timestamp).getTime();
-      return !isNaN(t) && t >= cutoffTime;
+      if (!o.timestamp) return false;
+      const orderDateStr = new Date(o.timestamp).toISOString().split('T')[0];
+      let matches = true;
+      if (startDate && orderDateStr < startDate) matches = false;
+      if (endDate && orderDateStr > endDate) matches = false;
+      return matches;
     });
+  } else {
+    const daysLimit = parseInt(days);
+    if (!isNaN(daysLimit)) {
+      // 1. Filter visits by relative days range
+      totalVisits = 0;
+      const now = new Date();
+      const allowedDates = new Set();
+      for (let i = 0; i < daysLimit; i++) {
+        const d = new Date();
+        d.setDate(now.getDate() - i);
+        allowedDates.add(d.toISOString().split('T')[0]);
+      }
+      if (db.analytics && db.analytics.daily) {
+        Object.entries(db.analytics.daily).forEach(([dateStr, count]) => {
+          if (allowedDates.has(dateStr)) {
+            totalVisits += count;
+          }
+        });
+      }
+
+      // 2. Filter orders by relative days range
+      const cutoffTime = Date.now() - (daysLimit * 24 * 60 * 60 * 1000);
+      orders = orders.filter(o => {
+        const t = new Date(o.timestamp).getTime();
+        return !isNaN(t) && t >= cutoffTime;
+      });
+    }
   }
   
   const completedOrders = orders.filter(o => o.status === 'completed');
