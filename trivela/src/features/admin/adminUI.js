@@ -6024,6 +6024,15 @@ window.restoreDefaultFeatures = async function() {
       stat: '<strong>15-45</strong> دقيقة متوسط توصيل الكوينز'
     },
     {
+      id: 'feat_8',
+      cardClass: 'bento-card bento-big bento-gradient-border',
+      icon: 'fas fa-lock',
+      iconClass: 'bc-blue',
+      title: 'أمان التشكيلة واللاعبين',
+      desc: 'أمان تام لناديك وتشكيلتك. نضمن عدم المساس بأي لاعب في ناديك أو الكوينز الموجودة مسبقاً في حسابك.',
+      badges: [ '✅ تشفير عالي', '✅ سرية تامة', '✅ أمان 100%' ]
+    },
+    {
       id: 'feat_2',
       cardClass: 'bento-card bento-white',
       icon: 'fas fa-shield-halved',
@@ -6032,12 +6041,12 @@ window.restoreDefaultFeatures = async function() {
       desc: '+1,500 عملية بدون أي حظر. نستخدم أسلوب Transfer Market الآمن بالكامل.'
     },
     {
-      id: 'feat_3',
+      id: 'feat_6',
       cardClass: 'bento-card bento-white',
-      icon: 'fas fa-rotate-left',
-      iconClass: 'bc-orange',
-      title: 'ضمان استرجاع المال',
-      desc: 'لو ما أُنجزت خدمتك لأي سبب — المبلغ يرجع لك فوراً، بدون جدال.'
+      icon: 'fas fa-ban',
+      iconClass: 'bc-red',
+      title: 'Anti-Ban مضمون',
+      desc: 'طريقتنا مجربة على +1,500 عملية. لا حظر، لا مشاكل مع EA.'
     },
     {
       id: 'feat_4',
@@ -6056,12 +6065,12 @@ window.restoreDefaultFeatures = async function() {
       desc: 'نراقب السوق يومياً لنضمن لك الحصول على أفضل قيمة مقابل مالك. أسعارنا تتحدث عن نفسها.'
     },
     {
-      id: 'feat_6',
+      id: 'feat_3',
       cardClass: 'bento-card bento-white',
-      icon: 'fas fa-ban',
-      iconClass: 'bc-red',
-      title: 'Anti-Ban مضمون',
-      desc: 'طريقتنا مجربة على +1,500 عملية. لا حظر، لا مشاكل مع EA.'
+      icon: 'fas fa-rotate-left',
+      iconClass: 'bc-orange',
+      title: 'ضمان استرجاع المال',
+      desc: 'لو ما أُنجزت خدمتك لأي سبب — المبلغ يرجع لك فوراً، بدون جدال.'
     },
     {
       id: 'feat_7',
@@ -6071,15 +6080,6 @@ window.restoreDefaultFeatures = async function() {
       title: 'كل المنصات مدعومة',
       desc: '',
       customHtml: '<div class="platform-icons-row"><div class="pi"><div class="pi-ico"><i class=\"fab fa-playstation\"></i></div><span>PS4 / PS5</span></div><div class="pi"><div class="pi-ico"><i class=\"fab fa-xbox\"></i></div><span>Xbox</span></div><div class="pi"><div class="pi-ico"><i class=\"fas fa-desktop\"></i></div><span>PC</span></div></div>'
-    },
-    {
-      id: 'feat_8',
-      cardClass: 'bento-card bento-big bento-gradient-border',
-      icon: 'fas fa-lock',
-      iconClass: 'bc-blue',
-      title: 'أمان التشكيلة واللاعبين',
-      desc: 'أمان تام لناديك وتشكيلتك. نضمن عدم المساس بأي لاعب في ناديك أو الكوينز الموجودة مسبقاً في حسابك.',
-      badges: [ '✅ تشفير عالي', '✅ سرية تامة', '✅ أمان 100%' ]
     }
   ];
 

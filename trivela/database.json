@@ -982,6 +982,19 @@
         "stat": "<strong>15-45</strong> دقيقة متوسط توصيل الكوينز"
       },
       {
+        "id": "feat_8",
+        "cardClass": "bento-card bento-big bento-gradient-border",
+        "icon": "fas fa-lock",
+        "iconClass": "bc-blue",
+        "title": "أمان التشكيلة واللاعبين",
+        "desc": "أمان تام لناديك وتشكيلتك. نضمن عدم المساس بأي لاعب في ناديك أو الكوينز الموجودة مسبقاً في حسابك.",
+        "badges": [
+          "✅ تشفير عالي",
+          "✅ سرية تامة",
+          "✅ أمان 100%"
+        ]
+      },
+      {
         "id": "feat_2",
         "cardClass": "bento-card bento-white",
         "icon": "fas fa-shield-halved",
@@ -990,12 +1003,12 @@
         "desc": "+1,500 عملية بدون أي حظر. نستخدم أسلوب Transfer Market الآمن بالكامل."
       },
       {
-        "id": "feat_3",
+        "id": "feat_6",
         "cardClass": "bento-card bento-white",
-        "icon": "fas fa-rotate-left",
-        "iconClass": "bc-orange",
-        "title": "ضمان استرجاع المال",
-        "desc": "لو ما أُنجزت خدمتك لأي سبب — المبلغ يرجع لك فوراً، بدون جدال."
+        "icon": "fas fa-ban",
+        "iconClass": "bc-red",
+        "title": "Anti-Ban مضمون",
+        "desc": "طريقتنا مجربة على +1,500 عملية. لا حظر، لا مشاكل مع EA."
       },
       {
         "id": "feat_4",
@@ -1014,12 +1027,12 @@
         "desc": "نراقب السوق يومياً لنضمن لك الحصول على أفضل قيمة مقابل مالك. أسعارنا تتحدث عن نفسها."
       },
       {
-        "id": "feat_6",
+        "id": "feat_3",
         "cardClass": "bento-card bento-white",
-        "icon": "fas fa-ban",
-        "iconClass": "bc-red",
-        "title": "Anti-Ban مضمون",
-        "desc": "طريقتنا مجربة على +1,500 عملية. لا حظر، لا مشاكل مع EA."
+        "icon": "fas fa-rotate-left",
+        "iconClass": "bc-orange",
+        "title": "ضمان استرجاع المال",
+        "desc": "لو ما أُنجزت خدمتك لأي سبب — المبلغ يرجع لك فوراً، بدون جدال."
       },
       {
         "id": "feat_7",
@@ -1029,19 +1042,6 @@
         "title": "كل المنصات مدعومة",
         "desc": "",
         "customHtml": "<div class=\"platform-icons-row\"><div class=\"pi\"><i class=\"fab fa-playstation\"></i><span>PS4</span></div><div class=\"pi\"><i class=\"fab fa-playstation\"></i><span>PS5</span></div><div class=\"pi\"><i class=\"fab fa-xbox\"></i><span>Xbox</span></div><div class=\"pi\"><i class=\"fas fa-desktop\"></i><span>PC</span></div></div>"
-      },
-      {
-        "id": "feat_8",
-        "cardClass": "bento-card bento-big bento-gradient-border",
-        "icon": "fas fa-lock",
-        "iconClass": "bc-blue",
-        "title": "أمان التشكيلة واللاعبين",
-        "desc": "أمان تام لناديك وتشكيلتك. نضمن عدم المساس بأي لاعب في ناديك أو الكوينز الموجودة مسبقاً في حسابك.",
-        "badges": [
-          "✅ تشفير عالي",
-          "✅ سرية تامة",
-          "✅ أمان 100%"
-        ]
       }
     ]
   },
@@ -6740,7 +6740,7 @@
     }
   ],
   "analytics": {
-    "totalVisits": 11026,
+    "totalVisits": 11038,
     "daily": {
       "2026-07-02": 85,
       "2026-07-03": 92,
@@ -6756,11 +6756,11 @@
       "2026-07-13": 789,
       "2026-07-15": 221,
       "2026-07-16": 1500,
-      "2026-07-17": 407
+      "2026-07-17": 419
     },
     "devices": {
       "mobile": 1128,
-      "desktop": 9858,
+      "desktop": 9870,
       "tablet": 40
     },
     "referrers": {
@@ -6771,11 +6771,11 @@
       "instagram": 90,
       "twitter": 54,
       "whatsapp": 110,
-      "other": 442
+      "other": 444
     },
     "countries": {
       "sa": 560,
-      "ae": 873,
+      "ae": 875,
       "kw": 140,
       "qa": 95,
       "bh": 65,
@@ -6799,7 +6799,7 @@
       "11": 67,
       "12": 112,
       "13": 49,
-      "14": 44,
+      "14": 46,
       "15": 77,
       "16": 166,
       "17": 143,
@@ -6811,7 +6811,7 @@
       "23": 83
     },
     "pages": {
-      "home": 1711,
+      "home": 1713,
       "coins": 738,
       "sbc": 420,
       "rivals": 380,
@@ -6822,7 +6822,7 @@
     },
     "visitorTypes": {
       "new": 761,
-      "returning": 1090
+      "returning": 1092
     },
     "clicks": {
       "coins": 326,
