@@ -6,6 +6,9 @@ let currentTab = 'orders';
 let allOrders = [];
 let allReviews = [];
 let pollingInterval = null;
+let statusFilter = 'all';
+let searchQuery = '';
+let expandedCardId = null;
 
 // Currency symbols
 const CURRENCY_SYMBOLS = {
@@ -102,9 +105,42 @@ function renderOrders() {
     return;
   }
   
-  // Sort orders: pending first, then paid, then in_progress, then completed, then cancelled
+  // 1. Filter by Status
+  let filtered = allOrders;
+  if (statusFilter !== 'all') {
+    filtered = allOrders.filter(o => o.status === statusFilter);
+  }
+  
+  // 2. Filter by Search Query
+  const query = searchQuery.trim().toLowerCase();
+  if (query) {
+    filtered = filtered.filter(o => {
+      const idPart = (o.id || '').substring(6, 14).toLowerCase();
+      return (
+        (o.customerName || '').toLowerCase().includes(query) ||
+        (o.customerPhone || '').includes(query) ||
+        (o.id || '').toLowerCase().includes(query) ||
+        idPart.includes(query) ||
+        (o.eaEmail || '').toLowerCase().includes(query) ||
+        (o.service || '').toLowerCase().includes(query)
+      );
+    });
+  }
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-search-minus"></i>
+        <div class="empty-state-title">لا توجد نتائج بحث</div>
+        <div class="empty-state-desc">تأكد من كتابة الاسم أو رقم الطلب بشكل صحيح.</div>
+      </div>
+    `;
+    return;
+  }
+  
+  // 3. Sort orders: pending first, then paid, then in_progress, then completed, then cancelled
   const statusWeight = { pending: 1, paid: 2, in_progress: 3, completed: 4, cancelled: 5 };
-  const sortedOrders = [...allOrders].sort((a, b) => {
+  const sortedOrders = [...filtered].sort((a, b) => {
     const wa = statusWeight[a.status] || 9;
     const wb = statusWeight[b.status] || 9;
     if (wa !== wb) return wa - wb;
@@ -131,70 +167,113 @@ function renderOrders() {
     if (order.status === 'pending') {
       actionButtons += `
         <button class="btn-action btn-whatsapp" onclick="openWhatsApp('${order.customerPhone}', '${order.id}', '${order.customerName}', '${formattedCoins}', '${order.platform}', '${order.priceSAR}')">
-          <i class="fab fa-whatsapp"></i> واتساب
+          <i class="fab fa-whatsapp"></i> مراسلة واتساب
         </button>
-        <button class="btn-action btn-state-change" onclick="openStatusModal('${order.id}', 'paid')">
-          <i class="fas fa-check"></i> قبول الدفع
+        <button class="btn-action btn-state-change" style="background:#3b82f6;" onclick="openStatusModal('${order.id}', 'paid')">
+          <i class="fas fa-check"></i> قبول وتأكيد الدفع
         </button>
       `;
     } else if (order.status === 'paid') {
       actionButtons += `
-        <button class="btn-action btn-details" onclick="openDetailsModal('${order.id}')">
-          <i class="fas fa-eye"></i> التفاصيل
-        </button>
-        <button class="btn-action btn-state-change" style="background:#a855f7;" onclick="openStatusModal('${order.id}', 'in_progress')">
-          <i class="fas fa-truck-loading"></i> إرسال للمورد
+        <button class="btn-action btn-state-change" style="background:#a855f7; width: 100%; flex: 1;" onclick="openStatusModal('${order.id}', 'in_progress')">
+          <i class="fas fa-truck-loading"></i> إرسال الطلب للمورد
         </button>
       `;
     } else if (order.status === 'in_progress') {
       actionButtons += `
-        <button class="btn-action btn-details" onclick="openDetailsModal('${order.id}')">
-          <i class="fas fa-eye"></i> التفاصيل
-        </button>
-        <button class="btn-action btn-state-change" style="background:#10b981;" onclick="openStatusModal('${order.id}', 'completed')">
-          <i class="fas fa-check-double"></i> إتمام وشحن
+        <button class="btn-action btn-state-change" style="background:#10b981; width: 100%; flex: 1;" onclick="openStatusModal('${order.id}', 'completed')">
+          <i class="fas fa-check-double"></i> إتمام وشحن الطلب بنجاح
         </button>
       `;
     } else {
-      // Completed or cancelled
+      // Completed or cancelled - no actions needed except styling
       actionButtons += `
-        <button class="btn-action btn-details" style="width: 100%; flex: none;" onclick="openDetailsModal('${order.id}')">
-          <i class="fas fa-eye"></i> تفاصيل الطلب
-        </button>
+        <div style="text-align: center; width: 100%; font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">
+          <i class="fas fa-info-circle"></i> الطلب في حالة نهائية ومقفل
+        </div>
       `;
     }
     
+    const isExpanded = expandedCardId === order.id;
+    
     return `
-      <div class="mobile-card border-${order.status}">
-        <div class="card-header">
-          <div class="card-title-wrap">
-            <span class="card-title">${order.customerName} (#${cleanId})</span>
-            <span class="card-subtitle">${dateStr}</span>
+      <div class="mobile-card border-${order.status} ${isExpanded ? 'expanded' : ''}" data-id="${order.id}" onclick="toggleCardExpansion('${order.id}', event)">
+        <div class="card-main-info">
+          <div class="card-left-info">
+            <span class="card-title">${order.customerName}</span>
+            <span class="card-subtitle">طلب #${cleanId} • ${dateStr}</span>
+            <span class="platform-badge ${order.platform === 'pc' ? 'pc' : 'console'}">${order.platform === 'pc' ? 'PC' : 'Console'}</span>
           </div>
-          <span class="badge badge-${order.status}">${statusText}</span>
-        </div>
-        
-        <div class="card-body-row">
-          <div class="body-item">
-            <span class="body-item-label">المنصة:</span>
-            <span class="body-item-val">${order.platform === 'pc' ? 'PC' : 'Console'}</span>
-          </div>
-          <div class="body-item">
-            <span class="body-item-label">الخدمة:</span>
-            <span class="body-item-val">${order.service}</span>
-          </div>
-          <div class="body-item">
-            <span class="body-item-label">الكمية:</span>
-            <span class="body-item-val">${formattedCoins || order.service}</span>
-          </div>
-          <div class="body-item">
-            <span class="body-item-label">السعر الفعلي:</span>
-            <span class="body-item-val monts">${Math.round(order.priceSAR)} ر.س</span>
+          <div class="card-right-info">
+            <span class="card-coin-badge">${formattedCoins || order.service}</span>
+            <span class="badge badge-${order.status}">${statusText}</span>
           </div>
         </div>
         
-        <div class="card-actions">
-          ${actionButtons}
+        <div class="card-expanded-content">
+          <!-- Copyable Credentials List -->
+          <div class="details-grid">
+            <div style="font-size: 0.72rem; color: var(--gold-primary); font-weight: 800; margin-bottom: 4px; text-align: right;"><i class="fas fa-key"></i> بيانات الحساب (اضغط للنسخ الفوري):</div>
+            
+            <div class="detail-row-copy">
+              <div class="detail-label-side">
+                <span class="detail-lbl">بريد الحساب EA:</span>
+                <span class="detail-val code">${order.eaEmail || 'غير متوفر'}</span>
+              </div>
+              ${order.eaEmail ? `<button class="btn-copy-action" onclick="copyToClipboard('${order.eaEmail}', event, this)"><i class="far fa-copy"></i> نسخ</button>` : ''}
+            </div>
+            
+            <div class="detail-row-copy">
+              <div class="detail-label-side">
+                <span class="detail-lbl">رمز مرور EA:</span>
+                <span class="detail-val code">${order.eaPassword || 'غير متوفر'}</span>
+              </div>
+              ${order.eaPassword ? `<button class="btn-copy-action" onclick="copyToClipboard('${order.eaPassword}', event, this)"><i class="far fa-copy"></i> نسخ</button>` : ''}
+            </div>
+            
+            <div class="detail-row-copy">
+              <div class="detail-label-side">
+                <span class="detail-lbl">الرموز الاحتياطية (Backup Codes):</span>
+                <span class="detail-val code">${(order.backupCodes || order.backup1 || '').replace(/,/g, '  |  ') || 'غير متوفر'}</span>
+              </div>
+              ${(order.backupCodes || order.backup1) ? `<button class="btn-copy-action" onclick="copyToClipboard('${(order.backupCodes || order.backup1 || '')}', event, this)"><i class="far fa-copy"></i> نسخ</button>` : ''}
+            </div>
+
+            ${(order.sonyEmail || order.sonyPassword) ? `
+              <div class="detail-row-copy">
+                <div class="detail-label-side">
+                  <span class="detail-lbl">بريد سوني (PSN):</span>
+                  <span class="detail-val code">${order.sonyEmail || 'غير متوفر'}</span>
+                </div>
+                ${order.sonyEmail ? `<button class="btn-copy-action" onclick="copyToClipboard('${order.sonyEmail}', event, this)"><i class="far fa-copy"></i> نسخ</button>` : ''}
+              </div>
+              <div class="detail-row-copy">
+                <div class="detail-label-side">
+                  <span class="detail-lbl">رمز مرور سوني:</span>
+                  <span class="detail-val code">${order.sonyPassword || 'غير متوفر'}</span>
+                </div>
+                ${order.sonyPassword ? `<button class="btn-copy-action" onclick="copyToClipboard('${order.sonyPassword}', event, this)"><i class="far fa-copy"></i> نسخ</button>` : ''}
+              </div>
+            ` : ''}
+            
+            <div class="detail-row-copy" style="background: rgba(48, 83, 136, 0.08);">
+              <div class="detail-label-side">
+                <span class="detail-lbl">تفاصيل الخدمة والسعر الفعلي:</span>
+                <span class="detail-val">${order.service} - <span class="monts" style="color:var(--green-primary);">${Math.round(order.priceSAR)} ر.س</span></span>
+              </div>
+            </div>
+            
+            ${order.adminNotes ? `
+              <div class="detail-row-copy" style="flex-direction: column; align-items: stretch; gap: 4px;">
+                <span class="detail-lbl" style="text-align: right;">ملاحظات الإدارة:</span>
+                <span class="detail-val" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-align: right; background: rgba(0,0,0,0.15); padding: 8px; border-radius: 6px;">${order.adminNotes}</span>
+              </div>
+            ` : ''}
+          </div>
+          
+          <div class="card-actions" style="margin-top: 10px;">
+            ${actionButtons}
+          </div>
         </div>
       </div>
     `;
@@ -460,7 +539,89 @@ window.submitStatusUpdate = async function(event) {
   }
 };
 
+// ══════════ CARD EXPANSION TOGGLE ══════════ //
+
+window.toggleCardExpansion = function(orderId, event) {
+  // If clicked a button or input, don't toggle expand
+  if (event.target.closest('button') || event.target.closest('input') || event.target.closest('a')) {
+    return;
+  }
+  
+  if (expandedCardId === orderId) {
+    // Collapse current card
+    expandedCardId = null;
+    const card = document.querySelector(`.mobile-card[data-id="${orderId}"]`);
+    if (card) card.classList.remove('expanded');
+  } else {
+    // Collapse previously expanded card
+    if (expandedCardId) {
+      const oldCard = document.querySelector(`.mobile-card[data-id="${expandedCardId}"]`);
+      if (oldCard) oldCard.classList.remove('expanded');
+    }
+    expandedCardId = orderId;
+    const card = document.querySelector(`.mobile-card[data-id="${orderId}"]`);
+    if (card) card.classList.add('expanded');
+  }
+};
+
+// ══════════ COPY TO CLIPBOARD ══════════ //
+
+window.copyToClipboard = function(text, event, btn) {
+  event.stopPropagation();
+  navigator.clipboard.writeText(text).then(() => {
+    const origText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> تم';
+    btn.style.background = 'var(--green-primary)';
+    btn.style.borderColor = 'var(--green-primary)';
+    btn.style.color = '#fff';
+    setTimeout(() => {
+      btn.innerHTML = origText;
+      btn.style.background = 'rgba(255,255,255,0.06)';
+      btn.style.borderColor = 'rgba(255,255,255,0.1)';
+      btn.style.color = '';
+    }, 1600);
+  }).catch(() => {
+    // Fallback for older browsers
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    const origText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> تم';
+    btn.style.background = 'var(--green-primary)';
+    setTimeout(() => {
+      btn.innerHTML = origText;
+      btn.style.background = 'rgba(255,255,255,0.06)';
+    }, 1600);
+  });
+};
+
+// ══════════ SEARCH & STATUS FILTER HANDLERS ══════════ //
+
+window.onSearchInput = function(val) {
+  searchQuery = val;
+  renderOrders();
+};
+
+window.filterByStatus = function(status, el) {
+  statusFilter = status;
+  
+  // Update pills UI
+  document.querySelectorAll('.status-pill').forEach(pill => {
+    pill.classList.remove('active');
+  });
+  el.classList.add('active');
+  
+  // Re-render orders
+  renderOrders();
+};
+
 // ══════════ TABS SWITCHING & NAVIGATION ══════════ //
+
 
 window.switchTab = function(tabName, el) {
   currentTab = tabName;

@@ -225,27 +225,214 @@
       font-weight: 600;
     }
 
+    /* Search & Filters */
+    .search-box-wrap {
+      padding: 0 16px 12px;
+      background: var(--bg-dark);
+      z-index: 90;
+    }
+    .search-input-wrap {
+      position: relative;
+      width: 100%;
+    }
+    .search-input-wrap i {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+    .search-input {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 42px 12px 16px;
+      color: white;
+      font-family: var(--font-cairo);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--blue-primary);
+    }
+    
+    .status-pills-bar {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      scrollbar-width: none;
+      background: var(--bg-dark);
+      z-index: 90;
+    }
+    .status-pills-bar::-webkit-scrollbar {
+      display: none;
+    }
+    .status-pill {
+      white-space: nowrap;
+      padding: 8px 16px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.05);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .status-pill.active {
+      background: var(--blue-primary);
+      color: white;
+      border-color: var(--blue-primary);
+    }
+    .status-pill.active.pill-pending { background: rgba(202, 138, 4, 0.2); color: var(--gold-primary); border-color: var(--gold-primary); }
+    .status-pill.active.pill-paid { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border-color: #3b82f6; }
+    .status-pill.active.pill-in_progress { background: rgba(168, 85, 247, 0.2); color: #a855f7; border-color: #a855f7; }
+    .status-pill.active.pill-completed { background: rgba(16, 185, 129, 0.2); color: var(--green-primary); border-color: var(--green-primary); }
+    .status-pill.active.pill-cancelled { background: rgba(239, 68, 68, 0.2); color: var(--red-primary); border-color: var(--red-primary); }
+
     /* ══════════ CARD LIST ══════════ */
     .card-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-
     .mobile-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 14px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      cursor: pointer;
+      overflow: hidden;
     }
-
     .mobile-card.border-pending { border-right: 4px solid var(--gold-primary); }
     .mobile-card.border-paid { border-right: 4px solid #3b82f6; }
     .mobile-card.border-in_progress { border-right: 4px solid #a855f7; }
     .mobile-card.border-completed { border-right: 4px solid var(--green-primary); }
     .mobile-card.border-cancelled { border-right: 4px solid var(--red-primary); }
+
+    /* Card Layout Parts */
+    .card-main-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-left-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      text-align: right;
+    }
+    .card-right-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      text-align: left;
+    }
+    .card-coin-badge {
+      font-family: var(--font-monts);
+      font-weight: 900;
+      font-size: 1.25rem;
+      color: var(--gold-primary);
+    }
+    .platform-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text-muted);
+      width: fit-content;
+    }
+    .platform-badge.pc {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green-primary);
+    }
+    .platform-badge.console {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3b82f6;
+    }
+
+    .card-expanded-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      margin-top: 0;
+      border-top: 0px solid transparent;
+      padding-top: 0;
+    }
+    .mobile-card.expanded {
+      background: #111a2e;
+      border-color: rgba(48, 83, 136, 0.3);
+    }
+    .mobile-card.expanded .card-expanded-content {
+      max-height: 600px;
+      margin-top: 14px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 14px;
+    }
+
+    /* Expandable Items Copy rows */
+    .details-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .detail-row-copy {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .detail-label-side {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-align: right;
+    }
+    .detail-lbl {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .detail-val {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: white;
+      font-family: var(--font-cairo);
+      word-break: break-all;
+    }
+    .detail-val.code {
+      font-family: var(--font-monts);
+      letter-spacing: 0.5px;
+    }
+    .btn-copy-action {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .btn-copy-action:active {
+      background: var(--blue-primary);
+      transform: scale(0.95);
+    }
 
     .card-header {
       display: flex;
@@ -269,6 +456,11 @@
       font-size: 0.78rem;
       color: var(--text-muted);
       margin-top: 1px;
+    }
+
+    .monts {
+      font-family: var(--font-monts);
+      font-weight: 800;
     }
 
     .badge {
@@ -620,9 +812,27 @@
 
   <!-- ══════════ TAB VIEW 1: ACTIVE ORDERS ══════════ -->
   <main class="tab-view active" id="viewOrders">
-    <div class="view-title">
+    <div class="view-title" style="margin-bottom: 12px;">
       <span>الطلبات الواردة</span>
       <span class="refresh-badge"><i class="fas fa-sync fa-spin"></i> تحديث تلقائي 15ث</span>
+    </div>
+    
+    <!-- Search Bar -->
+    <div class="search-box-wrap" style="padding: 0 0 12px 0; position: static;">
+      <div class="search-input-wrap">
+        <i class="fas fa-search" style="right: 14px;"></i>
+        <input type="text" id="searchOrdersInput" placeholder="ابحث باسم العميل، الهاتف، أو رقم الطلب..." class="search-input" oninput="onSearchInput(this.value)" style="padding-right: 42px;">
+      </div>
+    </div>
+
+    <!-- Status Filter Pills -->
+    <div class="status-pills-bar" style="padding: 0 0 16px 0; position: static; margin-bottom: 8px;">
+      <div class="status-pill active" onclick="filterByStatus('all', this)">الكل</div>
+      <div class="status-pill pill-pending" onclick="filterByStatus('pending', this)">انتظار</div>
+      <div class="status-pill pill-paid" onclick="filterByStatus('paid', this)">مدفوع</div>
+      <div class="status-pill pill-in_progress" onclick="filterByStatus('in_progress', this)">بالمورد</div>
+      <div class="status-pill pill-completed" onclick="filterByStatus('completed', this)">مكتمل</div>
+      <div class="status-pill pill-cancelled" onclick="filterByStatus('cancelled', this)">ملغي</div>
     </div>
     
     <div class="card-list" id="ordersContainer">
