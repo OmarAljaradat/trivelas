@@ -599,26 +599,34 @@
               </label>
               
               <div class="discount-input-wrapper" id="pointsInputWrapper" style="display: none;">
-                <p class="points-helper-text">
+                <p class="points-helper-text" style="display: none;">
                   <i class="fas fa-info-circle"></i>
                   يمكنك الاستفادة من رصيدك بقيمة خصم <strong id="lblPointsDiscountSAR" style="color: #ca8a04;">0.00</strong> ر.س، <a href="#" onclick="togglePointsUsage(event)" id="btnApplyPoints" class="points-action-link">اضغط هنا للتفعيل</a>
                 </p>
 
                 <!-- Redeem Points Section -->
                 <div class="redeem-rewards-section" style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed rgba(48,83,136,0.15);">
-                  <span style="font-size: 0.85rem; font-weight: 700; color: var(--blue-600); display: block; margin-bottom: 8px;">🎁 أو استبدل نقاطك بكوبونات خصم فوري:</span>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px;">
-                    <button type="button" class="redeem-reward-btn" id="btnRedeemSar10" onclick="redeemPointsForCoupon('sar10')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
-                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.95rem;">خصم 5%</span>
-                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 100 نقطة</span>
+                  <span style="font-size: 0.85rem; font-weight: 700; color: var(--blue-600); display: block; margin-bottom: 8px;">🎁 أو استبدل نقاطك بمكافآت حصرية:</span>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
+                    <button type="button" class="redeem-reward-btn" id="btnRedeemCoins50k" onclick="redeemPointsForCoupon('coins50k')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
+                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.9rem;">+50K كوينز مجاناً</span>
+                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 1000 نقطة</span>
                     </button>
-                    <button type="button" class="redeem-reward-btn" id="btnRedeemSar30" onclick="redeemPointsForCoupon('sar30')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
-                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.95rem;">خصم 12%</span>
-                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 250 نقطة</span>
+                    <button type="button" class="redeem-reward-btn" id="btnRedeemCoins100k" onclick="redeemPointsForCoupon('coins100k')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
+                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.9rem;">+100K كوينز مجاناً</span>
+                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 1800 نقطة</span>
                     </button>
-                    <button type="button" class="redeem-reward-btn" id="btnRedeemSar70" onclick="redeemPointsForCoupon('sar70')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
-                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.95rem;">خصم 25%</span>
-                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 500 نقطة</span>
+                    <button type="button" class="redeem-reward-btn" id="btnRedeemCoins250k" onclick="redeemPointsForCoupon('coins250k')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
+                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.9rem;">+250K كوينز مجاناً</span>
+                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 4000 نقطة</span>
+                    </button>
+                    <button type="button" class="redeem-reward-btn" id="btnRedeemDiscount15" onclick="redeemPointsForCoupon('discount15')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
+                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.9rem;">خصم 15 ر.س</span>
+                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 800 نقطة</span>
+                    </button>
+                    <button type="button" class="redeem-reward-btn" id="btnRedeemDiscount40" onclick="redeemPointsForCoupon('discount40')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
+                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.9rem;">خصم 40 ر.س</span>
+                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 2000 نقطة</span>
                     </button>
                   </div>
                   <div id="redeemStatusMessage" style="margin-top: 8px; font-size: 0.75rem; font-weight: 700; text-align: center;"></div>

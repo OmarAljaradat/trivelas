@@ -309,12 +309,21 @@ export function applyCouponCode() {
   }
 
   if (dynamicCoupons[code] !== undefined) {
+    const c = dynamicCoupons[code];
     activeCoupon = {
       code: code,
-      percent: dynamicCoupons[code].percent
+      percent: c.percent || 0,
+      flatDiscount: c.flatDiscount || 0,
+      freeCoins: c.freeCoins || 0
     };
     msg.className = "coupon-status-msg success";
-    msg.textContent = `تم تفعيل الكوبون بنجاح! خصم ${dynamicCoupons[code].percent}%`;
+    if (activeCoupon.freeCoins > 0) {
+      msg.textContent = `تم تفعيل الكوبون بنجاح! ستحصل على +${formatCoins(activeCoupon.freeCoins)} كوينز إضافية مجاناً!`;
+    } else if (activeCoupon.flatDiscount > 0) {
+      msg.textContent = `تم تفعيل الكوبون بنجاح! خصم بقيمة ${activeCoupon.flatDiscount} ر.س`;
+    } else {
+      msg.textContent = `تم تفعيل الكوبون بنجاح! خصم بقيمة ${activeCoupon.percent}%`;
+    }
   } else {
     activeCoupon = null;
     msg.className = "coupon-status-msg error";
@@ -346,7 +355,8 @@ export async function redeemPointsForCoupon(rewardType) {
     const res = await fetch('/api/public/redeem-points', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({ rewardType })
     });
@@ -448,16 +458,18 @@ export function updatePriceAndSummary() {
   );
   
   let finalPrice = res.price;
+  let activeFreeCoins = 0;
 
   if (activeCoupon) {
-    finalPrice -= finalPrice * (activeCoupon.percent / 100);
-  }
-
-  if (usePointsActive && userPoints > 0) {
-    const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
-    const maxDiscountUSD = userPoints / dynamicSettings.pointsDiscountRate;
-    const maxDiscountConverted = maxDiscountUSD * cur.rate;
-    finalPrice -= Math.min(finalPrice, maxDiscountConverted);
+    if (activeCoupon.percent > 0) {
+      finalPrice -= finalPrice * (activeCoupon.percent / 100);
+    } else if (activeCoupon.flatDiscount > 0) {
+      const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
+      const discountConverted = (activeCoupon.flatDiscount / 3.75) * cur.rate;
+      finalPrice = Math.max(0, finalPrice - discountConverted);
+    } else if (activeCoupon.freeCoins > 0) {
+      activeFreeCoins = activeCoupon.freeCoins;
+    }
   }
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
@@ -471,7 +483,11 @@ export function updatePriceAndSummary() {
   const summaryPrice = document.getElementById('summaryPrice');
   const summaryCoins = document.getElementById('summaryCoins');
   if (summaryPrice) summaryPrice.textContent = formattedPrice;
-  if (summaryCoins) summaryCoins.textContent = formatCoins(currentCoins);
+  if (summaryCoins) {
+    summaryCoins.textContent = activeFreeCoins > 0 
+      ? `${formatCoins(currentCoins)} (+${formatCoins(activeFreeCoins)} مجاناً)` 
+      : formatCoins(currentCoins);
+  }
 
   // Time Est
   const lblTime = document.getElementById('lblEstimatedTime');
@@ -497,7 +513,11 @@ export function updatePriceAndSummary() {
   const sidebarDiscRow = document.getElementById('sidebarDiscountRow');
   const sidebarDiscAmt = document.getElementById('sidebarDiscountAmount');
 
-  if (sidebarCoins) sidebarCoins.textContent = new Intl.NumberFormat('en-US').format(currentCoins);
+  if (sidebarCoins) {
+    sidebarCoins.textContent = activeFreeCoins > 0
+      ? `${new Intl.NumberFormat('en-US').format(currentCoins)} (+${new Intl.NumberFormat('en-US').format(activeFreeCoins)} مجاناً)`
+      : new Intl.NumberFormat('en-US').format(currentCoins);
+  }
 
   const basePriceFormatted = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: res.dec, maximumFractionDigits: res.dec
@@ -592,8 +612,12 @@ export async function handlePurchaseSubmit(event) {
 
   let couponDiscountValSAR = 0;
   if (activeCoupon) {
-    couponDiscountValSAR = finalPriceSAR * (activeCoupon.percent / 100);
-    finalPriceSAR -= couponDiscountValSAR;
+    if (activeCoupon.percent > 0) {
+      couponDiscountValSAR = finalPriceSAR * (activeCoupon.percent / 100);
+    } else if (activeCoupon.flatDiscount > 0) {
+      couponDiscountValSAR = activeCoupon.flatDiscount;
+    }
+    finalPriceSAR = Math.max(0, finalPriceSAR - couponDiscountValSAR);
   }
 
   let pointsDiscountValSAR = 0;
@@ -611,7 +635,11 @@ export async function handlePurchaseSubmit(event) {
 
   let serviceDesc = `شحن كوينز: ${formatCoins(currentCoins)}`;
   if (activeCoupon) {
-    serviceDesc += ` (كوبون: ${activeCoupon.code})`;
+    if (activeCoupon.freeCoins > 0) {
+      serviceDesc += ` (+${formatCoins(activeCoupon.freeCoins)} مجاناً - كوبون: ${activeCoupon.code})`;
+    } else {
+      serviceDesc += ` (كوبون: ${activeCoupon.code})`;
+    }
   }
 
   const orderPayload = {

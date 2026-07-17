@@ -273,12 +273,26 @@ export function applyCouponCode() {
   }
 
   if (dynamicCoupons[code] !== undefined) {
+    const c = dynamicCoupons[code];
+    if (c.freeCoins > 0) {
+      activeCoupon = null;
+      msg.className = "coupon-status-msg error";
+      msg.textContent = "هذا الكوبون مخصص لشحن الكوينز فقط.";
+      updatePriceAndSummary();
+      return;
+    }
     activeCoupon = {
       code: code,
-      percent: dynamicCoupons[code].percent
+      percent: c.percent || 0,
+      flatDiscount: c.flatDiscount || 0,
+      freeCoins: 0
     };
     msg.className = "coupon-status-msg success";
-    msg.textContent = `تم تطبيق الكوبون بنجاح! خصم ${dynamicCoupons[code].percent}%`;
+    if (activeCoupon.flatDiscount > 0) {
+      msg.textContent = `تم تطبيق الكوبون بنجاح! خصم بقيمة ${activeCoupon.flatDiscount} ر.س`;
+    } else {
+      msg.textContent = `تم تطبيق الكوبون بنجاح! خصم ${activeCoupon.percent}%`;
+    }
   } else {
     activeCoupon = null;
     msg.className = "coupon-status-msg error";
@@ -310,7 +324,8 @@ export async function redeemPointsForCoupon(rewardType) {
     const res = await fetch('/api/public/redeem-points', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({ rewardType })
     });
@@ -415,8 +430,12 @@ export function updatePriceAndSummary() {
   // 1. Coupon Discount
   let couponDiscountValue = 0;
   if (activeCoupon) {
-    couponDiscountValue = totalRawPrice * (activeCoupon.percent / 100);
-    totalRawPrice -= couponDiscountValue;
+    if (activeCoupon.percent > 0) {
+      couponDiscountValue = totalRawPrice * (activeCoupon.percent / 100);
+    } else if (activeCoupon.flatDiscount > 0) {
+      couponDiscountValue = (activeCoupon.flatDiscount / 3.75) * cur.rate;
+    }
+    totalRawPrice = Math.max(0, totalRawPrice - couponDiscountValue);
   }
 
   // 2. Loyalty Points Discount
@@ -537,8 +556,12 @@ export async function handleOrderSubmit(event) {
   let couponDiscountSAR = 0;
   let totalAfterCouponSAR = totalRawSAR;
   if (activeCoupon) {
-    couponDiscountSAR = totalRawSAR * (activeCoupon.percent / 100);
-    totalAfterCouponSAR -= couponDiscountSAR;
+    if (activeCoupon.percent > 0) {
+      couponDiscountSAR = totalRawSAR * (activeCoupon.percent / 100);
+    } else if (activeCoupon.flatDiscount > 0) {
+      couponDiscountSAR = activeCoupon.flatDiscount;
+    }
+    totalAfterCouponSAR = Math.max(0, totalAfterCouponSAR - couponDiscountSAR);
   }
 
   let pointsDeducted = 0;

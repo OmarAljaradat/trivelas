@@ -1804,8 +1804,13 @@ app.put('/api/admin/orders/:id/status', (req, res) => {
       });
 
       if (user) {
-        // Calculate points (1 point per 5 SAR spent)
-        const earnedPoints = Math.floor(parseFloat(order.priceSAR || 0) / 5);
+        // Calculate points: 1 point per 1,000 coins, or 5 points per 1 SAR spent on services
+        let earnedPoints = 0;
+        if (order.coinsAmount && parseInt(order.coinsAmount, 10) > 0) {
+          earnedPoints = Math.floor(parseInt(order.coinsAmount, 10) / 1000);
+        } else {
+          earnedPoints = Math.floor(parseFloat(order.priceSAR || 0) * 5);
+        }
         if (earnedPoints > 0) {
           user.points = (user.points || 0) + earnedPoints;
           if (!user.history) user.history = [];
@@ -2101,9 +2106,11 @@ app.post('/api/public/redeem-points', authenticateToken, (req, res) => {
   const userId = req.user.id;
 
   const validRewards = {
-    'sar10': { cost: 100, discount: 5, label: "5%" },
-    'sar30': { cost: 250, discount: 12, label: "12%" },
-    'sar70': { cost: 500, discount: 25, label: "25%" }
+    'coins50k': { cost: 1000, discount: 0, flatDiscount: 0, freeCoins: 50000, label: "+50,000 كوينز" },
+    'coins100k': { cost: 1800, discount: 0, flatDiscount: 0, freeCoins: 100000, label: "+100,000 كوينز" },
+    'coins250k': { cost: 4000, discount: 0, flatDiscount: 0, freeCoins: 250000, label: "+250,000 كوينز" },
+    'discount15': { cost: 800, discount: 0, flatDiscount: 15, freeCoins: 0, label: "15 ر.س" },
+    'discount40': { cost: 2000, discount: 0, flatDiscount: 40, freeCoins: 0, label: "40 ر.س" }
   };
 
   if (!validRewards[rewardType]) {
@@ -2131,14 +2138,16 @@ app.post('/api/public/redeem-points', authenticateToken, (req, res) => {
   user.history.push({
     date: new Date().toISOString(),
     amount: -reward.cost,
-    reason: `استبدال نقاط بكوبون خصم ${reward.label} (${couponCode})`
+    reason: `استبدال نقاط بمكافأة ${reward.label} (${couponCode})`
   });
 
   // Create the coupon
   if (!db.coupons) db.coupons = [];
   db.coupons.push({
     code: couponCode,
-    percent: reward.discount, // Convert to actual percentage discount!
+    percent: reward.discount,
+    flatDiscount: reward.flatDiscount || 0,
+    freeCoins: reward.freeCoins || 0,
     maxUses: 1,
     usedCount: 0,
     expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 30 days validation
