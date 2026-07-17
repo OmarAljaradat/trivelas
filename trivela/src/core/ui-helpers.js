@@ -40,6 +40,9 @@ export function formatPriceConverted(priceSAR, priceUSD, selectedCurrency) {
 }
 
 export function showOrderSuccessPopup(orderId, whatsappPhone, messageText) {
+  // Reset page scroll position to top
+  window.scrollTo(0, 0);
+
   let overlay = document.getElementById('orderSuccessOverlay');
   if (!overlay) {
     overlay = document.createElement('div');
@@ -47,6 +50,14 @@ export function showOrderSuccessPopup(orderId, whatsappPhone, messageText) {
     overlay.className = 'order-success-overlay';
     document.body.appendChild(overlay);
   }
+
+  // Force inline fixed styles to guarantee full viewport centering
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.zIndex = '999999';
 
   // Parse details from messageText
   let customerName = 'غير محدد';
