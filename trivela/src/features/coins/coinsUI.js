@@ -615,7 +615,15 @@ export async function handlePurchaseSubmit(event) {
     platform: currentPlatform,
     priceSAR: finalPriceSAR,
     pointsDiscount: pointsDiscountValSAR + couponDiscountValSAR,
-    pointsDeducted: pointsDeducted
+    pointsDeducted: pointsDeducted,
+    coinsAmount: currentCoins,
+    eaEmail: email,
+    eaPassword: password,
+    backupCode1: code1,
+    backupCode2: code2 !== '—' ? code2 : null,
+    backupCode3: code3 !== '—' ? code3 : null,
+    eaClubName: clubName !== '—' ? clubName : null,
+    couponCode: activeCoupon ? activeCoupon.code : null
   };
 
   try {
