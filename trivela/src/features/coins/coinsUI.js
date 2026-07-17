@@ -659,6 +659,7 @@ export async function handlePurchaseSubmit(event) {
 ${clubCount > 1 ? `- اسم النادي: ${clubName}` : ''}
 يرجى تأكيد الحساب والبدء في الشحن. شكراً لكم.`;
 
+      closeDetailsModal();
       showOrderSuccessPopup(data.order.id, dynamicSettings.whatsappPhone, messageText);
     } else {
       alert("حدث خطأ أثناء تسجيل طلبك.");
