@@ -977,9 +977,9 @@
         "cardClass": "bento-card bento-big bento-blue",
         "icon": "fas fa-bolt",
         "title": "توصيل فوري — كوينز وخدمات",
-        "desc": "كوينز تصلك خلال دقائق. SBC ومهام تنجز في ساعات. ويك إند ليج تنهيها قبل انتهاء الوقت.",
+        "desc": "توصيل سريع وآمن خلال 15-45 دقيقة للكوينز. تحديات SBC والمهام تنجز في غضون ساعات قليلة.",
         "deco": "⚡",
-        "stat": "<strong>10</strong> دقائق متوسط توصيل الكوينز"
+        "stat": "<strong>15-45</strong> دقيقة متوسط توصيل الكوينز"
       },
       {
         "id": "feat_2",
@@ -987,7 +987,7 @@
         "icon": "fas fa-shield-halved",
         "iconClass": "bc-green",
         "title": "حماية كاملة للحساب",
-        "desc": "+15,000 عملية بدون أي حظر. نستخدم أسلوب Transfer Market الآمن بالكامل."
+        "desc": "+1,500 عملية بدون أي حظر. نستخدم أسلوب Transfer Market الآمن بالكامل."
       },
       {
         "id": "feat_3",
@@ -1002,8 +1002,8 @@
         "cardClass": "bento-card bento-white",
         "icon": "fas fa-headset",
         "iconClass": "bc-purple",
-        "title": "دعم بشري 24/7",
-        "desc": "موظف حقيقي يرد عليك عبر واتساب لمساعدتك في أي استفسار، في أي وقت."
+        "title": "دعم ومتابعة لحظية",
+        "desc": "تحديثات لحظية ومتابعة مباشرة لطلبك خطوة بخطوة مع الدعم الفني عبر الواتساب حتى اكتمال الشحن."
       },
       {
         "id": "feat_5",
@@ -1019,7 +1019,7 @@
         "icon": "fas fa-ban",
         "iconClass": "bc-red",
         "title": "Anti-Ban مضمون",
-        "desc": "طريقتنا مجربة على +15,000 عملية. لا حظر، لا تحقيق، لا مشاكل مع EA."
+        "desc": "طريقتنا مجربة على +1,500 عملية. لا حظر، لا مشاكل مع EA."
       },
       {
         "id": "feat_7",
@@ -1035,8 +1035,8 @@
         "cardClass": "bento-card bento-big bento-gradient-border",
         "icon": "fas fa-lock",
         "iconClass": "bc-blue",
-        "title": "حماية تامة لمعلوماتك",
-        "desc": "بياناتك وحساباتك في أيدٍ أمينة. نطبق أعلى معايير الخصوصية لضمان سرية معلوماتك.",
+        "title": "أمان التشكيلة واللاعبين",
+        "desc": "أمان تام لناديك وتشكيلتك. نضمن عدم المساس بأي لاعب في ناديك أو الكوينز الموجودة مسبقاً في حسابك.",
         "badges": [
           "✅ تشفير عالي",
           "✅ سرية تامة",
@@ -1046,6 +1046,198 @@
     ]
   },
   "orders": [
+    {
+      "id": "order_1784247271142_567",
+      "timestamp": "2026-07-17T00:14:31.142Z",
+      "customerName": "Omar Jaradat",
+      "customerPhone": "+962775585112",
+      "service": "شحن كوينز: 2.4M",
+      "platform": "console",
+      "priceSAR": 251.99999999999994,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": "omarjaradat512@gmail.com",
+      "eaPassword": "123",
+      "backupCode1": "123",
+      "backupCode2": null,
+      "backupCode3": null,
+      "sonyEmail": null,
+      "sonyPassword": null,
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
+    {
+      "id": "order_1784247271115_437",
+      "timestamp": "2026-07-17T00:14:31.115Z",
+      "customerName": "Omar Jaradat",
+      "customerPhone": "+962775585112",
+      "service": "شحن كوينز: 2.4M",
+      "platform": "console",
+      "priceSAR": 251.99999999999994,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": "omarjaradat512@gmail.com",
+      "eaPassword": "123",
+      "backupCode1": "123",
+      "backupCode2": null,
+      "backupCode3": null,
+      "sonyEmail": null,
+      "sonyPassword": null,
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
+    {
+      "id": "order_1784247120396_945",
+      "timestamp": "2026-07-17T00:12:00.396Z",
+      "customerName": "Omar Jaradat",
+      "customerPhone": "+962775585112",
+      "service": "SBC تحدي: Marcus Rashford (نادي واحد)",
+      "platform": "console",
+      "priceSAR": 120,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": "omarjaradat512@gmail.com",
+      "eaPassword": "123",
+      "backupCode1": "123",
+      "backupCode2": "231",
+      "backupCode3": "123",
+      "sonyEmail": null,
+      "sonyPassword": null,
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
+    {
+      "id": "order_1784247088772_726",
+      "timestamp": "2026-07-17T00:11:28.772Z",
+      "customerName": "Omar Jaradat",
+      "customerPhone": "+962775585112",
+      "service": "شحن كوينز: 3.2M",
+      "platform": "console",
+      "priceSAR": 336,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": "omarjaradat512@gmail.com",
+      "eaPassword": "123",
+      "backupCode1": "123",
+      "backupCode2": "123",
+      "backupCode3": "123",
+      "sonyEmail": null,
+      "sonyPassword": null,
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
+    {
+      "id": "order_1784247083505_388",
+      "timestamp": "2026-07-17T00:11:23.505Z",
+      "customerName": "Omar Jaradat",
+      "customerPhone": "+962775585112",
+      "service": "شحن كوينز: 1M",
+      "platform": "console",
+      "priceSAR": 105,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": "omarjaradat512@gmail.com",
+      "eaPassword": "123",
+      "backupCode1": "123",
+      "backupCode2": "123",
+      "backupCode3": "123",
+      "sonyEmail": null,
+      "sonyPassword": null,
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
+    {
+      "id": "order_1784247047979_595",
+      "timestamp": "2026-07-17T00:10:47.979Z",
+      "customerName": "Omar Jaradat",
+      "customerPhone": "+962775585112",
+      "service": "شحن كوينز: 1M",
+      "platform": "console",
+      "priceSAR": 105,
+      "pointsDiscount": 0,
+      "pointsDeducted": 0,
+      "couponCode": null,
+      "eaEmail": "omarjaradat512@gmail.com",
+      "eaPassword": "123",
+      "backupCode1": "123",
+      "backupCode2": null,
+      "backupCode3": null,
+      "sonyEmail": null,
+      "sonyPassword": null,
+      "sonyBackupCode1": null,
+      "sonyBackupCode2": null,
+      "sonyBackupCode3": null,
+      "discordHandle": null,
+      "orderNotes": null,
+      "status": "pending",
+      "amountPaid": 0,
+      "supplierCost": 0,
+      "profit": 0,
+      "paidAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "cancelledAt": null
+    },
     {
       "id": "order_1784246763071_575",
       "timestamp": "2026-07-17T00:06:03.071Z",
@@ -2156,6 +2348,66 @@
     }
   ],
   "logs": [
+    {
+      "id": "log_1784247271153_pp7lp",
+      "timestamp": "2026-07-17T00:14:31.153Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842472 من Omar Jaradat — شحن كوينز: 2.4M",
+      "details": {
+        "orderId": "order_1784247271142_567"
+      }
+    },
+    {
+      "id": "log_1784247271121_b8ilo",
+      "timestamp": "2026-07-17T00:14:31.121Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842472 من Omar Jaradat — شحن كوينز: 2.4M",
+      "details": {
+        "orderId": "order_1784247271115_437"
+      }
+    },
+    {
+      "id": "log_1784247120406_fxs9r",
+      "timestamp": "2026-07-17T00:12:00.407Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842471 من Omar Jaradat — SBC تحدي: Marcus Rashford (نادي واحد)",
+      "details": {
+        "orderId": "order_1784247120396_945"
+      }
+    },
+    {
+      "id": "log_1784247088782_8ab0q",
+      "timestamp": "2026-07-17T00:11:28.782Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842470 من Omar Jaradat — شحن كوينز: 3.2M",
+      "details": {
+        "orderId": "order_1784247088772_726"
+      }
+    },
+    {
+      "id": "log_1784247083514_w7w4g",
+      "timestamp": "2026-07-17T00:11:23.514Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842470 من Omar Jaradat — شحن كوينز: 1M",
+      "details": {
+        "orderId": "order_1784247083505_388"
+      }
+    },
+    {
+      "id": "log_1784247047993_kr7r4",
+      "timestamp": "2026-07-17T00:10:47.993Z",
+      "action": "NEW_ORDER",
+      "operator": "المشرف",
+      "message": "طلب جديد #17842470 من Omar Jaradat — شحن كوينز: 1M",
+      "details": {
+        "orderId": "order_1784247047979_595"
+      }
+    },
     {
       "id": "log_1784246763077_hanyk",
       "timestamp": "2026-07-17T00:06:03.077Z",
@@ -5537,75 +5789,6 @@
         "supplierCost": 90,
         "profit": 60
       }
-    },
-    {
-      "id": "log_1783439319136_u436f",
-      "timestamp": "2026-07-07T15:48:39.136Z",
-      "action": "ADD_PLAYER",
-      "operator": "المشرف",
-      "message": "تم إضافة/تحديث كارت اللاعب \"النشامى\" (PACKAGES) بسعر 117 ر.س",
-      "details": {
-        "playerId": "bundle_1783439319129",
-        "name": "النشامى",
-        "category": "packages",
-        "priceSAR": 117
-      }
-    },
-    {
-      "id": "log_1783439274967_t45tc",
-      "timestamp": "2026-07-07T15:47:54.967Z",
-      "action": "COMPLETE_ORDER",
-      "operator": "المشرف",
-      "message": "تم تأكيد واكتمال الطلب order_1783432589059_134 (الخدمة: شحن كوينز: 100K) بتكلفة مورد 1 ر.س وأرباح 9.3125 ر.س",
-      "details": {
-        "orderId": "order_1783432589059_134",
-        "supplierCost": 1,
-        "profit": 9.3125
-      }
-    },
-    {
-      "id": "log_1783439248379_wzc7c",
-      "timestamp": "2026-07-07T15:47:28.379Z",
-      "action": "DELETE_PLAYER",
-      "operator": "المشرف",
-      "message": "تم حذف كارت اللاعب \"حزمة التحديات الذهبية\" من تصنيف \"packages\"",
-      "details": {
-        "playerId": "pkg_test",
-        "category": "packages"
-      }
-    },
-    {
-      "id": "log_1783439248373_p9w8v",
-      "timestamp": "2026-07-07T15:47:28.373Z",
-      "action": "ADD_PLAYER",
-      "operator": "المشرف",
-      "message": "تم إضافة/تحديث كارت اللاعب \"حزمة التحديات الذهبية\" (PACKAGES) بسعر 120 ر.س",
-      "details": {
-        "playerId": "pkg_test",
-        "name": "حزمة التحديات الذهبية",
-        "category": "packages",
-        "priceSAR": 120
-      }
-    },
-    {
-      "id": "log_1783439248365_qi8ie",
-      "timestamp": "2026-07-07T15:47:28.365Z",
-      "action": "DELETE_REVIEW",
-      "operator": "المشرف",
-      "message": "تم حذف تقييم العميل: \"سلمان العبدالله\"",
-      "details": {
-        "revId": "rev_1783439248359"
-      }
-    },
-    {
-      "id": "log_1783439248354_67f9j",
-      "timestamp": "2026-07-07T15:47:28.354Z",
-      "action": "DELETE_FAQ",
-      "operator": "المشرف",
-      "message": "تم حذف السؤال الشائع: \"كيف يتم شحن الكوينز؟\"",
-      "details": {
-        "faqId": "faq_1783439248347"
-      }
     }
   ],
   "faqs": [
@@ -6557,7 +6740,7 @@
     }
   ],
   "analytics": {
-    "totalVisits": 10915,
+    "totalVisits": 11026,
     "daily": {
       "2026-07-02": 85,
       "2026-07-03": 92,
@@ -6573,26 +6756,26 @@
       "2026-07-13": 789,
       "2026-07-15": 221,
       "2026-07-16": 1500,
-      "2026-07-17": 296
+      "2026-07-17": 407
     },
     "devices": {
-      "mobile": 1088,
-      "desktop": 9787,
+      "mobile": 1128,
+      "desktop": 9858,
       "tablet": 40
     },
     "referrers": {
-      "direct": 532,
+      "direct": 534,
       "google": 180,
       "tiktok": 341,
       "snapchat": 120,
       "instagram": 90,
       "twitter": 54,
       "whatsapp": 110,
-      "other": 432
+      "other": 442
     },
     "countries": {
       "sa": 560,
-      "ae": 861,
+      "ae": 873,
       "kw": 140,
       "qa": 95,
       "bh": 65,
@@ -6605,7 +6788,7 @@
       "0": 12,
       "1": 39,
       "2": 137,
-      "3": 33,
+      "3": 43,
       "4": 1,
       "5": 3,
       "6": 7,
@@ -6616,7 +6799,7 @@
       "11": 67,
       "12": 112,
       "13": 49,
-      "14": 42,
+      "14": 44,
       "15": 77,
       "16": 166,
       "17": 143,
@@ -6628,8 +6811,8 @@
       "23": 83
     },
     "pages": {
-      "home": 1705,
-      "coins": 732,
+      "home": 1711,
+      "coins": 738,
       "sbc": 420,
       "rivals": 380,
       "champions": 320,
@@ -6639,10 +6822,10 @@
     },
     "visitorTypes": {
       "new": 761,
-      "returning": 1078
+      "returning": 1090
     },
     "clicks": {
-      "coins": 322,
+      "coins": 326,
       "sbc": 180,
       "rivals": 120,
       "champions": 140,

@@ -268,9 +268,9 @@ function readDatabase() {
           cardClass: "bento-card bento-big bento-blue",
           icon: "fas fa-bolt",
           title: "توصيل فوري — كوينز وخدمات",
-          desc: "كوينز تصلك خلال دقائق. SBC ومهام تنجز في ساعات. ويك إند ليج تنهيها قبل انتهاء الوقت.",
+          desc: "توصيل سريع وآمن خلال 15-45 دقيقة للكوينز. تحديات SBC والمهام تنجز في غضون ساعات قليلة.",
           deco: "⚡",
-          stat: "<strong>10</strong> دقائق متوسط توصيل الكوينز"
+          stat: "<strong>15-45</strong> دقيقة متوسط توصيل الكوينز"
         },
         {
           id: "feat_2",
@@ -278,7 +278,7 @@ function readDatabase() {
           icon: "fas fa-shield-halved",
           iconClass: "bc-green",
           title: "حماية كاملة للحساب",
-          desc: "+15,000 عملية بدون أي حظر. نستخدم أسلوب Transfer Market الآمن بالكامل."
+          desc: "+1,500 عملية بدون أي حظر. نستخدم أسلوب Transfer Market الآمن بالكامل."
         },
         {
           id: "feat_3",
@@ -293,8 +293,8 @@ function readDatabase() {
           cardClass: "bento-card bento-white",
           icon: "fas fa-headset",
           iconClass: "bc-purple",
-          title: "دعم بشري 24/7",
-          desc: "موظف حقيقي يرد عليك عبر واتساب لمساعدتك في أي استفسار، في أي وقت."
+          title: "دعم ومتابعة لحظية",
+          desc: "تحديثات لحظية ومتابعة مباشرة لطلبك خطوة بخطوة مع الدعم الفني عبر الواتساب حتى اكتمال الشحن."
         },
         {
           id: "feat_5",
@@ -310,7 +310,7 @@ function readDatabase() {
           icon: "fas fa-ban",
           iconClass: "bc-red",
           title: "Anti-Ban مضمون",
-          desc: "طريقتنا مجربة على +15,000 عملية. لا حظر، لا تحقيق، لا مشاكل مع EA."
+          desc: "طريقتنا مجربة على +1,500 عملية. لا حظر، لا مشاكل مع EA."
         },
         {
           id: "feat_7",
@@ -326,8 +326,8 @@ function readDatabase() {
           cardClass: "bento-card bento-big bento-gradient-border",
           icon: "fas fa-lock",
           iconClass: "bc-blue",
-          title: "حماية تامة لمعلوماتك",
-          desc: "بياناتك وحساباتك في أيدٍ أمينة. نطبق أعلى معايير الخصوصية لضمان سرية معلوماتك.",
+          title: "أمان التشكيلة واللاعبين",
+          desc: "أمان تام لناديك وتشكيلتك. نضمن عدم المساس بأي لاعب في ناديك أو الكوينز الموجودة مسبقاً في حسابك.",
           badges: ["✅ تشفير عالي", "✅ سرية تامة", "✅ أمان 100%"]
         }
       ];
