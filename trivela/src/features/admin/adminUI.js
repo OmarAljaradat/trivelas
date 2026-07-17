@@ -18,10 +18,12 @@ let allUsers = [];
 let adminActiveOrders = [];
 let lastOrdersCount = null;
 let adminExpenses = [];
-let currentOrderFilter = 'all';
 let statsDaysRange = 30;
+let statsStartDate = null;
+let statsEndDate = null;
 let globalChampionsRanks = {};
 let globalRivalsRanks = {};
+let currentOrderFilter = 'all';
 
 // DOM Content Loaded Initializer
 document.addEventListener('DOMContentLoaded', () => {
@@ -193,7 +195,7 @@ export function switchTab(panelId) {
 // 1. Dashboard Stats
 async function loadQuickStats() {
   try {
-    const stats = await adminService.getQuickStats(statsDaysRange);
+    const stats = await adminService.getQuickStats(statsDaysRange, statsStartDate, statsEndDate);
     
     const statTotalUsers = document.getElementById('statTotalUsers');
     if (statTotalUsers) statTotalUsers.textContent = (stats.totalUsers || 0).toLocaleString();
@@ -2179,12 +2181,24 @@ function renderDashboardChart() {
   if (!chartSvg || !pathOrders || !pathUsers || !axisLabels) return;
 
   const dates = [];
-  const now = new Date();
-  const limit = statsDaysRange || 30;
-  for (let i = limit - 1; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(now.getDate() - i);
-    dates.push(d.toISOString().split('T')[0]);
+  if (statsStartDate || statsEndDate) {
+    const start = statsStartDate ? new Date(statsStartDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const end = statsEndDate ? new Date(statsEndDate) : new Date();
+    
+    let current = new Date(start);
+    // Limit to 366 days max to prevent page lockups on massive ranges
+    while (current <= end && dates.length < 366) {
+      dates.push(current.toISOString().split('T')[0]);
+      current.setDate(current.getDate() + 1);
+    }
+  } else {
+    const limit = statsDaysRange || 30;
+    const now = new Date();
+    for (let i = limit - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(now.getDate() - i);
+      dates.push(d.toISOString().split('T')[0]);
+    }
   }
 
   const ordersCountMap = {};
@@ -2226,7 +2240,7 @@ function renderDashboardChart() {
   pathUsers.setAttribute('d', `M ${pointsUsers.join(' L ')}`);
 
   let labelsHtml = '';
-  const step = Math.ceil(limit / 6);
+  const step = Math.ceil(dates.length / 6) || 1;
   dates.forEach((dt, index) => {
     if (index % step === 0 || index === dates.length - 1) {
       const totalDays = dates.length - 1 || 1;
@@ -2244,13 +2258,25 @@ function renderTopServicesBreakdown() {
 
   const counts = { 'coins': 0, 'sbc': 0, 'objectives': 0, 'rivals': 0, 'champions': 0, 'packages': 0, 'coaching': 0 };
 
-  const limit = statsDaysRange || 30;
-  const cutoffTime = Date.now() - (limit * 24 * 60 * 60 * 1000);
-
-  const filteredOrders = (adminActiveOrders || []).filter(o => {
-    const t = new Date(o.timestamp).getTime();
-    return !isNaN(t) && t >= cutoffTime;
-  });
+  let filteredOrders = adminActiveOrders || [];
+  
+  if (statsStartDate || statsEndDate) {
+    filteredOrders = filteredOrders.filter(o => {
+      if (!o.timestamp) return false;
+      const orderDateStr = new Date(o.timestamp).toISOString().split('T')[0];
+      let matches = true;
+      if (statsStartDate && orderDateStr < statsStartDate) matches = false;
+      if (statsEndDate && orderDateStr > statsEndDate) matches = false;
+      return matches;
+    });
+  } else {
+    const limit = statsDaysRange || 30;
+    const cutoffTime = Date.now() - (limit * 24 * 60 * 60 * 1000);
+    filteredOrders = filteredOrders.filter(o => {
+      const t = new Date(o.timestamp).getTime();
+      return !isNaN(t) && t >= cutoffTime;
+    });
+  }
 
   filteredOrders.forEach(o => {
     const cat = o.category ? o.category.toLowerCase() : '';
@@ -2379,11 +2405,56 @@ window.calculateBundlePrices = calculateBundlePrices;
 
 window.setStatsTimeRange = function(days, btn) {
   statsDaysRange = days;
+  statsStartDate = null;
+  statsEndDate = null;
+  
+  const startInp = document.getElementById('statsStartDate');
+  const endInp = document.getElementById('statsEndDate');
+  if (startInp) startInp.value = '';
+  if (endInp) endInp.value = '';
+  
+  const clearBtn = document.getElementById('btnCustomDateClear');
+  if (clearBtn) clearBtn.style.display = 'none';
+  
   document.querySelectorAll('.filters-group .filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   loadQuickStats();
   renderDashboardChart();
   renderTopServicesBreakdown();
+};
+
+window.applyCustomDateRange = function() {
+  const startVal = document.getElementById('statsStartDate').value;
+  const endVal = document.getElementById('statsEndDate').value;
+  
+  if (startVal || endVal) {
+    document.querySelectorAll('.filters-group .filter-btn').forEach(b => b.classList.remove('active'));
+    
+    statsDaysRange = null;
+    statsStartDate = startVal || null;
+    statsEndDate = endVal || null;
+    
+    const clearBtn = document.getElementById('btnCustomDateClear');
+    if (clearBtn) clearBtn.style.display = 'inline-block';
+    
+    loadQuickStats();
+    renderDashboardChart();
+    renderTopServicesBreakdown();
+  }
+};
+
+window.clearCustomDateRange = function() {
+  const startInp = document.getElementById('statsStartDate');
+  const endInp = document.getElementById('statsEndDate');
+  if (startInp) startInp.value = '';
+  if (endInp) endInp.value = '';
+  
+  const clearBtn = document.getElementById('btnCustomDateClear');
+  if (clearBtn) clearBtn.style.display = 'none';
+  
+  // Revert to 30 days default
+  const activeBtn = document.querySelector('.filters-group button:nth-child(2)');
+  setStatsTimeRange(30, activeBtn);
 };
 
 window.toggleResetDropdown = function(event) {
