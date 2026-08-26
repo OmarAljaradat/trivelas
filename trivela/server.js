@@ -350,25 +350,48 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// Static directories resolution across all environments (Vercel, local, Docker)
+const staticDirs = [
+  __dirname,
+  path.join(__dirname, 'trivela'),
+  path.join(__dirname, '..', 'trivela'),
+  path.join(process.cwd(), 'trivela'),
+  process.cwd()
+].filter((d, i, arr) => arr.indexOf(d) === i);
+
+function findStaticFile(relPath) {
+  const clean = relPath.replace(/^\/+/, '').split('?')[0];
+  for (const d of staticDirs) {
+    try {
+      const candidate = path.join(d, clean);
+      if (fs.existsSync(candidate) && !fs.statSync(candidate).isDirectory()) {
+        return candidate;
+      }
+    } catch {}
+  }
+  return null;
+}
+
 // 3. Inject FIFA cinematic background CSS/JS into all public HTML pages
 app.use(async (req, res, next) => {
-  const isHtmlPath = req.method === 'GET' && (
-    req.url === '/' ||
-    /^\/[a-zA-Z0-9_-]+\.html(\?.*)?$/.test(req.url) ||
-    (!req.url.includes('.') && !req.url.startsWith('/api'))
-  );
-  if (!isHtmlPath) return next();
+  if (req.method !== 'GET') return next();
+  const rawPath = req.url.split('?')[0];
+  if (rawPath.startsWith('/api')) return next();
 
-  const lowered = req.url.toLowerCase();
-  if (lowered.includes('admin') || lowered.includes('maintenance')) return next();
+  let targetHtml = rawPath === '/' ? 'index.html' : rawPath.replace(/^\/+/, '');
+  if (!targetHtml.includes('.')) targetHtml += '.html';
+  if (!targetHtml.endsWith('.html')) return next();
 
-  let cleanPath = req.url === '/' ? 'index.html' : req.url.split('?')[0].replace(/^\/+/, '');
-  if (!cleanPath.includes('.') && !cleanPath.endsWith('.html')) cleanPath += '.html';
-  const abs = path.join(__dirname, cleanPath);
-  if (!fs.existsSync(abs)) return next();
+  const lowered = targetHtml.toLowerCase();
+  const found = findStaticFile(targetHtml);
+  if (!found) return next();
+
+  if (lowered.includes('admin') || lowered.includes('maintenance')) {
+    return res.sendFile(found);
+  }
 
   try {
-    let html = fs.readFileSync(abs, 'utf8');
+    let html = fs.readFileSync(found, 'utf8');
     if (!html.includes('fifa-bg.css')) {
       html = html.replace(
         /<link\s+rel="stylesheet"\s+href="style\.css"[^>]*>/i,
@@ -385,18 +408,27 @@ app.use(async (req, res, next) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
     return res.send(html);
   } catch (e) {
-    return next();
+    return res.sendFile(found);
   }
 });
 
-app.use(express.static(__dirname));
+// Universal Static assets middleware (CSS, JS, Images, Fonts, JSON)
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+  const rawPath = req.url.split('?')[0];
+  if (rawPath.startsWith('/api')) return next();
 
-// Direct fallback route for root and common HTML pages
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-app.get('/:page.html', (req, res, next) => {
-  const p = path.join(__dirname, req.params.page + '.html');
-  if (fs.existsSync(p)) return res.sendFile(p);
+  const found = findStaticFile(rawPath);
+  if (found) {
+    return res.sendFile(found);
+  }
   next();
+});
+
+staticDirs.forEach(d => {
+  try {
+    if (fs.existsSync(d)) app.use(express.static(d));
+  } catch {}
 });
 
 // ==========================================
