@@ -1,0 +1,2350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <link rel="icon" type="image/png" href="logo-official.png"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>سلة المشتريات وإنهاء الطلب | Trivela</title>
+  <meta name="description" content="سلة مشتريات متجر Trivela — راجع طلباتك وأتمم الدفع الآمن بأعلى سرعة وضمان."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css?v=3.6"/>
+
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --border-light: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --gold-primary: #ca8a04;
+      --blue-primary: #2563eb;
+      --green-success: #10b981;
+    }
+
+    body.cart-page-body {
+      background-color: #f8fafc;
+      color: var(--text-main);
+      min-height: 100vh;
+      font-family: 'Cairo', sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══════════ SIMPLE & MINIMALIST CLEAN HEADER ══════════ */
+    .buy-header {
+      background: #ffffff;
+      padding: 14px 0;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .buy-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Clean Logo Right */
+    .buy-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .buy-logo img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+    }
+    .buy-logo span {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.35rem;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+    }
+
+    /* Clean Actions Left */
+    .header-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    /* Minimalist Currency Picker */
+    .global-currency-picker {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 6px 12px;
+      color: #0f172a;
+      transition: all 0.2s ease;
+    }
+    .global-currency-picker:hover {
+      border-color: #94a3b8;
+      background: #ffffff;
+    }
+    .global-currency-picker i.fa-globe {
+      color: #ca8a04;
+      font-size: 0.9rem;
+    }
+    .global-currency-picker select {
+      background: transparent;
+      border: none;
+      color: #0f172a;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.84rem;
+      cursor: pointer;
+      outline: none;
+    }
+    .global-currency-picker select option {
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    /* Simple Clean Text Link */
+    .buy-header .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #64748b;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.86rem;
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .buy-header .back-link:hover {
+      color: #2563eb;
+      background: #eff6ff;
+    }
+
+    /* ── MAIN CONTENT CONTAINER ── */
+    .cart-main-container {
+      max-width: 1200px;
+      margin: 28px auto 60px auto;
+      padding: 0 20px;
+      flex: 1;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* ── HERO BANNER ── */
+    .cart-hero-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .cart-hero-header h1 {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #0f172a;
+      margin: 0 0 8px 0;
+    }
+    .cart-hero-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    /* ── STEPPER ── */
+    .cart-stepper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .cart-step-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 20px;
+      border-radius: 50px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      color: var(--text-muted);
+      font-weight: 800;
+      font-size: 0.88rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+    .cart-step-pill.active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+    }
+    .cart-step-pill.completed {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #059669;
+    }
+    .cart-step-divider {
+      color: #cbd5e1;
+      font-size: 0.85rem;
+    }
+
+    /* ── GRID LAYOUT ── */
+    .cart-layout-grid {
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    @media (max-width: 960px) {
+      .cart-layout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── WHITE PANELS ── */
+    .cart-panel-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      margin-bottom: 20px;
+    }
+    .cart-panel-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .panel-top-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1.5px solid #f1f5f9;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+    .panel-top-title h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .panel-top-title h3 i {
+      color: var(--blue-primary);
+    }
+
+    .btn-clear-cart {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-clear-cart:hover {
+      background: #fee2e2;
+    }
+
+    /* ── CART ITEMS ── */
+    .page-cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 18px;
+      background: #f8fafc;
+      border: 1.5px solid var(--border-light);
+      border-radius: 16px;
+      margin-bottom: 10px;
+      transition: all 0.2s ease;
+    }
+    .page-cart-item:hover {
+      border-color: #cbd5e1;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+    .item-icon-box {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: rgba(37, 99, 235, 0.08);
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .item-details-wrap {
+      flex: 1;
+      text-align: right;
+    }
+    .item-main-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+    .item-tags-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .item-pill-tag {
+      font-size: 0.75rem;
+      background: #e2e8f0;
+      color: #475569;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+    .item-pill-tag.wa-pill {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .item-pill-tag.platform-pill {
+      background: rgba(37, 99, 235, 0.1);
+      color: #1d4ed8;
+    }
+
+    .item-price-delete {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .item-price-val {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #2563eb;
+      font-family: 'Montserrat', 'Cairo', sans-serif;
+    }
+    .item-delete-btn {
+      background: #fee2e2;
+      color: #ef4444;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    .item-delete-btn:hover {
+      background: #ef4444;
+      color: #ffffff;
+      transform: scale(1.05);
+    }
+
+    /* ══════════ UPSELL SECTION (REAL SBC & OBJECTIVES) ══════════ */
+    .cart-upsell-box {
+      margin-top: 18px;
+      background: #fffbeb;
+      border: 1.5px dashed #fcd34d;
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .cart-upsell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .cart-upsell-header span {
+      font-weight: 900;
+      font-size: 0.88rem;
+      color: #92400e;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .upsell-items-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 620px) {
+      .upsell-items-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    .upsell-card-mini {
+      background: #ffffff;
+      border: 1.5px solid #fde68a;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+    .upsell-card-mini:hover {
+      border-color: #f59e0b;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
+    }
+    .upsell-card-mini.in-cart {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+    .upsell-icon-tag {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.12);
+      color: #d97706;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .upsell-info-wrap {
+      flex: 1;
+      text-align: right;
+    }
+    .upsell-info-wrap .title {
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+    .upsell-info-wrap .sub-detail {
+      font-size: 0.72rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .upsell-info-wrap .price {
+      font-size: 0.85rem;
+      font-weight: 900;
+      color: #b45309;
+      font-family: 'Montserrat', sans-serif;
+      margin-top: 3px;
+    }
+    .btn-add-upsell {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .btn-add-upsell:hover {
+      background: #f59e0b;
+      color: #ffffff;
+    }
+    .btn-add-upsell.in-cart-btn {
+      background: #dcfce7;
+      color: #15803d;
+      border-color: #86efac;
+    }
+    .btn-add-upsell.in-cart-btn:hover {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fca5a5;
+    }
+
+    /* ══════════ READ-ONLY CREDENTIALS SUMMARY CARD ══════════ */
+    .cart-creds-locked-card {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .locked-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+    .locked-card-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #047857;
+    }
+    .btn-edit-small {
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+      padding: 5px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-edit-small:hover {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .locked-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 18px;
+    }
+    @media (max-width: 600px) {
+      .locked-card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .locked-data-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .locked-data-item.full-row {
+      grid-column: 1 / -1;
+    }
+    .locked-lbl {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .locked-val {
+      font-size: 0.92rem;
+      color: #0f172a;
+      font-weight: 800;
+      word-break: break-all;
+    }
+    .backup-codes-pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .backup-code-pill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 0.88rem;
+      letter-spacing: 1px;
+      color: #0f172a;
+    }
+
+    /* ── EDIT FORM ── */
+    .ea-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 600px) {
+      .ea-form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .ea-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .ea-input-group.full-width {
+      grid-column: 1 / -1;
+    }
+    .input-label-tag {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #334155;
+    }
+    .input-with-icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-with-icon .input-icon {
+      position: absolute;
+      right: 14px;
+      color: #94a3b8;
+      font-size: 1rem;
+      pointer-events: none;
+    }
+    .input-with-icon input {
+      width: 100%;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 11px 40px 11px 12px;
+      color: #0f172a;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+    .input-with-icon input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+    .backup-codes-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .backup-code-box {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 11px;
+      color: #0f172a;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: 1.5px;
+      font-size: 0.92rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .backup-code-box:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .form-actions-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      grid-column: 1 / -1;
+    }
+    .btn-save-edits {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-save-edits:hover {
+      background: #1d4ed8;
+    }
+    .btn-cancel-edits {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+
+    /* ── STICKY SUMMARY (LEFT COLUMN) ── */
+    .cart-summary-sticky {
+      position: sticky;
+      top: 90px;
+    }
+    .summary-title {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1.5px solid #f1f5f9;
+      padding-bottom: 12px;
+    }
+    .summary-title i {
+      color: #f59e0b;
+    }
+
+    /* Coupon Box */
+    .cart-coupon-input-wrap {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .cart-coupon-input-wrap input {
+      flex: 1;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: #0f172a;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      text-transform: uppercase;
+    }
+    .cart-coupon-input-wrap input:focus {
+      border-color: #2563eb;
+    }
+    .cart-coupon-input-wrap button {
+      background: #0f172a;
+      color: #ffffff;
+      font-weight: 800;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+    .cart-coupon-input-wrap button:hover {
+      background: #2563eb;
+    }
+
+    /* Calculations */
+    .summary-calc-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+    }
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #64748b;
+      font-weight: 700;
+    }
+    .calc-row strong {
+      color: #0f172a;
+      font-family: 'Montserrat', 'Cairo', sans-serif;
+    }
+    .calc-row.discount-val {
+      color: #059669;
+    }
+    .calc-row.discount-val strong {
+      color: #059669;
+    }
+    .calc-row.grand-total-row {
+      border-top: 1.5px dashed #cbd5e1;
+      padding-top: 12px;
+      margin-top: 4px;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #0f172a;
+    }
+    .calc-row.grand-total-row strong {
+      color: #2563eb;
+      font-size: 1.35rem;
+    }
+
+    /* ── PAYMENT METHOD SELECTOR (EXCLUSIVE IN CART) ── */
+    .payment-method-selector-section {
+      margin-bottom: 20px;
+    }
+    .payment-method-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .payment-methods-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .payment-option-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .payment-option-card:hover {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+    }
+    .payment-option-card.active {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.1);
+    }
+    .payment-option-card.whatsapp-option.active {
+      background: #ecfdf5;
+      border-color: #10b981;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.1);
+    }
+    .pay-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .whatsapp-option .pay-icon-box {
+      color: #16a34a;
+      background: #eafaf1;
+    }
+    .pay-text-group {
+      flex: 1;
+      text-align: right;
+      padding: 0 12px;
+    }
+    .pay-main-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .pay-sub-label {
+      display: block;
+      font-size: 0.72rem;
+      color: #64748b;
+      margin-top: 2px;
+    }
+    .pay-check-radio {
+      accent-color: #2563eb;
+      width: 17px;
+      height: 17px;
+    }
+
+    .cart-wa-alert {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #b45309;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── CHECKOUT BUTTON ── */
+    .btn-proceed-checkout {
+      width: 100%;
+      padding: 15px 20px;
+      border-radius: 14px;
+      border: none;
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+    .btn-proceed-checkout.paytabs-btn {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+    }
+    .btn-proceed-checkout.paytabs-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+    }
+    .btn-proceed-checkout.wa-btn {
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      box-shadow: 0 4px 15px rgba(22, 163, 74, 0.25);
+    }
+    .btn-proceed-checkout.wa-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(22, 163, 74, 0.35);
+    }
+
+    /* ══════════ BALANCED & REASSURING CURRENCY CONFIRMATION MODAL ══════════ */
+    .jod-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .jod-modal-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 22px;
+      max-width: 470px;
+      width: 100%;
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: cardSlideUp 0.2s ease-out;
+    }
+    @keyframes cardSlideUp {
+      from { transform: translateY(14px) scale(0.98); }
+      to { transform: translateY(0) scale(1); }
+    }
+    .jod-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .jod-header-text h4 {
+      margin: 0 0 3px 0;
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .jod-header-text h4 i {
+      color: #2563eb;
+    }
+    .jod-header-text p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .btn-close-mini {
+      background: #f1f5f9;
+      color: #64748b;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-close-mini:hover {
+      background: #fee2e2;
+      color: #ef4444;
+    }
+
+    /* Currency Comparison Box */
+    .jod-compare-box {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .jod-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .jod-col.jod-highlight {
+      text-align: left;
+    }
+    .jod-col-lbl {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .jod-col-val {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #0f172a;
+      font-family: 'Montserrat', 'Cairo', sans-serif;
+    }
+    .jod-col-val.blue {
+      color: #2563eb;
+      font-size: 1.35rem;
+    }
+    .jod-col-cur {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      font-weight: 800;
+    }
+    .jod-arrow-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .rate-pill {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    /* Explanation Bullet Points */
+    .jod-points-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #ffffff;
+      border: 1px solid #f1f5f9;
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .jod-point-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: #334155;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+    .jod-point-item i {
+      color: #10b981;
+      font-size: 0.9rem;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+    .jod-point-item.highlight-bank i {
+      color: #2563eb;
+    }
+
+    /* Apple Pay Safari Note Box */
+    .apple-pay-safari-note {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 0.78rem;
+      color: #475569;
+      font-weight: 700;
+    }
+    .apple-pay-safari-note i {
+      font-size: 1.1rem;
+      color: #0f172a;
+    }
+
+    /* Cards logos */
+    .cards-row-mini {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .card-tag {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #475569;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .card-tag.apple-tag {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
+    /* Modal Buttons */
+    .jod-modal-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .btn-simple-pay {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #ffffff;
+      border: none;
+      padding: 13px 20px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+      transition: all 0.2s ease;
+    }
+    .btn-simple-pay:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+    }
+    .btn-simple-cancel {
+      background: none;
+      border: none;
+      color: #64748b;
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .btn-simple-cancel:hover {
+      color: #0f172a;
+      text-decoration: underline;
+    }
+
+    /* ── EMPTY STATE ── */
+    .cart-empty-state-card {
+      text-align: center;
+      padding: 60px 20px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    }
+    .empty-cart-glow-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: #2563eb;
+      font-size: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px auto;
+    }
+    .cart-empty-state-card h3 {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .cart-empty-state-card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      max-width: 480px;
+      margin: 0 auto 26px auto;
+      line-height: 1.6;
+    }
+    .empty-shortcuts-grid {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .empty-shortcut-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .empty-shortcut-link:hover {
+      border-color: #2563eb;
+      color: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+    }
+
+    /* Trust Seals */
+    .trust-seals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    @media (max-width: 650px) {
+      .trust-seals-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .trust-seal-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .trust-seal-item i {
+      color: #ca8a04;
+    }
+  </style>
+</head>
+<body class="cart-page-body">
+
+  <!-- ══════════ SIMPLE, MINIMALIST & CLEAN HEADER ══════════ -->
+  <header class="buy-header">
+    <div class="buy-header-inner">
+      
+      <!-- Right: Pure Logo -->
+      <a href="index.html" class="buy-logo">
+        <img src="logo-official.png" alt="Trivela" />
+        <span>Trivela</span>
+      </a>
+
+      <!-- Left: Currency Selector + Simple Back Link -->
+      <div class="header-actions-group">
+        <!-- Global Currency Picker -->
+        <div class="global-currency-picker">
+          <i class="fas fa-globe"></i>
+          <select id="currencySelect">
+            <option value="SAR">SAR — ريال سعودي</option>
+            <option value="USD">USD — دولار أمريكي</option>
+            <option value="AED">AED — درهم إماراتي</option>
+            <option value="KWD">KWD — دينار كويتي</option>
+            <option value="BHD">BHD — دينار بحريني</option>
+            <option value="QAR">QAR — ريال قطري</option>
+            <option value="OMR">OMR — ريال عماني</option>
+            <option value="JOD">JOD — دينار أردني</option>
+            <option value="EGP">EGP — جنيه مصري</option>
+          </select>
+        </div>
+
+        <!-- Clean Subtle Back Link -->
+        <a href="index.html" class="back-link">
+          <span>العودة للمتجر</span>
+          <i class="fas fa-arrow-left"></i>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ══════════ MAIN CONTENT ══════════ -->
+  <main class="cart-main-container">
+    
+    <!-- Hero Header -->
+    <div class="cart-hero-header">
+      <h1>سلة المشتريات وإنهاء الطلب</h1>
+      <p>راجع طلباتك وأتمم الدفع الآمن بأعلى سرعة وضمان</p>
+    </div>
+
+    <!-- Stepper -->
+    <div class="cart-stepper">
+      <div class="cart-step-pill completed">
+        <i class="fas fa-check-circle"></i>
+        <span>1. اختيار الخدمات</span>
+      </div>
+      <div class="cart-step-divider"><i class="fas fa-chevron-left"></i></div>
+      <div class="cart-step-pill active">
+        <i class="fas fa-shopping-cart"></i>
+        <span>2. مراجعة السلة والبيانات</span>
+      </div>
+      <div class="cart-step-divider"><i class="fas fa-chevron-left"></i></div>
+      <div class="cart-step-pill">
+        <i class="fas fa-shield-check"></i>
+        <span>3. الدفع والتنفيذ الفوري</span>
+      </div>
+    </div>
+
+    <!-- Active Cart Layout -->
+    <div class="cart-layout-grid" id="cartActiveGrid">
+      
+      <!-- RIGHT COLUMN: Items List + EA Credentials + Upsells -->
+      <div class="cart-right-col">
+        
+        <!-- Panel 1: Cart Items -->
+        <div class="cart-panel-card">
+          <div class="panel-top-title">
+            <h3><i class="fas fa-box-open"></i> الخدمات والمنتجات المضافة (<span id="cartTotalCountBadge" style="color: #2563eb;">0</span>)</h3>
+            <button type="button" class="btn-clear-cart" onclick="clearFullCart()"><i class="fas fa-trash-can"></i> إفراغ السلة</button>
+          </div>
+
+          <div id="cartItemsContainer">
+            <!-- Dynamic Items injected via JS -->
+          </div>
+
+          <!-- ══════════ REALISTIC SBC & OBJECTIVES UPSELLS ══════════ -->
+          <div class="cart-upsell-box" id="cartUpsellSection">
+            <div class="cart-upsell-header">
+              <span><i class="fas fa-fire font-gold" style="color: #f59e0b;"></i> عروض وتحديات مقترحة لسلتك بنقرة واحدة:</span>
+              <small style="color: #b45309; font-size: 0.76rem; font-weight: 800;">تحديات SBC ومهام حصرية</small>
+            </div>
+            
+            <div class="upsell-items-row" id="upsellCardsGrid">
+              <!-- Real SBC 1: 85+ x10 Upgrade -->
+              <div class="upsell-card-mini" id="upsellCard_sbc_85">
+                <div class="upsell-icon-tag"><i class="fas fa-puzzle-piece"></i></div>
+                <div class="upsell-info-wrap">
+                  <div class="title">تحدي ترقية 85+ x10 Upgrade</div>
+                  <div class="sub-detail">حل فوري لتحدي الباكة الأسطورية</div>
+                  <div class="price" id="upsellPrice_sbc_85">15.00 ر.س</div>
+                </div>
+                <button type="button" class="btn-add-upsell" id="btnUpsell_sbc_85" onclick="toggleUpsellOffer('sbc_85')">+ إضافة للسلة</button>
+              </div>
+
+              <!-- Real SBC 2: Icon Player Pick -->
+              <div class="upsell-card-mini" id="upsellCard_sbc_icon">
+                <div class="upsell-icon-tag" style="background: rgba(202, 138, 4, 0.1); color: #ca8a04;"><i class="fas fa-crown"></i></div>
+                <div class="upsell-info-wrap">
+                  <div class="title">تحدي اختيار آيكون (Icon Pick)</div>
+                  <div class="sub-detail">حل جميع تشكيلات باقة الآيكون</div>
+                  <div class="price" id="upsellPrice_sbc_icon">25.00 ر.س</div>
+                </div>
+                <button type="button" class="btn-add-upsell" id="btnUpsell_sbc_icon" onclick="toggleUpsellOffer('sbc_icon')">+ إضافة للسلة</button>
+              </div>
+
+              <!-- Real Objectives 1: Rush Weekly Tasks -->
+              <div class="upsell-card-mini" id="upsellCard_obj_rush">
+                <div class="upsell-icon-tag" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;"><i class="fas fa-bolt"></i></div>
+                <div class="upsell-info-wrap">
+                  <div class="title">مهام نمط الـ Rush الأسبوعية</div>
+                  <div class="sub-detail">حزمة ميجا نادرة + 5x لاعبين 83+</div>
+                  <div class="price" id="upsellPrice_obj_rush">55.00 ر.س</div>
+                </div>
+                <button type="button" class="btn-add-upsell" id="btnUpsell_obj_rush" onclick="toggleUpsellOffer('obj_rush')">+ إضافة للسلة</button>
+              </div>
+
+              <!-- Real Objectives 2: Live Friendly Cup -->
+              <div class="upsell-card-mini" id="upsellCard_obj_cup">
+                <div class="upsell-icon-tag" style="background: rgba(16, 185, 129, 0.1); color: #10b981;"><i class="fas fa-trophy"></i></div>
+                <div class="upsell-info-wrap">
+                  <div class="title">كأس البطولة الودي (Live Friendly Cup)</div>
+                  <div class="sub-detail">باقة 85+ x3 + كارت لاعب خاص</div>
+                  <div class="price" id="upsellPrice_obj_cup">70.00 ر.س</div>
+                </div>
+                <button type="button" class="btn-add-upsell" id="btnUpsell_obj_cup" onclick="toggleUpsellOffer('obj_cup')">+ إضافة للسلة</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Panel 2: EA Account Credentials -->
+        <div class="cart-panel-card" id="customerPanelContainer">
+          <div class="panel-top-title">
+            <h3><i class="fas fa-user-shield"></i> بيانات حساب EA للتنفيذ الفوري</h3>
+            <button type="button" class="btn-use-saved-ea" id="btnAutoFillProfile" onclick="autoFillCustomerProfile()" style="display: none; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 6px 14px; border-radius: 8px; font-weight: 800; font-size: 0.82rem; cursor: pointer;">
+              <i class="fas fa-magic"></i> تعبئة من حسابي
+            </button>
+          </div>
+
+          <!-- ══════════ READ-ONLY SUMMARY CARD (DEFAULT WHEN DATA FILLED) ══════════ -->
+          <div class="cart-creds-locked-card" id="credentialsLockedCard" style="display: none;">
+            <div class="locked-card-top">
+              <div class="locked-card-status">
+                <i class="fas fa-circle-check"></i>
+                <span>تم إدخال وتأكيد بيانات حساب EA لتنفيذ الطلب</span>
+              </div>
+              <button type="button" class="btn-edit-small" onclick="enableCredentialsEdit()">
+                <i class="fas fa-pen-to-square"></i>
+                <span>تعديل البيانات</span>
+              </button>
+            </div>
+
+            <div class="locked-card-grid">
+              <div class="locked-data-item" id="viewEaEmailWrap">
+                <span class="locked-lbl">البريد الإلكتروني لحساب EA:</span>
+                <span class="locked-val" id="viewEaEmail">—</span>
+              </div>
+
+              <div class="locked-data-item" id="viewEaPassWrap">
+                <span class="locked-lbl">كلمة مرور EA:</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="locked-val" id="viewEaPassword" style="letter-spacing: 2px;">••••••••</span>
+                  <button type="button" onclick="toggleViewPassword()" style="background: none; border: none; color: #64748b; cursor: pointer; font-size: 0.85rem;" title="إظهار/إخفاء">
+                    <i class="fas fa-eye" id="viewEyeIcon"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="locked-data-item full-row" id="viewBackupCodesWrap">
+                <span class="locked-lbl">الرموز الاحتياطية (Backup Codes):</span>
+                <div class="backup-codes-pill-row" id="viewBackupCodesPills">
+                  <!-- Pills injected here -->
+                </div>
+              </div>
+
+              <div class="locked-data-item full-row" id="viewNotesWrap" style="display: none;">
+                <span class="locked-lbl">ملاحظات الطلب:</span>
+                <span class="locked-val" id="viewOrderNotes" style="font-size: 0.85rem; color: #475569;">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══════════ EDITABLE FORM (WHEN CLICKING EDIT OR NOT FILLED) ══════════ -->
+          <div id="credentialsEditForm" style="display: none;">
+            <div class="ea-form-grid">
+              <!-- EA Email -->
+              <div class="ea-input-group" id="groupEaEmail">
+                <label class="input-label-tag" for="pageEaEmail">البريد الإلكتروني لحساب EA (Origin)</label>
+                <div class="input-with-icon">
+                  <i class="fas fa-envelope input-icon"></i>
+                  <input type="email" id="pageEaEmail" placeholder="ايميل حساب EA لتسجيل الدخول"/>
+                </div>
+              </div>
+
+              <!-- EA Password -->
+              <div class="ea-input-group" id="groupEaPassword">
+                <label class="input-label-tag" for="pageEaPassword">كلمة مرور حساب EA</label>
+                <div class="input-with-icon">
+                  <i class="fas fa-lock input-icon"></i>
+                  <input type="password" id="pageEaPassword" placeholder="كلمة المرور المشفرة"/>
+                </div>
+              </div>
+
+              <!-- Backup Codes -->
+              <div class="ea-input-group full-width" id="groupBackupCodes">
+                <label class="input-label-tag">الرموز الاحتياطية (3 Backup Codes)</label>
+                <div class="backup-codes-row">
+                  <input type="text" class="backup-code-box" id="pageBackup1" placeholder="رمز 1" maxlength="8"/>
+                  <input type="text" class="backup-code-box" id="pageBackup2" placeholder="رمز 2" maxlength="8"/>
+                  <input type="text" class="backup-code-box" id="pageBackup3" placeholder="رمز 3" maxlength="8"/>
+                </div>
+                <label style="display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 0.82rem; color: #64748b; font-weight: 700; cursor: pointer;">
+                  <input type="checkbox" id="chkCartBackupHelp" onchange="toggleCartBackupHelp(this.checked)" style="width: 16px; height: 16px; accent-color: #2563eb;"/>
+                  <span>لا أعرف طريقة استخراج الرموز الاحتياطية (سيتواصل الدعم الفني معي للمساعدة بعد الدفع)</span>
+                </label>
+              </div>
+
+              <!-- Order Notes -->
+              <div class="ea-input-group full-width">
+                <label class="input-label-tag" for="pageOrderNotes">ملاحظات إضافية بطلبك (اختياري)</label>
+                <div class="input-with-icon">
+                  <i class="fas fa-comment-dots input-icon"></i>
+                  <input type="text" id="pageOrderNotes" placeholder="أي تعليمات تفضلها لوقت الشحن أو المنصة..." />
+                </div>
+              </div>
+
+              <!-- Form Action Buttons -->
+              <div class="form-actions-row">
+                <button type="button" class="btn-save-edits" onclick="saveCredentialsEdits()"><i class="fas fa-check"></i> حفظ بيانات الحساب</button>
+                <button type="button" class="btn-cancel-edits" id="btnCancelEdits" onclick="cancelCredentialsEdits()">إلغاء</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="trust-seals-grid">
+            <div class="trust-seal-item"><i class="fas fa-shield-halved"></i><span>تشفير بنكي آمن 256-bit</span></div>
+            <div class="trust-seal-item"><i class="fas fa-rotate-left"></i><span>ضمان استرجاع الأموال 100%</span></div>
+            <div class="trust-seal-item"><i class="fas fa-headset"></i><span>دعم فني مباشر على مدار الساعة</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- LEFT COLUMN: Sticky Summary & Payment Selector -->
+      <div class="cart-left-col">
+        <div class="cart-panel-card cart-summary-sticky">
+          
+          <div class="summary-title">
+            <i class="fas fa-receipt"></i>
+            <span>ملخص الحساب وطريقة الدفع</span>
+          </div>
+
+          <!-- Coupon Box -->
+          <div class="cart-coupon-input-wrap">
+            <input type="text" id="pageCouponInput" placeholder="هل لديك كوبون خصم؟" />
+            <button type="button" onclick="applyPageCoupon()">تطبيق</button>
+          </div>
+          <div id="pageCouponStatusMsg" style="font-size: 0.82rem; font-weight: 800; margin-bottom: 12px;"></div>
+
+          <!-- Calculation Rows -->
+          <div class="summary-calc-rows">
+            <div class="calc-row">
+              <span>المجموع الفرعي:</span>
+              <strong id="lblSubtotal">0.00 ر.س</strong>
+            </div>
+            <div class="calc-row discount-val" id="rowDiscount" style="display: none;">
+              <span>خصم الكوبون:</span>
+              <strong id="lblDiscount">-0.00 ر.س</strong>
+            </div>
+            <div class="calc-row grand-total-row">
+              <span>المبلغ الإجمالي المستحق:</span>
+              <strong id="lblGrandTotal">0.00 ر.س</strong>
+            </div>
+          </div>
+
+          <!-- ══════════ PAYMENT METHOD SELECTOR (EXCLUSIVE IN CART) ══════════ -->
+          <div class="payment-method-selector-section">
+            <div class="payment-method-title">
+              <i class="fas fa-wallet" style="color: #2563eb;"></i>
+              <span>اختر طريقة الدفع المفضلة:</span>
+            </div>
+
+            <!-- WhatsApp Only Notice -->
+            <div id="cartWaOnlyNotice" class="cart-wa-alert" style="display: none;">
+              <i class="fas fa-triangle-exclamation"></i>
+              <span>يحتوي طلبك على خدمات (رايفلز / فوت / ويب آب مقفل) تتطلب التنسيق اليدوي، لذلك الدفع متاح عبر الواتساب فقط.</span>
+            </div>
+
+            <div class="payment-methods-grid">
+              <div class="payment-option-card active" id="cardPayTabs" onclick="selectCartPayment('paytabs')">
+                <div class="pay-icon-box">
+                  <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="pay-text-group">
+                  <span class="pay-main-label">دفع إلكتروني فوري (PayTabs)</span>
+                  <span class="pay-sub-label">مدى / فيزا / ماستركارد / Apple Pay (سفاري)</span>
+                </div>
+                <input type="radio" name="pagePaymentRadio" value="paytabs" checked class="pay-check-radio">
+              </div>
+
+              <div class="payment-option-card whatsapp-option" id="cardWhatsApp" onclick="selectCartPayment('whatsapp')">
+                <div class="pay-icon-box">
+                  <i class="fab fa-whatsapp"></i>
+                </div>
+                <div class="pay-text-group">
+                  <span class="pay-main-label">دفع وتحويل بالواتساب</span>
+                  <span class="pay-sub-label">كليك / زين كاش / STC Pay / USDT</span>
+                </div>
+                <input type="radio" name="pagePaymentRadio" value="whatsapp" class="pay-check-radio">
+              </div>
+            </div>
+          </div>
+
+          <!-- Final Checkout Execution Button -->
+          <button type="button" class="btn-proceed-checkout paytabs-btn" id="btnPageCheckout" onclick="handleCheckoutClick()">
+            <span>إتمام الدفع الإلكتروني الفوري (PayTabs)</span>
+            <i class="fas fa-lock"></i>
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EMPTY STATE DISPLAY -->
+    <div id="cartEmptyState" class="cart-empty-state-card" style="display: none;">
+      <div class="empty-cart-glow-circle"><i class="fas fa-cart-shopping"></i></div>
+      <h3>سلة المشتريات فارغة حالياً!</h3>
+      <p>لم تقم بإضافة أي خدمات بعد. تصفح أقسام متجر Trivela واختر ما يناسبك لتنفيذ طلبك بأعلى سرعة وضمان أمان 100%.</p>
+      <div class="empty-shortcuts-grid">
+        <a href="buy-coins.html" class="empty-shortcut-link"><i class="fas fa-coins" style="color: #ca8a04;"></i> شحن كوينز Ultimate Team</a>
+        <a href="buy-sbc.html" class="empty-shortcut-link"><i class="fas fa-puzzle-piece" style="color: #ca8a04;"></i> حل تحديات الـ SBC</a>
+        <a href="buy-objectives.html" class="empty-shortcut-link"><i class="fas fa-tasks" style="color: #ca8a04;"></i> إنجاز مهام Objectives</a>
+        <a href="buy-rivals.html" class="empty-shortcut-link"><i class="fas fa-crown" style="color: #ca8a04;"></i> انتصارات Division Rivals</a>
+        <a href="buy-coaching.html" class="empty-shortcut-link"><i class="fas fa-headset" style="color: #ca8a04;"></i> التدريب والاستشارات</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ══════════ BALANCED & REASSURING CURRENCY CONFIRMATION MODAL ══════════ -->
+  <div class="jod-modal-overlay" id="jodConfirmModal" style="display: none;">
+    <div class="jod-modal-card">
+      
+      <!-- Header -->
+      <div class="jod-header-row">
+        <div class="jod-header-text">
+          <h4><i class="fas fa-credit-card"></i> تفاصيل الدفع وتحويل العملة</h4>
+          <p>نفس قيمة طلبك بالعملة الرسمية للبوابة دون أي زيادة</p>
+        </div>
+        <button type="button" class="btn-close-mini" onclick="closeJodModal()" title="إغلاق"><i class="fas fa-xmark"></i></button>
+      </div>
+
+      <!-- Currency Comparison Box -->
+      <div class="jod-compare-box">
+        <!-- Selected Currency -->
+        <div class="jod-col">
+          <span class="jod-col-lbl">المبلغ بعملتك المحددة:</span>
+          <div class="jod-col-val" id="modalUserCurAmount">0.00 ر.س</div>
+          <span class="jod-col-cur" id="modalUserCurCode">SAR</span>
+        </div>
+
+        <!-- Exchange Arrow -->
+        <div class="jod-arrow-badge">
+          <span class="rate-pill" id="modalRateBadge">1 د.أ = 5.29 ر.س</span>
+          <i class="fas fa-arrow-left-long" style="color: #94a3b8; font-size: 0.9rem;"></i>
+        </div>
+
+        <!-- JOD Amount -->
+        <div class="jod-col jod-highlight">
+          <span class="jod-col-lbl">ما يعادله بالدينار الأردني:</span>
+          <div class="jod-col-val blue" id="modalJodAmount">0.00 د.أ</div>
+          <span class="jod-col-cur">دينار أردني (JOD)</span>
+        </div>
+      </div>
+
+      <!-- Balanced 3-Point Reassurance List -->
+      <div class="jod-points-list">
+        <div class="jod-point-item">
+          <i class="fas fa-circle-check"></i>
+          <span><b>نفس المبلغ تماماً:</b> لا توجد أي رسوم إضافية أو عمولات خفية مضافة من المتجر.</span>
+        </div>
+        <div class="jod-point-item highlight-bank">
+          <i class="fas fa-building-columns"></i>
+          <span><b>الخصم البنكي:</b> سيقوم بنكك بخصم ما يعادلها بالضبط بعملتك المحلية تلقائياً بسعر الصرف الرسمي.</span>
+        </div>
+        <div class="jod-point-item">
+          <i class="fas fa-shield-halved"></i>
+          <span><b>بوابة دفع معتمدة:</b> الفوترة بالدينار الأردني لأن البوابة الإلكترونية مسجلة ومرخصة رسمياً في الأردن.</span>
+        </div>
+      </div>
+
+      <!-- Apple Pay Safari Hint Box -->
+      <div class="apple-pay-safari-note">
+        <i class="fab fa-apple"></i>
+        <span><b>ملاحظة Apple Pay:</b> للدفع عبر Apple Pay يُرجى استخدام متصفح <b>Safari</b> على أجهزة Apple.</span>
+      </div>
+
+      <!-- Supported Cards -->
+      <div class="cards-row-mini">
+        <span class="card-tag"><i class="fas fa-credit-card"></i> Mada مدى</span>
+        <span class="card-tag apple-tag"><i class="fab fa-apple"></i> Apple Pay (سفاري)</span>
+        <span class="card-tag"><i class="fab fa-cc-visa"></i> Visa</span>
+        <span class="card-tag"><i class="fab fa-cc-mastercard"></i> MasterCard</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="jod-modal-buttons">
+        <button type="button" class="btn-simple-pay" id="btnFinalProceedPayTabs" onclick="submitFinalPayTabsOrder()">
+          <span>متابعة الدفع بالدينار الأردني (<span id="modalBtnJodAmount">0.00 د.أ</span>)</span>
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <button type="button" class="btn-simple-cancel" onclick="closeJodModal()">رجوع للسلة والتعديل</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="footer" style="margin-top: auto; border-top: 1px solid var(--border-light); background: #ffffff;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 24px 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <span>© 2026 Trivela — جميع الحقوق محفوظة</span>
+        <span>هذا الموقع غير مرتبط بـ EA Sports</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="src/core/global-currency.js"></script>
+  <script>
+    // ══════════ CART PAGE CONTROLLER ══════════
+    let selectedCartPaymentMethod = 'paytabs';
+    let appliedPageCoupon = null;
+    let isPasswordRevealed = false;
+
+    // Real, authentic SBC & Objectives Upsell Offer Definitions
+    const UPSELL_OFFERS = {
+      sbc_85: {
+        id: 'sbc_85',
+        service: 'حل تحدي: ترقية 85+ x10 Upgrade Pack',
+        type: 'sbc',
+        platform: 'PlayStation / Xbox / PC',
+        priceSAR: 15.00,
+        details: '10x لاعبين 85+'
+      },
+      sbc_icon: {
+        id: 'sbc_icon',
+        service: 'حل تحدي: باقة اختيار آيكون (Icon Pick)',
+        type: 'sbc',
+        platform: 'PlayStation / Xbox / PC',
+        priceSAR: 25.00,
+        details: 'تشكيلات تحدي الآيكون'
+      },
+      obj_rush: {
+        id: 'obj_rush',
+        service: 'إنجاز مهام: نمط الـ Rush الأسبوعية',
+        type: 'objectives',
+        platform: 'PlayStation / Xbox / PC',
+        priceSAR: 55.00,
+        details: 'حزمة ميجا + 5x لاعبين 83+'
+      },
+      obj_cup: {
+        id: 'obj_cup',
+        service: 'إنجاز مهام: كأس البطولة الودي (Live Cup)',
+        type: 'objectives',
+        platform: 'PlayStation / Xbox / PC',
+        priceSAR: 70.00,
+        details: '10 انتصارات + باقة 85+ x3'
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCartPage();
+      checkLoggedInUser();
+
+      const curSel = document.getElementById('currencySelect');
+      if (curSel) {
+        curSel.addEventListener('change', () => {
+          renderCartPage();
+        });
+      }
+    });
+
+    function getCartItems() {
+      try {
+        const data = localStorage.getItem('trivela_cart');
+        return data ? JSON.parse(data) : [];
+      } catch(e) { return []; }
+    }
+
+    function saveCartItems(items) {
+      localStorage.setItem('trivela_cart', JSON.stringify(items));
+      renderCartPage();
+    }
+
+    function renderCartPage() {
+      const items = getCartItems();
+      const grid = document.getElementById('cartActiveGrid');
+      const emptyState = document.getElementById('cartEmptyState');
+      const countBadge = document.getElementById('cartTotalCountBadge');
+
+      if (!items || items.length === 0) {
+        if (grid) grid.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+
+      if (grid) grid.style.display = 'grid';
+      if (emptyState) emptyState.style.display = 'none';
+      if (countBadge) countBadge.textContent = items.length;
+
+      // Render Items List
+      const container = document.getElementById('cartItemsContainer');
+      if (container) {
+        container.innerHTML = items.map((item, idx) => {
+          let iconClass = 'fas fa-gem';
+          if (item.type === 'coins') iconClass = 'fas fa-coins font-gold';
+          else if (item.type === 'sbc') iconClass = 'fas fa-puzzle-piece font-gold';
+          else if (item.type === 'objectives') iconClass = 'fas fa-tasks font-gold';
+          else if (item.type === 'coaching') iconClass = 'fas fa-headset font-gold';
+          else if (item.type === 'rivals') iconClass = 'fas fa-crown font-gold';
+          else if (item.type === 'champions') iconClass = 'fas fa-trophy font-gold';
+
+          return `
+            <div class="page-cart-item">
+              <div style="display: flex; align-items: center; gap: 14px; flex: 1;">
+                <div class="item-icon-box"><i class="${iconClass}"></i></div>
+                <div class="item-details-wrap">
+                  <div class="item-main-name">${item.service}</div>
+                  <div class="item-tags-row">
+                    ${item.platform ? `<span class="item-pill-tag platform-pill">${item.platform}</span>` : ''}
+                    ${item.details ? `<span class="item-pill-tag">${item.details}</span>` : ''}
+                    ${item.whatsappOnly ? `<span class="item-pill-tag wa-pill"><i class="fab fa-whatsapp"></i> واتساب فقط</span>` : ''}
+                  </div>
+                </div>
+              </div>
+
+              <div class="item-price-delete">
+                <div class="item-price-val">${formatCurrencyVal(item.priceSAR)}</div>
+                <button type="button" class="item-delete-btn" onclick="removeCartItemIdx(${idx})" title="حذف من السلة">
+                  <i class="fas fa-trash-can"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Update Upsell Cards State & Formatted Prices
+      renderUpsellButtons(items);
+
+      // Check WhatsApp-Only locking rule
+      const hasWaOnly = items.some(i => i.whatsappOnly === true || (i.service && (i.service.includes('رايفلز') || i.service.includes('فوت') || i.service.includes('مقفل'))));
+      const waAlert = document.getElementById('cartWaOnlyNotice');
+      const cardPayTabs = document.getElementById('cardPayTabs');
+
+      if (hasWaOnly) {
+        if (waAlert) waAlert.style.display = 'flex';
+        if (cardPayTabs) {
+          cardPayTabs.style.opacity = '0.4';
+          cardPayTabs.style.pointerEvents = 'none';
+        }
+        selectCartPayment('whatsapp');
+      } else {
+        if (waAlert) waAlert.style.display = 'none';
+        if (cardPayTabs) {
+          cardPayTabs.style.opacity = '1';
+          cardPayTabs.style.pointerEvents = 'auto';
+        }
+      }
+
+      // Populate & Display Credentials (Read-only Summary vs Edit Form)
+      syncCredentialsView(items);
+      updateSummaryCalculations();
+    }
+
+    // ── Upsell state and toggle ──
+    function renderUpsellButtons(items) {
+      Object.keys(UPSELL_OFFERS).forEach(key => {
+        const offer = UPSELL_OFFERS[key];
+        const btn = document.getElementById(`btnUpsell_${key}`);
+        const card = document.getElementById(`upsellCard_${key}`);
+        const priceLbl = document.getElementById(`upsellPrice_${key}`);
+
+        if (priceLbl) {
+          priceLbl.textContent = formatCurrencyVal(offer.priceSAR);
+        }
+
+        const isAlreadyInCart = items.some(i => i.service === offer.service);
+
+        if (btn) {
+          if (isAlreadyInCart) {
+            btn.className = 'btn-add-upsell in-cart-btn';
+            btn.innerHTML = '<i class="fas fa-check"></i> مضاف بالسلة';
+          } else {
+            btn.className = 'btn-add-upsell';
+            btn.innerHTML = '+ إضافة للسلة';
+          }
+        }
+
+        if (card) {
+          if (isAlreadyInCart) card.classList.add('in-cart');
+          else card.classList.remove('in-cart');
+        }
+      });
+    }
+
+    function toggleUpsellOffer(key) {
+      const offer = UPSELL_OFFERS[key];
+      if (!offer) return;
+
+      const items = getCartItems();
+      const existingIdx = items.findIndex(i => i.service === offer.service);
+
+      if (existingIdx !== -1) {
+        // Remove if clicked again
+        items.splice(existingIdx, 1);
+      } else {
+        // Add realistic offer to cart
+        items.push({
+          service: offer.service,
+          type: offer.type,
+          platform: offer.platform,
+          priceSAR: offer.priceSAR,
+          details: offer.details
+        });
+      }
+
+      saveCartItems(items);
+    }
+
+    // ── Synchronize Credentials View (Read-Only Summary vs Edit Mode) ──
+    function syncCredentialsView(items) {
+      const firstWithData = items.find(i => i.eaEmail);
+      
+      const lockedCard = document.getElementById('credentialsLockedCard');
+      const editForm = document.getElementById('credentialsEditForm');
+
+      let eaEmail = document.getElementById('pageEaEmail').value.trim();
+      let eaPassword = document.getElementById('pageEaPassword').value;
+      let b1 = document.getElementById('pageBackup1').value.trim();
+      let b2 = document.getElementById('pageBackup2').value.trim();
+      let b3 = document.getElementById('pageBackup3').value.trim();
+      let notes = document.getElementById('pageOrderNotes').value.trim();
+
+      // If form fields are empty, autofill from cart item
+      if (firstWithData) {
+        if (!eaEmail && firstWithData.eaEmail) { eaEmail = firstWithData.eaEmail; document.getElementById('pageEaEmail').value = eaEmail; }
+        if (!eaPassword && firstWithData.eaPassword) { eaPassword = firstWithData.eaPassword; document.getElementById('pageEaPassword').value = eaPassword; }
+        if (firstWithData.backupCodes && firstWithData.backupCodes.length > 0) {
+          if (!b1 && firstWithData.backupCodes[0]) { b1 = firstWithData.backupCodes[0]; document.getElementById('pageBackup1').value = b1; }
+          if (!b2 && firstWithData.backupCodes[1]) { b2 = firstWithData.backupCodes[1]; document.getElementById('pageBackup2').value = b2; }
+          if (!b3 && firstWithData.backupCodes[2]) { b3 = firstWithData.backupCodes[2]; document.getElementById('pageBackup3').value = b3; }
+        }
+        if (!notes && firstWithData.notes) { notes = firstWithData.notes; document.getElementById('pageOrderNotes').value = notes; }
+      }
+
+      // Check if we have EA credentials to show in Read-Only Summary Card
+      const hasFilledData = (eaEmail || (window.loggedInUserData && window.loggedInUserData.eaEmail));
+
+      if (hasFilledData && !window.isForceEditMode) {
+        // Show Locked Card
+        if (lockedCard) lockedCard.style.display = 'block';
+        if (editForm) editForm.style.display = 'none';
+
+        // Update read-only labels
+        const viewEmail = document.getElementById('viewEaEmail');
+        const viewPass = document.getElementById('viewEaPassword');
+        const pillsWrap = document.getElementById('viewBackupCodesPills');
+        const notesWrap = document.getElementById('viewNotesWrap');
+        const viewNotes = document.getElementById('viewOrderNotes');
+
+        if (viewEmail) viewEmail.textContent = eaEmail || 'غير محدد';
+        
+        if (viewPass) {
+          viewPass.textContent = isPasswordRevealed ? (eaPassword || 'لا توجد') : (eaPassword ? '••••••••' : 'لا توجد');
+        }
+
+        if (pillsWrap) {
+          const codes = [b1, b2, b3].filter(c => c && c !== '—');
+          if (codes.length > 0) {
+            pillsWrap.innerHTML = codes.map(c => `<span class="backup-code-pill">${c}</span>`).join('');
+          } else {
+            pillsWrap.innerHTML = `<span class="backup-code-pill" style="color: #b45309; background: #fffbeb;">مساعدة الدعم الفني</span>`;
+          }
+        }
+
+        if (notesWrap && viewNotes) {
+          if (notes) {
+            notesWrap.style.display = 'flex';
+            viewNotes.textContent = notes;
+          } else {
+            notesWrap.style.display = 'none';
+          }
+        }
+      } else {
+        // Show Editable Form
+        if (lockedCard) lockedCard.style.display = 'none';
+        if (editForm) editForm.style.display = 'block';
+      }
+    }
+
+    function enableCredentialsEdit() {
+      window.isForceEditMode = true;
+      const lockedCard = document.getElementById('credentialsLockedCard');
+      const editForm = document.getElementById('credentialsEditForm');
+      if (lockedCard) lockedCard.style.display = 'none';
+      if (editForm) editForm.style.display = 'block';
+      document.getElementById('pageEaEmail').focus();
+    }
+
+    function saveCredentialsEdits() {
+      window.isForceEditMode = false;
+      const items = getCartItems();
+      const eaEmail = document.getElementById('pageEaEmail').value.trim();
+      const eaPassword = document.getElementById('pageEaPassword').value;
+      const b1 = document.getElementById('pageBackup1').value.trim();
+      const b2 = document.getElementById('pageBackup2').value.trim();
+      const b3 = document.getElementById('pageBackup3').value.trim();
+      const notes = document.getElementById('pageOrderNotes').value.trim();
+
+      // Update all items in cart with edited credentials
+      items.forEach(it => {
+        it.eaEmail = eaEmail;
+        it.eaPassword = eaPassword;
+        it.backupCodes = [b1, b2, b3].filter(c => c && c !== '—');
+        it.notes = notes;
+      });
+
+      saveCartItems(items);
+      alert("✅ تم حفظ وتحديث بيانات حساب EA بنجاح!");
+    }
+
+    function cancelCredentialsEdits() {
+      window.isForceEditMode = false;
+      renderCartPage();
+    }
+
+    function toggleViewPassword() {
+      isPasswordRevealed = !isPasswordRevealed;
+      const eaPassword = document.getElementById('pageEaPassword').value;
+      const viewPass = document.getElementById('viewEaPassword');
+      const icon = document.getElementById('viewEyeIcon');
+      if (viewPass) {
+        viewPass.textContent = isPasswordRevealed ? (eaPassword || 'لا توجد') : '••••••••';
+      }
+      if (icon) {
+        icon.className = isPasswordRevealed ? 'fas fa-eye-slash' : 'fas fa-eye';
+      }
+    }
+
+    function removeCartItemIdx(idx) {
+      const items = getCartItems();
+      items.splice(idx, 1);
+      saveCartItems(items);
+    }
+
+    function clearFullCart() {
+      if (!confirm("هل أنت متأكد من رغبتك في إفراغ سلة المشتريات بالكامل؟")) return;
+      saveCartItems([]);
+    }
+
+    // ── Payment method selector ──
+    function selectCartPayment(method) {
+      selectedCartPaymentMethod = method;
+      const cardPayTabs = document.getElementById('cardPayTabs');
+      const cardWhatsApp = document.getElementById('cardWhatsApp');
+      const btn = document.getElementById('btnPageCheckout');
+
+      if (method === 'paytabs') {
+        if (cardPayTabs) cardPayTabs.classList.add('active');
+        if (cardWhatsApp) cardWhatsApp.classList.remove('active');
+        const r1 = cardPayTabs ? cardPayTabs.querySelector('input') : null;
+        if (r1) r1.checked = true;
+        if (btn) {
+          btn.className = 'btn-proceed-checkout paytabs-btn';
+          btn.innerHTML = '<span>إتمام الدفع الإلكتروني الفوري (PayTabs)</span> <i class="fas fa-lock"></i>';
+        }
+      } else {
+        if (cardWhatsApp) cardWhatsApp.classList.add('active');
+        if (cardPayTabs) cardPayTabs.classList.remove('active');
+        const r2 = cardWhatsApp ? cardWhatsApp.querySelector('input') : null;
+        if (r2) r2.checked = true;
+        if (btn) {
+          btn.className = 'btn-proceed-checkout wa-btn';
+          btn.innerHTML = '<span>تأكيد الطلب والدفع عبر الواتساب</span> <i class="fab fa-whatsapp"></i>';
+        }
+      }
+    }
+
+    // ── Coupon Application ──
+    function applyPageCoupon() {
+      const input = document.getElementById('pageCouponInput');
+      const msg = document.getElementById('pageCouponStatusMsg');
+      const code = input ? input.value.trim().toUpperCase() : '';
+
+      if (!code) {
+        appliedPageCoupon = null;
+        if (msg) { msg.textContent = ''; msg.style.color = 'inherit'; }
+        updateSummaryCalculations();
+        return;
+      }
+
+      fetch('/api/public/content')
+        .then(res => res.json())
+        .then(data => {
+          const coupons = (data && data.coupons) ? data.coupons : {};
+          if (coupons[code] !== undefined) {
+            appliedPageCoupon = { code: code, percent: coupons[code].percent || 10 };
+            if (msg) {
+              msg.textContent = `🎉 تم تفعيل الكوبون بنجاح! خصم ${appliedPageCoupon.percent}%`;
+              msg.style.color = '#059669';
+            }
+          } else {
+            appliedPageCoupon = null;
+            if (msg) {
+              msg.textContent = '❌ الكوبون غير صالح أو منتهي الصلاحية.';
+              msg.style.color = '#ef4444';
+            }
+          }
+          updateSummaryCalculations();
+        })
+        .catch(() => {
+          appliedPageCoupon = null;
+          updateSummaryCalculations();
+        });
+    }
+
+    // ── Summary Calculations ──
+    function calculateGrandTotals() {
+      const items = getCartItems();
+      const subtotalSAR = items.reduce((sum, item) => sum + (parseFloat(item.priceSAR) || 0), 0);
+      
+      let discountSAR = 0;
+      if (appliedPageCoupon && appliedPageCoupon.percent > 0) {
+        discountSAR = subtotalSAR * (appliedPageCoupon.percent / 100);
+      }
+
+      const grandTotalSAR = Math.max(0, subtotalSAR - discountSAR);
+      const grandTotalJOD = (grandTotalSAR / 3.75) * 0.709;
+
+      return { subtotalSAR, discountSAR, grandTotalSAR, grandTotalJOD };
+    }
+
+    function updateSummaryCalculations() {
+      const { subtotalSAR, discountSAR, grandTotalSAR } = calculateGrandTotals();
+
+      const lblSubtotal = document.getElementById('lblSubtotal');
+      const lblDiscount = document.getElementById('lblDiscount');
+      const rowDiscount = document.getElementById('rowDiscount');
+      const lblGrandTotal = document.getElementById('lblGrandTotal');
+
+      if (lblSubtotal) lblSubtotal.textContent = formatCurrencyVal(subtotalSAR);
+      if (discountSAR > 0) {
+        if (rowDiscount) rowDiscount.style.display = 'flex';
+        if (lblDiscount) lblDiscount.textContent = `-${formatCurrencyVal(discountSAR)}`;
+      } else {
+        if (rowDiscount) rowDiscount.style.display = 'none';
+      }
+      if (lblGrandTotal) lblGrandTotal.textContent = formatCurrencyVal(grandTotalSAR);
+    }
+
+    function formatCurrencyVal(valSAR) {
+      const sel = document.getElementById('currencySelect');
+      const curKey = sel ? sel.value : 'SAR';
+      const curData = (typeof CURRENCIES !== 'undefined' && CURRENCIES[curKey]) ? CURRENCIES[curKey] : { rate: 3.75, symbol: 'ر.س', dec: 2 };
+      
+      const valUSD = (parseFloat(valSAR) || 0) / 3.75;
+      const converted = valUSD * curData.rate;
+
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: curData.dec,
+        maximumFractionDigits: curData.dec
+      }).format(converted) + ' ' + curData.symbol;
+    }
+
+    function toggleCartBackupHelp(checked) {
+      const b1 = document.getElementById('pageBackup1');
+      const b2 = document.getElementById('pageBackup2');
+      const b3 = document.getElementById('pageBackup3');
+      if (checked) {
+        if (b1) { b1.value = 'HELP'; b1.disabled = true; }
+        if (b2) { b2.value = 'HELP'; b2.disabled = true; }
+        if (b3) { b3.value = 'HELP'; b3.disabled = true; }
+      } else {
+        if (b1) { b1.value = ''; b1.disabled = false; }
+        if (b2) { b2.value = ''; b2.disabled = false; }
+        if (b3) { b3.value = ''; b3.disabled = false; }
+      }
+    }
+
+    // ── Logged In User Profile Autofill ──
+    function checkLoggedInUser() {
+      fetch('/api/user/profile')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.success && data.user) {
+            window.loggedInUserData = data.user;
+            const btn = document.getElementById('btnAutoFillProfile');
+            if (btn) btn.style.display = 'inline-flex';
+            autoFillCustomerProfile();
+          }
+        })
+        .catch(() => {});
+    }
+
+    function autoFillCustomerProfile() {
+      if (!window.loggedInUserData) return;
+      const u = window.loggedInUserData;
+      if (u.eaEmail && !document.getElementById('pageEaEmail').value) document.getElementById('pageEaEmail').value = u.eaEmail;
+      if (u.eaBackupCodes && Array.isArray(u.eaBackupCodes)) {
+        if (u.eaBackupCodes[0]) document.getElementById('pageBackup1').value = u.eaBackupCodes[0];
+        if (u.eaBackupCodes[1]) document.getElementById('pageBackup2').value = u.eaBackupCodes[1];
+        if (u.eaBackupCodes[2]) document.getElementById('pageBackup3').value = u.eaBackupCodes[2];
+      }
+      renderCartPage();
+    }
+
+    // ── Checkout Button Dispatcher ──
+    function handleCheckoutClick() {
+      const items = getCartItems();
+      if (!items || items.length === 0) {
+        alert("سلة المشتريات فارغة!");
+        return;
+      }
+
+      // Check EA Credentials if needed
+      const requiresEA = items.some(i => i.type === 'coins' || i.type === 'sbc' || i.type === 'rivals' || i.type === 'champions' || i.type === 'objectives');
+      const eaEmail = document.getElementById('pageEaEmail').value.trim();
+      const eaPassword = document.getElementById('pageEaPassword').value;
+
+      if (requiresEA) {
+        if (!eaEmail) {
+          enableCredentialsEdit();
+          alert("يرجى إدخال البريد الإلكتروني لحساب EA للبدء بالشحن والتنفيذ.");
+          document.getElementById('pageEaEmail').focus();
+          return;
+        }
+        if (!eaPassword) {
+          enableCredentialsEdit();
+          alert("يرجى إدخال كلمة مرور حساب EA.");
+          document.getElementById('pageEaPassword').focus();
+          return;
+        }
+      }
+
+      if (selectedCartPaymentMethod === 'paytabs') {
+        // Open Balanced JOD Confirmation Modal
+        openJodConfirmModal();
+      } else {
+        // Direct WhatsApp Checkout
+        executeFinalOrderCreation('whatsapp');
+      }
+    }
+
+    // ── Balanced JOD Confirmation Modal ──
+    function openJodConfirmModal() {
+      const { grandTotalSAR, grandTotalJOD } = calculateGrandTotals();
+      const sel = document.getElementById('currencySelect');
+      const curKey = sel ? sel.value : 'SAR';
+      const curData = (typeof CURRENCIES !== 'undefined' && CURRENCIES[curKey]) ? CURRENCIES[curKey] : { rate: 3.75, symbol: 'ر.س', dec: 2 };
+
+      const valUSD = grandTotalSAR / 3.75;
+      const userAmount = (valUSD * curData.rate).toFixed(curData.dec);
+      const jodAmount = grandTotalJOD.toFixed(2);
+
+      const modalUserAmt = document.getElementById('modalUserCurAmount');
+      const modalUserCode = document.getElementById('modalUserCurCode');
+      const modalJodAmt = document.getElementById('modalJodAmount');
+      const modalRateBadge = document.getElementById('modalRateBadge');
+      const modalBtnJod = document.getElementById('modalBtnJodAmount');
+
+      if (modalUserAmt) modalUserAmt.textContent = `${userAmount} ${curData.symbol}`;
+      if (modalUserCode) modalUserCode.textContent = `${curKey}`;
+      if (modalJodAmt) modalJodAmt.textContent = `${jodAmount} د.أ`;
+      if (modalBtnJod) modalBtnJod.textContent = `${jodAmount} د.أ`;
+
+      // Rate label
+      const oneJodInUserCur = (curData.rate / 0.709).toFixed(2);
+      if (modalRateBadge) {
+        if (curKey === 'JOD') {
+          modalRateBadge.textContent = `1 د.أ = 1.00 د.أ`;
+        } else {
+          modalRateBadge.textContent = `1 د.أ = ${oneJodInUserCur} ${curData.symbol}`;
+        }
+      }
+
+      const modal = document.getElementById('jodConfirmModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeJodModal() {
+      const modal = document.getElementById('jodConfirmModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function submitFinalPayTabsOrder() {
+      const btn = document.getElementById('btnFinalProceedPayTabs');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري فتح بوابة الدفع...';
+      }
+      executeFinalOrderCreation('paytabs');
+    }
+
+    // ── Final Order Creation ──
+    async function executeFinalOrderCreation(paymentMethod) {
+      const items = getCartItems();
+      const eaEmail = document.getElementById('pageEaEmail').value.trim();
+      const eaPassword = document.getElementById('pageEaPassword').value;
+      const code1 = document.getElementById('pageBackup1').value.trim();
+      const code2 = document.getElementById('pageBackup2').value.trim();
+      const code3 = document.getElementById('pageBackup3').value.trim();
+      const notes = document.getElementById('pageOrderNotes').value.trim();
+
+      const { grandTotalSAR, discountSAR, grandTotalJOD } = calculateGrandTotals();
+
+      const servicesSummary = items.map(i => i.service).join(' + ');
+
+      // Use logged in user info if available, or fallback
+      const u = window.loggedInUserData || {};
+      const customerName = u.name || 'عميل Trivela';
+      const customerPhone = u.phone || '962775585112';
+
+      const orderPayload = {
+        customerName: customerName,
+        customerPhone: customerPhone,
+        eaEmail: eaEmail,
+        eaPassword: eaPassword,
+        backupCodes: [code1, code2, code3].filter(c => c && c !== '—'),
+        backupCode1: code1,
+        backupCode2: code2,
+        backupCode3: code3,
+        service: servicesSummary,
+        platform: items[0]?.platform || 'Console',
+        priceSAR: grandTotalSAR,
+        priceJOD: parseFloat(grandTotalJOD.toFixed(2)),
+        couponCode: appliedPageCoupon ? appliedPageCoupon.code : null,
+        couponDiscount: discountSAR,
+        paymentMethod: paymentMethod,
+        orderNotes: notes,
+        cartItems: items
+      };
+
+      try {
+        const res = await fetch('/api/orders/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderPayload)
+        });
+        const data = await res.json();
+
+        if (data.success && data.order) {
+          // Clear cart upon successful order registration
+          localStorage.removeItem('trivela_cart');
+
+          if (data.paymentMethod === 'paytabs' && data.paymentUrl) {
+            window.location.href = data.paymentUrl;
+            return;
+          }
+
+          // WhatsApp Flow
+          const cleanPhone = '962775585112';
+          const waMsg = encodeURIComponent(
+            `🎮 *طلب جديد من سلة متجر Trivela* 🛒\n\n` +
+            `📋 *رقم الطلب:* #${data.order.id}\n` +
+            `👤 *العميل:* ${customerName}\n` +
+            `📱 *رقم الهاتف:* ${customerPhone}\n` +
+            `📦 *الخدمات:* ${servicesSummary}\n` +
+            `💰 *المبلغ الإجمالي:* ${grandTotalSAR.toFixed(2)} ر.س (${grandTotalJOD.toFixed(2)} د.أ)\n\n` +
+            `يرجى تأكيد استلام الطلب وتزويدي ببيانات التحويل. شكراً!`
+          );
+
+          window.location.href = `https://wa.me/${cleanPhone}?text=${waMsg}`;
+        } else {
+          closeJodModal();
+          alert(data.error || "حدث خطأ أثناء تسجيل طلبك. يرجى المحاولة مرة أخرى.");
+        }
+      } catch (err) {
+        closeJodModal();
+        alert("حدث خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً.");
+      }
+    }
+  </script>
+</body>
+</html>

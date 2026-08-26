@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadUserLoyalty();
 
   // Watch inputs to update progress bar
-  const inputsToWatch = ['customerName', 'customerPhone', 'eaEmail', 'eaPassword', 'backup1'];
+  const inputsToWatch = ['eaEmail', 'eaPassword', 'backup1'];
   inputsToWatch.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -225,10 +225,23 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCheckoutProgress();
 });
 
-let loggedInName = "";
-let loggedInPhone = "";
+window.toggleCompactCoupon = function(btn) {
+  const wrapper = document.getElementById('couponInputWrapper');
+  const chevron = btn ? btn.querySelector('.toggle-chevron') : document.getElementById('couponChevron');
+  if (!wrapper) return;
+  const isHidden = wrapper.style.display === 'none' || wrapper.style.display === '';
+  wrapper.style.display = isHidden ? 'block' : 'none';
+  if (btn) btn.classList.toggle('open', isHidden);
+  if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+  if (isHidden) {
+    const inp = document.getElementById('couponCodeInput');
+    if (inp) inp.focus();
+  }
+};
 
-// Load user points if logged in
+let savedUserEA = null;
+
+// Load user details and Saved EA Account if logged in
 function loadUserLoyalty() {
   const token = localStorage.getItem('trivela_token');
   if (!token) return;
@@ -248,23 +261,58 @@ function loadUserLoyalty() {
       if (nameInput && loggedInName) nameInput.value = loggedInName;
       if (phoneInput && loggedInPhone) phoneInput.value = loggedInPhone;
 
-      if (user.points > 0) {
-        userPoints = user.points;
-        const lblBalance = document.getElementById('lblLoyaltyPointsBalance');
-        if (lblBalance) lblBalance.textContent = userPoints;
-        
-        // Update display initially
-        updatePointsDisplayVal();
-
-        // Show points blocks
-        const optionRow = document.getElementById('loyaltyOptionRow');
-        const divider = document.getElementById('loyaltyPointsDivider');
-        if (optionRow) optionRow.style.display = 'block';
-        if (divider) divider.style.display = 'block';
+      if (user.savedEA && user.savedEA.email) {
+        savedUserEA = user.savedEA;
+        const banner = document.getElementById('savedEaAccountBanner');
+        const info = document.getElementById('lblSavedEaInfo');
+        if (banner) {
+          banner.style.display = 'flex';
+        }
+        if (info && user.savedEA.email) {
+          info.innerHTML = `الحساب المحفوظ: <strong>${user.savedEA.email}</strong> (${user.savedEA.platform || 'Console'}) — انقر للتعبئة الفورية.`;
+        }
       }
     }
   })
   .catch(err => console.log("User not logged in or session expired."));
+}
+
+function fillSavedEaAccount() {
+  if (!savedUserEA) return;
+
+  const emailInput = document.getElementById('eaEmail');
+  const code1 = document.getElementById('backup1');
+  const code2 = document.getElementById('backup2');
+  const code3 = document.getElementById('backup3');
+
+  if (emailInput && savedUserEA.email) emailInput.value = savedUserEA.email;
+  if (savedUserEA.backupCodes && savedUserEA.backupCodes.length > 0) {
+    if (code1) code1.value = savedUserEA.backupCodes[0] || '';
+    if (code2) code2.value = savedUserEA.backupCodes[1] || '';
+    if (code3) code3.value = savedUserEA.backupCodes[2] || '';
+  }
+
+  // Auto-select saved platform
+  if (savedUserEA.platform) {
+    if (savedUserEA.platform.toLowerCase().includes('pc')) {
+      selectPlatform('PC');
+    } else {
+      selectPlatform('Console');
+    }
+  }
+
+  // Visual success feedback
+  const banner = document.getElementById('savedEaAccountBanner');
+  if (banner) {
+    banner.style.borderColor = '#10b981';
+    banner.style.background = 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(13, 21, 39, 0.95) 100%)';
+    const btn = banner.querySelector('button');
+    if (btn) {
+      btn.innerHTML = '<i class="fas fa-check-circle"></i> تم تعبئة الحساب بنجاح ✓';
+      btn.style.background = '#10b981';
+      btn.style.color = '#ffffff';
+    }
+  }
 }
 
 // Handle radio toggle between Coupon and Points
@@ -422,6 +470,16 @@ function onSliderChange(value) {
     liveCoins.textContent = currentCoins.toLocaleString();
   }
 
+  // Update slider track fill
+  const slider = document.getElementById('coinsSlider');
+  if (slider) {
+    const min = parseInt(slider.min, 10) || 100000;
+    const max = parseInt(slider.max, 10) || 10000000;
+    const pct = Math.min(100, Math.max(0, ((currentCoins - min) / (max - min)) * 100));
+    const fill = document.getElementById('sliderFill');
+    if (fill) fill.style.width = pct + '%';
+  }
+
   // Deactivate active quick amount buttons
   const qaBtns = document.querySelectorAll('.qa-btn');
   qaBtns.forEach(btn => btn.classList.remove('active'));
@@ -440,6 +498,11 @@ function selectQuickAmount(btn, amount) {
   const slider = document.getElementById('coinsSlider');
   if (slider) {
     slider.value = amount;
+    const min = parseInt(slider.min, 10) || 100000;
+    const max = parseInt(slider.max, 10) || 10000000;
+    const pct = Math.min(100, Math.max(0, ((amount - min) / (max - min)) * 100));
+    const fill = document.getElementById('sliderFill');
+    if (fill) fill.style.width = pct + '%';
   }
   
   currentCoins = amount;
@@ -450,10 +513,18 @@ function selectQuickAmount(btn, amount) {
 
   const qaBtns = document.querySelectorAll('.qa-btn');
   qaBtns.forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
 
   updatePriceAndSummary();
 }
+
+// Expose handlers globally
+window.onSliderChange = onSliderChange;
+window.selectQuickAmount = selectQuickAmount;
+window.selectPlatform = selectPlatform;
+window.selectClubCount = selectClubCount;
+window.updatePriceAndSummary = updatePriceAndSummary;
+
 
 // Helper: Format Coins to M or K
 function formatCoins(n) {
@@ -472,15 +543,20 @@ function getDiscount(coins) {
 
 // Calculate base price in selected currency
 function calculatePrice(coins, platform, currency) {
-  const rateUSD = platform === 'pc' ? dynamicSettings.baseRatePC : dynamicSettings.baseRateConsole;
-  const baseUSD = (coins / 100_000) * rateUSD;
-  const discPct = getDiscount(coins);
+  const cRate = parseFloat(dynamicSettings.baseRateConsole) || 2.80;
+  const pRate = parseFloat(dynamicSettings.baseRatePC) || 2.40;
+  const isPC = typeof platform === 'string' && platform.toLowerCase() === 'pc';
+  const rateUSD = isPC ? pRate : cRate;
+  const numCoins = parseInt(coins, 10) || 1000000;
+  const baseUSD = (numCoins / 100_000) * rateUSD;
+  const discPct = getDiscount(numCoins);
   const finalUSD = baseUSD * (1 - discPct / 100);
-  const cur = CURRENCIES[currency];
+  const cur = CURRENCIES[currency] || { rate: 3.75, symbol: 'ر.س', dec: 2 };
+  const rate = parseFloat(cur.rate) || 3.75;
   return {
-    price: finalUSD * cur.rate,
-    symbol: cur.symbol,
-    dec: cur.dec
+    price: finalUSD * rate,
+    symbol: cur.symbol || 'ر.س',
+    dec: cur.dec !== undefined ? cur.dec : 2
   };
 }
 
@@ -503,17 +579,6 @@ function updatePriceAndSummary() {
   if (activeCoupon) {
     couponDiscountValue = finalPrice * (activeCoupon.percent / 100);
     finalPrice -= couponDiscountValue;
-  }
-
-  // Calculate Points Discount if active
-  let pointsDiscountValue = 0;
-  if (usePointsActive && userPoints > 0) {
-    const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
-    const maxDiscountUSD = userPoints / 37.5;
-    const maxDiscountConverted = maxDiscountUSD * cur.rate;
-    
-    pointsDiscountValue = Math.min(finalPrice, maxDiscountConverted);
-    finalPrice -= pointsDiscountValue;
   }
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
@@ -556,9 +621,59 @@ function updatePriceAndSummary() {
   }
 }
 
-// Form Submission & WhatsApp Redirect
-function handlePurchaseSubmit(event) {
-  event.preventDefault();
+// Backup Codes Help Toggle
+window.toggleBackupHelp = function(isHelpNeeded) {
+  const row = document.getElementById('backupCodesRow');
+  const lockBanner = document.getElementById('backupLockedBanner');
+  const helperLink = document.getElementById('backupCodesHelperLink');
+  const b1 = document.getElementById('backup1');
+  const b2 = document.getElementById('backup2');
+  const b3 = document.getElementById('backup3');
+  const inputs = [b1, b2, b3];
+  
+  if (isHelpNeeded) {
+    if (row) row.style.setProperty('display', 'none', 'important');
+    if (lockBanner) lockBanner.style.setProperty('display', 'flex', 'important');
+    if (helperLink) helperLink.style.setProperty('display', 'none', 'important');
+    inputs.forEach(inp => {
+      if (inp) {
+        inp.disabled = true;
+        inp.value = '';
+        inp.removeAttribute('required');
+      }
+    });
+  } else {
+    if (row) row.style.setProperty('display', 'flex', 'important');
+    if (lockBanner) lockBanner.style.setProperty('display', 'none', 'important');
+    if (helperLink) helperLink.style.setProperty('display', 'block', 'important');
+    inputs.forEach(inp => {
+      if (inp) {
+        inp.disabled = false;
+        if (inp.id === 'backup1') inp.setAttribute('required', 'required');
+      }
+    });
+  }
+
+  if (typeof updateCheckoutProgress === 'function') {
+    updateCheckoutProgress();
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const chk = document.getElementById('chkNeedBackupHelp');
+  if (chk) {
+    chk.addEventListener('change', function() {
+      window.toggleBackupHelp(this.checked);
+    });
+  }
+});
+
+// Form Submission & Cart Redirect
+window.handlePurchaseSubmit = function(event) {
+  if (event) {
+    event.preventDefault();
+    if (typeof event.stopPropagation === 'function') event.stopPropagation();
+  }
 
   const minLimit = dynamicSettings.minCoinsPurchase || 100000;
   const maxLimit = dynamicSettings.maxCoinsPurchase || 10000000;
@@ -567,129 +682,119 @@ function handlePurchaseSubmit(event) {
     return;
   }
 
+  const marketCheck = document.getElementById('marketOpenCheck');
+  if (marketCheck && !marketCheck.checked) {
+    // Web App closed → redirect to WhatsApp with order details
+    const platformName = currentPlatform === 'pc' ? 'الكمبيوتر (PC)' : 'بلايستيشن / إكس بوكس (Console)';
+    const phone = dynamicSettings.whatsappPhone || '962775585112';
+    const resSAR = calculatePrice(currentCoins, currentPlatform, 'SAR');
+    const approxPrice = resSAR.price.toFixed(2);
+    const msg = `💰 *طلب شحن كوينز (الويب آب مقفل) — Trivela*\n\n` +
+      `🕹️ *المنصة:* ${platformName}\n` +
+      `🪙 *الكمية:* ${formatCoins(currentCoins)} كوينز\n` +
+      `💵 *السعر التقريبي:* ${approxPrice} ر.س\n\n` +
+      `السلام عليكم، أرغب بشحن كوينز لكن سوق الانتقالات مقفل عندي حالياً. كيف ممكن نكمل الطلب؟`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    return;
+  }
+
   const submitBtn = document.getElementById('btnSubmitOrder');
   if (submitBtn) {
     submitBtn.classList.add('btn-loading');
-    submitBtn.disabled = true;
   }
 
-  const currencySelect = document.getElementById('currencySelect');
-  const selectedCurrency = currencySelect ? currencySelect.value : 'SAR';
-
-  const res = calculatePrice(currentCoins, currentPlatform, selectedCurrency);
-  let finalPrice = res.price;
-
-  // Coupon Discount
-  let couponDiscountValue = 0;
-  if (activeCoupon) {
-    couponDiscountValue = finalPrice * (activeCoupon.percent / 100);
-    finalPrice -= couponDiscountValue;
-  }
-
-  // Points Discount
-  let pointsDeducted = 0;
-  let pointsDiscountValue = 0;
-  if (usePointsActive && userPoints > 0) {
-    const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
-    const maxDiscountUSD = userPoints / 37.5;
-    const maxDiscountConverted = maxDiscountUSD * cur.rate;
-    
-    pointsDiscountValue = Math.min(finalPrice, maxDiscountConverted);
-    finalPrice -= pointsDiscountValue;
-    pointsDeducted = Math.round((pointsDiscountValue / cur.rate) * 37.5);
-  }
-
-  const email = document.getElementById('eaEmail').value;
-  const password = document.getElementById('eaPassword').value;
-  const code1 = document.getElementById('backup1').value.trim();
-  const code2 = document.getElementById('backup2').value.trim() || '—';
-  const code3 = document.getElementById('backup3').value.trim() || '—';
-  
-  // Calculate final price in SAR for earnings database
+  // Calculate final price in SAR
   const resSAR = calculatePrice(currentCoins, currentPlatform, 'SAR');
   let finalPriceSAR = resSAR.price;
 
-  let couponDiscountValSAR = 0;
   if (activeCoupon) {
-    couponDiscountValSAR = finalPriceSAR * (activeCoupon.percent / 100);
+    const couponDiscountValSAR = finalPriceSAR * (activeCoupon.percent / 100);
     finalPriceSAR -= couponDiscountValSAR;
   }
 
-  let pointsDiscountValSAR = 0;
-  if (usePointsActive && userPoints > 0) {
-    const maxDiscountUSD = userPoints / 37.5;
-    const maxDiscountConvertedSAR = maxDiscountUSD * 3.75;
-    pointsDiscountValSAR = Math.min(finalPriceSAR, maxDiscountConvertedSAR);
-    finalPriceSAR -= pointsDiscountValSAR;
-  }
+  const emailEl = document.getElementById('eaEmail');
+  const passEl = document.getElementById('eaPassword');
+  const b1 = document.getElementById('backup1');
+  const b2 = document.getElementById('backup2');
+  const b3 = document.getElementById('backup3');
+  const notesEl = document.getElementById('eaOrderNotes');
 
-  const nameInput = document.getElementById('customerName');
-  const phoneInput = document.getElementById('customerPhone');
-  const customerName = nameInput ? nameInput.value.trim() : (loggedInName || email.split('@')[0]);
-  const customerPhone = phoneInput ? phoneInput.value.trim() : (loggedInPhone || "غير محدد");
+  const email = emailEl ? emailEl.value.trim() : '';
+  const password = passEl ? passEl.value : '';
+  const code1 = b1 ? b1.value.trim() : '';
+  const code2 = b2 ? b2.value.trim() : '';
+  const code3 = b3 ? b3.value.trim() : '';
+  const notes = notesEl ? notesEl.value.trim() : '';
 
+  const platformName = currentPlatform === 'pc' ? 'بي سي (PC)' : 'بلايستيشن واكس بوكس (Console)';
   let serviceDesc = `شحن كوينز: ${formatCoins(currentCoins)}`;
   if (activeCoupon) {
     serviceDesc += ` (كوبون: ${activeCoupon.code})`;
   }
 
-  const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
-  const formattedPrice = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: cur.dec,
-    maximumFractionDigits: cur.dec
-  }).format(finalPrice) + ' ' + cur.symbol;
-  const platformName = currentPlatform === 'pc' ? 'بي سي (PC)' : 'بلايستيشن واكس بوكس (Console)';
-
-  const msg = `🪙 طلب شحن كوينز جديد — Trivela\n\n` +
-              `🕹️ الجهاز: ${platformName}\n` +
-              `📦 الكمية: ${formatCoins(currentCoins)}\n` +
-              `💵 الاجمالي: ${formattedPrice}\n` +
-              `📝 الاسم: ${customerName}\n` +
-              `📞 الجوال: ${customerPhone}\n\n` +
-              `_أرسل من Trivela.com_`;
-
-  const orderPayload = {
-    customerName: customerName,
-    customerPhone: customerPhone,
+  const cartItem = {
+    id: 'cart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    addedAt: new Date().toISOString(),
     service: serviceDesc,
-    platform: currentPlatform,
+    type: 'coins',
+    platform: platformName,
     priceSAR: finalPriceSAR,
-    pointsDiscount: pointsDiscountValSAR + couponDiscountValSAR,
-    pointsDeducted: pointsDeducted,
-    couponCode: activeCoupon ? activeCoupon.code : null,
     eaEmail: email,
     eaPassword: password,
-    backupCode1: code1,
-    backupCode2: code2,
-    backupCode3: code3
+    backupCodes: [code1, code2, code3].filter(c => c && c !== '—'),
+    notes: notes,
+    details: `${formatCoins(currentCoins)} (${platformName})`
   };
 
-  fetch('/api/orders', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(orderPayload)
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (submitBtn) {
-        submitBtn.classList.remove('btn-loading');
-        submitBtn.disabled = false;
-      }
-      if (data.success && data.order) {
-        showOrderSuccessPopup(data.order.id, dynamicSettings.whatsappPhone || '966500000000', msg);
-      } else {
-        alert("حدث خطأ أثناء تسجيل طلبك.");
-      }
-    })
-    .catch(err => {
-      if (submitBtn) {
-        submitBtn.classList.remove('btn-loading');
-        submitBtn.disabled = false;
-      }
-      console.warn("Could not log order details:", err);
-      alert("حدث خطأ في الاتصال بالخادم.");
-    });
-}
+  try {
+    const existing = localStorage.getItem('trivela_cart');
+    const items = existing ? JSON.parse(existing) : [];
+    items.push(cartItem);
+    localStorage.setItem('trivela_cart', JSON.stringify(items));
+    if (window.trivelaCart) {
+      window.trivelaCart.items = items;
+      window.trivelaCart.updateBadge();
+    }
+  } catch (e) {
+    console.error("Cart save error:", e);
+  }
+
+  // Redirect to cart page immediately
+  window.location.href = 'cart.html';
+};
+
+
+
+
+// ══════════ PAYMENT METHOD SWITCHER ══════════
+window.currentSelectedPaymentMethod = 'paytabs';
+window.selectPaymentMethod = function(method) {
+  window.currentSelectedPaymentMethod = method;
+  const cardPayTabs = document.getElementById('payOptionPayTabs');
+  const cardWhatsApp = document.getElementById('payOptionWhatsApp');
+  const radioPayTabs = cardPayTabs ? cardPayTabs.querySelector('input') : null;
+  const radioWhatsApp = cardWhatsApp ? cardWhatsApp.querySelector('input') : null;
+  const submitBtn = document.getElementById('btnSubmitOrder');
+
+  if (method === 'paytabs') {
+    if (cardPayTabs) cardPayTabs.classList.add('active');
+    if (cardWhatsApp) cardWhatsApp.classList.remove('active');
+    if (radioPayTabs) radioPayTabs.checked = true;
+    if (radioWhatsApp) radioWhatsApp.checked = false;
+    if (submitBtn) {
+      submitBtn.innerHTML = '<span>الدفع الإلكتروني الفوري (PayTabs)</span> <i class="fas fa-credit-card"></i>';
+    }
+  } else {
+    if (cardPayTabs) cardPayTabs.classList.remove('active');
+    if (cardWhatsApp) cardWhatsApp.classList.add('active');
+    if (radioPayTabs) radioPayTabs.checked = false;
+    if (radioWhatsApp) radioWhatsApp.checked = true;
+    if (submitBtn) {
+      submitBtn.innerHTML = '<span>تأكيد الطلب والدفع بالواتساب</span> <i class="fab fa-whatsapp"></i>';
+    }
+  }
+};
+
 
 function switchCoinsTab(tabId) {
   const btnSafety = document.getElementById('btnTabSafety');
@@ -841,35 +946,21 @@ function scrollToStep(stepNum) {
 
 // Dynamically compute and update step progress indicator
 function updateCheckoutProgress() {
-  let percent = 33; // Starts at 33% since steps 1 & 2 are completed by default
-  
-  const name = document.getElementById('customerName')?.value.trim();
-  const phone = document.getElementById('customerPhone')?.value.trim();
-  const step3Active = !!(name && phone);
+  let percent = 50; // Starts at 50% for platform and amount
   
   const email = document.getElementById('eaEmail')?.value.trim();
   const password = document.getElementById('eaPassword')?.value.trim();
   const backup1 = document.getElementById('backup1')?.value.trim();
-  const step4Active = !!(email && password && backup1);
+  const step3Active = !!(email && password && backup1);
 
   const pStep3 = document.getElementById('pStep3');
-  const pStep4 = document.getElementById('pStep4');
   
   if (pStep3) {
     if (step3Active) {
       pStep3.classList.add('active');
-      percent = 66;
-    } else {
-      pStep3.classList.remove('active');
-    }
-  }
-
-  if (pStep4) {
-    if (step3Active && step4Active) {
-      pStep4.classList.add('active');
       percent = 100;
     } else {
-      pStep4.classList.remove('active');
+      pStep3.classList.remove('active');
     }
   }
 

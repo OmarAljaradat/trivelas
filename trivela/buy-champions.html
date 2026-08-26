@@ -4,7 +4,14 @@
   <link rel="icon" type="image/png" href="logo-official.png"/>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>خطوات شراء خدمات فوت تشامبيون | Trivela</title>
+  <title>تقييم وحجز خدمات فوت تشامبيونز | Trivela</title>
+  <meta name="description" content="تحدي بطولة FUT Champions في FIFA 27 بواسطة محترفين. ارفع سكرين شوت لتشكيلتك لتقييمها والبدء الفوري عبر الواتساب."/>
+  <meta property="og:title" content="تقييم وحجز فوت تشامبيونز | Trivela"/>
+  <meta property="og:description" content="تحدي بطولة FUT Champions في FIFA 27 بواسطة محترفين. ارفع سكرين شوت لتشكيلتك لتقييمها والبدء الفوري."/>
+  <meta property="og:image" content="logo-official.png"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:locale" content="ar_SA"/>
+  <meta property="og:site_name" content="Trivela"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
@@ -47,17 +54,17 @@
       <div class="catalog-hero-banner" style="margin-bottom: 25px;">
         <div class="catalog-hero-content" style="display: block; text-align: center;">
           <div class="catalog-hero-text" style="display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; text-align: center;">
-            <h1 class="catalog-hero-title" id="cms_championsTitle" style="text-align: center; border-bottom: 0; padding-bottom: 0;">تحدي بطولة فوت تشامبيونز (FIFA 27)</h1>
-            <p class="catalog-hero-desc" id="cms_championsDesc" style="text-align: center; margin: 0 auto; max-width: 800px;">احجز ترتيبك في بطولة الـ Champions، ودع محترفينا يقودون حسابك لأعلى تصنيف وتحقيق الجوائز الأفضل.</p>
+            <h1 class="catalog-hero-title" id="cms_championsTitle" style="text-align: center; border-bottom: 0; padding-bottom: 0;">بطولة فوت تشامبيونز (FC 27)</h1>
+            <p class="catalog-hero-desc" id="cms_championsDesc" style="text-align: center; margin: 0 auto; max-width: 800px;">حدد الرانك المستهدف وارفع سكرين شوت لتشكيلتك لنقوم بتقييمها واقتراح أفضل رانك وتحديد السعر والاتفاق معك مباشرة.</p>
             <div class="catalog-hero-hint" style="margin-top: 6px; justify-content: center; width: fit-content; display: inline-flex;">
-              <i class="far fa-lightbulb"></i>
-              <span id="cms_championsHint">املأ حقول الطلب لتسجيل نقاط التأهيل وبدء حل البطولة</span>
+              <i class="fas fa-camera"></i>
+              <span id="cms_championsHint">ارفع سكرين شوت للتشكيلة وتواصل معنا عبر الواتساب فوراً</span>
             </div>
           </div>
         </div>
       </div>
       
-      <form id="purchaseForm" onsubmit="handlePurchaseSubmit(event)">
+      <form id="championsForm" onsubmit="event.preventDefault(); sendChampionsWhatsApp();">
         
         <!-- STEP 1: SELECT DEVICE -->
         <div class="buy-step-block">
@@ -71,19 +78,20 @@
           
           <div class="step-content">
             <div class="inline-device-picker">
-              <button type="button" class="inline-device-btn active" id="btnConsole" onclick="selectPlatform('Console')">
-                <div class="console-inline-icons">
-                  <i class="fab fa-playstation"></i>
-                  <i class="fab fa-xbox"></i>
-                </div>
-                <span>بلايستيشن واكس بوكس</span>
+              <button type="button" class="inline-device-btn active" id="btnPlaystation" onclick="selectPlatform('PlayStation')">
+                <i class="fab fa-playstation" style="font-size: 1.3rem; color: #00439c;"></i>
+                <span>بلايستيشن (PlayStation)</span>
+              </button>
+              <button type="button" class="inline-device-btn" id="btnXbox" onclick="selectPlatform('Xbox')">
+                <i class="fab fa-xbox" style="font-size: 1.3rem; color: #107c10;"></i>
+                <span>إكس بوكس (Xbox)</span>
               </button>
               <button type="button" class="inline-device-btn" id="btnPC" onclick="selectPlatform('PC')">
                 <svg class="pc-inline-logo" viewBox="0 0 120 80" fill="currentColor">
                   <path d="M15 15 H55 C65 15 70 23 70 32 C70 42 63 48 53 48 H33 V75 H15 Z M33 28 V35 H52 C55 35 55 28 52 28 Z" />
                   <path d="M105 28 C100 20 90 15 78 15 C60 15 50 30 50 48 C50 65 60 80 78 80 C90 80 100 75 105 67 L95 58 C90 63 85 67 78 67 C68 67 63 58 63 48 C63 37 68 28 78 28 C85 28 90 32 95 37 Z" />
                 </svg>
-                <span>بي سي</span>
+                <span>بي سي (PC)</span>
               </button>
             </div>
           </div>
@@ -96,209 +104,127 @@
           <div class="step-badge-title">
             <span class="step-number">02</span>
             <div class="step-info-text">
-              <h3>الخدمة المطلوبة</h3>
-              <p>اختر باقة الفوت تشامبيون التي ترغب في شحنها لحسابك</p>
+              <h3>الرانك المستهدف</h3>
+              <p>اختر الرانك أو عدد الانتصارات التي تطمح لتحقيقها</p>
             </div>
           </div>
           
           <div class="step-content">
 
-
-            <!-- Active Player Challenges Grid (Loaded dynamically if they exist) -->
-            <div id="dynamicPlayersSection" style="display: none; margin-bottom: 28px;">
-              <label style="font-weight: 800; font-size: 0.95rem; margin-bottom: 12px; display: block; color: var(--blue-800);"><i class="fas fa-fire font-gold" style="color: #eab308; margin-left: 6px;"></i> أو اختر أحد التحديات المتاحة للشحن الفوري:</label>
-              <div class="player-cards-grid" id="activePlayersGrid">
-                <!-- Dynamically loaded player cards -->
-              </div>
+            <!-- FC Mode Badges -->
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+              <span style="background: rgba(37, 99, 235, 0.08); border: 1px solid #bfdbfe; color: #1e40af; border-radius: 50px; padding: 6px 14px; font-size: 0.82rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fas fa-shield-alt"></i> لعب احترافي يدوي 100%
+              </span>
+              <span style="background: rgba(234, 179, 8, 0.12); border: 1px solid #fef08a; color: #854d0e; border-radius: 50px; padding: 6px 14px; font-size: 0.82rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fas fa-trophy"></i> البطولة الرئيسية (FUT Champions)
+              </span>
             </div>
 
             <!-- Hidden input to store selected rank for form submission -->
-            <input type="hidden" id="selectedRankInput" name="productService" value="qualify" />
+            <input type="hidden" id="selectedRankInput" name="productService" value="فوت تشامبيونز — 9 انتصارات" />
 
-            <!-- Interactive FUT Champions Rank Slider -->
+            <!-- Interactive FUT Champions Wins Timeline Slider -->
             <div class="futs-slider-container">
               <div class="futs-progress-track">
                 <div class="futs-progress-bar" id="futsProgressBar" style="width: 0%;"></div>
               </div>
               <div class="futs-steps-row">
-                <div class="futs-step-node active" id="node_qualify" onclick="selectFutRank('qualify', 0)">
-                  <div class="node-icon"><i class="fas fa-ticket"></i></div>
-                  <span class="node-label">التأهيل</span>
-                </div>
-                <div class="futs-step-node" id="node_rank5" onclick="selectFutRank('rank5', 20)">
+                <div class="futs-step-node active" id="node_wins_9" onclick="selectFutRank('wins_9', 0)">
                   <div class="node-icon"><i class="fas fa-award"></i></div>
-                  <span class="node-label">الرتبة 5</span>
+                  <span class="node-label">9 انتصارات</span>
                 </div>
-                <div class="futs-step-node" id="node_rank4" onclick="selectFutRank('rank4', 40)">
+                <div class="futs-step-node" id="node_wins_11" onclick="selectFutRank('wins_11', 25)">
                   <div class="node-icon"><i class="fas fa-award"></i></div>
-                  <span class="node-label">الرتبة 4</span>
+                  <span class="node-label">11 انتصار</span>
                 </div>
-                <div class="futs-step-node" id="node_rank3" onclick="selectFutRank('rank3', 60)">
+                <div class="futs-step-node" id="node_wins_14" onclick="selectFutRank('wins_14', 50)">
                   <div class="node-icon"><i class="fas fa-award"></i></div>
-                  <span class="node-label">الرتبة 3</span>
+                  <span class="node-label">14 انتصار</span>
                 </div>
-                <div class="futs-step-node" id="node_rank2" onclick="selectFutRank('rank2', 80)">
+                <div class="futs-step-node" id="node_wins_16" onclick="selectFutRank('wins_16', 75)">
                   <div class="node-icon"><i class="fas fa-award"></i></div>
-                  <span class="node-label">الرتبة 2</span>
+                  <span class="node-label">16 انتصار</span>
                 </div>
-                <div class="futs-step-node" id="node_rank1" onclick="selectFutRank('rank1', 100)">
+                <div class="futs-step-node" id="node_wins_19" onclick="selectFutRank('wins_19', 100)">
                   <div class="node-icon"><i class="fas fa-trophy"></i></div>
-                  <span class="node-label">الرتبة 1</span>
+                  <span class="node-label">19 انتصار</span>
                 </div>
               </div>
             </div>
 
-            <!-- Dynamic Rewards & Info Card -->
-            <div class="fut-rewards-card" id="futRewardsCard">
-              <div class="card-header">
-                <h3 id="lblRankName">تأهيل تصفيات فوت تشامبيونز (Playoffs)</h3>
-                <span class="badge" id="lblRankWins">4 انتصارات / 20 نقطة</span>
+            <!-- Redesigned Rewards & Info Card -->
+            <div class="fut-rewards-card" id="futRewardsCard" style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 18px; padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.04);">
+              <div class="card-header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 14px; margin-bottom: 16px;">
+                <h3 id="lblRankName" style="font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 1.15rem; color: #0f172a; margin: 0;">فوت تشامبيونز — 9 انتصارات</h3>
+                <span class="badge" id="lblRankWins" style="background: rgba(37, 99, 235, 0.1); color: #2563eb; font-weight: 800; padding: 6px 14px; border-radius: 50px; font-size: 0.85rem;">9 انتصارات</span>
               </div>
               <div class="card-body">
+                <div class="delivery-time-box" style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-family: Cairo; font-weight: 700; font-size: 0.88rem; color: #ca8a04;">
+                  <i class="fas fa-clock"></i>
+                  <span>وقت التنفيذ المتوقع: </span>
+                  <span id="lblEstimatedDelivery">2 - 6 ساعات</span>
+                </div>
                 <div class="rewards-list">
-                  <h4><i class="fas fa-gift"></i> الجوائز والمكافآت المتوقعة:</h4>
-                  <div class="fut-rewards-grid" id="lstRankRewards">
+                  <h4 style="font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 0.95rem; color: #334155; margin-bottom: 14px;"><i class="fas fa-gift" style="color: #eab308; margin-left: 6px;"></i> الجوائز والمكافآت المتوقعة:</h4>
+                  
+                  <div class="fut-rewards-hero-grid" id="lstRankRewards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 16px;">
                     <!-- Loaded dynamically via JS -->
                   </div>
                 </div>
-                <div class="rewards-info-box" style="margin-top: 15px;">
-                  <i class="fas fa-info-circle"></i>
-                  <p>نقوم باللعب نيابة عنك عبر شبكة آمنة وسيرفرات مخصصة لضمان إتمام الخدمة بالكامل وبأقصى سرعة وأمان لحسابك.</p>
-                </div>
               </div>
             </div>
+
           </div>
         </div>
-
-        <!-- STEP: DISCOUNTS & GIFTS -->
-        <div class="buy-step-block" id="loyaltyPointsBlock" style="display: none; margin-top: 20px;">
-          <div class="step-badge-title">
-            <span class="step-number"><i class="fas fa-gift"></i></span>
-            <div class="step-info-text">
-              <h3>الخصومات والهدايا</h3>
-              <p>اختر وسيلة الخصم المناسبة لطلبك</p>
-            </div>
-          </div>
-          <div class="step-content">
-            <div class="discounts-gifts-card">
-              <!-- Option 1: Coupon Code -->
-              <div class="discount-option-row">
-                <label class="discount-radio-label">
-                  <input type="radio" name="discountType" value="coupon" id="radCoupon" checked onchange="handleDiscountTypeChange()"/>
-                  <span class="custom-radio-circle"></span>
-                  <span class="discount-label-text">تفعيل كوبون الخصم</span>
-                </label>
-                <div class="discount-input-wrapper" id="couponInputWrapper">
-                  <div class="coupon-field-group">
-                    <div class="coupon-input-relative">
-                      <input type="text" id="couponCodeInput" placeholder="كوبون الهدية / الخصم؟"/>
-                      <i class="fas fa-percent coupon-icon"></i>
-                    </div>
-                    <button type="button" class="coupon-btn" id="btnApplyCoupon" onclick="applyCouponCode()">تفعيل</button>
-                  </div>
-                  <div id="couponStatusMessage" class="coupon-status-msg"></div>
-                </div>
-              </div>
-
-              <div class="discount-divider" id="loyaltyPointsDivider" style="display: none;"></div>
-
-              <!-- Option 2: Loyalty Points -->
-              <div class="discount-option-row" id="loyaltyOptionRow" style="display: none;">
-                <label class="discount-radio-label">
-                  <input type="radio" name="discountType" value="points" id="radPoints" onchange="handleDiscountTypeChange()"/>
-                  <span class="custom-radio-circle"></span>
-                  <span class="discount-label-text"><span id="lblLoyaltyPointsBalance">0</span> نقطة رصيدك من نقاط الولاء</span>
-                </label>
-                <div class="discount-input-wrapper" id="pointsInputWrapper" style="display: none;">
-                  <p class="points-helper-text" style="font-size: 0.82rem; color: #64748b; margin-top: 8px;">
-                    <i class="fas fa-info-circle"></i>
-                    يمكنك الاستفادة من رصيدك بقيمة خصم <strong id="lblPointsDiscountSAR" style="color: #ca8a04;">0.00</strong>، <a href="#" onclick="togglePointsUsage(event)" id="btnApplyPoints" class="points-action-link" style="color: #ca8a04; font-weight: 700; text-decoration: none; margin-right: 4px;">اضغط هنا للتفعيل</a>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <hr class="step-divider" id="loyaltyDivider" style="display: none;"/>
 
         <hr class="step-divider"/>
 
-        <!-- STEP 3: SONY DATA -->
+        <!-- STEP 3: UPLOAD SQUAD SCREENSHOT -->
         <div class="buy-step-block" id="stepBlock3">
           <div class="step-badge-title">
             <span class="step-number">03</span>
             <div class="step-info-text">
-              <h3>بيانات حساب السوني (PSN)</h3>
-              <p>يرجى ملء بيانات حساب السوني الخاص بك لنتمكن من الدخول وإنجاز الخدمة</p>
+              <h3>إرفاق سكرين شوت للتشكيلة</h3>
+              <p>ارفع صورة واضحة لتشكيلتك الحالية لنقوم بتقييمها واقتراح الأنسب لك</p>
             </div>
           </div>
           
           <div class="step-content">
-            <div class="ea-form-grid">
+            <!-- Squad Upload Drop Zone -->
+            <div class="squad-upload-zone" id="squadDropZone" onclick="document.getElementById('squadFileInput').click()">
+              <input type="file" id="squadFileInput" accept="image/*" style="display: none;" onchange="handleSquadImageSelect(event)"/>
               
-              <!-- Customer Name -->
-              <div class="ea-input-group">
-                <div class="input-with-icon">
-                  <i class="fas fa-user input-icon"></i>
-                  <input type="text" id="customerName" placeholder="الاسم الكامل" required/>
+              <div id="uploadPrompt">
+                <div class="upload-icon-circle">
+                  <i class="fas fa-cloud-arrow-up"></i>
+                </div>
+                <h4 style="margin: 8px 0 6px; font-family: Cairo; font-weight: 800; color: #1e293b; font-size: 1.1rem;">اضغط هنا أو اسحب سكرين شوت لتشكيلتك</h4>
+                <p style="margin: 0; font-size: 0.86rem; color: #64748b; font-weight: 600;">صورة واضحة من داخل اللعبة أو من تطبيق الويب آب (Web App / Companion)</p>
+                <div class="upload-badge-tag"><i class="fas fa-image"></i> يدعم PNG, JPG, JPEG, WebP</div>
+              </div>
+
+              <!-- Image Preview Box (Hidden initially) -->
+              <div id="imagePreviewContainer" style="display: none; width: 100%; text-align: center;">
+                <div style="position: relative; display: inline-block; max-width: 100%; border-radius: 14px; overflow: hidden; border: 2px solid #10b981; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);">
+                  <img id="squadImgPreview" src="" alt="تشكيلة الفوت" style="max-height: 320px; max-width: 100%; display: block; object-fit: contain; background: #0f172a;"/>
+                  <button type="button" onclick="event.stopPropagation(); removeSquadImage();" title="حذف الصورة" style="position: absolute; top: 12px; left: 12px; background: rgba(239, 68, 68, 0.95); color: #fff; border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.2s ease;">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+                <div style="margin-top: 12px; font-weight: 700; color: #059669; font-size: 0.92rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                  <i class="fas fa-circle-check" style="font-size: 1.1rem;"></i> تم إرفاق صورة التشكيلة بنجاح — جاهز للإرسال
                 </div>
               </div>
-
-              <!-- Customer Phone -->
-              <div class="ea-input-group">
-                <div class="input-with-icon">
-                  <i class="fab fa-whatsapp input-icon"></i>
-                  <input type="tel" id="customerPhone" placeholder="رقم الواتساب للتواصل (مثال: +9665xxxxxxxx)" required/>
-                </div>
-              </div>
-
-              <!-- Email Input -->
-              <div class="ea-input-group">
-                <div class="input-with-icon">
-                  <i class="fas fa-envelope input-icon"></i>
-                  <input type="email" id="sonyEmail" placeholder="ايميل حساب السوني (PSN)" required/>
-                </div>
-                <a href="https://wa.me/966500000000?text=أحتاج%20مساعدة%20في%20استخراج%20ايميل%20السوني" target="_blank" class="helper-link">لمعرفة كيفية استخراج ايميل السوني. <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
-              </div>
-
-              <!-- Password Input -->
-              <div class="ea-input-group">
-                <div class="input-with-icon">
-                  <i class="fas fa-lock input-icon"></i>
-                  <input type="password" id="sonyPassword" placeholder="كلمة مرور حساب السوني (PSN)" required/>
-                  <button type="button" class="eye-toggle" onclick="togglePasswordVisibility()"><i class="fas fa-eye" id="eyeIcon"></i></button>
-                </div>
-                <a href="https://wa.me/966500000000?text=أحتاج%20مساعدة%20في%20استخراج%20كلمة%20مرور%20السوني" target="_blank" class="helper-link">لمعرفة كيفية استخراج كلمة المرور. <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
-              </div>
-
-              <!-- Backup Codes -->
-              <div class="ea-input-group full-width">
-                <label class="input-label-tag">الرموز الاحتياطية لحساب السوني</label>
-                <div class="backup-codes-row">
-                  <input type="text" class="backup-code-box" id="backup1" placeholder="رمز 1" maxlength="8" required/>
-                  <input type="text" class="backup-code-box" id="backup2" placeholder="رمز 2" maxlength="8" required/>
-                  <input type="text" class="backup-code-box" id="backup3" placeholder="رمز 3" maxlength="8" required/>
-                </div>
-                <a href="https://wa.me/966500000000?text=أحتاج%20مساعدة%20في%20استخراج%20الرموز%20الاحتياطية%20لحساب%20السوني" target="_blank" class="helper-link">لمعرفة كيفية استخراج الرموز الاحتياطية للسوني. <span class="highlight" style="color: #ca8a04; font-weight: 700;">👈 من هنا</span></a>
-              </div>
-
-              <!-- Terms Checkbox -->
-              <div class="ea-input-group full-width terms-row">
-                <label class="terms-label">
-                  <input type="checkbox" id="sonyConfirmCheck" required/>
-                  <span>أقر بصحة البيانات المكتوبة وأنه تم تفعيل التحقق بخطوتين وتوفير رموز احتياطية صالحة لحساب السوني</span>
-                </label>
-              </div>
-
-              <!-- Trust Seals -->
-              <div class="ea-input-group full-width trust-seals-grid">
-                <div class="trust-seal-item"><i class="fas fa-shield-halved"></i><span>تشفير آمن لبياناتك 256-bit</span></div>
-                <div class="trust-seal-item"><i class="fas fa-rotate-left"></i><span>ضمان استرجاع الأموال 100%</span></div>
-                <div class="trust-seal-item"><i class="fas fa-user-lock"></i><span>حماية كاملة للملف التعريفي</span></div>
-              </div>
-
             </div>
+
+            <!-- Trust Seals -->
+            <div class="ea-input-group full-width trust-seals-grid" style="margin-top: 20px;">
+              <div class="trust-seal-item"><i class="fas fa-shield-halved"></i><span>لعب يدوي آمن 100% بدون أي مخاطرة</span></div>
+              <div class="trust-seal-item"><i class="fas fa-comments"></i><span>تقييم فوري واتفاق مرن عبر الواتساب</span></div>
+              <div class="trust-seal-item"><i class="fas fa-trophy"></i><span>لاعبون محترفون لضمان أعلى الرانكات</span></div>
+            </div>
+
           </div>
         </div>
 
@@ -318,9 +244,9 @@
         </div>
         <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
         <div class="footer-socials">
-          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+          <a href="https://wa.me/962775585112" aria-label="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://www.instagram.com/trivelacoins" aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://tiktok.com/@Trivela" aria-label="TikTok" target="_blank"><i class="fab fa-tiktok"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -353,24 +279,28 @@
       
       <!-- Right: Summary info -->
       <div class="summary-right-details">
-        <div class="summary-total-price" id="summaryPrice">0.00 ر.س</div>
+        <div class="summary-total-price" id="summaryStatusText" style="color: #16a34a; font-size: 1.05rem;">
+          <i class="fab fa-whatsapp"></i> تواصل وتقييم فوري
+        </div>
         <div class="summary-divider-line"></div>
         <div class="summary-coins">
           <i class="fas fa-trophy font-gold"></i>
-          <span id="summaryServiceText">فوت تشامبيون</span>
+          <span id="summaryServiceText">فوت تشامبيونز — 9 انتصارات (بلايستيشن)</span>
         </div>
       </div>
       
       <!-- Left: Action button -->
-      <button type="submit" form="purchaseForm" class="summary-complete-btn">
-        <span>اتمام العملية</span>
-        <i class="fas fa-arrow-left"></i>
+      <button type="button" class="summary-complete-btn" id="btnSubmitChampions" onclick="sendChampionsWhatsApp()" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); box-shadow: 0 4px 16px rgba(22, 163, 74, 0.35);">
+        <i class="fab fa-whatsapp" style="font-size: 1.25rem;"></i>
+        <span>إرسال التشكيلة للتقييم والاتفاق</span>
       </button>
 
     </div>
   </div>
 
   <script src="src/core/global-currency.js"></script>
-  <script src="buy-champions.js"></script>
+  <script src="src/core/cart.js?v=1.0"></script>
+  <script src="buy-champions.js?v=2.4"></script>
 </body>
 </html>
+

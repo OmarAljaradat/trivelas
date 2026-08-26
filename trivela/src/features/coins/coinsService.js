@@ -30,16 +30,21 @@ export function getDiscount(coins, discounts) {
 }
 
 export function calculatePrice(coins, platform, currency, rateConsole, ratePC, currencyRates, discounts) {
-  const rateUSD = platform === 'pc' ? ratePC : rateConsole;
-  const baseUSD = (coins / 100_000) * rateUSD;
-  const discPct = getDiscount(coins, discounts);
+  const cRate = (typeof rateConsole === 'number' && !isNaN(rateConsole)) ? rateConsole : (parseFloat(rateConsole) || 2.80);
+  const pRate = (typeof ratePC === 'number' && !isNaN(ratePC)) ? ratePC : (parseFloat(ratePC) || 2.40);
+  const isPC = typeof platform === 'string' && platform.toLowerCase() === 'pc';
+  const rateUSD = isPC ? pRate : cRate;
+  const numCoins = parseInt(coins, 10) || 1000000;
+  const baseUSD = (numCoins / 100_000) * rateUSD;
+  const discPct = getDiscount(numCoins, discounts);
   const finalUSD = baseUSD * (1 - discPct / 100);
   
-  const cur = currencyRates[currency] || { rate: 1, symbol: '$', dec: 2 };
+  const cur = (currencyRates && currencyRates[currency]) ? currencyRates[currency] : { rate: 3.75, symbol: 'ر.س', dec: 2 };
+  const rate = (typeof cur.rate === 'number' && !isNaN(cur.rate)) ? cur.rate : (parseFloat(cur.rate) || 3.75);
   return {
-    price: finalUSD * cur.rate,
-    symbol: cur.symbol,
-    dec: cur.dec
+    price: finalUSD * rate,
+    symbol: cur.symbol || 'ر.س',
+    dec: cur.dec !== undefined ? cur.dec : 2
   };
 }
 

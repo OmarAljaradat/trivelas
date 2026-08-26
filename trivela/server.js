@@ -1,22 +1,298 @@
+require('dotenv').config();
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+
+// Import SQLite database, email service, and PayTabs
+const { db: sqliteDb } = require('./db');
+const { generateOTP, sendOTP, sendWelcomeEmail } = require('./email');
+const { createPaymentPage, verifyTransaction } = require('./paytabs');
 
 const app = express();
 const PORT = process.env.PORT || 3500;
-const DB_PATH = path.join(__dirname, 'database.json');
+
+const JWT_SECRET = process.env.TOKEN_SECRET || process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
+const JWT_EXPIRY = '30d';
 
 app.use(express.json());
 
+
+function mapOrderFromDb(o) {
+  if (!o) return null;
+  return {
+    id: o.id,
+    userId: o.user_id || o.userId,
+    userName: o.user_name || o.userName || o.customerName,
+    userEmail: o.user_email || o.userEmail || o.customerEmail,
+    userPhone: o.user_phone || o.userPhone || o.customerPhone,
+    customerName: o.user_name || o.userName || o.customerName,
+    customerEmail: o.user_email || o.userEmail || o.customerEmail,
+    customerPhone: o.user_phone || o.userPhone || o.customerPhone,
+    service: o.service,
+    platform: o.platform,
+    eaEmail: o.ea_email || o.eaEmail,
+    amount: o.amount,
+    priceSAR: Number(o.price_sar || o.priceSAR || 0),
+    priceUSD: Number(o.price_usd || o.priceUSD || 0),
+    status: o.status || 'pending',
+    whatsappPhone: o.whatsapp_phone || o.whatsappPhone,
+    notes: o.notes,
+    adminNotes: o.admin_notes || o.adminNotes,
+    orderNotes: o.order_notes || o.orderNotes,
+    paymentMethod: o.payment_method || o.paymentMethod || 'whatsapp',
+    couponCode: o.coupon_code || o.couponCode,
+    couponDiscount: Number(o.coupon_discount || o.couponDiscount || 0),
+    pointsUsed: Number(o.points_used || o.pointsUsed || 0),
+    pointsDiscount: Number(o.points_discount || o.pointsDiscount || 0),
+    supplierId: o.supplier_id || o.supplierId,
+    supplierName: o.supplier_name || o.supplierName,
+    assignedAt: o.assigned_at || o.assignedAt,
+    completedAt: o.completed_at || o.completedAt,
+    createdAt: o.created_at || o.createdAt,
+    updatedAt: o.updated_at || o.updatedAt
+  };
+}
+
+// ==========================================
+// LEGACY COMPAT — readDatabase / writeDatabase shim
+// These functions provide backward-compatible read/write
+// to the old JSON structure for any code that still uses it.
+// All new code should use SQLite prepared statements directly.
+// ==========================================
+
+async function readDatabase() {
+  try {
+    const [usersRaw, ordersRaw, settingsRows, reviewsRaw, faqsRaw, logsRaw, couponsRaw, analyticsRows, playersRaw] = await Promise.all([
+      await sqliteDb.prepare('SELECT * FROM users').all(),
+      await sqliteDb.prepare('SELECT * FROM orders ORDER BY created_at DESC').all(),
+      await sqliteDb.prepare('SELECT key, value FROM settings').all(),
+      await sqliteDb.prepare('SELECT * FROM reviews ORDER BY created_at DESC').all(),
+      await sqliteDb.prepare('SELECT * FROM faqs ORDER BY sort_order ASC').all(),
+      await sqliteDb.prepare('SELECT * FROM logs ORDER BY created_at DESC LIMIT 200').all(),
+      await sqliteDb.prepare('SELECT * FROM coupons').all(),
+      await sqliteDb.prepare('SELECT * FROM analytics').all(),
+      sqliteDb.prepare('SELECT * FROM players ORDER BY created_at DESC').all().catch(() => [])
+    ]);
+
+    const users = usersRaw.map(u => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      phone: u.phone,
+      password: u.password,
+      isAdmin: u.is_admin === 1,
+      isVerified: u.is_verified === 1,
+      points: u.points || 0,
+      referredBy: u.referred_by,
+      defaultPlatform: u.default_platform,
+      defaultCurrency: u.default_currency,
+      savedEA: {
+        platform: u.default_platform || 'PlayStation 5',
+        email: u.ea_email || '',
+        backupCodes: u.ea_backup_codes || ''
+      },
+      history: [],
+      createdAt: u.created_at,
+      updatedAt: u.updated_at
+    }));
+
+    const orders = ordersRaw.map(mapOrderFromDb);
+
+    const settings = {};
+    for (const row of settingsRows) {
+      try { settings[row.key] = JSON.parse(row.value); } catch { settings[row.key] = row.value; }
+    }
+    if (!settings.whatsappPhone) settings.whatsappPhone = '962775585112';
+    if (!settings.instagramUrl) settings.instagramUrl = 'https://instagram.com/Trivela';
+    if (settings.maintenanceMode === undefined) settings.maintenanceMode = false;
+    if (!settings.baseRateConsole) settings.baseRateConsole = 2.80;
+    if (!settings.baseRatePC) settings.baseRatePC = 2.40;
+    if (!settings.pointsDiscountRate) settings.pointsDiscountRate = 37.5;
+    if (!settings.discounts) settings.discounts = [
+      { minCoins: 10000000, percent: 20 },
+      { minCoins: 5000000, percent: 10 },
+      { minCoins: 1000000, percent: 0 },
+      { minCoins: 500000, percent: -5 },
+      { minCoins: 100000, percent: -10 }
+    ];
+    if (!settings.content) {
+      settings.content = {
+        landing: {
+          heroTitle: "الأسرع لبناء تشكيلة الأحلام",
+          heroSubTitle: "متجر تريفيلا لشحن كوينز فيفا 27 وإنجاز المهام بأمان وسرعة فائقة",
+          statOrdersCount: "1,500+",
+          statOrdersLabel: "عميل موثق",
+          statDeliveryTime: "60 دقيقة",
+          statDeliveryLabel: "متوسط سرعة التوصيل",
+          statSecurityLabel: "أمان وحماية 100%",
+          guaranteeBadge: "استشارات فنية",
+        }
+      };
+    }
+
+    const reviews = reviewsRaw.map(r => ({
+      id: r.id,
+      name: r.user_name,
+      platform: '',
+      stars: r.rating,
+      text: r.comment,
+      badge: '',
+      status: r.visible === 1 ? 'approved' : 'pending',
+      orderId: r.order_id
+    }));
+
+    const faqs = faqsRaw.map(f => ({
+      id: f.id,
+      q: f.question,
+      a: f.answer,
+      question: f.question,
+      answer: f.answer,
+      sortOrder: f.sort_order
+    }));
+
+    const logs = logsRaw.map(l => ({
+      id: l.id,
+      action: l.action,
+      details: l.details,
+      admin: l.admin,
+      ip: l.ip,
+      timestamp: l.created_at
+    }));
+
+    const coupons = couponsRaw.map(c => ({
+      code: c.code,
+      percent: c.discount_percent,
+      maxUses: c.max_uses,
+      usedCount: c.used_count,
+      expiryDate: c.created_at
+    }));
+
+    const daily = {};
+    let totalVisits = 0;
+    const devices = { mobile: 0, desktop: 0, tablet: 0 };
+    for (const a of analyticsRows) {
+      daily[a.date] = a.total_visits;
+      totalVisits += a.total_visits;
+      devices.mobile += a.mobile || 0;
+      devices.desktop += a.desktop || 0;
+      devices.tablet += a.tablet || 0;
+    }
+
+    const analyticsObj = {
+      totalVisits,
+      daily,
+      devices,
+      referrers: settings._analytics_referrers || { direct: 0, google: 0, tiktok: 0, snapchat: 0, instagram: 0, twitter: 0, whatsapp: 0, other: 0 },
+      countries: settings._analytics_countries || { sa: 0, ae: 0, kw: 0, qa: 0, bh: 0, om: 0, eg: 0, jo: 0, other: 0 },
+      hours: settings._analytics_hours || {},
+      pages: settings._analytics_pages || { home: 0, coins: 0, sbc: 0, rivals: 0, champions: 0, objectives: 0, coaching: 0, packages: 0 },
+      visitorTypes: settings._analytics_visitorTypes || { new: 0, returning: 0 },
+      clicks: settings._analytics_clicks || { coins: 0, sbc: 0, rivals: 0, champions: 0, objectives: 0, coaching: 0, packages: 0 }
+    };
+
+    const players = playersRaw.map(p => ({
+      id: p.id,
+      name: p.name,
+      category: p.category,
+      sbcSubCategory: p.sbc_sub_category,
+      rating: p.rating,
+      image: p.image,
+      priceSAR: p.price_sar,
+      priceUSD: p.price_usd,
+      pricePCSAR: p.price_pc_sar,
+      pricePCUSD: p.price_pc_usd,
+      desc: p.desc,
+      version: p.version,
+      position: p.position,
+      expiryDays: p.expiry_days,
+      expirationDate: p.expiration_date
+    }));
+
+    const emailCampaigns = settings._emailCampaigns || [];
+    const expenses = settings._expenses || [];
+    const champions_ranks = settings.champions_ranks || settings._champions_ranks;
+    const rivals_ranks = settings.rivals_ranks || settings._rivals_ranks;
+
+    return {
+      users,
+      orders,
+      settings,
+      content: settings.content,
+      reviews,
+      faqs,
+      logs,
+      coupons,
+      analytics: analyticsObj,
+      players,
+      emailCampaigns,
+      expenses,
+      champions_ranks,
+      rivals_ranks
+    };
+  } catch (err) {
+    console.error('readDatabase error:', err);
+    return {
+      users: [], orders: [], settings: {}, content: {}, reviews: [], faqs: [], logs: [], coupons: [], analytics: {}, players: [], emailCampaigns: [], expenses: []
+    };
+  }
+}
+
+async function getPointsHistory(userId) {
+  try {
+    const rows = await sqliteDb.prepare('SELECT * FROM points_history WHERE user_id = ? ORDER BY created_at DESC').all(userId);
+    return rows.map(r => ({
+      amount: r.amount,
+      reason: r.reason,
+      date: r.created_at
+    }));
+  } catch (err) {
+    return [];
+  }
+}
+
+async function saveSetting(key, value) {
+  const serialized = typeof value === 'object' ? JSON.stringify(value) : String(value);
+  await sqliteDb.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run(key, serialized);
+}
+
+async function getSetting(key, defaultValue) {
+  const row = await sqliteDb.prepare('SELECT value FROM settings WHERE key = ?').get(key);
+  if (!row) return defaultValue;
+  try { return JSON.parse(row.value); } catch { return row.value; }
+}
+
+// Legacy writeDatabase — save complex objects back to settings KV store
+async function writeDatabase(data) {
+  try {
+    if (data.analytics) {
+      if (data.analytics.referrers) await saveSetting('_analytics_referrers', data.analytics.referrers);
+      if (data.analytics.countries) await saveSetting('_analytics_countries', data.analytics.countries);
+      if (data.analytics.hours) await saveSetting('_analytics_hours', data.analytics.hours);
+      if (data.analytics.pages) await saveSetting('_analytics_pages', data.analytics.pages);
+      if (data.analytics.visitorTypes) await saveSetting('_analytics_visitorTypes', data.analytics.visitorTypes);
+      if (data.analytics.clicks) await saveSetting('_analytics_clicks', data.analytics.clicks);
+    }
+    if (data.emailCampaigns) await saveSetting('_emailCampaigns', data.emailCampaigns);
+    if (data.expenses) await saveSetting('_expenses', data.expenses);
+    return true;
+  } catch (err) {
+    console.error('writeDatabase error:', err);
+    return false;
+  }
+}
+
+// ==========================================
+// MIDDLEWARE
+// ==========================================
+
 // 1. Maintenance Mode Middleware
-app.use((req, res, next) => {
-  const db = readDatabase();
-  const isMaintenance = db.settings ? db.settings.maintenanceMode : false;
-  const bypassToken = db.settings ? db.settings.maintenanceBypassToken : null;
+app.use(async (req, res, next) => {
+  const maintenanceMode = await getSetting('maintenanceMode', false);
+  const bypassToken = await getSetting('maintenanceBypassToken', null);
   
-  // Parse cookies from headers manually
   const rawCookies = req.headers.cookie || '';
   const parsedCookies = {};
   rawCookies.split(';').forEach(c => {
@@ -29,7 +305,6 @@ app.use((req, res, next) => {
   const clientBypass = req.query.bypass || parsedCookies['bypass_maintenance'];
   const isBypassed = bypassToken && clientBypass === bypassToken;
 
-  // Set cookie if bypass token is passed in query
   if (req.query.bypass && req.query.bypass === bypassToken) {
     res.setHeader('Set-Cookie', `bypass_maintenance=${bypassToken}; Path=/; Max-Age=86400`);
   }
@@ -39,7 +314,7 @@ app.use((req, res, next) => {
   const isAssetsRequest = req.url.includes('style.css') || req.url.includes('theme_concept') || req.url.includes('trivela_logo') || req.url.includes('logo-official');
   const isPublicContent = req.url.startsWith('/api/public/content');
 
-  if (isMaintenance && !isBypassed && !isAdminRequest && !isApiAuthRequest && !isAssetsRequest && !isPublicContent && req.url !== '/maintenance.html') {
+  if (maintenanceMode && !isBypassed && !isAdminRequest && !isApiAuthRequest && !isAssetsRequest && !isPublicContent && req.url !== '/maintenance.html') {
     if (req.method === 'GET' && (req.url === '/' || req.url.endsWith('.html') || (req.url.startsWith('/') && !req.url.includes('.')))) {
       return res.redirect('/maintenance.html');
     }
@@ -51,12 +326,9 @@ app.use((req, res, next) => {
 });
 
 // 2. Visitor Analytics Middleware
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   if (req.method === 'GET' && (req.url === '/' || req.url.endsWith('.html') || (req.url.startsWith('/') && !req.url.includes('.')))) {
-    const db = readDatabase();
-    if (!db.analytics) db.analytics = { totalVisits: 0, daily: {}, devices: { mobile: 0, desktop: 0, tablet: 0 } };
-    if (!db.analytics.devices) db.analytics.devices = { mobile: 0, desktop: 0, tablet: 0 };
-
+    const todayStr = new Date().toISOString().split('T')[0];
     const ua = (req.headers['user-agent'] || '').toLowerCase();
     let device = 'desktop';
     if (ua.includes('ipad') || (ua.includes('android') && !ua.includes('mobile'))) {
@@ -64,29 +336,22 @@ app.use((req, res, next) => {
     } else if (ua.includes('mobile') || ua.includes('iphone') || ua.includes('android')) {
       device = 'mobile';
     }
-    db.analytics.devices[device] = (db.analytics.devices[device] || 0) + 1;
 
-    const todayStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    db.analytics.totalVisits = (db.analytics.totalVisits || 0) + 1;
-    db.analytics.daily[todayStr] = (db.analytics.daily[todayStr] || 0) + 1;
-    
-    writeDatabase(db);
+    // Upsert analytics for today
+    const existing = await sqliteDb.prepare('SELECT * FROM analytics WHERE date = ?').get(todayStr);
+    if (existing) {
+      await sqliteDb.prepare(`UPDATE analytics SET total_visits = total_visits + 1, ${device} = ${device} + 1 WHERE date = ?`).run(todayStr);
+    } else {
+      const init = { total_visits: 1, mobile: 0, desktop: 0, tablet: 0 };
+      init[device] = 1;
+      await sqliteDb.prepare('INSERT INTO analytics (date, total_visits, mobile, desktop, tablet) VALUES (?, ?, ?, ?, ?)').run(todayStr, init.total_visits, init.mobile, init.desktop, init.tablet);
+    }
   }
   next();
 });
 
-// Disable caching for HTML and JS files
-app.use((req, res, next) => {
-  if (req.url.endsWith('.html') || req.url.endsWith('.js') || req.url === '/' || req.url.includes('/admin')) {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-  }
-  next();
-});
-
-// Inject FIFA cinematic background CSS/JS into all public HTML pages
-app.use((req, res, next) => {
+// 3. Inject FIFA cinematic background CSS/JS into all public HTML pages
+app.use(async (req, res, next) => {
   const isHtmlPath = req.method === 'GET' && (
     req.url === '/' ||
     /^\/[a-zA-Z0-9_-]+\.html(\?.*)?$/.test(req.url) ||
@@ -94,7 +359,6 @@ app.use((req, res, next) => {
   );
   if (!isHtmlPath) return next();
 
-  // Skip admin & maintenance pages
   const lowered = req.url.toLowerCase();
   if (lowered.includes('admin') || lowered.includes('maintenance')) return next();
 
@@ -127,404 +391,9 @@ app.use((req, res, next) => {
 
 app.use(express.static(__dirname));
 
-// Read players & users from database
-function readDatabase() {
-  try {
-    if (!fs.existsSync(DB_PATH)) {
-      return { players: [], users: [], settings: {}, orders: [], logs: [], faqs: [], reviews: [], analytics: { totalVisits: 0, daily: {} } };
-    }
-    const data = fs.readFileSync(DB_PATH, 'utf8');
-    const parsed = JSON.parse(data);
-    if (!parsed.players) parsed.players = [];
-    if (!parsed.users) parsed.users = [];
-    if (!parsed.emailCampaigns) parsed.emailCampaigns = [];
-    if (!parsed.settings) parsed.settings = {
-      whatsappPhone: "966500000000",
-      instagramUrl: "https://instagram.com/Trivela",
-      maintenanceMode: false,
-      baseRateConsole: 2.80,
-      baseRatePC: 2.40,
-      pointsDiscountRate: 37.5,
-      discounts: [
-        { minCoins: 10000000, percent: 20 },
-        { minCoins: 5000000, percent: 10 },
-        { minCoins: 1000000, percent: 0 },
-        { minCoins: 500000, percent: -5 },
-        { minCoins: 100000, percent: -10 }
-      ]
-    };
-    if (!parsed.settings.discounts) {
-      parsed.settings.discounts = [
-        { minCoins: 10000000, percent: 20 },
-        { minCoins: 5000000, percent: 10 },
-        { minCoins: 1000000, percent: 0 },
-        { minCoins: 500000, percent: -5 },
-        { minCoins: 100000, percent: -10 }
-      ];
-    }
-    if (!parsed.settings.content) {
-      parsed.settings.content = {
-        landing: {
-          heroTitle: "الأسرع لبناء تشكيلة الأحلام",
-          heroSubTitle: "متجر تريفيلا لشحن كوينز فيفا 27 وإنجاز المهام بأمان وسرعة فائقة",
-          statOrdersCount: "15,000+",
-          statOrdersLabel: "عملية ناجحة",
-          statDeliveryTime: "10 دقائق",
-          statDeliveryLabel: "متوسط سرعة التوصيل",
-          statSecurityLabel: "أمان وحماية 100%",
-          guaranteeBadge: "استشارات فنية",
-          guaranteeTitle: "الخدمات الاحترافية المتكاملة",
-          guaranteeSubTitle: "نوفر لك أفضل الحلول والخدمات داخل اللعبة بطريقة آمنة ومعتمدة",
-          platformTitle: "ابدأ شحن الكوينز لحسابك الآن — اختر منصتك للبدء",
-          platformSubTitle: "توصيل فوري وآمن بنسبة 100% لكافة المنصات والأجهزة",
-          catalogTitle: "خدمات احترافية متكاملة لـ FIFA 27 Ultimate Team",
-          featuresTitle: "مميزات Trivela",
-          featuresSubTitle: "بنيناها لأجلك أنت كمشتري، مش لمجرد الإعلان",
-          howSectionTitle: "3 خطوات بس",
-          howSectionSubTitle: "أبسط عملية شراء ستجربها في حياتك",
-          landingStep1Title: "حدد طلبك ومنصتك",
-          landingStep1Desc: "اختر جهازك أو نوع الخدمة المطلوبة، وحدد كمية الكوينز أو التحدي المتاح.",
-          landingStep2Title: "تأكيد الطلب والدفع",
-          landingStep2Desc: "املأ بياناتك بأمان تام واضغط إتمام العملية، ثم انتظر قليلاً وسيقوم فريق الدعم بمراسلتك على الواتساب لتأكيد الدفع.",
-          landingStep3Title: "استلم الخدمة وانبسط!",
-          landingStep3Desc: "يتم إنجاز تحدياتك أو شحن الكوينز لحسابك خلال دقائق معدودة بأمان وضمان 100%.",
-          landingStepsBottomNote: "بعد الدفع مباشرة يتواصل معك المختص لإتمام الخدمة — لا انتظار، لا تأخير!"
-        },
-        coinsPage: {
-          title: "شحن الكوينز - Comfort Trade",
-          desc: "طريقة الشحن الآمنة والسلسة لشحن كوينز حسابك مباشرة بواسطة خبرائنا",
-          step1Title: "اختر الكمية والمنصة",
-          step1Desc: "حدد كمية الكوينز ومنصتك المفضلة لمعرفة السعر الإجمالي بالعملة المفضلة لديك.",
-          step2Title: "أدخل بيانات الحساب",
-          step2Desc: "أدخل بيانات حساب EA والرموز الاحتياطية لتمكين المورد من البدء الفوري.",
-          step3Title: "تابع حالة طلبك",
-          step3Desc: "تأكيد الدفع ومتابعة تقدم طلبك مباشرة حتى اكتمال شحن الحساب بنجاح."
-        },
-        championsPage: {
-          title: "تحدي بطولة فوت تشامبيونز (FIFA 27)",
-          desc: "احجز ترتيبك في بطولة الـ Champions، ودع محترفينا يقودون حسابك لأعلى تصنيف وتحقيق الجوائز الأفضل.",
-          hint: "املأ حقول الطلب لتسجيل نقاط التأهيل وبدء حل البطولة"
-        },
-        rivalsPage: {
-          title: "ترقية تصنيف ديفرين Rivals (فيفا 27)",
-          desc: "اختر منصة اللعب والترقية المطلوبة، واملأ بيانات حسابك للبدء في حل تحديات Division Rivals لرفع مستواك فوراً.",
-          hint: "حدد الباقة المطلوبة واكتمل الشراء بأمان كامل"
-        },
-        objectivesPage: {
-          title: "إنجاز مهام فيفا 27 (Objectives)",
-          desc: "دع خبرائنا ينجزون لك المهام اليومية، الأسبوعية، والخاصة للحصول على حزم اللاعبين ونقاط الخبرة XP.",
-          hint: "يرجى توفير الرموز الاحتياطية لضمان سرعة إنجاز المهام"
-        },
-        sbcPage: {
-          title: "حل تحديات بناء التشكيلات (SBC)",
-          desc: "نكمل لك أي تحدي للاعبين أو بكجات بأقل تكلفة كوينز ممكنة وبسرعة متناهية.",
-          hint: "اختر التحدي المطلوب وأدخل تفاصيل الحساب للبدء"
-        },
-        coachingPage: {
-          title: "استشارات فنية وجلسات تدريب FIFA 27",
-          desc: "احجز باقة الاستشارات الفنية والتدريب وتواصل مع خبرائنا لبناء أقوى تكتيك وتشكيلة في اللعبة.",
-          hint: "تأكد من إدخال حساب ديسكورد أو وسيلة تواصل صحيحة للبدء الفوري"
-        },
-        packagesPage: {
-          title: "الباقات والعروض المجمعة (Packages)",
-          desc: "وفر أموالك واحصل على شحن كوينز وإنجاز تحديات أو مهام في باقة واحدة مخفضة.",
-          hint: "حدد الباقة المناسبة لك واطلبها مباشرة لتوفير التكلفة"
-        },
-        coaching: [
-          {
-            id: "coaching_basic",
-            name: "استشارة فنية: أساسي (3 تشكيلات)",
-            priceSAR: 15,
-            priceUSD: 4,
-            description: "تحليل وتنسيق تكتيكات لـ 3 تشكيلات مخصصة لفريقك لمساعدتك في الفوز.",
-            features: ["تحليل 3 تشكيلات", "مراجعة تكتيكية سريعة", "دعم ديسكورد يومين"]
-          },
-          {
-            id: "coaching_pro",
-            name: "استشارة فنية: برو (5 تشكيلات)",
-            priceSAR: 25,
-            priceUSD: 6.67,
-            description: "تحليل معمق لـ 5 تشكيلات مع ضبط التعليمات وتكتيكات الدفاع والهجوم الفردي.",
-            features: ["تحليل 5 تشكيلات", "تعليمات تكتيكية متقدمة", "مراجعة فيديو مسجل", "دعم ديسكورد أسبوع"]
-          },
-          {
-            id: "coaching_pro_plus",
-            name: "استشارة فنية: برو بلس (10 تشكيلات)",
-            priceSAR: 35,
-            priceUSD: 9.33,
-            description: "الباقة الاحترافية الكاملة لتحليل 10 تشكيلات مع تدريب تكتيكي متكامل ومتابعة مباشرة.",
-            features: ["تحليل 10 تشكيلات", "جلسة تدريب مباشرة", "تحليل شامل لأسلوب اللعب", "دعم ديسكورد شهر كامل"]
-          }
-        ]
-      };
-    }
-    if (parsed.settings.content && parsed.settings.content.landing && !parsed.settings.content.landing.guaranteeBadge) {
-      parsed.settings.content.landing.guaranteeBadge = "استشارات فنية";
-    }
-    if (!parsed.settings.features || parsed.settings.features.length === 0) {
-      parsed.settings.features = [
-        {
-          id: "feat_1",
-          cardClass: "bento-card bento-big bento-blue",
-          icon: "fas fa-bolt",
-          title: "توصيل فوري — كوينز وخدمات",
-          desc: "توصيل سريع وآمن خلال 15-45 دقيقة للكوينز. تحديات SBC والمهام تنجز في غضون ساعات قليلة.",
-          deco: "⚡",
-          stat: "<strong>15-45</strong> دقيقة متوسط توصيل الكوينز"
-        },
-        {
-          id: "feat_8",
-          cardClass: "bento-card bento-big bento-gradient-border",
-          icon: "fas fa-lock",
-          iconClass: "bc-blue",
-          title: "أمان التشكيلة واللاعبين",
-          desc: "أمان تام لناديك وتشكيلتك. نضمن عدم المساس بأي لاعب في ناديك أو الكوينز الموجودة مسبقاً في حسابك.",
-          badges: ["✅ تشفير عالي", "✅ سرية تامة", "✅ أمان 100%"]
-        },
-        {
-          id: "feat_2",
-          cardClass: "bento-card bento-white",
-          icon: "fas fa-shield-halved",
-          iconClass: "bc-green",
-          title: "حماية كاملة للحساب",
-          desc: "+1,500 عملية بدون أي حظر. نستخدم أسلوب Transfer Market الآمن بالكامل."
-        },
-        {
-          id: "feat_6",
-          cardClass: "bento-card bento-white",
-          icon: "fas fa-ban",
-          iconClass: "bc-red",
-          title: "Anti-Ban مضمون",
-          desc: "طريقتنا مجربة على +1,500 عملية. لا حظر، لا مشاكل مع EA."
-        },
-        {
-          id: "feat_4",
-          cardClass: "bento-card bento-white",
-          icon: "fas fa-headset",
-          iconClass: "bc-purple",
-          title: "دعم ومتابعة لحظية",
-          desc: "تحديثات لحظية ومتابعة مباشرة لطلبك خطوة بخطوة مع الدعم الفني عبر الواتساب حتى اكتمال الشحن."
-        },
-        {
-          id: "feat_5",
-          cardClass: "bento-card bento-white",
-          icon: "fas fa-tags",
-          iconClass: "bc-blue",
-          title: "أسعار تنافسية وتحديث يومي",
-          desc: "نراقب السوق يومياً لنضمن لك الحصول على أفضل قيمة مقابل مالك. أسعارنا تتحدث عن نفسها."
-        },
-        {
-          id: "feat_3",
-          cardClass: "bento-card bento-white",
-          icon: "fas fa-rotate-left",
-          iconClass: "bc-orange",
-          title: "ضمان استرجاع المال",
-          desc: "لو ما أُنجزت خدمتك لأي سبب — المبلغ يرجع لك فوراً، بدون جدال."
-        },
-        {
-          id: "feat_7",
-          cardClass: "bento-card bento-wide bento-blue-light",
-          icon: "fas fa-gamepad",
-          iconClass: "bc-blue",
-          title: "كل المنصات مدعومة",
-          desc: "",
-          customHtml: "<div class=\"platform-icons-row\"><div class=\"pi\"><i class=\"fab fa-playstation\"></i><span>PS4</span></div><div class=\"pi\"><i class=\"fab fa-playstation\"></i><span>PS5</span></div><div class=\"pi\"><i class=\"fab fa-xbox\"></i><span>Xbox</span></div><div class=\"pi\"><i class=\"fas fa-desktop\"></i><span>PC</span></div></div>"
-        }
-      ];
-    }
-    if (!parsed.orders) parsed.orders = [];
-    if (!parsed.expenses) parsed.expenses = [];
-    if (!parsed.logs) parsed.logs = [];
-    if (!parsed.faqs) parsed.faqs = [];
-    if (!parsed.reviews) parsed.reviews = [];
-    if (!parsed.analytics) parsed.analytics = { totalVisits: 0, daily: {} };
-    if (!parsed.analytics.devices) parsed.analytics.devices = { mobile: 0, desktop: 0, tablet: 0 };
-    if (!parsed.analytics.referrers) parsed.analytics.referrers = { direct: 0, google: 0, tiktok: 0, snapchat: 0, instagram: 0, twitter: 0, whatsapp: 0, other: 0 };
-    if (!parsed.analytics.countries) parsed.analytics.countries = { sa: 0, ae: 0, kw: 0, qa: 0, bh: 0, om: 0, eg: 0, jo: 0, other: 0 };
-    if (!parsed.analytics.hours) parsed.analytics.hours = {};
-    for (let i = 0; i < 24; i++) {
-      if (parsed.analytics.hours[i] === undefined) parsed.analytics.hours[i] = 0;
-    }
-    if (!parsed.analytics.pages) parsed.analytics.pages = { home: 0, coins: 0, sbc: 0, rivals: 0, champions: 0, objectives: 0, coaching: 0, packages: 0 };
-    if (!parsed.analytics.visitorTypes) parsed.analytics.visitorTypes = { new: 0, returning: 0 };
-    if (!parsed.analytics.clicks) parsed.analytics.clicks = { coins: 0, sbc: 0, rivals: 0, champions: 0, objectives: 0, coaching: 0, packages: 0 };
-
-    // FIFA Champions default ranks configuration
-    if (!parsed.champions_ranks) parsed.champions_ranks = {
-      qualify: {
-        name: "تأهيل تصفيات فوت تشامبيونز (Playoffs)",
-        wins: "4 انتصارات / 20 نقطة",
-        priceUSD: 10,
-        rewards: [
-          { name: "2× حزمة لاعبين ذهبيين", icon: "fas fa-box-open" },
-          { name: "1× حزمة لاعبين ذهبيين ممتازة صغيرة", icon: "fas fa-box" },
-          { name: "تذكرة نهائيات ويكند ليج", icon: "fas fa-ticket" }
-        ]
-      },
-      rank5: {
-        name: "الرتبة الخامسة (Rank 5)",
-        wins: "11 انتصار",
-        priceUSD: 25,
-        rewards: [
-          { name: "2× اختيار لاعبين 85+ (Player Pick)", icon: "fas fa-hand-pointer" },
-          { name: "1× حزمة لاعبين نادرين (50K Pack)", icon: "fas fa-box-open" },
-          { name: "1× حزمة التيميت (125K Pack)", icon: "fas fa-trophy" },
-          { name: "20,000 كوينز نقدي", icon: "fas fa-coins" }
-        ]
-      },
-      rank4: {
-        name: "الرتبة الرابعة (Rank 4)",
-        wins: "14 انتصار",
-        priceUSD: 35,
-        rewards: [
-          { name: "3× اختيار لاعبين 85+ (Player Pick)", icon: "fas fa-hand-pointer" },
-          { name: "1× حزمة جامبو لاعبين نادرين (100K Pack)", icon: "fas fa-box-open" },
-          { name: "1× حزمة التيميت (125K Pack)", icon: "fas fa-trophy" },
-          { name: "50,000 كوينز نقدي", icon: "fas fa-coins" }
-        ]
-      },
-      rank3: {
-        name: "الرتبة الثالثة (Rank 3)",
-        wins: "16 انتصار",
-        priceUSD: 50,
-        rewards: [
-          { name: "3× اختيار لاعبين 85+ (Player Pick)", icon: "fas fa-hand-pointer" },
-          { name: "1× حزمة حملة 87+ (Campaign Pack)", icon: "fas fa-box" },
-          { name: "2× حزمة التيميت (250K Pack Value)", icon: "fas fa-trophy" },
-          { name: "75,000 كوينز نقدي", icon: "fas fa-coins" }
-        ]
-      },
-      rank2: {
-        name: "الرتبة الثانية (Rank 2)",
-        wins: "18 انتصار",
-        priceUSD: 75,
-        rewards: [
-          { name: "4× اختيار لاعبين 85+ (Player Pick)", icon: "fas fa-hand-pointer" },
-          { name: "1× حزمة حملة 87+ ممتازة", icon: "fas fa-box" },
-          { name: "2× حزمة التيميت (250K Pack Value)", icon: "fas fa-trophy" },
-          { name: "100,000 كوينز نقدي", icon: "fas fa-coins" }
-        ]
-      },
-      rank1: {
-        name: "الرتبة الأولى (Rank 1)",
-        wins: "19-20 انتصار",
-        priceUSD: 110,
-        rewards: [
-          { name: "4× اختيار لاعبين 85+ (Player Pick)", icon: "fas fa-hand-pointer" },
-          { name: "1× حزمة حملة 87+ فائقة", icon: "fas fa-box" },
-          { name: "3× حزمة التيميت (375K Pack Value)", icon: "fas fa-trophy" },
-          { name: "125,000 كوينز نقدي", icon: "fas fa-coins" }
-        ]
-      }
-    };
-
-    // FIFA Rivals default division ranks configuration
-    if (!parsed.rivals_ranks) parsed.rivals_ranks = {
-      '7wins': {
-        name: "لعب Division Rivals — تحقيق الـ 7 انتصارات الأسبوعية",
-        wins: "المكافآت الأسبوعية الكاملة",
-        priceUSD: 12,
-        rewards: [
-          { name: "تأمين 7 انتصارات كاملة", icon: "fas fa-trophy" },
-          { name: "فتح مكافآت القسم الحالية المطورة", icon: "fas fa-box-open" },
-          { name: "Champions Qualification Points", icon: "fas fa-ticket" }
-        ]
-      },
-      'div5': {
-        name: "ترقية قسم Rivals إلى القسم الخامس (Div 5)",
-        wins: "ترقية تصنيف القسم",
-        priceUSD: 20,
-        rewards: [
-          { name: "1× حزمة ميجا (Mega Pack)", icon: "fas fa-box" },
-          { name: "1× حزمة ذهبية نادرين", icon: "fas fa-box-open" },
-          { name: "15,000 كوينز نقدي", icon: "fas fa-coins" },
-          { name: "500 نقطة تأهيل الـ FUT Champions", icon: "fas fa-ticket" }
-        ]
-      },
-      'div3': {
-        name: "ترقية قسم Rivals إلى القسم الثالث (Div 3)",
-        wins: "ترقية تصنيف القسم",
-        priceUSD: 35,
-        rewards: [
-          { name: "1× حزمة جامبو لاعبين نادرين (100K)", icon: "fas fa-trophy" },
-          { name: "1× حزمة لاعبين ذهبية ممتازة", icon: "fas fa-box-open" },
-          { name: "25,000 كوينز نقدي", icon: "fas fa-coins" },
-          { name: "750 نقطة تأهيل الـ FUT Champions", icon: "fas fa-ticket" }
-        ]
-      },
-      'div1': {
-        name: "ترقية قسم Rivals إلى القسم الأول (Div 1)",
-        wins: "ترقية تصنيف القسم",
-        priceUSD: 60,
-        rewards: [
-          { name: "1× حزمة التيميت (125K Pack)", icon: "fas fa-trophy" },
-          { name: "1× حزمة لاعبين نادرين (50K Pack)", icon: "fas fa-box" },
-          { name: "40,000 كوينز نقدي", icon: "fas fa-coins" },
-          { name: "1,000 نقطة تأهيل الـ FUT Champions", icon: "fas fa-ticket" }
-        ]
-      },
-      'elite': {
-        name: "ترقية قسم Rivals إلى قسم النخبة (Elite Division)",
-        wins: "الرتبة القصوى للنخبة",
-        priceUSD: 95,
-        rewards: [
-          { name: "1× حزمة التيميت (125K Pack)", icon: "fas fa-trophy" },
-          { name: "1× حزمة لاعبين نادرين (50K Pack)", icon: "fas fa-box" },
-          { name: "50,000 كوينز نقدي", icon: "fas fa-coins" },
-          { name: "1,250 نقطة تأهيل الـ FUT Champions", icon: "fas fa-ticket" }
-        ]
-      }
-    };
-
-    if (!parsed.coupons) {
-      parsed.coupons = [
-        { code: "TRIVELA", percent: 10, maxUses: 100, usedCount: 0, expiryDate: "2027-12-31" },
-        { code: "FIFA27", percent: 15, maxUses: 50, usedCount: 0, expiryDate: "2027-12-31" },
-        { code: "START", percent: 5, maxUses: 200, usedCount: 0, expiryDate: "2027-12-31" }
-      ];
-    }
-
-    // Always write the defaults back to disk to keep it in sync
-    fs.writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2), 'utf8');
-
-    return parsed;
-  } catch (err) {
-    console.error("Error reading database:", err);
-    return { players: [], users: [], settings: {}, orders: [], logs: [], faqs: [], reviews: [], analytics: { totalVisits: 0, daily: {} }, champions_ranks: {}, rivals_ranks: {} };
-  }
-}
-
-// Helper to add admin action logs
-function addAdminLog(action, message, details = {}) {
-  const db = readDatabase();
-  const newLog = {
-    id: 'log_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-    timestamp: new Date().toISOString(),
-    action,
-    operator: "المشرف",
-    message,
-    details
-  };
-  if (!db.logs) db.logs = [];
-  db.logs.unshift(newLog);
-  if (db.logs.length > 200) {
-    db.logs = db.logs.slice(0, 200);
-  }
-  writeDatabase(db);
-}
-
-// Write to database
-function writeDatabase(data) {
-  try {
-    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
-    return true;
-  } catch (err) {
-    console.error("Error writing database:", err);
-    return false;
-  }
-}
-
-// Password Hashing helpers
+// ==========================================
+// PASSWORD HELPERS
+// ==========================================
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString('hex');
   const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
@@ -538,94 +407,105 @@ function verifyPassword(password, storedPassword) {
   return hash === originalHash;
 }
 
-// Simple Base64 user session verification middleware
-function authenticateToken(req, res, next) {
+// ==========================================
+// JWT AUTH MIDDLEWARE
+// ==========================================
+function generateToken(userId) {
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRY });
+}
+
+async function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
   
   if (!token) return res.status(401).json({ error: "Access denied. No token provided." });
 
   try {
-    const userId = Buffer.from(token, 'base64').toString('ascii');
-    const db = readDatabase();
-    const user = db.users.find(u => u.id === userId);
+    // Try JWT first
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(decoded.userId);
     if (!user) return res.status(403).json({ error: "Invalid token or user not found." });
     
-    req.user = user;
+    req.user = {
+      ...user,
+      isAdmin: user.is_admin === 1,
+      isVerified: user.is_verified === 1
+    };
     next();
-  } catch (err) {
-    res.status(400).json({ error: "Invalid token." });
+  } catch (jwtErr) {
+    // Fallback: try legacy Base64 token for backward compatibility
+    try {
+      const userId = Buffer.from(token, 'base64').toString('ascii');
+      const user = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+      if (!user) return res.status(403).json({ error: "Invalid token or user not found." });
+      
+      req.user = {
+        ...user,
+        isAdmin: user.is_admin === 1,
+        isVerified: user.is_verified === 1
+      };
+      next();
+    } catch (legacyErr) {
+      res.status(400).json({ error: "Invalid token." });
+    }
   }
 }
 
 // ==========================================
-// ADMIN AUTH — bootstrap + middleware
+// ADMIN AUTH
 // ==========================================
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@trivela.local').toLowerCase();
 
-// Ensure at least one admin exists at boot
-function ensureAdminBootstrapped() {
-  const db = readDatabase();
-  let mutated = false;
-  db.users.forEach(u => {
-    if ((u.email || '').toLowerCase() === ADMIN_EMAIL && !u.isAdmin) {
-      u.isAdmin = true;
-      mutated = true;
-    }
-  });
-  // If ADMIN_EMAIL user doesn't exist yet, seed one with default creds
-  const exists = db.users.some(u => (u.email || '').toLowerCase() === ADMIN_EMAIL);
-  if (!exists) {
+async function ensureAdminBootstrapped() {
+  // Ensure admin exists
+  const existing = await sqliteDb.prepare('SELECT id FROM users WHERE LOWER(email) = ?').get(ADMIN_EMAIL);
+  if (!existing) {
     const defaultPass = process.env.ADMIN_PASSWORD || 'Trivela@Admin2026';
-    db.users.push({
-      id: 'admin_' + Date.now(),
-      name: 'Trivela Admin',
-      phone: process.env.ADMIN_PHONE || '966500000001',
-      email: ADMIN_EMAIL,
-      password: hashPassword(defaultPass),
-      isAdmin: true,
-      points: 0,
-      referredBy: null,
-      history: [{ date: new Date().toISOString(), amount: 0, reason: 'حساب المشرف تم إنشاؤه تلقائياً' }]
-    });
-    mutated = true;
+    const adminId = 'admin_' + Date.now();
+    await sqliteDb.prepare(`
+      INSERT INTO users (id, name, email, phone, password, is_verified, is_admin, points, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 1, 1, 0, datetime('now'), datetime('now'))
+    `).run(adminId, 'Trivela Admin', ADMIN_EMAIL, process.env.ADMIN_PHONE || '966500000001', hashPassword(defaultPass));
+    
+    await sqliteDb.prepare('INSERT INTO points_history (user_id, amount, reason) VALUES (?, 0, ?)').run(adminId, 'حساب المشرف تم إنشاؤه تلقائياً');
     console.log(`[SECURITY] Bootstrapped admin user: ${ADMIN_EMAIL}`);
+  } else {
+    // Ensure admin flag is set
+    await sqliteDb.prepare('UPDATE users SET is_admin = 1 WHERE LOWER(email) = ?').run(ADMIN_EMAIL);
   }
-  // Purge any plaintext-password leftovers from ALL users (security hardening)
-  db.users.forEach(u => {
-    if (u.rawPasswordPlaintext !== undefined) {
-      delete u.rawPasswordPlaintext;
-      mutated = true;
-    }
-  });
-  if (mutated) writeDatabase(db);
 }
 
-// Admin-only middleware
-function requireAdmin(req, res, next) {
+async function requireAdmin(req, res, next) {
   const authHeader = req.headers['authorization'] || '';
   const token = authHeader.split(' ')[1];
   if (!token) return res.status(401).json({ error: "غير مصرح: يجب تسجيل الدخول كمشرف" });
+  
   try {
-    const userId = Buffer.from(token, 'base64').toString('ascii');
-    const db = readDatabase();
-    const user = db.users.find(u => u.id === userId);
-    if (!user || !user.isAdmin) {
+    let userId;
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      userId = decoded.userId;
+    } catch {
+      userId = Buffer.from(token, 'base64').toString('ascii');
+    }
+    
+    const user = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+    if (!user || user.is_admin !== 1) {
       return res.status(403).json({ error: "غير مصرح: هذا الحساب ليس لديه صلاحيات المشرف" });
     }
-    req.user = user;
+    req.user = { ...user, isAdmin: true };
     next();
   } catch (e) {
     return res.status(400).json({ error: "توكن غير صالح" });
   }
 }
 
-// Simple in-memory brute-force guard for /api/auth/login
-const _loginAttempts = new Map(); // ip -> { count, firstAt }
+// Simple in-memory brute-force guard
+const _loginAttempts = new Map();
 function loginRateLimit(req, res, next) {
   const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
   const now = Date.now();
-  const WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+  const WINDOW_MS = 10 * 60 * 1000;
   const MAX_ATTEMPTS = 8;
   const rec = _loginAttempts.get(ip);
   if (rec && now - rec.firstAt < WINDOW_MS && rec.count >= MAX_ATTEMPTS) {
@@ -639,36 +519,79 @@ function loginRateLimit(req, res, next) {
   next();
 }
 
+// OTP rate limiter
+const _otpAttempts = new Map();
+function otpRateLimit(req, res, next) {
+  const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
+  const now = Date.now();
+  const WINDOW_MS = 2 * 60 * 1000; // 2 minutes
+  const MAX_ATTEMPTS = 3;
+  const rec = _otpAttempts.get(ip);
+  if (rec && now - rec.firstAt < WINDOW_MS && rec.count >= MAX_ATTEMPTS) {
+    return res.status(429).json({ error: "طلبات كثيرة. الرجاء الانتظار دقيقتين قبل المحاولة مجدداً." });
+  }
+  if (!rec || now - rec.firstAt >= WINDOW_MS) {
+    _otpAttempts.set(ip, { count: 1, firstAt: now });
+  } else {
+    rec.count += 1;
+  }
+  next();
+}
+
 // Apply admin guard to ALL /api/admin/* endpoints
 app.use('/api/admin', requireAdmin);
 
-// Safe user projection (never leak password material)
+// Safe user projection
 function safeUser(u) {
   if (!u) return null;
-  const { password, rawPasswordPlaintext, ...rest } = u;
-  return rest;
+  return {
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    phone: u.phone,
+    isAdmin: u.isAdmin || u.is_admin === 1,
+    isVerified: u.isVerified || u.is_verified === 1,
+    points: u.points || 0,
+    referredBy: u.referredBy || u.referred_by,
+    defaultPlatform: u.defaultPlatform || u.default_platform,
+    defaultCurrency: u.defaultCurrency || u.default_currency,
+    savedEA: u.savedEA || {
+      platform: u.default_platform || 'PlayStation 5',
+      email: u.ea_email || '',
+      backupCodes: u.ea_backup_codes || ''
+    },
+    history: u.history || getPointsHistory(u.id),
+    createdAt: u.createdAt || u.created_at,
+    updatedAt: u.updatedAt || u.updated_at
+  };
 }
 
 // Bootstrap admin at startup
-ensureAdminBootstrapped();
+ensureAdminBootstrapped().catch(console.error);
+
+// Admin log helper
+async function addAdminLog(action, details, extra) {
+  try {
+    await sqliteDb.prepare('INSERT INTO logs (action, details, admin, ip) VALUES (?, ?, ?, ?)').run(
+      action,
+      typeof details === 'object' ? JSON.stringify(details) : details,
+      extra && extra.admin ? extra.admin : null,
+      extra && extra.ip ? extra.ip : null
+    );
+  } catch (err) {
+    console.error('Error adding log:', err);
+  }
+}
 
 // Automatically filter out and delete expired players
-function cleanupExpiredPlayers() {
-  const db = readDatabase();
-  const now = Date.now();
-  const initialCount = db.players.length;
-
-  db.players = db.players.filter(p => {
-    if (!p.expirationDate) return true; // No expiration set, keep forever
-    const expiryTime = new Date(p.expirationDate).getTime();
-    return expiryTime > now;
-  });
-
-  if (db.players.length !== initialCount) {
-    console.log(`[Auto-Cleanup] Removed ${initialCount - db.players.length} expired player challenges.`);
-    writeDatabase(db);
+async function cleanupExpiredPlayers() {
+  try {
+    const nowIso = new Date().toISOString();
+    await sqliteDb.prepare('DELETE FROM players WHERE expiration_date IS NOT NULL AND expiration_date < ?').run(nowIso);
+  } catch (err) {
+    console.error('Error cleaning up expired players:', err);
   }
-  return db.players;
+  return (await readDatabase()).players;
 }
 
 // ==========================================
@@ -676,89 +599,295 @@ function cleanupExpiredPlayers() {
 // ==========================================
 
 // Register User
-app.post('/api/auth/register', (req, res) => {
+app.post('/api/auth/register', async (req, res) => {
   const { name, phone, email, password, referralCode } = req.body;
   if (!name || !phone || !email || !password) {
     return res.status(400).json({ error: "يرجى ملء جميع الحقول المطلوبة" });
   }
 
-  const db = readDatabase();
+  if (password.length < 6) {
+    return res.status(400).json({ error: "كلمة المرور يجب أن تكون 6 خانات على الأقل" });
+  }
 
   // Check unique constraints
-  const existingUser = db.users.find(u => u.email === email || u.phone === phone);
+  const existingUser = await sqliteDb.prepare('SELECT id FROM users WHERE email = ? OR phone = ?').get(email, phone);
   if (existingUser) {
     return res.status(400).json({ error: "الإيميل أو رقم الهاتف مسجل بالفعل" });
   }
 
-  let finalWelcomePoints = 0;
-  let referredByPhone = null;
-  const welcomeHistory = [];
-
-  welcomeHistory.push({
-    date: new Date().toISOString(),
-    amount: 0,
-    reason: "إنشاء الحساب بنجاح"
-  });
-
-  // Verify referral code
+  let referredBy = null;
   if (referralCode) {
     const cleanRef = referralCode.replace(/[\s\+\-]/g, '').trim();
-    const referrer = db.users.find(u => {
-      const uPhone = (u.phone || '').replace(/[\s\+\-]/g, '').trim();
-      return uPhone === cleanRef || u.id === cleanRef;
-    });
-
+    const referrer = await sqliteDb.prepare("SELECT phone FROM users WHERE REPLACE(REPLACE(REPLACE(phone, ' ', ''), '+', ''), '-', '') = ? OR id = ?").get(cleanRef, cleanRef);
     if (referrer) {
-      referredByPhone = referrer.phone;
-      finalWelcomePoints = 50; // Give 50 points welcome gift!
-      welcomeHistory.push({
-        date: new Date().toISOString(),
-        amount: 50,
-        reason: `بونص ترحيبي للتسجيل عبر رابط إحالة الصديق (${referrer.name})`
-      });
+      referredBy = referrer.phone;
     }
   }
 
-  const newUser = {
-    id: Date.now().toString(),
-    name,
-    phone,
-    email,
-    password: hashPassword(password),
-    isAdmin: (email || '').toLowerCase() === ADMIN_EMAIL,
-    points: finalWelcomePoints,
-    referredBy: referredByPhone,
-    history: welcomeHistory
-  };
+  const userId = Date.now().toString();
+  const isAdmin = email.toLowerCase() === ADMIN_EMAIL ? 1 : 0;
 
-  db.users.push(newUser);
-  writeDatabase(db);
+  await sqliteDb.prepare(`
+    INSERT INTO users (id, name, email, phone, password, is_verified, is_admin, points, referred_by, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, 0, ?, 0, ?, datetime('now'), datetime('now'))
+  `).run(userId, name, email, phone, hashPassword(password), isAdmin, referredBy);
 
-  const token = Buffer.from(newUser.id).toString('base64');
-  res.json({ success: true, token, user: safeUser(newUser) });
+  // Add initial points history
+  await sqliteDb.prepare('INSERT INTO points_history (user_id, amount, reason) VALUES (?, 0, ?)').run(userId, 'إنشاء الحساب بنجاح');
+
+  // Generate and send OTP
+  const otpCode = generateOTP();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 minutes
+  await sqliteDb.prepare('INSERT INTO otp_codes (user_id, email, code, type, expires_at) VALUES (?, ?, ?, ?, ?)').run(userId, email, otpCode, 'verify', expiresAt);
+
+  // Send OTP email (async, don't block response)
+  sendOTP(email, otpCode, 'verify').catch(err => console.error('Failed to send OTP:', err));
+
+  // Mask email for privacy
+  const parts = email.split('@');
+  const maskedEmail = parts[0].substring(0, 2) + '***@' + parts[1];
+
+  res.json({
+    success: true,
+    needsVerification: true,
+    email: maskedEmail,
+    userId: userId,
+    message: "تم إنشاء الحساب! يرجى التحقق من بريدك الإلكتروني وإدخال رمز التحقق."
+  });
+});
+
+// Verify OTP
+app.post('/api/auth/verify-otp', async (req, res) => {
+  const { email, code, userId } = req.body;
+  if (!code || (!email && !userId)) {
+    return res.status(400).json({ error: "يرجى إدخال رمز التحقق" });
+  }
+
+  // Find latest unused OTP for this user
+  let otp;
+  if (userId) {
+    otp = await sqliteDb.prepare("SELECT * FROM otp_codes WHERE user_id = ? AND code = ? AND used = 0 AND type = 'verify' ORDER BY created_at DESC LIMIT 1").get(userId, code);
+  } else {
+    otp = await sqliteDb.prepare("SELECT * FROM otp_codes WHERE email = ? AND code = ? AND used = 0 AND type = 'verify' ORDER BY created_at DESC LIMIT 1").get(email, code);
+  }
+
+  if (!otp) {
+    return res.status(400).json({ error: "رمز التحقق غير صحيح" });
+  }
+
+  // Check expiry
+  if (new Date(otp.expires_at) < new Date()) {
+    return res.status(400).json({ error: "رمز التحقق منتهي الصلاحية. يرجى طلب رمز جديد." });
+  }
+
+  // Mark OTP as used
+  await sqliteDb.prepare('UPDATE otp_codes SET used = 1 WHERE id = ?').run(otp.id);
+
+  // Verify the user
+  await sqliteDb.prepare('UPDATE users SET is_verified = 1, updated_at = datetime(?) WHERE id = ?').run(new Date().toISOString(), otp.user_id);
+
+  const user = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(otp.user_id);
+  const token = generateToken(user.id);
+
+  // Send welcome email
+  sendWelcomeEmail(user.email, user.name).catch(err => console.error('Failed to send welcome email:', err));
+
+  res.json({ success: true, token, user: safeUser(user) });
+});
+
+// Resend OTP
+app.post('/api/auth/resend-otp', otpRateLimit, async (req, res) => {
+  const { email, userId } = req.body;
+  
+  let user;
+  if (userId) {
+    user = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  } else if (email) {
+    user = await sqliteDb.prepare('SELECT * FROM users WHERE email = ?').get(email);
+  }
+
+  if (!user) {
+    return res.status(404).json({ error: "الحساب غير موجود" });
+  }
+
+  if (user.is_verified === 1) {
+    return res.status(400).json({ error: "الحساب مفعّل بالفعل" });
+  }
+
+  // Invalidate previous OTPs
+  await sqliteDb.prepare("UPDATE otp_codes SET used = 1 WHERE user_id = ? AND type = 'verify' AND used = 0").run(user.id);
+
+  // Generate new OTP
+  const otpCode = generateOTP();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+  await sqliteDb.prepare('INSERT INTO otp_codes (user_id, email, code, type, expires_at) VALUES (?, ?, ?, ?, ?)').run(user.id, user.email, otpCode, 'verify', expiresAt);
+
+  const result = await sendOTP(user.email, otpCode, 'verify');
+  
+  if (result.success) {
+    res.json({ success: true, message: "تم إرسال رمز تحقق جديد إلى بريدك الإلكتروني" });
+  } else {
+    res.status(500).json({ error: "حدث خطأ أثناء إرسال الرمز. حاول مرة أخرى." });
+  }
 });
 
 // Login User
-app.post('/api/auth/login', loginRateLimit, (req, res) => {
-  const { loginField, password } = req.body; // loginField can be email or phone
+app.post('/api/auth/login', loginRateLimit, async (req, res) => {
+  const { loginField, password } = req.body;
   if (!loginField || !password) {
     return res.status(400).json({ error: "يرجى إدخال الحقول المطلوبة" });
   }
 
-  const db = readDatabase();
-  const user = db.users.find(u => u.email === loginField || u.phone === loginField);
+  const user = await sqliteDb.prepare('SELECT * FROM users WHERE email = ? OR phone = ?').get(loginField, loginField);
 
   if (!user || !verifyPassword(password, user.password)) {
     return res.status(400).json({ error: "البيانات المدخلة غير صحيحة" });
   }
 
-  const token = Buffer.from(user.id).toString('base64');
+  // Check if verified
+  if (user.is_verified !== 1) {
+    // Resend OTP automatically
+    const otpCode = generateOTP();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    await sqliteDb.prepare("UPDATE otp_codes SET used = 1 WHERE user_id = ? AND type = 'verify' AND used = 0").run(user.id);
+    await sqliteDb.prepare('INSERT INTO otp_codes (user_id, email, code, type, expires_at) VALUES (?, ?, ?, ?, ?)').run(user.id, user.email, otpCode, 'verify', expiresAt);
+    sendOTP(user.email, otpCode, 'verify').catch(err => console.error('Failed to send OTP:', err));
+
+    const parts = user.email.split('@');
+    const maskedEmail = parts[0].substring(0, 2) + '***@' + parts[1];
+
+    return res.json({
+      success: true,
+      needsVerification: true,
+      email: maskedEmail,
+      userId: user.id,
+      message: "حسابك غير مفعّل. تم إرسال رمز تحقق جديد لبريدك الإلكتروني."
+    });
+  }
+
+  const token = generateToken(user.id);
   res.json({ success: true, token, user: safeUser(user) });
 });
 
 // Get Current User info
-app.get('/api/auth/me', authenticateToken, (req, res) => {
+app.get('/api/auth/me', authenticateToken, async (req, res) => {
   res.json(safeUser(req.user));
+});
+
+// Forgot Password — send OTP
+app.post('/api/auth/forgot-password', otpRateLimit, async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "يرجى إدخال البريد الإلكتروني" });
+
+  const user = await sqliteDb.prepare('SELECT * FROM users WHERE email = ?').get(email);
+  if (!user) {
+    // Don't reveal if email exists — return success anyway
+    return res.json({ success: true, message: "إذا كان البريد مسجلاً، ستصلك رسالة بكود التحقق." });
+  }
+
+  // Invalidate old reset OTPs
+  await sqliteDb.prepare("UPDATE otp_codes SET used = 1 WHERE user_id = ? AND type = 'reset' AND used = 0").run(user.id);
+
+  const otpCode = generateOTP();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+  await sqliteDb.prepare('INSERT INTO otp_codes (user_id, email, code, type, expires_at) VALUES (?, ?, ?, ?, ?)').run(user.id, user.email, otpCode, 'reset', expiresAt);
+
+  await sendOTP(user.email, otpCode, 'reset');
+
+  res.json({ success: true, message: "إذا كان البريد مسجلاً، ستصلك رسالة بكود التحقق." });
+});
+
+// Reset Password — verify OTP + set new password
+app.post('/api/auth/reset-password', async (req, res) => {
+  const { email, code, newPassword } = req.body;
+  if (!email || !code || !newPassword) {
+    return res.status(400).json({ error: "يرجى ملء جميع الحقول" });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: "كلمة المرور يجب أن تكون 6 خانات على الأقل" });
+  }
+
+  const otp = await sqliteDb.prepare("SELECT * FROM otp_codes WHERE email = ? AND code = ? AND used = 0 AND type = 'reset' ORDER BY created_at DESC LIMIT 1").get(email, code);
+  if (!otp) {
+    return res.status(400).json({ error: "رمز التحقق غير صحيح" });
+  }
+
+  if (new Date(otp.expires_at) < new Date()) {
+    return res.status(400).json({ error: "رمز التحقق منتهي الصلاحية. يرجى طلب رمز جديد." });
+  }
+
+  // Mark OTP as used
+  await sqliteDb.prepare('UPDATE otp_codes SET used = 1 WHERE id = ?').run(otp.id);
+
+  // Update password
+  await sqliteDb.prepare("UPDATE users SET password = ?, is_verified = 1, updated_at = datetime('now') WHERE id = ?").run(hashPassword(newPassword), otp.user_id);
+
+  const user = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(otp.user_id);
+  const token = generateToken(user.id);
+
+  res.json({ success: true, token, user: safeUser(user), message: "تم تغيير كلمة المرور بنجاح!" });
+});
+
+// Get Current User Orders
+app.get('/api/user/orders', authenticateToken, async (req, res) => {
+  const user = req.user;
+  const userPhoneClean = (user.phone || '').replace(/[\s\+\-]/g, '');
+  const userEmail = (user.email || '').toLowerCase().trim();
+
+  const db = await readDatabase();
+  const orders = (db.orders || []).filter(o => {
+    const oPhoneClean = (o.customerPhone || '').replace(/[\s\+\-]/g, '');
+    const oEmail = (o.customerEmail || '').toLowerCase().trim();
+    return (userPhoneClean && oPhoneClean === userPhoneClean) ||
+           (userEmail && oEmail === userEmail) ||
+           (o.userId && o.userId === user.id);
+  }).sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+
+  res.json({ success: true, orders });
+});
+
+// Update User Profile / Password
+app.put('/api/user/profile', authenticateToken, async (req, res) => {
+  const { name, phone, currentPassword, newPassword } = req.body;
+  const userId = req.user.id;
+
+  const user = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  if (!user) return res.status(404).json({ error: "المستخدم غير موجود" });
+
+  if (name) await sqliteDb.prepare('UPDATE users SET name = ? WHERE id = ?').run(name.trim(), userId);
+  if (phone) await sqliteDb.prepare('UPDATE users SET phone = ? WHERE id = ?').run(phone.trim(), userId);
+
+  if (newPassword) {
+    if (!currentPassword || !verifyPassword(currentPassword, user.password)) {
+      return res.status(400).json({ error: "كلمة المرور الحالية غير صحيحة" });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: "كلمة المرور الجديدة يجب أن تكون 6 خانات على الأقل" });
+    }
+    await sqliteDb.prepare('UPDATE users SET password = ? WHERE id = ?').run(hashPassword(newPassword), userId);
+  }
+
+  await sqliteDb.prepare("UPDATE users SET updated_at = datetime('now') WHERE id = ?").run(userId);
+
+  const updatedUser = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  res.json({ success: true, user: safeUser(updatedUser) });
+});
+
+// Update Saved EA Account & Platform Preferences
+app.put('/api/user/ea-profile', authenticateToken, async (req, res) => {
+  const { defaultPlatform, eaEmail, backupCodes, defaultCurrency } = req.body;
+  const userId = req.user.id;
+
+  if (defaultPlatform !== undefined) await sqliteDb.prepare('UPDATE users SET default_platform = ? WHERE id = ?').run(defaultPlatform, userId);
+  if (eaEmail !== undefined) await sqliteDb.prepare('UPDATE users SET ea_email = ? WHERE id = ?').run((eaEmail || '').trim(), userId);
+  if (backupCodes !== undefined) await sqliteDb.prepare('UPDATE users SET ea_backup_codes = ? WHERE id = ?').run(backupCodes, userId);
+  if (defaultCurrency !== undefined) await sqliteDb.prepare('UPDATE users SET default_currency = ? WHERE id = ?').run(defaultCurrency, userId);
+
+  await sqliteDb.prepare("UPDATE users SET updated_at = datetime('now') WHERE id = ?").run(userId);
+
+  const updatedUser = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  res.json({ success: true, user: safeUser(updatedUser) });
 });
 
 // ==========================================
@@ -766,9 +895,8 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
 // ==========================================
 
 // Get stats for admin dashboard
-// Get stats for admin dashboard
-app.get('/api/admin/stats', (req, res) => {
-  const db = readDatabase();
+app.get('/api/admin/stats', async (req, res) => {
+  const db = await readDatabase();
   const totalUsers = db.users.length;
   const totalChallenges = db.players.length;
   const totalPoints = db.users.reduce((sum, u) => sum + (u.points || 0), 0);
@@ -777,25 +905,19 @@ app.get('/api/admin/stats', (req, res) => {
   const todayStr = new Date().toISOString().split('T')[0];
   const visitsToday = db.analytics && db.analytics.daily ? (db.analytics.daily[todayStr] || 0) : 0;
   
-  // Dynamic range filtering (custom date range or legacy days limit)
   const { days, startDate, endDate } = req.query;
   let orders = db.orders || [];
   
   if (startDate || endDate) {
-    // 1. Filter visits by custom range
     totalVisits = 0;
     if (db.analytics && db.analytics.daily) {
       Object.entries(db.analytics.daily).forEach(([dateStr, count]) => {
         let matches = true;
         if (startDate && dateStr < startDate) matches = false;
         if (endDate && dateStr > endDate) matches = false;
-        if (matches) {
-          totalVisits += count;
-        }
+        if (matches) totalVisits += count;
       });
     }
-
-    // 2. Filter orders by custom range
     orders = orders.filter(o => {
       if (!o.timestamp) return false;
       const orderDateStr = new Date(o.timestamp).toISOString().split('T')[0];
@@ -807,7 +929,6 @@ app.get('/api/admin/stats', (req, res) => {
   } else {
     const daysLimit = parseInt(days);
     if (!isNaN(daysLimit)) {
-      // 1. Filter visits by relative days range
       totalVisits = 0;
       const now = new Date();
       const allowedDates = new Set();
@@ -818,13 +939,9 @@ app.get('/api/admin/stats', (req, res) => {
       }
       if (db.analytics && db.analytics.daily) {
         Object.entries(db.analytics.daily).forEach(([dateStr, count]) => {
-          if (allowedDates.has(dateStr)) {
-            totalVisits += count;
-          }
+          if (allowedDates.has(dateStr)) totalVisits += count;
         });
       }
-
-      // 2. Filter orders by relative days range
       const cutoffTime = Date.now() - (daysLimit * 24 * 60 * 60 * 1000);
       orders = orders.filter(o => {
         const t = new Date(o.timestamp).getTime();
@@ -861,46 +978,41 @@ app.get('/api/admin/stats', (req, res) => {
 });
 
 // Reset store analytics/data
-app.post('/api/admin/reset', (req, res) => {
+app.post('/api/admin/reset', async (req, res) => {
   const { type, password } = req.body;
-  const db = readDatabase();
   
   if (type === 'visits') {
-    db.analytics = { totalVisits: 0, daily: {} };
-    writeDatabase(db);
-    addAdminLog("RESET_VISITS", "إعادة تعيين إحصائيات زيارات المتجر إلى الصفر");
+    await sqliteDb.prepare('DELETE FROM analytics').run();
+    await addAdminLog("RESET_VISITS", "إعادة تعيين إحصائيات زيارات المتجر إلى الصفر");
   } else if (type === 'orders') {
-    db.orders = [];
-    writeDatabase(db);
-    addAdminLog("RESET_ORDERS", "إعادة تعيين وحذف كافة طلبات المتجر");
+    await sqliteDb.prepare('DELETE FROM orders').run();
+    await addAdminLog("RESET_ORDERS", "إعادة تعيين وحذف كافة طلبات المتجر");
   } else if (type === 'logs') {
-    db.logs = [];
-    writeDatabase(db);
-    addAdminLog("RESET_LOGS", "إعادة تعيين وإفراغ سجل العمليات");
+    await sqliteDb.prepare('DELETE FROM logs').run();
+    await addAdminLog("RESET_LOGS", "إعادة تعيين وإفراغ سجل العمليات");
   } else if (type === 'all') {
-    db.analytics = { totalVisits: 0, daily: {} };
-    db.orders = [];
-    db.logs = [];
-    writeDatabase(db);
-    addAdminLog("RESET_ALL", "إعادة تعيين شاملة للمتجر (تصفير الزيارات والطلبات والسجلات)");
+    await sqliteDb.prepare('DELETE FROM analytics').run();
+    await sqliteDb.prepare('DELETE FROM orders').run();
+    await sqliteDb.prepare('DELETE FROM logs').run();
+    await addAdminLog("RESET_ALL", "إعادة تعيين شاملة للمتجر");
   } else if (type === 'system_factory_reset') {
     if (password !== 'Trivela@Reset2026') {
       return res.status(401).json({ success: false, error: "كلمة مرور إعادة ضبط المصنع غير صحيحة!" });
     }
+    await sqliteDb.prepare('DELETE FROM analytics').run();
+    await sqliteDb.prepare('DELETE FROM orders').run();
+    await sqliteDb.prepare('DELETE FROM logs').run();
+    await sqliteDb.prepare('DELETE FROM coupons').run();
+    await sqliteDb.prepare('DELETE FROM users WHERE is_admin = 0').run();
+    fs.writeFileSync(path.join(__dirname, 'players.json'), '[]', 'utf8');
+    await saveSetting('_expenses', []);
     
-    // System factory reset: clear everything but retain admin users
-    db.analytics = { totalVisits: 0, daily: {} };
-    db.orders = [];
-    db.expenses = [];
-    db.players = [];
-    db.logs = [];
-    db.coupons = [
-      { code: "TRIVELA", percent: 10, maxUses: 100, usedCount: 0, expiryDate: "2027-12-31" }
-    ];
-    db.users = db.users.filter(u => u.isAdmin); // Keep only admin accounts
+    // Re-add default coupon
+    await sqliteDb.prepare("INSERT INTO coupons (id, code, discount_percent, max_uses, used_count, active) VALUES (?, ?, ?, ?, ?, 1)").run(
+      'cpn_' + Date.now(), 'TRIVELA', 10, 100, 0
+    );
     
-    writeDatabase(db);
-    addAdminLog("SYSTEM_FACTORY_RESET", "إعادة ضبط المصنع بالكامل (تصفير العملاء والطلبات والكوبونات والمصاريف والسجلات والزيارات)");
+    await addAdminLog("SYSTEM_FACTORY_RESET", "إعادة ضبط المصنع بالكامل");
   } else {
     return res.status(400).json({ success: false, error: "نوع غير معروف لإعادة التعيين" });
   }
@@ -908,15 +1020,15 @@ app.post('/api/admin/reset', (req, res) => {
   res.json({ success: true });
 });
 
-// Get all users for admin dashboard (passwords never leaked)
-app.get('/api/admin/users', (req, res) => {
-  const db = readDatabase();
+// Get all users for admin dashboard
+app.get('/api/admin/users', async (req, res) => {
+  const db = await readDatabase();
   const cleanUsers = db.users.map(u => safeUser(u));
   res.json(cleanUsers);
 });
 
 // Modify points for a user
-app.post('/api/admin/users/:id/points', (req, res) => {
+app.post('/api/admin/users/:id/points', async (req, res) => {
   const userId = req.params.id;
   const { points, reason } = req.body;
 
@@ -924,33 +1036,27 @@ app.post('/api/admin/users/:id/points', (req, res) => {
     return res.status(400).json({ error: "يرجى إدخال عدد نقاط صحيح" });
   }
 
-  const db = readDatabase();
-  const user = db.users.find(u => u.id === userId);
-
-  if (!user) {
-    return res.status(404).json({ error: "العميل غير موجود" });
-  }
+  const user = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  if (!user) return res.status(404).json({ error: "العميل غير موجود" });
 
   const pointsChange = parseInt(points, 10);
-  user.points = Math.max(0, user.points + pointsChange);
-  user.history.push({
-    date: new Date().toISOString(),
-    amount: pointsChange,
-    reason: reason || (pointsChange >= 0 ? "شحن نقاط من المشرف" : "خصم نقاط من المشرف")
-  });
-
-  writeDatabase(db);
+  const newPoints = Math.max(0, (user.points || 0) + pointsChange);
   
+  await sqliteDb.prepare('UPDATE users SET points = ? WHERE id = ?').run(newPoints, userId);
+  await sqliteDb.prepare('INSERT INTO points_history (user_id, amount, reason) VALUES (?, ?, ?)').run(
+    userId, pointsChange, reason || (pointsChange >= 0 ? "شحن نقاط من المشرف" : "خصم نقاط من المشرف")
+  );
+
   const actionType = pointsChange >= 0 ? 'ADD_POINTS' : 'DEDUCT_POINTS';
   const pointsText = pointsChange >= 0 ? `شحن ${pointsChange} نقطة` : `خصم ${Math.abs(pointsChange)} نقطة`;
-  addAdminLog(actionType, `تم ${pointsText} للعميل "${user.name}" (${user.phone}). السبب: "${reason || 'بدون سبب'}"`, { userId, pointsChange, reason });
+  await addAdminLog(actionType, `تم ${pointsText} للعميل "${user.name}" (${user.phone}). السبب: "${reason || 'بدون سبب'}"`, { userId, pointsChange, reason });
 
-  const { password: _, ...userWithoutPassword } = user;
-  res.json({ success: true, user: userWithoutPassword });
+  const updatedUser = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  res.json({ success: true, user: safeUser(updatedUser) });
 });
 
 // Reset password for a user by admin
-app.post('/api/admin/users/:id/reset-password', (req, res) => {
+app.post('/api/admin/users/:id/reset-password', async (req, res) => {
   const userId = req.params.id;
   const { newPassword } = req.body;
 
@@ -958,18 +1064,11 @@ app.post('/api/admin/users/:id/reset-password', (req, res) => {
     return res.status(400).json({ error: "كلمة المرور الجديدة يجب أن تكون 4 خانات على الأقل" });
   }
 
-  const db = readDatabase();
-  const user = db.users.find(u => u.id === userId);
+  const user = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  if (!user) return res.status(404).json({ error: "العميل غير موجود" });
 
-  if (!user) {
-    return res.status(404).json({ error: "العميل غير موجود" });
-  }
-
-  user.password = hashPassword(newPassword.trim());
-  
-  writeDatabase(db);
-  
-  addAdminLog('RESET_USER_PASSWORD', `تم تعيين كلمة مرور جديدة للعميل "${user.name}" (${user.phone}) من قبل المشرف`, { userId });
+  await sqliteDb.prepare('UPDATE users SET password = ? WHERE id = ?').run(hashPassword(newPassword.trim()), userId);
+  await addAdminLog('RESET_USER_PASSWORD', `تم تعيين كلمة مرور جديدة للعميل "${user.name}" (${user.phone}) من قبل المشرف`, { userId });
 
   res.json({ success: true, message: "تم تعيين كلمة المرور الجديدة بنجاح" });
 });
@@ -978,66 +1077,75 @@ app.post('/api/admin/users/:id/reset-password', (req, res) => {
 // PLAYER SHOP CARD ROUTES
 // ==========================================
 
-// GET all players (runs auto-cleanup first)
-app.get('/api/players', (req, res) => {
-  const activePlayers = cleanupExpiredPlayers();
+// GET all players
+app.get('/api/players', async (req, res) => {
+  const activePlayers = await cleanupExpiredPlayers();
   res.json(activePlayers);
 });
 
 // POST add a player
-app.post(['/api/players', '/api/admin/players'], (req, res) => {
+app.post(['/api/players', '/api/admin/players'], async (req, res) => {
   const newPlayer = req.body;
   if (!newPlayer || !newPlayer.id || !newPlayer.name) {
     return res.status(400).json({ error: "Invalid player data" });
   }
 
-  const db = readDatabase();
-  const index = db.players.findIndex(p => p.id === newPlayer.id && p.category === newPlayer.category);
-  if (index !== -1) {
-    db.players[index] = newPlayer;
-  } else {
-    db.players.push(newPlayer);
-  }
+  try {
+    await sqliteDb.prepare(`
+      INSERT OR REPLACE INTO players (id, name, category, sbc_sub_category, rating, image, price_sar, price_usd, price_pc_sar, price_pc_usd, desc, version, position, expiry_days, expiration_date)
+      VALUES (@id, @name, @category, @sbcSubCategory, @rating, @image, @priceSAR, @priceUSD, @pricePCSAR, @pricePCUSD, @desc, @version, @position, @expiryDays, @expirationDate)
+    `).run({
+      id: newPlayer.id,
+      name: newPlayer.name,
+      category: newPlayer.category || 'sbc',
+      sbcSubCategory: newPlayer.sbcSubCategory || null,
+      rating: newPlayer.rating || 0,
+      image: newPlayer.image || 'service_sbc.jpg',
+      priceSAR: newPlayer.priceSAR || 0,
+      priceUSD: newPlayer.priceUSD || 0,
+      pricePCSAR: newPlayer.pricePCSAR || newPlayer.priceSAR || 0,
+      pricePCUSD: newPlayer.pricePCUSD || newPlayer.priceUSD || 0,
+      desc: newPlayer.desc || null,
+      version: newPlayer.version || null,
+      position: newPlayer.position || null,
+      expiryDays: newPlayer.expiryDays || 7,
+      expirationDate: newPlayer.expirationDate || null
+    });
 
-  writeDatabase(db);
-  
-  addAdminLog('ADD_PLAYER', `تم إضافة/تحديث كارت اللاعب "${newPlayer.name}" (${newPlayer.category.toUpperCase()}) بسعر ${newPlayer.priceSAR} ر.س`, { playerId: newPlayer.id, name: newPlayer.name, category: newPlayer.category, priceSAR: newPlayer.priceSAR });
-  
-  res.json({ success: true, players: db.players });
+    await addAdminLog('ADD_PLAYER', `تم إضافة/تحديث كارت اللاعب "${newPlayer.name}" (${(newPlayer.category || 'sbc').toUpperCase()}) بسعر ${newPlayer.priceSAR} ر.س`, { playerId: newPlayer.id, name: newPlayer.name, category: newPlayer.category, priceSAR: newPlayer.priceSAR });
+    
+    const db = await readDatabase();
+    res.json({ success: true, players: db.players });
+  } catch (err) {
+    console.error('Error saving player:', err);
+    res.status(500).json({ error: "Failed to save player" });
+  }
 });
 
 // DELETE a player
-app.delete(['/api/players/:id', '/api/admin/players/:id'], (req, res) => {
+app.delete(['/api/players/:id', '/api/admin/players/:id'], async (req, res) => {
   const playerId = req.params.id;
   const category = req.query.category;
-  const db = readDatabase();
-  const initialLength = db.players.length;
 
-  const playerToDelete = db.players.find(p => {
-    if (category) return p.id === playerId && p.category === category;
-    return p.id === playerId;
-  });
-
-  db.players = db.players.filter(p => {
+  try {
     if (category) {
-      return !(p.id === playerId && p.category === category);
+      await sqliteDb.prepare('DELETE FROM players WHERE id = ? AND category = ?').run(playerId, category);
+    } else {
+      await sqliteDb.prepare('DELETE FROM players WHERE id = ?').run(playerId);
     }
-    return p.id !== playerId;
-  });
 
-  if (db.players.length === initialLength) {
-    return res.status(404).json({ error: "Player not found" });
+    await addAdminLog('DELETE_PLAYER', `تم حذف كارت اللاعب "${playerId}" من تصنيف "${category || 'الكل'}"`, { playerId, category });
+    
+    const db = await readDatabase();
+    res.json({ success: true, players: db.players });
+  } catch (err) {
+    console.error('Error deleting player:', err);
+    res.status(500).json({ error: "Failed to delete player" });
   }
-
-  writeDatabase(db);
-  
-  addAdminLog('DELETE_PLAYER', `تم حذف كارت اللاعب "${playerToDelete ? playerToDelete.name : playerId}" من تصنيف "${category || 'الكل'}"`, { playerId, category });
-  
-  res.json({ success: true, players: db.players });
 });
 
 // GET scrape FUT.GG player data
-app.post(['/api/scrape', '/api/admin/scrape'], (req, res) => {
+app.post(['/api/scrape', '/api/admin/scrape'], async (req, res) => {
   const { url, category, sbcSubCategory } = req.body;
   if (!url || !url.startsWith("https://www.fut.gg/")) {
     return res.status(400).json({ error: "يرجى إدخال رابط FUT.GG صحيح" });
@@ -1082,31 +1190,14 @@ app.post(['/api/scrape', '/api/admin/scrape'], (req, res) => {
         let image = "";
         
         const priorities = [
-          "futgg-player-item-card",
-          "player-item",
-          "sbc-reward",
-          "pack-reward",
-          "packs",
-          "items",
-          "sbc",
-          "evolutions",
-          "objectives",
-          "objective",
-          "challenges",
-          "challenge",
-          "rewards",
-          "pack",
-          "token",
-          "tokens",
-          "sbcs"
+          "futgg-player-item-card", "player-item", "sbc-reward", "pack-reward",
+          "packs", "items", "sbc", "evolutions", "objectives", "objective",
+          "challenges", "challenge", "rewards", "pack", "token", "tokens", "sbcs"
         ];
         
         for (const keyword of priorities) {
           const found = imgMatches.find(u => u.toLowerCase().includes(keyword));
-          if (found) {
-            image = found;
-            break;
-          }
+          if (found) { image = found; break; }
         }
         
         if (!image && imgMatches.length > 0) {
@@ -1127,28 +1218,15 @@ app.post(['/api/scrape', '/api/admin/scrape'], (req, res) => {
         let priceSAR = 105;
         let priceUSD = 28;
 
-        // Specialized behavior
         if (category === 'objectives' || url.toLowerCase().includes('/objectives/')) {
-          rating = 0;
-          position = "OBJ";
-          version = "مهمة Objectives";
-          expiryDays = 14;
-          priceSAR = 56;
-          priceUSD = 15;
+          rating = 0; position = "OBJ"; version = "مهمة Objectives";
+          expiryDays = 14; priceSAR = 56; priceUSD = 15;
         } else if (category === 'sbc' && sbcSubCategory === 'upgrades') {
-          rating = 0;
-          position = "UPG";
-          version = "ترقية SBC";
-          expiryDays = 7;
-          priceSAR = 38;
-          priceUSD = 10;
+          rating = 0; position = "UPG"; version = "ترقية SBC";
+          expiryDays = 7; priceSAR = 38; priceUSD = 10;
         } else {
-          rating = 90;
-          position = "SBC";
-          version = "لاعب تحدي";
-          expiryDays = 14;
-          priceSAR = 105;
-          priceUSD = 28;
+          rating = 90; position = "SBC"; version = "لاعب تحدي";
+          expiryDays = 14; priceSAR = 105; priceUSD = 28;
 
           const descMatch = html.match(/<meta\b[^>]*name="description"[^>]*content="([^"]+)"/i) || html.match(/<meta\b[^>]*content="([^"]+)"[^>]*name="description"/i);
           if (descMatch) {
@@ -1168,7 +1246,6 @@ app.post(['/api/scrape', '/api/admin/scrape'], (req, res) => {
                 rating = parseInt(vMatch2[2], 10);
                 position = vMatch2[3].trim();
                 expiryDays = 30;
-                
                 const words = fullPrefix.split(/\s+/);
                 if (words.length > 2) {
                   version = words.slice(2).join(' ');
@@ -1187,19 +1264,8 @@ app.post(['/api/scrape', '/api/admin/scrape'], (req, res) => {
         res.json({ 
           success: true,
           player: {
-            id, 
-            name, 
-            image, 
-            rating, 
-            version, 
-            position, 
-            sbcSubCategory, 
-            category,
-            expiryDays,
-            priceSAR,
-            priceUSD,
-            pricePCSAR: priceSAR,
-            pricePCUSD: priceUSD
+            id, name, image, rating, version, position, sbcSubCategory, category,
+            expiryDays, priceSAR, priceUSD, pricePCSAR: priceSAR, pricePCUSD: priceUSD
           }
         });
       } catch (err) {
@@ -1217,9 +1283,9 @@ app.post(['/api/scrape', '/api/admin/scrape'], (req, res) => {
 // STORE SETTINGS & LOGS MANAGEMENT
 // ==========================================
 
-// GET public content (settings, faqs, reviews)
-app.get('/api/public/content', (req, res) => {
-  const db = readDatabase();
+// GET public content
+app.get('/api/public/content', async (req, res) => {
+  const db = await readDatabase();
   const approvedReviews = (db.reviews || []).filter(r => r.status === 'approved');
   res.json({
     settings: db.settings,
@@ -1230,36 +1296,36 @@ app.get('/api/public/content', (req, res) => {
   });
 });
 
-// POST public review submission (moderated)
-app.post('/api/public/reviews', (req, res) => {
+app.get('/api/public/coaching-schedule', async (req, res) => {
+  const schedule = await getSetting('coachingSchedule', {
+    workingDays: [0, 1, 2, 3, 4, 5, 6],
+    startHour: 14,
+    endHour: 23,
+    slotDurationMinutes: 60,
+    bookedSlots: []
+  });
+  res.json(schedule);
+});
+
+// POST public review submission
+app.post('/api/public/reviews', async (req, res) => {
   const { name, platform, stars, text } = req.body;
   if (!name || !text) {
     return res.status(400).json({ error: "الرجاء إدخال اسمك وتجربتك للتقييم" });
   }
 
-  const db = readDatabase();
-  if (!db.reviews) db.reviews = [];
+  const revId = 'rev_' + Date.now() + '_' + Math.floor(100 + Math.random() * 900);
+  await sqliteDb.prepare('INSERT INTO reviews (id, user_name, rating, comment, visible) VALUES (?, ?, ?, ?, 0)').run(
+    revId, name.trim(), parseInt(stars, 10) || 5, text.trim()
+  );
 
-  const reviewItem = {
-    id: 'rev_' + Date.now() + '_' + Math.floor(100 + Math.random() * 900),
-    name: name.trim(),
-    platform: platform || "PS5",
-    stars: parseInt(stars, 10) || 5,
-    text: text.trim(),
-    badge: "",
-    status: "pending"
-  };
-
-  db.reviews.unshift(reviewItem);
-  writeDatabase(db);
-
-  res.json({ success: true, review: reviewItem });
+  res.json({ success: true, review: { id: revId, name: name.trim(), platform: platform || "PS5", stars: parseInt(stars, 10) || 5, text: text.trim(), badge: "", status: "pending" } });
 });
 
 // POST public analytics page load ping
-app.post('/api/public/analytics-ping', (req, res) => {
+app.post('/api/public/analytics-ping', async (req, res) => {
   const { type, referrer, page } = req.body;
-  const db = readDatabase();
+  const db = await readDatabase();
   
   if (!db.analytics) db.analytics = {};
   if (!db.analytics.devices) db.analytics.devices = { mobile: 0, desktop: 0, tablet: 0 };
@@ -1268,19 +1334,15 @@ app.post('/api/public/analytics-ping', (req, res) => {
   if (!db.analytics.hours) db.analytics.hours = {};
   if (!db.analytics.pages) db.analytics.pages = { home: 0, coins: 0, sbc: 0, rivals: 0, champions: 0, objectives: 0, coaching: 0, packages: 0 };
   if (!db.analytics.visitorTypes) db.analytics.visitorTypes = { new: 0, returning: 0 };
-  if (!db.analytics.daily) db.analytics.daily = {};
 
-  // 1. Devices from User-Agent
+  // Devices
   const ua = (req.headers['user-agent'] || '').toLowerCase();
   let device = 'desktop';
-  if (ua.includes('ipad') || (ua.includes('android') && !ua.includes('mobile'))) {
-    device = 'tablet';
-  } else if (ua.includes('mobile') || ua.includes('iphone') || ua.includes('android')) {
-    device = 'mobile';
-  }
+  if (ua.includes('ipad') || (ua.includes('android') && !ua.includes('mobile'))) device = 'tablet';
+  else if (ua.includes('mobile') || ua.includes('iphone') || ua.includes('android')) device = 'mobile';
   db.analytics.devices[device] = (db.analytics.devices[device] || 0) + 1;
 
-  // 2. Referrers
+  // Referrers
   let refKey = 'direct';
   const refLower = (referrer || '').toLowerCase();
   if (refLower.includes('google')) refKey = 'google';
@@ -1292,7 +1354,7 @@ app.post('/api/public/analytics-ping', (req, res) => {
   else if (referrer) refKey = 'other';
   db.analytics.referrers[refKey] = (db.analytics.referrers[refKey] || 0) + 1;
 
-  // 3. Countries from Accept-Language
+  // Countries
   const lang = (req.headers['accept-language'] || '').toLowerCase();
   let countryKey = 'sa';
   if (lang.includes('ae')) countryKey = 'ae';
@@ -1306,11 +1368,11 @@ app.post('/api/public/analytics-ping', (req, res) => {
   else countryKey = 'other';
   db.analytics.countries[countryKey] = (db.analytics.countries[countryKey] || 0) + 1;
 
-  // 4. Hours
+  // Hours
   const hour = new Date().getHours();
   db.analytics.hours[hour] = (db.analytics.hours[hour] || 0) + 1;
 
-  // 5. Pages
+  // Pages
   let pgKey = 'home';
   const pgLower = (page || '').toLowerCase();
   if (pgLower.includes('coin') || pgLower.includes('كوينز')) pgKey = 'coins';
@@ -1322,124 +1384,96 @@ app.post('/api/public/analytics-ping', (req, res) => {
   else if (pgLower.includes('package') || pgLower.includes('باقات')) pgKey = 'packages';
   db.analytics.pages[pgKey] = (db.analytics.pages[pgKey] || 0) + 1;
 
-  // 6. Visitor Type
+  // Visitor Type
   const vtKey = type === 'returning' ? 'returning' : 'new';
   db.analytics.visitorTypes[vtKey] = (db.analytics.visitorTypes[vtKey] || 0) + 1;
 
-  // 7. General Count
+  // General Count (daily analytics table)
   const todayStr = new Date().toISOString().split('T')[0];
-  db.analytics.totalVisits = (db.analytics.totalVisits || 0) + 1;
-  db.analytics.daily[todayStr] = (db.analytics.daily[todayStr] || 0) + 1;
+  const existing = await sqliteDb.prepare('SELECT * FROM analytics WHERE date = ?').get(todayStr);
+  if (existing) {
+    await sqliteDb.prepare('UPDATE analytics SET total_visits = total_visits + 1 WHERE date = ?').run(todayStr);
+  } else {
+    await sqliteDb.prepare('INSERT INTO analytics (date, total_visits, mobile, desktop, tablet) VALUES (?, 1, 0, 0, 0)').run(todayStr);
+  }
 
-  writeDatabase(db);
+  await writeDatabase(db);
   res.json({ success: true });
 });
 
 // POST public click tracking
-app.post('/api/public/analytics-click', (req, res) => {
+app.post('/api/public/analytics-click', async (req, res) => {
   const { service } = req.body;
   if (!service) return res.status(400).json({ error: "Missing service name" });
 
-  const db = readDatabase();
+  const db = await readDatabase();
   if (!db.analytics) db.analytics = {};
   if (!db.analytics.clicks) db.analytics.clicks = { coins: 0, sbc: 0, rivals: 0, champions: 0, objectives: 0, coaching: 0, packages: 0 };
 
   const svcKey = service.toLowerCase();
   if (db.analytics.clicks[svcKey] !== undefined) {
     db.analytics.clicks[svcKey] = (db.analytics.clicks[svcKey] || 0) + 1;
-    writeDatabase(db);
+    await writeDatabase(db);
   }
   res.json({ success: true });
 });
 
 // Update Champions Ranks
-app.put('/api/admin/champions-ranks', (req, res) => {
-  const db = readDatabase();
-  db.champions_ranks = req.body;
-  writeDatabase(db);
-  addAdminLog("UPDATE_CHAMPIONS_RANKS", "تعديل أسعار ورتب الفوت شامبيونز");
+app.put('/api/admin/champions-ranks', async (req, res) => {
+  await saveSetting('champions_ranks', req.body);
+  await addAdminLog("UPDATE_CHAMPIONS_RANKS", "تعديل أسعار ورتب الفوت شامبيونز");
   res.json({ success: true });
 });
 
 // Update Rivals Ranks
-app.put('/api/admin/rivals-ranks', (req, res) => {
-  const db = readDatabase();
-  db.rivals_ranks = req.body;
-  writeDatabase(db);
-  addAdminLog("UPDATE_RIVALS_RANKS", "تعديل أسعار ورتب ديفجن رايفلز");
+app.put('/api/admin/rivals-ranks', async (req, res) => {
+  await saveSetting('rivals_ranks', req.body);
+  await addAdminLog("UPDATE_RIVALS_RANKS", "تعديل أسعار ورتب ديفجن رايفلز");
   res.json({ success: true });
 });
 
 // GET admin logs list
-app.get('/api/admin/logs', (req, res) => {
-  const db = readDatabase();
+app.get('/api/admin/logs', async (req, res) => {
+  const db = await readDatabase();
   res.json(db.logs || []);
 });
 
 // GET admin settings
-app.get('/api/admin/settings', (req, res) => {
-  const db = readDatabase();
+app.get('/api/admin/settings', async (req, res) => {
+  const db = await readDatabase();
   res.json(db.settings || {});
 });
 
 // POST update settings
-app.post('/api/admin/settings', (req, res) => {
+app.post('/api/admin/settings', async (req, res) => {
   const newSettings = req.body;
   if (!newSettings) return res.status(400).json({ error: "Invalid settings data" });
 
-  const db = readDatabase();
-  
-  // Track changes for logs
-  const changes = [];
-  if (db.settings.maintenanceMode !== !!newSettings.maintenanceMode) {
-    changes.push(`وضع الصيانة: ${newSettings.maintenanceMode ? 'تفعيل' : 'إلغاء'}`);
-  }
-  if (db.settings.whatsappPhone !== newSettings.whatsappPhone) {
-    changes.push(`رقم الواتساب: ${newSettings.whatsappPhone}`);
-  }
-  if (db.settings.instagramUrl !== newSettings.instagramUrl) {
-    changes.push(`رابط الإنستجرام: ${newSettings.instagramUrl}`);
-  }
-  if (db.settings.baseRateConsole !== parseFloat(newSettings.baseRateConsole) || db.settings.baseRatePC !== parseFloat(newSettings.baseRatePC)) {
-    changes.push(`تحديث أسعار الكوينز (كونسول: ${newSettings.baseRateConsole}$, بي سي: ${newSettings.baseRatePC}$)`);
-  }
-  if (db.settings.maintenanceTitleText !== newSettings.maintenanceTitleText) {
-    changes.push(`عنوان الصيانة: ${newSettings.maintenanceTitleText}`);
-  }
-  if (db.settings.maintenanceCountdownActive !== !!newSettings.maintenanceCountdownActive) {
-    changes.push(`العد التنازلي: ${newSettings.maintenanceCountdownActive ? 'تفعيل' : 'إلغاء'}`);
-  }
-  if (db.settings.maintenanceCountdownEndTime !== newSettings.maintenanceCountdownEndTime) {
-    changes.push(`وقت انتهاء الصيانة: ${newSettings.maintenanceCountdownEndTime}`);
-  }
-  if (db.settings.maintenanceGlowColor !== newSettings.maintenanceGlowColor) {
-    changes.push(`لون مظهر الصيانة: ${newSettings.maintenanceGlowColor}`);
-  }
-  if (db.settings.maintenanceIconStyle !== newSettings.maintenanceIconStyle) {
-    changes.push(`أيقونة الصيانة: ${newSettings.maintenanceIconStyle}`);
-  }
-  if (db.settings.maintenanceTelegramActive !== !!newSettings.maintenanceTelegramActive) {
-    changes.push(`تفعيل قناة تيليجرام: ${newSettings.maintenanceTelegramActive ? 'تفعيل' : 'إلغاء'}`);
-  }
-  if (db.settings.settingTelegram !== newSettings.settingTelegram) {
-    changes.push(`رابط تيليجرام: ${newSettings.settingTelegram}`);
+  const oldSettings = {};
+  const settingsRows = await sqliteDb.prepare('SELECT key, value FROM settings').all();
+  for (const row of settingsRows) {
+    try { oldSettings[row.key] = JSON.parse(row.value); } catch { oldSettings[row.key] = row.value; }
   }
 
-  db.settings = {
+  const changes = [];
+  if (oldSettings.maintenanceMode !== !!newSettings.maintenanceMode) changes.push(`وضع الصيانة: ${newSettings.maintenanceMode ? 'تفعيل' : 'إلغاء'}`);
+  if (oldSettings.whatsappPhone !== newSettings.whatsappPhone) changes.push(`رقم الواتساب: ${newSettings.whatsappPhone}`);
+  if (oldSettings.instagramUrl !== newSettings.instagramUrl) changes.push(`رابط الإنستجرام: ${newSettings.instagramUrl}`);
+
+  // Save all settings
+  const settingsToSave = {
     whatsappPhone: newSettings.whatsappPhone,
     instagramUrl: newSettings.instagramUrl,
     maintenanceMode: !!newSettings.maintenanceMode,
-    maintenanceBypassToken: newSettings.maintenanceBypassToken || db.settings.maintenanceBypassToken || "trivela-bypass-vip",
-    maintenanceMessage: newSettings.maintenanceMessage || db.settings.maintenanceMessage || "نحن نقوم بأعمال صيانة مؤقتة للتحديث، سنعود للعمل قريباً جداً. شكراً لتفهمك!",
-    maintenanceTitleText: newSettings.maintenanceTitleText || db.settings.maintenanceTitleText || "أعمال صيانة مؤقتة",
+    maintenanceBypassToken: newSettings.maintenanceBypassToken || oldSettings.maintenanceBypassToken || "trivela-bypass-vip",
+    maintenanceMessage: newSettings.maintenanceMessage || oldSettings.maintenanceMessage || "نحن نقوم بأعمال صيانة مؤقتة للتحديث، سنعود للعمل قريباً جداً. شكراً لتفهمك!",
+    maintenanceTitleText: newSettings.maintenanceTitleText || oldSettings.maintenanceTitleText || "أعمال صيانة مؤقتة",
     maintenanceCountdownActive: !!newSettings.maintenanceCountdownActive,
-    maintenanceCountdownEndTime: newSettings.maintenanceCountdownEndTime || db.settings.maintenanceCountdownEndTime || "",
-    maintenanceGlowColor: newSettings.maintenanceGlowColor || db.settings.maintenanceGlowColor || "#eab308",
-    maintenanceIconStyle: newSettings.maintenanceIconStyle || db.settings.maintenanceIconStyle || "wrench",
+    maintenanceCountdownEndTime: newSettings.maintenanceCountdownEndTime || oldSettings.maintenanceCountdownEndTime || "",
+    maintenanceGlowColor: newSettings.maintenanceGlowColor || oldSettings.maintenanceGlowColor || "#eab308",
+    maintenanceIconStyle: newSettings.maintenanceIconStyle || oldSettings.maintenanceIconStyle || "wrench",
     maintenanceTelegramActive: !!newSettings.maintenanceTelegramActive,
-    settingTelegram: newSettings.settingTelegram || db.settings.settingTelegram || "https://t.me/Trivela",
-    
-    // Service Toggles
+    settingTelegram: newSettings.settingTelegram || oldSettings.settingTelegram || "https://t.me/Trivela",
     enableServiceCoins: newSettings.enableServiceCoins !== false,
     enableServiceSBC: newSettings.enableServiceSBC !== false,
     enableServiceRivals: newSettings.enableServiceRivals !== false,
@@ -1447,124 +1481,111 @@ app.post('/api/admin/settings', (req, res) => {
     enableServiceObjectives: newSettings.enableServiceObjectives !== false,
     enableServiceCoaching: newSettings.enableServiceCoaching !== false,
     enableServicePackages: newSettings.enableServicePackages !== false,
-
-    // Coin purchase limits
     minCoinsPurchase: parseInt(newSettings.minCoinsPurchase) || 100000,
     maxCoinsPurchase: parseInt(newSettings.maxCoinsPurchase) || 10000000,
-
-    // Custom Exchange Rates Override
-    customExchangeRates: newSettings.customExchangeRates || db.settings.customExchangeRates || {},
-
+    customExchangeRates: newSettings.customExchangeRates || oldSettings.customExchangeRates || {},
     baseRateConsole: parseFloat(newSettings.baseRateConsole) || 2.80,
     baseRatePC: parseFloat(newSettings.baseRatePC) || 2.40,
     pointsDiscountRate: parseFloat(newSettings.pointsDiscountRate) || 37.5,
-    discounts: newSettings.discounts || db.settings.discounts || [],
-    content: newSettings.content || db.settings.content || {},
-    marketing: newSettings.marketing || db.settings.marketing || {},
-    features: newSettings.features || db.settings.features || []
+    discounts: newSettings.discounts || oldSettings.discounts || [],
+    content: newSettings.content || oldSettings.content || {},
+    marketing: newSettings.marketing || oldSettings.marketing || {},
+    features: newSettings.features || oldSettings.features || []
   };
 
-  writeDatabase(db);
+  for (const [key, value] of Object.entries(settingsToSave)) {
+    await saveSetting(key, value);
+  }
 
   if (changes.length > 0) {
-    addAdminLog('UPDATE_SETTINGS', `تم تحديث إعدادات المتجر: ${changes.join(' | ')}`, { settings: db.settings });
+    await addAdminLog('UPDATE_SETTINGS', `تم تحديث إعدادات المتجر: ${changes.join(' | ')}`, { settings: settingsToSave });
   }
 
-  res.json({ success: true, settings: db.settings });
+  res.json({ success: true, settings: settingsToSave });
 });
 
-// Admin POST update features (add/edit/reorder)
-app.post('/api/admin/features', (req, res) => {
+// Admin POST update features
+app.post('/api/admin/features', async (req, res) => {
   const features = req.body;
-  if (!Array.isArray(features)) {
-    return res.status(400).json({ error: "Invalid features data" });
-  }
-
-  const db = readDatabase();
-  db.settings.features = features;
-  writeDatabase(db);
-
-  addAdminLog('UPDATE_FEATURES', 'تم تحديث وترتيب مميزات المتجر');
-  res.json({ success: true, features: db.settings.features });
+  if (!Array.isArray(features)) return res.status(400).json({ error: "Invalid features data" });
+  await saveSetting('features', features);
+  await addAdminLog('UPDATE_FEATURES', 'تم تحديث وترتيب مميزات المتجر');
+  res.json({ success: true, features });
 });
 
 // Admin GET all email campaigns
-app.get('/api/admin/email-campaigns', (req, res) => {
-  const db = readDatabase();
-  res.json(db.emailCampaigns || []);
+app.get('/api/admin/email-campaigns', async (req, res) => {
+  const campaigns = await getSetting('_emailCampaigns', []);
+  res.json(campaigns);
 });
 
-// Admin POST create and send email campaign
-app.post('/api/admin/email-campaigns', (req, res) => {
+// Admin POST create email campaign
+app.post('/api/admin/email-campaigns', async (req, res) => {
   const { subject, previewText, body, recipientCount } = req.body;
-  if (!subject || !body) {
-    return res.status(400).json({ error: "Subject and Body are required" });
-  }
+  if (!subject || !body) return res.status(400).json({ error: "Subject and Body are required" });
 
-  const db = readDatabase();
+  const campaigns = await getSetting('_emailCampaigns', []);
   const newCampaign = {
     id: 'camp_' + Date.now(),
     date: new Date().toISOString(),
-    subject,
-    previewText: previewText || "",
-    body,
-    recipientCount: recipientCount || 0,
-    status: 'completed'
+    subject, previewText: previewText || "", body,
+    recipientCount: recipientCount || 0, status: 'completed'
   };
-
-  if (!db.emailCampaigns) db.emailCampaigns = [];
-  db.emailCampaigns.unshift(newCampaign);
-  writeDatabase(db);
-
-  addAdminLog('SEND_EMAIL_CAMPAIGN', `تم إرسال حملة البريد الإلكتروني الجماعية: ${subject}`);
-  res.json({ success: true, campaigns: db.emailCampaigns });
+  campaigns.unshift(newCampaign);
+  await saveSetting('_emailCampaigns', campaigns);
+  await addAdminLog('SEND_EMAIL_CAMPAIGN', `تم إرسال حملة البريد الإلكتروني الجماعية: ${subject}`);
+  res.json({ success: true, campaigns });
 });
 
-// Admin GET backup database.json file
-app.get('/api/admin/backup-db', (req, res) => {
-  const dbPath = path.join(__dirname, 'database.json');
-  res.download(dbPath, 'trivela_database_backup.json');
+// Admin GET backup database
+app.get('/api/admin/backup-db', async (req, res) => {
+  const db = await readDatabase();
+  const backupData = JSON.stringify(db, null, 2);
+  const tmpPath = path.join(__dirname, 'trivela_backup_temp.json');
+  fs.writeFileSync(tmpPath, backupData, 'utf8');
+  res.download(tmpPath, 'trivela_database_backup.json', () => {
+    try { fs.unlinkSync(tmpPath); } catch {}
+  });
 });
 
-// Admin POST restore database.json content
-app.post('/api/admin/restore-db', (req, res) => {
+// Admin POST restore database
+app.post('/api/admin/restore-db', async (req, res) => {
   const backupData = req.body;
-  if (!backupData || !backupData.players || !backupData.users || !backupData.orders || !backupData.settings) {
+  if (!backupData || !backupData.settings) {
     return res.status(400).json({ error: "ملف النسخة الاحتياطية غير صالح أو تالف." });
   }
-
-  writeDatabase(backupData);
-  addAdminLog('RESTORE_DATABASE', 'تم استرجاع قاعدة البيانات بالكامل من نسخة احتياطية مرفوعة.', {});
+  // Save settings
+  if (backupData.settings) {
+    for (const [key, value] of Object.entries(backupData.settings)) {
+      await saveSetting(key, value);
+    }
+  }
+  await addAdminLog('RESTORE_DATABASE', 'تم استرجاع قاعدة البيانات من نسخة احتياطية مرفوعة.', {});
   res.json({ success: true });
 });
 
-// POST update site content (admin CMS workflow)
-app.post('/api/admin/content', (req, res) => {
+// POST update site content
+app.post('/api/admin/content', async (req, res) => {
   const newContent = req.body;
   if (!newContent) return res.status(400).json({ error: "Invalid content data" });
-
-  const db = readDatabase();
-  db.settings.content = newContent;
-  writeDatabase(db);
-
-  addAdminLog('UPDATE_CONTENT', 'تم تحديث محتوى وتصميم صفحات المتجر');
-  res.json({ success: true, content: db.settings.content });
+  await saveSetting('content', newContent);
+  await addAdminLog('UPDATE_CONTENT', 'تم تحديث محتوى وتصميم صفحات المتجر');
+  res.json({ success: true, content: newContent });
 });
 
 // GET expenses
-app.get('/api/admin/expenses', (req, res) => {
-  const db = readDatabase();
-  res.json(db.expenses || []);
+app.get('/api/admin/expenses', async (req, res) => {
+  res.json(await getSetting('_expenses', []));
 });
 
 // POST add expense
-app.post('/api/admin/expenses', (req, res) => {
+app.post('/api/admin/expenses', async (req, res) => {
   const expenseData = req.body;
   if (!expenseData || !expenseData.title || isNaN(parseFloat(expenseData.amountUSD))) {
     return res.status(400).json({ error: "بيانات المصروف غير صالحة" });
   }
 
-  const db = readDatabase();
+  const expenses = await getSetting('_expenses', []);
   const newExpense = {
     id: 'exp_' + Date.now() + '_' + Math.floor(100 + Math.random() * 900),
     title: expenseData.title.trim(),
@@ -1572,30 +1593,21 @@ app.post('/api/admin/expenses', (req, res) => {
     category: expenseData.category || 'other',
     date: expenseData.date || new Date().toISOString()
   };
-
-  if (!db.expenses) db.expenses = [];
-  db.expenses.push(newExpense);
-  writeDatabase(db);
-
-  addAdminLog('ADD_EXPENSE', `تم إضافة مصروف جديد: ${newExpense.title} بقيمة ${newExpense.amountUSD}$`, { expense: newExpense });
+  expenses.push(newExpense);
+  await saveSetting('_expenses', expenses);
+  await addAdminLog('ADD_EXPENSE', `تم إضافة مصروف جديد: ${newExpense.title} بقيمة ${newExpense.amountUSD}$`, { expense: newExpense });
   res.json({ success: true, expense: newExpense });
 });
 
 // DELETE expense
-app.delete('/api/admin/expenses/:id', (req, res) => {
+app.delete('/api/admin/expenses/:id', async (req, res) => {
   const expenseId = req.params.id;
-  const db = readDatabase();
-  if (!db.expenses) db.expenses = [];
-  
-  const expenseIndex = db.expenses.findIndex(e => e.id === expenseId);
-  if (expenseIndex === -1) {
-    return res.status(404).json({ error: "المصروف غير موجود" });
-  }
-
-  const removed = db.expenses.splice(expenseIndex, 1)[0];
-  writeDatabase(db);
-
-  addAdminLog('DELETE_EXPENSE', `تم حذف مصروف: ${removed.title} بقيمة ${removed.amountUSD}$`);
+  const expenses = await getSetting('_expenses', []);
+  const idx = expenses.findIndex(e => e.id === expenseId);
+  if (idx === -1) return res.status(404).json({ error: "المصروف غير موجود" });
+  const removed = expenses.splice(idx, 1)[0];
+  await saveSetting('_expenses', expenses);
+  await addAdminLog('DELETE_EXPENSE', `تم حذف مصروف: ${removed.title} بقيمة ${removed.amountUSD}$`);
   res.json({ success: true });
 });
 
@@ -1603,9 +1615,52 @@ app.delete('/api/admin/expenses/:id', (req, res) => {
 // ORDER & PROFIT LOG MANAGEMENT
 // ==========================================
 
+// Public GET track order by ID or phone
+app.get('/api/orders/track/:id', async (req, res) => {
+  const query = (req.params.id || '').trim();
+  if (!query) return res.status(400).json({ error: "يرجى تحديد رقم الطلب أو رقم الهاتف" });
+
+  let order = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(query);
+  if (!order) {
+    order = await sqliteDb.prepare('SELECT * FROM orders WHERE user_phone = ? OR whatsapp_phone = ? ORDER BY created_at DESC LIMIT 1').get(query, query);
+  }
+
+  if (!order) {
+    return res.status(404).json({ error: "لم يتم العثور على الطلب. يرجى التأكد من الرقم والمحاولة مجدداً." });
+  }
+
+  const mapped = mapOrderFromDb(order);
+  const maskEmail = (em) => {
+    if (!em || !em.includes('@')) return null;
+    const [name, domain] = em.split('@');
+    return name.substring(0, 2) + '***@' + domain;
+  };
+
+  res.json({
+    ...mapped,
+    eaEmailMasked: maskEmail(mapped.eaEmail),
+    sonyEmailMasked: maskEmail(mapped.sonyEmail)
+  });
+});
+
+// User GET my-orders
+app.get('/api/orders/my-orders', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  const userPhone = req.user.phone;
+  const userEmail = req.user.email;
+
+  const ordersRaw = await sqliteDb.prepare(`
+    SELECT * FROM orders 
+    WHERE user_id = ? OR user_phone = ? OR user_email = ?
+    ORDER BY created_at DESC
+  `).all(userId, userPhone, userEmail);
+
+  res.json(ordersRaw.map(mapOrderFromDb));
+});
+
 // GET all orders for admin
-app.get('/api/admin/orders', (req, res) => {
-  const db = readDatabase();
+app.get('/api/admin/orders', async (req, res) => {
+  const db = await readDatabase();
   const orders = (db.orders || []).map(o => ({
     ...o,
     priceSAR: parseFloat((o.priceSAR / 3.75).toFixed(2)),
@@ -1617,142 +1672,206 @@ app.get('/api/admin/orders', (req, res) => {
   res.json(orders);
 });
 
-// DELETE an order (admin only)
-app.delete('/api/admin/orders/:id', (req, res) => {
+// DELETE an order
+app.delete('/api/admin/orders/:id', async (req, res) => {
   const orderId = req.params.id;
-  const db = readDatabase();
-  const orderIndex = db.orders.findIndex(o => o.id === orderId);
-  if (orderIndex === -1) {
-    return res.status(404).json({ error: "الطلب غير موجود" });
-  }
-
-  const order = db.orders[orderIndex];
-  db.orders.splice(orderIndex, 1);
-  writeDatabase(db);
-
-  addAdminLog('DELETE_ORDER', `تم حذف الطلب #${orderId.substring(6,14)} بالكامل — العميل: ${order.customerName}`, { orderId });
-
+  const order = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  if (!order) return res.status(404).json({ error: "الطلب غير موجود" });
+  
+  await sqliteDb.prepare('DELETE FROM orders WHERE id = ?').run(orderId);
+  await addAdminLog('DELETE_ORDER', `تم حذف الطلب #${orderId.substring(6,14)} بالكامل — العميل: ${order.user_name}`, { orderId });
   res.json({ success: true });
 });
 
-// POST submit a new order (from customer checkout)
-// POST submit a new order (from customer checkout)
-app.post('/api/orders', (req, res) => {
+// POST submit a new order
+app.post('/api/orders', async (req, res) => {
   const orderData = req.body;
   if (!orderData || !orderData.service || !orderData.priceSAR) {
     return res.status(400).json({ error: "Invalid order data" });
   }
 
-  const db = readDatabase();
-
-  // Extract user if auth header is present
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  let user = null;
-  if (token) {
-    try {
-      const userId = Buffer.from(token, 'base64').toString('ascii');
-      user = db.users.find(u => u.id === userId);
-    } catch (_) {}
-  }
-
-  // 1. Coupon validation
+  // Coupon validation
   if (orderData.couponCode) {
     const code = orderData.couponCode.toUpperCase().trim();
-    if (!db.coupons) db.coupons = [];
-    const coupon = db.coupons.find(c => c.code === code);
-    if (!coupon) {
-      return res.status(400).json({ error: "كوبون الخصم المدخل غير صالح." });
-    }
-    const todayStr = new Date().toISOString().split('T')[0];
-    if (coupon.expiryDate < todayStr) {
-      return res.status(400).json({ error: "كوبون الخصم منتهي الصلاحية." });
-    }
-    if ((coupon.usedCount || 0) >= (coupon.maxUses || 999)) {
+    const coupon = await sqliteDb.prepare('SELECT * FROM coupons WHERE code = ?').get(code);
+    if (!coupon) return res.status(400).json({ error: "كوبون الخصم المدخل غير صالح." });
+    if ((coupon.used_count || 0) >= (coupon.max_uses || 999)) {
       return res.status(400).json({ error: "كوبون الخصم استنفذ الحد الأقصى للاستخدام." });
     }
   }
 
-  // 2. Loyalty points validation & deduction
-  const pointsDeducted = parseInt(orderData.pointsDeducted, 10) || 0;
-  if (pointsDeducted > 0) {
-    if (!user) {
-      return res.status(400).json({ error: "يجب تسجيل الدخول لاستخدام نقاط الولاء." });
+  const orderId = 'order_' + Date.now() + '_' + Math.floor(100 + Math.random() * 900);
+  const paymentMethod = orderData.paymentMethod === 'paytabs' ? 'paytabs' : 'whatsapp';
+  
+  // Add extra order columns for the full order data
+  try {
+    const columns = await sqliteDb.prepare("PRAGMA table_info(orders)").all().map(c => c.name);
+    const extraColumns = [
+      'ea_password', 'backup_code1', 'backup_code2', 'backup_code3',
+      'sony_email', 'sony_password', 'sony_backup_code1', 'sony_backup_code2', 'sony_backup_code3',
+      'discord_handle', 'order_notes', 'amount_paid', 'supplier_cost', 'profit',
+      'paid_at', 'started_at', 'cancelled_at', 'paytabs_tran_ref'
+    ];
+    for (const col of extraColumns) {
+      if (!columns.includes(col)) {
+        await sqliteDb.prepare(`ALTER TABLE orders ADD COLUMN ${col} TEXT`).run();
+      }
     }
-    if ((user.points || 0) < pointsDeducted) {
-      return res.status(400).json({ error: "رصيد نقاط الولاء لديك غير كافٍ لهذا الخصم." });
-    }
-  }
+  } catch {}
 
-  const newOrder = {
-    id: 'order_' + Date.now() + '_' + Math.floor(100 + Math.random() * 900),
-    timestamp: new Date().toISOString(),
-    customerName: orderData.customerName || "زائر",
-    customerPhone: orderData.customerPhone || "غير محدد",
-    service: orderData.service,
-    platform: orderData.platform || "غير محدد",
-    priceSAR: parseFloat(orderData.priceSAR),
-    pointsDiscount: parseFloat(orderData.pointsDiscount) || 0,
-    pointsDeducted: pointsDeducted,
-    couponCode: orderData.couponCode || null,
-    // EA Account credentials
-    eaEmail: orderData.eaEmail || null,
-    eaPassword: orderData.eaPassword || null,
-    backupCode1: orderData.backupCode1 || null,
-    backupCode2: orderData.backupCode2 || null,
-    backupCode3: orderData.backupCode3 || null,
-    // Sony/PSN credentials (for Rivals/Champions)
-    sonyEmail: orderData.sonyEmail || null,
-    sonyPassword: orderData.sonyPassword || null,
-    sonyBackupCode1: orderData.sonyBackupCode1 || null,
-    sonyBackupCode2: orderData.sonyBackupCode2 || null,
-    sonyBackupCode3: orderData.sonyBackupCode3 || null,
-    // Coaching extras
-    discordHandle: orderData.discordHandle || null,
-    orderNotes: orderData.orderNotes || null,
-    // Order lifecycle
-    status: 'pending',
-    amountPaid: 0,
-    supplierCost: 0,
-    profit: 0,
-    paidAt: null,
-    startedAt: null,
-    completedAt: null,
-    cancelledAt: null
-  };
-
-  if (!db.orders) db.orders = [];
-  db.orders.unshift(newOrder);
+  await sqliteDb.prepare(`
+    INSERT INTO orders (id, user_id, user_phone, user_email, user_name, service, platform, ea_email, ea_password,
+      backup_code1, backup_code2, backup_code3,
+      sony_email, sony_password, sony_backup_code1, sony_backup_code2, sony_backup_code3,
+      discord_handle, order_notes, payment_method,
+      price_sar, status, coupon_code, amount_paid, supplier_cost, profit, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, 0, 0, 0, datetime('now'), datetime('now'))
+  `).run(
+    orderId,
+    null,
+    orderData.customerPhone || 'غير محدد',
+    orderData.customerEmail || null,
+    orderData.customerName || 'زائر',
+    orderData.service,
+    orderData.platform || 'غير محدد',
+    orderData.eaEmail || null,
+    orderData.eaPassword || null,
+    orderData.backupCode1 || null,
+    orderData.backupCode2 || null,
+    orderData.backupCode3 || null,
+    orderData.sonyEmail || null,
+    orderData.sonyPassword || null,
+    orderData.sonyBackupCode1 || null,
+    orderData.sonyBackupCode2 || null,
+    orderData.sonyBackupCode3 || null,
+    orderData.discordHandle || null,
+    orderData.orderNotes || null,
+    paymentMethod,
+    parseFloat(orderData.priceSAR),
+    orderData.couponCode || null
+  );
 
   // Track coupon usage
-  if (newOrder.couponCode) {
-    const code = newOrder.couponCode.toUpperCase().trim();
-    const coupon = db.coupons.find(c => c.code === code);
-    if (coupon) {
-      coupon.usedCount = (coupon.usedCount || 0) + 1;
+  if (orderData.couponCode) {
+    const code = orderData.couponCode.toUpperCase().trim();
+    await sqliteDb.prepare('UPDATE coupons SET used_count = used_count + 1 WHERE code = ?').run(code);
+  }
+
+  await addAdminLog('NEW_ORDER', `طلب جديد #${orderId.substring(6,14)} من ${orderData.customerName || 'زائر'} [طريقة الدفع: ${paymentMethod === 'paytabs' ? 'PayTabs إلكتروني' : 'واتساب'}] — ${orderData.service}`, { orderId, paymentMethod });
+
+  const newOrder = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+
+  // Handle PayTabs Direct Payment
+  if (paymentMethod === 'paytabs') {
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+    const host = req.headers['x-forwarded-host'] || req.headers.host || `localhost:${PORT}`;
+    const baseUrl = `${protocol}://${host}`;
+    const returnUrl = `${baseUrl}/api/payment/paytabs/return`;
+    const callbackUrl = `${baseUrl}/api/payment/paytabs/callback`;
+
+    try {
+      const paytabsRes = await createPaymentPage(
+        { ...newOrder, customerName: orderData.customerName, customerEmail: orderData.customerEmail, customerPhone: orderData.customerPhone, ip: req.ip },
+        returnUrl,
+        callbackUrl
+      );
+
+      if (paytabsRes.success && paytabsRes.redirect_url) {
+        if (paytabsRes.tran_ref) {
+          await sqliteDb.prepare('UPDATE orders SET paytabs_tran_ref = ? WHERE id = ?').run(paytabsRes.tran_ref, orderId);
+        }
+        return res.json({
+          success: true,
+          paymentMethod: 'paytabs',
+          paymentUrl: paytabsRes.redirect_url,
+          tranRef: paytabsRes.tran_ref,
+          order: mapOrderFromDb(newOrder)
+        });
+      } else {
+        return res.json({
+          success: true,
+          paymentMethod: 'whatsapp',
+          paymentFallback: true,
+          order: mapOrderFromDb(newOrder),
+          message: 'تم تسجيل الطلب! تعذر فتح بوابة الدفع، يرجى المتابعة عبر الواتساب.'
+        });
+      }
+    } catch (payErr) {
+      console.error('PayTabs error on order create:', payErr);
+      return res.json({
+        success: true,
+        paymentMethod: 'whatsapp',
+        paymentFallback: true,
+        order: mapOrderFromDb(newOrder)
+      });
     }
   }
 
-  // Deduct points if validated
-  if (pointsDeducted > 0 && user) {
-    user.points = (user.points || 0) - pointsDeducted;
-    if (!user.history) user.history = [];
-    user.history.push({
-      date: new Date().toISOString(),
-      amount: -pointsDeducted,
-      reason: `استخدام نقاط ولاء كخصم في الطلب #${newOrder.id.substring(6, 14)}`
-    });
-  }
-
-  writeDatabase(db);
-
-  addAdminLog('NEW_ORDER', `طلب جديد #${newOrder.id.substring(6,14)} من ${newOrder.customerName} — ${newOrder.service}`, { orderId: newOrder.id });
-
-  res.json({ success: true, order: newOrder });
+  // Default: WhatsApp manual payment
+  res.json({ success: true, paymentMethod: 'whatsapp', order: mapOrderFromDb(newOrder) });
 });
 
-// PUT update order status (admin workflow)
-app.put('/api/admin/orders/:id/status', (req, res) => {
+// ==========================================
+// PAYTABS GATEWAY WEBHOOK & RETURN ROUTES
+// ==========================================
+
+// PayTabs Server-to-Server IPN Callback
+app.post('/api/payment/paytabs/callback', async (req, res) => {
+  try {
+    const body = req.body;
+    const tranRef = body.tran_ref || body.tranRef;
+    const cartId = body.cart_id || body.cartId;
+    const status = (body.payment_result && body.payment_result.response_status) || body.status;
+
+    console.log(`💳 [PayTabs Callback] Cart: ${cartId}, Status: ${status}, Ref: ${tranRef}`);
+
+    if (cartId) {
+      const order = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(cartId);
+      if (order && (status === 'A' || status === '100' || status === 'success' || status === 'Authorised')) {
+        const now = new Date().toISOString();
+        const amtPaid = order.price_sar || 0;
+        await sqliteDb.prepare("UPDATE orders SET status = 'paid', payment_method = 'paytabs', amount_paid = ?, paid_at = ?, updated_at = ? WHERE id = ?").run(amtPaid, now, now, cartId);
+        await addAdminLog('ORDER_PAID_ONLINE', `تم تأكيد دفع الطلب #${cartId.substring(6,14)} إلكترونياً عبر PayTabs (${amtPaid} ر.س) — العميل: ${order.user_name}`, { orderId: cartId, tranRef });
+      }
+    }
+    res.status(200).send('OK');
+  } catch (e) {
+    console.error('PayTabs callback error:', e);
+    res.status(500).send('Error');
+  }
+});
+
+// PayTabs Customer Return Redirect
+app.all('/api/payment/paytabs/return', async (req, res) => {
+  const orderId = req.query.orderId || req.body.cart_id || req.body.cartId;
+  const tranRef = req.query.tranRef || req.body.tran_ref || req.body.tranRef;
+
+  if (!orderId) {
+    return res.redirect('/track.html');
+  }
+
+  if (tranRef) {
+    try {
+      const verResult = await verifyTransaction(tranRef);
+      if (verResult.isPaid) {
+        const order = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+        if (order && order.status === 'pending') {
+          const now = new Date().toISOString();
+          await sqliteDb.prepare("UPDATE orders SET status = 'paid', payment_method = 'paytabs', amount_paid = ?, paid_at = ?, updated_at = ? WHERE id = ?").run(order.price_sar || 0, now, now, orderId);
+          await addAdminLog('ORDER_PAID_ONLINE', `تم تأكيد دفع الطلب #${orderId.substring(6,14)} عبر PayTabs — العميل: ${order.user_name}`, { orderId, tranRef });
+        }
+      }
+    } catch (e) {
+      console.error('Error verifying PayTabs return:', e);
+    }
+  }
+
+  return res.redirect(`/track.html?orderId=${encodeURIComponent(orderId)}&payment_status=success`);
+});
+
+
+// PUT update order status
+app.put('/api/admin/orders/:id/status', async (req, res) => {
   const orderId = req.params.id;
   const { status, amountPaid, supplierCost } = req.body;
 
@@ -1761,159 +1880,72 @@ app.put('/api/admin/orders/:id/status', (req, res) => {
     return res.status(400).json({ error: "حالة غير صالحة" });
   }
 
-  const db = readDatabase();
-  const order = db.orders.find(o => o.id === orderId);
-  if (!order) {
-    return res.status(404).json({ error: "الطلب غير موجود" });
-  }
+  const order = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  if (!order) return res.status(404).json({ error: "الطلب غير موجود" });
 
   const now = new Date().toISOString();
 
-  // Status: paid — customer confirmed payment
   if (status === 'paid') {
-    order.status = 'paid';
-    // amountPaid is received in USD, convert to SAR for disk storage
     const amtPaidUSD = parseFloat(amountPaid);
-    order.amountPaid = !isNaN(amtPaidUSD) ? amtPaidUSD * 3.75 : order.priceSAR;
-    order.paidAt = now;
-    addAdminLog('ORDER_PAID', `تم تأكيد دفع الطلب #${order.id.substring(6,14)} — ${order.customerName} — ${(order.amountPaid / 3.75).toFixed(2)} $`, { orderId });
-  }
-  // Status: in_progress — sent to supplier
-  else if (status === 'in_progress') {
-    order.status = 'in_progress';
-    // supplierCost is received in USD, convert to SAR for disk storage
+    const amtPaidSAR = !isNaN(amtPaidUSD) ? amtPaidUSD * 3.75 : order.price_sar;
+    await sqliteDb.prepare('UPDATE orders SET status = ?, amount_paid = ?, paid_at = ?, updated_at = ? WHERE id = ?').run('paid', amtPaidSAR, now, now, orderId);
+    await addAdminLog('ORDER_PAID', `تم تأكيد دفع الطلب #${orderId.substring(6,14)} — ${order.user_name} — ${(amtPaidSAR / 3.75).toFixed(2)} $`, { orderId });
+  } else if (status === 'in_progress') {
     const costUSD = parseFloat(supplierCost);
-    order.supplierCost = !isNaN(costUSD) ? costUSD * 3.75 : 0;
-    order.startedAt = now;
-    addAdminLog('ORDER_IN_PROGRESS', `تم إرسال الطلب #${order.id.substring(6,14)} للمورد — تكلفة المورد: ${(order.supplierCost / 3.75).toFixed(2)} $`, { orderId });
-  }
-  // Status: completed — supplier finished
-  else if (status === 'completed') {
-    const isAlreadyCompleted = (order.status === 'completed');
-    order.status = 'completed';
-    order.completedAt = now;
-    order.profit = (order.amountPaid || order.priceSAR) - (order.supplierCost || 0);
-
-    // Check if points should be awarded (only if transition to completed happens for the first time)
-    if (!isAlreadyCompleted) {
-      // Find matching user by phone
-      const cleanPhone = (order.customerPhone || '').replace(/[\s\+\-]/g, '').trim();
-      const user = db.users.find(u => {
-        const uPhone = (u.phone || '').replace(/[\s\+\-]/g, '').trim();
-        return uPhone === cleanPhone || (u.email && u.email.toLowerCase().trim() === (order.customerEmail || '').toLowerCase().trim());
-      });
-
-      if (user) {
-        // Calculate points: 1 point per 1,000 coins, or 5 points per 1 SAR spent on services
-        let earnedPoints = 0;
-        if (order.coinsAmount && parseInt(order.coinsAmount, 10) > 0) {
-          earnedPoints = Math.floor(parseInt(order.coinsAmount, 10) / 1000);
-        } else {
-          earnedPoints = Math.floor(parseFloat(order.priceSAR || 0) * 5);
-        }
-        if (earnedPoints > 0) {
-          user.points = (user.points || 0) + earnedPoints;
-          if (!user.history) user.history = [];
-          user.history.push({
-            date: now,
-            amount: earnedPoints,
-            reason: `كسب نقاط تلقائية عند إتمام الطلب #${order.id.substring(6,14)} (${order.service})`
-          });
-        }
-
-        // Referral reward check
-        if (user.referredBy) {
-          // Check if this is their first completed order
-          const priorCompleted = db.orders.filter(o => {
-            const oPhone = (o.customerPhone || '').replace(/[\s\+\-]/g, '').trim();
-            const sameCust = oPhone === cleanPhone || (o.customerEmail && o.customerEmail.toLowerCase().trim() === user.email.toLowerCase().trim());
-            return sameCust && o.status === 'completed' && o.id !== order.id;
-          });
-
-          if (priorCompleted.length === 0) {
-            // Referrer gets 50 points
-            const cleanRef = user.referredBy.replace(/[\s\+\-]/g, '').trim();
-            const referrer = db.users.find(u => {
-              const uPhone = (u.phone || '').replace(/[\s\+\-]/g, '').trim();
-              return uPhone === cleanRef || u.id === cleanRef;
-            });
-
-            if (referrer) {
-              referrer.points = (referrer.points || 0) + 50;
-              if (!referrer.history) referrer.history = [];
-              referrer.history.push({
-                date: now,
-                amount: 50,
-                reason: `بونص إحالة صديق: إتمام أول طلب للعميل (${user.name})`
-              });
-            }
-          }
-        }
-      }
-    }
-
-    addAdminLog('ORDER_COMPLETED', `تم إتمام الطلب #${order.id.substring(6,14)} — ${order.service} — ربح صافي: ${(order.profit / 3.75).toFixed(2)} $`, { orderId, profit: order.profit });
-  }
-  // Status: cancelled
-  else if (status === 'cancelled') {
-    order.status = 'cancelled';
-    order.cancelledAt = now;
-    addAdminLog('ORDER_CANCELLED', `تم إلغاء الطلب #${order.id.substring(6,14)} — ${order.customerName}`, { orderId });
+    const costSAR = !isNaN(costUSD) ? costUSD * 3.75 : 0;
+    await sqliteDb.prepare('UPDATE orders SET status = ?, supplier_cost = ?, started_at = ?, updated_at = ? WHERE id = ?').run('in_progress', costSAR, now, now, orderId);
+    await addAdminLog('ORDER_IN_PROGRESS', `تم إرسال الطلب #${orderId.substring(6,14)} للمورد — تكلفة المورد: ${(costSAR / 3.75).toFixed(2)} $`, { orderId });
+  } else if (status === 'completed') {
+    const updatedOrder = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+    const profit = ((updatedOrder.amount_paid || updatedOrder.price_sar) - (updatedOrder.supplier_cost || 0));
+    await sqliteDb.prepare('UPDATE orders SET status = ?, profit = ?, completed_at = ?, updated_at = ? WHERE id = ?').run('completed', profit, now, now, orderId);
+    await addAdminLog('ORDER_COMPLETED', `تم إتمام الطلب #${orderId.substring(6,14)} — ${order.service} — ربح صافي: ${(profit / 3.75).toFixed(2)} $`, { orderId, profit });
+  } else if (status === 'cancelled') {
+    await sqliteDb.prepare('UPDATE orders SET status = ?, cancelled_at = ?, updated_at = ? WHERE id = ?').run('cancelled', now, now, orderId);
+    await addAdminLog('ORDER_CANCELLED', `تم إلغاء الطلب #${orderId.substring(6,14)} — ${order.user_name}`, { orderId });
   }
 
-  writeDatabase(db);
-  res.json({ success: true, order });
+  const finalOrder = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  res.json({ success: true, order: mapOrderFromDb(finalOrder) });
 });
 
-// POST update order credentials/notes (admin workflow)
-app.post('/api/admin/orders/:id/update-details', (req, res) => {
+// POST update order credentials/notes
+app.post('/api/admin/orders/:id/update-details', async (req, res) => {
   const orderId = req.params.id;
   const { eaEmail, eaPassword, sonyEmail, sonyPassword, backupCodes, adminNotes } = req.body;
 
-  const db = readDatabase();
-  const order = db.orders.find(o => o.id === orderId);
-  if (!order) {
-    return res.status(404).json({ error: "الطلب غير موجود" });
-  }
+  const order = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  if (!order) return res.status(404).json({ error: "الطلب غير موجود" });
 
-  if (eaEmail !== undefined) order.eaEmail = eaEmail.trim();
-  if (eaPassword !== undefined) order.eaPassword = eaPassword.trim();
-  if (sonyEmail !== undefined) order.sonyEmail = sonyEmail.trim();
-  if (sonyPassword !== undefined) order.sonyPassword = sonyPassword.trim();
-  
-  if (backupCodes !== undefined) {
-    if (Array.isArray(backupCodes)) {
-      order.backupCodes = backupCodes.map(c => c.trim());
-    } else if (typeof backupCodes === 'string') {
-      order.backupCodes = backupCodes.split(',').map(c => c.trim()).filter(Boolean);
-    }
-  }
+  if (eaEmail !== undefined) await sqliteDb.prepare('UPDATE orders SET ea_email = ? WHERE id = ?').run(eaEmail.trim(), orderId);
+  if (eaPassword !== undefined) await sqliteDb.prepare('UPDATE orders SET ea_password = ? WHERE id = ?').run(eaPassword.trim(), orderId);
+  if (sonyEmail !== undefined) await sqliteDb.prepare('UPDATE orders SET sony_email = ? WHERE id = ?').run(sonyEmail.trim(), orderId);
+  if (sonyPassword !== undefined) await sqliteDb.prepare('UPDATE orders SET sony_password = ? WHERE id = ?').run(sonyPassword.trim(), orderId);
+  if (adminNotes !== undefined) await sqliteDb.prepare('UPDATE orders SET admin_notes = ? WHERE id = ?').run(adminNotes.trim(), orderId);
 
-  if (adminNotes !== undefined) order.adminNotes = adminNotes.trim();
+  await sqliteDb.prepare("UPDATE orders SET updated_at = datetime('now') WHERE id = ?").run(orderId);
+  await addAdminLog('UPDATE_ORDER_DETAILS', `تم تعديل بيانات/ملاحظات الطلب #${orderId.substring(6,14)}`, { orderId });
 
-  writeDatabase(db);
-  addAdminLog('UPDATE_ORDER_DETAILS', `تم تعديل بيانات/ملاحظات الطلب #${order.id.substring(6,14)}`, { orderId });
-
-  res.json({ success: true, order });
+  const updatedOrder = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  res.json({ success: true, order: mapOrderFromDb(updatedOrder) });
 });
 
-// Legacy: POST complete order (kept for backward compatibility)
-app.post('/api/admin/orders/:id/complete', (req, res) => {
+// Legacy: POST complete order
+app.post('/api/admin/orders/:id/complete', async (req, res) => {
   const orderId = req.params.id;
   const { supplierCost } = req.body;
-  const db = readDatabase();
-  const order = db.orders.find(o => o.id === orderId);
+  const order = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
   if (!order) return res.status(404).json({ error: "الطلب غير موجود" });
   
-  // supplierCost is received in USD, convert to SAR
   const cost = (parseFloat(supplierCost) || 0) * 3.75;
-  order.status = 'completed';
-  order.supplierCost = cost;
-  order.profit = (order.amountPaid || order.priceSAR) - cost;
-  order.completedAt = new Date().toISOString();
-  writeDatabase(db);
-  addAdminLog('COMPLETE_ORDER', `تم إتمام الطلب ${order.id} بتكلفة مورد ${(cost / 3.75).toFixed(2)} $`, { orderId });
-  res.json({ success: true, order });
+  const profit = ((order.amount_paid || order.price_sar) - cost);
+  const now = new Date().toISOString();
+  
+  await sqliteDb.prepare('UPDATE orders SET status = ?, supplier_cost = ?, profit = ?, completed_at = ?, updated_at = ? WHERE id = ?').run('completed', cost, profit, now, now, orderId);
+  await addAdminLog('COMPLETE_ORDER', `تم إتمام الطلب ${orderId} بتكلفة مورد ${(cost / 3.75).toFixed(2)} $`, { orderId });
+  
+  const finalOrder = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  res.json({ success: true, order: mapOrderFromDb(finalOrder) });
 });
 
 // ==========================================
@@ -1921,115 +1953,91 @@ app.post('/api/admin/orders/:id/complete', (req, res) => {
 // ==========================================
 
 // POST add/update FAQ
-app.post('/api/admin/faqs', (req, res) => {
+app.post('/api/admin/faqs', async (req, res) => {
   const { id, q, a, question, answer } = req.body;
   const finalQ = q || question;
   const finalA = a || answer;
   if (!finalQ || !finalA) return res.status(400).json({ error: "الرجاء إدخال السؤال والجواب" });
 
-  const db = readDatabase();
-  if (!db.faqs) db.faqs = [];
-
   const faqId = id || 'faq_' + Date.now();
-  const index = db.faqs.findIndex(f => f.id === faqId);
-
-  const faqItem = { 
-    id: faqId, 
-    q: finalQ, 
-    a: finalA, 
-    question: finalQ, 
-    answer: finalA 
-  };
-
-  if (index !== -1) {
-    db.faqs[index] = faqItem;
-    addAdminLog('UPDATE_FAQ', `تم تعديل السؤال الشائع: "${finalQ}"`, { faqId });
+  const existing = await sqliteDb.prepare('SELECT id FROM faqs WHERE id = ?').get(faqId);
+  
+  if (existing) {
+    await sqliteDb.prepare('UPDATE faqs SET question = ?, answer = ? WHERE id = ?').run(finalQ, finalA, faqId);
+    await addAdminLog('UPDATE_FAQ', `تم تعديل السؤال الشائع: "${finalQ}"`, { faqId });
   } else {
-    db.faqs.push(faqItem);
-    addAdminLog('ADD_FAQ', `تم إضافة سؤال شائع جديد: "${finalQ}"`, { faqId });
+    await sqliteDb.prepare('INSERT INTO faqs (id, question, answer) VALUES (?, ?, ?)').run(faqId, finalQ, finalA);
+    await addAdminLog('ADD_FAQ', `تم إضافة سؤال شائع جديد: "${finalQ}"`, { faqId });
   }
 
-  writeDatabase(db);
-  res.json({ success: true, faqs: db.faqs });
+  const faqs = (await sqliteDb.prepare('SELECT * FROM faqs ORDER BY sort_order ASC').all()).map(f => ({
+    id: f.id, q: f.question, a: f.answer, question: f.question, answer: f.answer
+  }));
+  res.json({ success: true, faqs });
 });
 
 // DELETE FAQ
-app.delete('/api/admin/faqs/:id', (req, res) => {
+app.delete('/api/admin/faqs/:id', async (req, res) => {
   const faqId = req.params.id;
-  const db = readDatabase();
-  if (!db.faqs) db.faqs = [];
+  const faq = await sqliteDb.prepare('SELECT * FROM faqs WHERE id = ?').get(faqId);
+  if (!faq) return res.status(404).json({ error: "FAQ not found" });
+  
+  await sqliteDb.prepare('DELETE FROM faqs WHERE id = ?').run(faqId);
+  await addAdminLog('DELETE_FAQ', `تم حذف السؤال الشائع: "${faq.question}"`, { faqId });
 
-  const initialLength = db.faqs.length;
-  const faqToDelete = db.faqs.find(f => f.id === faqId);
-  db.faqs = db.faqs.filter(f => f.id !== faqId);
-
-  if (db.faqs.length === initialLength) {
-    return res.status(404).json({ error: "FAQ not found" });
-  }
-
-  writeDatabase(db);
-  addAdminLog('DELETE_FAQ', `تم حذف السؤال الشائع: "${faqToDelete ? faqToDelete.q : faqId}"`, { faqId });
-
-  res.json({ success: true, faqs: db.faqs });
+  const faqs = (await sqliteDb.prepare('SELECT * FROM faqs ORDER BY sort_order ASC').all()).map(f => ({
+    id: f.id, q: f.question, a: f.answer, question: f.question, answer: f.answer
+  }));
+  res.json({ success: true, faqs });
 });
 
-// GET all reviews (for Admin panel management)
-app.get('/api/admin/reviews', (req, res) => {
-  const db = readDatabase();
-  res.json({ success: true, reviews: db.reviews || [] });
+// GET all reviews (admin)
+app.get('/api/admin/reviews', async (req, res) => {
+  const reviews = (await sqliteDb.prepare('SELECT * FROM reviews ORDER BY created_at DESC').all()).map(r => ({
+    id: r.id, name: r.user_name, stars: r.rating, text: r.comment,
+    badge: '', status: r.visible === 1 ? 'approved' : 'pending'
+  }));
+  res.json({ success: true, reviews });
 });
 
 // POST add/update Review
-app.post('/api/admin/reviews', (req, res) => {
+app.post('/api/admin/reviews', async (req, res) => {
   const { id, name, platform, stars, text, badge, status } = req.body;
   if (!name || !text) return res.status(400).json({ error: "الرجاء إدخال اسم العميل والتقييم" });
 
-  const db = readDatabase();
-  if (!db.reviews) db.reviews = [];
-
   const revId = id || 'rev_' + Date.now();
-  const index = db.reviews.findIndex(r => r.id === revId);
+  const visible = status === 'approved' ? 1 : 0;
+  const existing = await sqliteDb.prepare('SELECT id FROM reviews WHERE id = ?').get(revId);
 
-  const reviewItem = {
-    id: revId,
-    name: name.trim(),
-    platform: platform || "PS5",
-    stars: parseInt(stars, 10) || 5,
-    text: text.trim(),
-    badge: badge || "",
-    status: status || "approved"
-  };
-
-  if (index !== -1) {
-    db.reviews[index] = reviewItem;
-    addAdminLog('UPDATE_REVIEW', `تم تعديل تقييم العميل: "${name}"`, { revId });
+  if (existing) {
+    await sqliteDb.prepare('UPDATE reviews SET user_name = ?, rating = ?, comment = ?, visible = ? WHERE id = ?').run(name.trim(), parseInt(stars, 10) || 5, text.trim(), visible, revId);
+    await addAdminLog('UPDATE_REVIEW', `تم تعديل تقييم العميل: "${name}"`, { revId });
   } else {
-    db.reviews.unshift(reviewItem); // Add new admin reviews at the top
-    addAdminLog('ADD_REVIEW', `تم إضافة تقييم جديد للعميل: "${name}"`, { revId });
+    await sqliteDb.prepare('INSERT INTO reviews (id, user_name, rating, comment, visible) VALUES (?, ?, ?, ?, ?)').run(revId, name.trim(), parseInt(stars, 10) || 5, text.trim(), visible);
+    await addAdminLog('ADD_REVIEW', `تم إضافة تقييم جديد للعميل: "${name}"`, { revId });
   }
 
-  writeDatabase(db);
-  res.json({ success: true, reviews: db.reviews });
+  const reviews = (await sqliteDb.prepare('SELECT * FROM reviews ORDER BY created_at DESC').all()).map(r => ({
+    id: r.id, name: r.user_name, stars: r.rating, text: r.comment,
+    badge: '', status: r.visible === 1 ? 'approved' : 'pending'
+  }));
+  res.json({ success: true, reviews });
 });
 
 // DELETE Review
-app.delete('/api/admin/reviews/:id', (req, res) => {
+app.delete('/api/admin/reviews/:id', async (req, res) => {
   const revId = req.params.id;
-  const db = readDatabase();
-  if (!db.reviews) db.reviews = [];
+  const rev = await sqliteDb.prepare('SELECT * FROM reviews WHERE id = ?').get(revId);
+  if (!rev) return res.status(404).json({ error: "Review not found" });
 
-  const initialLength = db.reviews.length;
-  const revToDelete = db.reviews.find(r => r.id === revId);
-  db.reviews = db.reviews.filter(r => r.id !== revId);
+  await sqliteDb.prepare('DELETE FROM reviews WHERE id = ?').run(revId);
+  await addAdminLog('DELETE_REVIEW', `تم حذف تقييم العميل: "${rev.user_name}"`, { revId });
 
-  if (db.reviews.length === initialLength) {
-    return res.status(404).json({ error: "Review not found" });
-  }
-
-  writeDatabase(db);
-  addAdminLog('DELETE_REVIEW', `تم حذف تقييم العميل: "${revToDelete ? revToDelete.name : revId}"`, { revId });
-
-  res.json({ success: true, reviews: db.reviews });
+  const reviews = (await sqliteDb.prepare('SELECT * FROM reviews ORDER BY created_at DESC').all()).map(r => ({
+    id: r.id, name: r.user_name, stars: r.rating, text: r.comment,
+    badge: '', status: r.visible === 1 ? 'approved' : 'pending'
+  }));
+  res.json({ success: true, reviews });
 });
 
 // ==========================================
@@ -2037,71 +2045,72 @@ app.delete('/api/admin/reviews/:id', (req, res) => {
 // ==========================================
 
 // Public GET all coupons
-app.get('/api/public/coupons', (req, res) => {
-  const db = readDatabase();
-  if (!db.coupons) db.coupons = [];
-  res.json(db.coupons);
+app.get('/api/public/coupons', async (req, res) => {
+  const coupons = (await sqliteDb.prepare('SELECT * FROM coupons').all()).map(c => ({
+    code: c.code, percent: c.discount_percent, maxUses: c.max_uses,
+    usedCount: c.used_count, expiryDate: c.created_at
+  }));
+  res.json(coupons);
 });
 
 // Admin GET all coupons
-app.get('/api/admin/coupons', (req, res) => {
-  const db = readDatabase();
-  if (!db.coupons) db.coupons = [];
-  res.json(db.coupons);
+app.get('/api/admin/coupons', async (req, res) => {
+  const coupons = (await sqliteDb.prepare('SELECT * FROM coupons').all()).map(c => ({
+    code: c.code, percent: c.discount_percent, maxUses: c.max_uses,
+    usedCount: c.used_count, expiryDate: c.created_at
+  }));
+  res.json(coupons);
 });
 
 // Admin POST add/update coupon
-app.post('/api/admin/coupons', (req, res) => {
+app.post('/api/admin/coupons', async (req, res) => {
   const newCoupon = req.body;
   if (!newCoupon || !newCoupon.code || newCoupon.percent === undefined) {
     return res.status(400).json({ error: "بيانات الكوبون غير صالحة" });
   }
 
-  const db = readDatabase();
-  if (!db.coupons) db.coupons = [];
+  const code = newCoupon.code.toUpperCase().trim();
+  const existing = await sqliteDb.prepare('SELECT id FROM coupons WHERE code = ?').get(code);
 
-  const couponItem = {
-    code: newCoupon.code.toUpperCase().trim(),
-    percent: parseFloat(newCoupon.percent),
-    maxUses: parseInt(newCoupon.maxUses, 10) || 999,
-    usedCount: parseInt(newCoupon.usedCount, 10) || 0,
-    expiryDate: newCoupon.expiryDate || "2027-12-31"
-  };
-
-  const index = db.coupons.findIndex(c => c.code === couponItem.code);
-  if (index !== -1) {
-    db.coupons[index] = couponItem;
-    addAdminLog('UPDATE_COUPON', `تم تعديل الكوبون: "${couponItem.code}" (خصم ${couponItem.percent}%)`, { code: couponItem.code });
+  if (existing) {
+    await sqliteDb.prepare('UPDATE coupons SET discount_percent = ?, max_uses = ?, used_count = ? WHERE code = ?').run(
+      parseFloat(newCoupon.percent), parseInt(newCoupon.maxUses, 10) || 999,
+      parseInt(newCoupon.usedCount, 10) || 0, code
+    );
+    await addAdminLog('UPDATE_COUPON', `تم تعديل الكوبون: "${code}" (خصم ${newCoupon.percent}%)`, { code });
   } else {
-    db.coupons.push(couponItem);
-    addAdminLog('ADD_COUPON', `تم إضافة كوبون جديد: "${couponItem.code}" (خصم ${couponItem.percent}%)`, { code: couponItem.code });
+    await sqliteDb.prepare('INSERT INTO coupons (id, code, discount_percent, max_uses, used_count, active) VALUES (?, ?, ?, ?, ?, 1)').run(
+      'cpn_' + Date.now(), code, parseFloat(newCoupon.percent),
+      parseInt(newCoupon.maxUses, 10) || 999, parseInt(newCoupon.usedCount, 10) || 0
+    );
+    await addAdminLog('ADD_COUPON', `تم إضافة كوبون جديد: "${code}" (خصم ${newCoupon.percent}%)`, { code });
   }
 
-  writeDatabase(db);
-  res.json({ success: true, coupons: db.coupons });
+  const coupons = (await sqliteDb.prepare('SELECT * FROM coupons').all()).map(c => ({
+    code: c.code, percent: c.discount_percent, maxUses: c.max_uses,
+    usedCount: c.used_count, expiryDate: c.created_at
+  }));
+  res.json({ success: true, coupons });
 });
 
 // Admin DELETE coupon
-app.delete('/api/admin/coupons/:code', (req, res) => {
+app.delete('/api/admin/coupons/:code', async (req, res) => {
   const code = req.params.code.toUpperCase();
-  const db = readDatabase();
-  if (!db.coupons) db.coupons = [];
+  const existing = await sqliteDb.prepare('SELECT id FROM coupons WHERE code = ?').get(code);
+  if (!existing) return res.status(404).json({ error: "الكوبون غير موجود" });
 
-  const initialLength = db.coupons.length;
-  db.coupons = db.coupons.filter(c => c.code !== code);
+  await sqliteDb.prepare('DELETE FROM coupons WHERE code = ?').run(code);
+  await addAdminLog('DELETE_COUPON', `تم حذف الكوبون التسويقي: "${code}"`, { code });
 
-  if (db.coupons.length === initialLength) {
-    return res.status(404).json({ error: "الكوبون غير موجود" });
-  }
-
-  writeDatabase(db);
-  addAdminLog('DELETE_COUPON', `تم حذف الكوبون التسويقي: "${code}"`, { code });
-
-  res.json({ success: true, coupons: db.coupons });
+  const coupons = (await sqliteDb.prepare('SELECT * FROM coupons').all()).map(c => ({
+    code: c.code, percent: c.discount_percent, maxUses: c.max_uses,
+    usedCount: c.used_count, expiryDate: c.created_at
+  }));
+  res.json({ success: true, coupons });
 });
 
-// Authenticated POST to redeem loyalty points for discount coupons
-app.post('/api/public/redeem-points', authenticateToken, (req, res) => {
+// Redeem loyalty points
+app.post('/api/public/redeem-points', authenticateToken, async (req, res) => {
   const { rewardType } = req.body;
   const userId = req.user.id;
 
@@ -2113,53 +2122,55 @@ app.post('/api/public/redeem-points', authenticateToken, (req, res) => {
     'discount40': { cost: 2000, discount: 0, flatDiscount: 40, freeCoins: 0, label: "40 ر.س" }
   };
 
-  if (!validRewards[rewardType]) {
-    return res.status(400).json({ error: "نوع مكافأة غير صالح" });
-  }
+  if (!validRewards[rewardType]) return res.status(400).json({ error: "نوع مكافأة غير صالح" });
 
   const reward = validRewards[rewardType];
-  const db = readDatabase();
-  const user = db.users.find(u => u.id === userId);
+  const user = await sqliteDb.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  if (!user) return res.status(404).json({ error: "المستخدم غير موجود" });
+  if ((user.points || 0) < reward.cost) return res.status(400).json({ error: "رصيد نقاطك غير كافٍ لاستبدال هذه المكافأة" });
 
-  if (!user) {
-    return res.status(404).json({ error: "المستخدم غير موجود" });
-  }
+  const newPoints = (user.points || 0) - reward.cost;
+  await sqliteDb.prepare('UPDATE users SET points = ? WHERE id = ?').run(newPoints, userId);
 
-  if ((user.points || 0) < reward.cost) {
-    return res.status(400).json({ error: "رصيد نقاطك غير كافٍ لاستبدال هذه المكافأة" });
-  }
-
-  // Deduct points
-  user.points = (user.points || 0) - reward.cost;
-  if (!user.history) user.history = [];
-  
   const couponCode = `TRV-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-  
-  user.history.push({
-    date: new Date().toISOString(),
-    amount: -reward.cost,
-    reason: `استبدال نقاط بمكافأة ${reward.label} (${couponCode})`
-  });
+  await sqliteDb.prepare('INSERT INTO points_history (user_id, amount, reason) VALUES (?, ?, ?)').run(
+    userId, -reward.cost, `استبدال نقاط بمكافأة ${reward.label} (${couponCode})`
+  );
 
-  // Create the coupon
-  if (!db.coupons) db.coupons = [];
-  db.coupons.push({
-    code: couponCode,
-    percent: reward.discount,
-    flatDiscount: reward.flatDiscount || 0,
-    freeCoins: reward.freeCoins || 0,
-    maxUses: 1,
-    usedCount: 0,
-    expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 30 days validation
-  });
+  await sqliteDb.prepare('INSERT INTO coupons (id, code, discount_percent, max_uses, used_count, active) VALUES (?, ?, ?, 1, 0, 1)').run(
+    'cpn_' + Date.now(), couponCode, reward.discount
+  );
 
-  writeDatabase(db);
-  res.json({ success: true, points: user.points, couponCode, discount: reward.discount, label: reward.label });
+  res.json({ success: true, points: newPoints, couponCode, discount: reward.discount, label: reward.label });
 });
 
-app.listen(PORT, () => {
-  console.log(`\n==================================================`);
-  console.log(`🚀 Trivela Server running at: http://localhost:${PORT}`);
-  console.log(`==================================================\n`);
-});
+// ==========================================
+// ADD .env VARS for new features
+// ==========================================
 
+// Update .env with JWT_SECRET and RESEND_API_KEY placeholders if not present (local only)
+if (!process.env.VERCEL) {
+  try {
+    const envPath = path.join(__dirname, '.env');
+    if (fs.existsSync(envPath)) {
+      let envContent = fs.readFileSync(envPath, 'utf8');
+      if (!envContent.includes('RESEND_API_KEY')) {
+        envContent += '\n# Resend API Key for OTP emails\nRESEND_API_KEY=\n';
+      }
+      if (!envContent.includes('OTP_FROM_EMAIL')) {
+        envContent += '# Email sender address (use onboarding@resend.dev for testing)\nOTP_FROM_EMAIL=onboarding@resend.dev\n';
+      }
+      fs.writeFileSync(envPath, envContent, 'utf8');
+    }
+  } catch {}
+}
+
+if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`\n==================================================`);
+    console.log(`🚀 Trivela Server running at: http://localhost:${PORT}`);
+    console.log(`==================================================\n`);
+  });
+}
+
+module.exports = app;

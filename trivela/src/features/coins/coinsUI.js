@@ -28,6 +28,7 @@ function fetchDynamicCoupons() {
           dynamicCoupons[c.code.toUpperCase()] = c;
         }
       });
+      window.couponsLoaded = true;
     })
     .catch(err => console.warn("Could not fetch coupons dynamically:", err));
 }
@@ -55,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
   Promise.all([p1, p2]).then(() => {
     updatePriceAndSummary();
   });
+
+  checkSavedEaAccount();
 
   // Close details modal when clicking outside
   const detailsModal = document.getElementById('coinsDetailsModal');
@@ -100,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadUserLoyalty();
 
   // Checkout progress watch
-  const inputsToWatch = ['customerName', 'customerPhone', 'eaEmail', 'eaPassword', 'backup1'];
+  const inputsToWatch = ['eaEmail', 'eaPassword', 'backup1'];
   inputsToWatch.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -117,15 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Load User profile & Points
+// Load User profile info
 async function loadUserLoyalty() {
-  const optionRow = document.getElementById('loyaltyOptionRow');
-  const divider = document.getElementById('loyaltyPointsDivider');
-  const radPoints = document.getElementById('radPoints');
-
-  if (optionRow) optionRow.style.display = 'block';
-  if (divider) divider.style.display = 'block';
-
   const user = await auth.getMe();
   if (user) {
     loggedInName = user.name || "";
@@ -135,28 +131,6 @@ async function loadUserLoyalty() {
     const phoneInput = document.getElementById('customerPhone');
     if (nameInput && loggedInName) nameInput.value = loggedInName;
     if (phoneInput && loggedInPhone) phoneInput.value = loggedInPhone;
-
-    userPoints = user.points || 0;
-    const lblBalance = document.getElementById('lblLoyaltyPointsBalance');
-    if (lblBalance) lblBalance.textContent = userPoints;
-    
-    updatePointsDisplayVal();
-
-    if (userPoints > 0) {
-      if (radPoints) radPoints.disabled = false;
-    } else {
-      if (radPoints) radPoints.disabled = true;
-      const labelText = document.querySelector('#loyaltyOptionRow .discount-label-text');
-      if (labelText) {
-        labelText.innerHTML = `رصيدك الحالي 0 نقطة من نقاط الولاء (اجمع المزيد عند إتمام الطلبات)`;
-      }
-    }
-  } else {
-    if (radPoints) radPoints.disabled = true;
-    const labelText = document.querySelector('#loyaltyOptionRow .discount-label-text');
-    if (labelText) {
-      labelText.innerHTML = `استخدام نقاط الولاء (<a href="login.html" style="color: var(--blue-500); text-decoration: underline; font-weight: 700;">سجل دخولك أولاً</a>)`;
-    }
   }
 }
 
@@ -236,12 +210,23 @@ export function selectQuickAmount(btn, amount) {
 }
 
 // Slider change
-export function onSliderChange(value) {
-  currentCoins = parseInt(value, 10);
-  const liveCoins = document.getElementById('liveCoins');
-  if (liveCoins) {
-    liveCoins.textContent = currentCoins.toLocaleString();
+export function onSliderChange(val) {
+  currentCoins = parseInt(val, 10);
+  const coinsEl = document.getElementById('liveCoins');
+  if (coinsEl) coinsEl.textContent = formatCoins(currentCoins);
+
+  const slider = document.getElementById('coinsSlider');
+  if (slider) {
+    slider.value = currentCoins;
+    const min = parseInt(slider.min, 10) || 100000;
+    const max = parseInt(slider.max, 10) || 10000000;
+    const pct = Math.min(100, Math.max(0, ((currentCoins - min) / (max - min)) * 100));
+    const fill = document.getElementById('sliderFill');
+    if (fill) fill.style.width = pct + '%';
   }
+
+  const summaryCoins = document.getElementById('summaryCoins');
+  if (summaryCoins) summaryCoins.textContent = formatCoins(currentCoins);
 
   const qaBtns = document.querySelectorAll('.qa-btn');
   qaBtns.forEach(btn => btn.classList.remove('active'));
@@ -253,6 +238,16 @@ export function onSliderChange(value) {
 
   updatePriceAndSummary();
 }
+
+export function onManualCoinsBlur(val) {
+  const cleanVal = parseInt(String(val).replace(/[^0-9]/g, ''), 10);
+  if (isNaN(cleanVal) || cleanVal < 10000) {
+    onSliderChange(100000);
+    return;
+  }
+  onSliderChange(cleanVal);
+}
+window.onManualCoinsBlur = onManualCoinsBlur;
 
 // Toggle password text
 export function togglePasswordVisibility() {
@@ -549,8 +544,11 @@ export function updatePriceAndSummary() {
 }
 
 // Purchase Form Submit
+let _isSubmitting = false;
 export async function handlePurchaseSubmit(event) {
   event.preventDefault();
+  if (_isSubmitting) return;
+  _isSubmitting = true;
 
   const submitBtn = document.getElementById('btnSubmitOrder');
   if (submitBtn) {
@@ -593,9 +591,10 @@ export async function handlePurchaseSubmit(event) {
   // Inputs
   const email = document.getElementById('eaEmail').value;
   const password = document.getElementById('eaPassword').value;
-  const code1 = document.getElementById('backup1').value.trim();
-  const code2 = document.getElementById('backup2').value.trim() || '—';
-  const code3 = document.getElementById('backup3').value.trim() || '—';
+  const needBackupHelp = document.getElementById('chkNeedBackupHelp')?.checked;
+  const code1 = needBackupHelp ? 'مساعدة الدعم الفني' : (document.getElementById('backup1').value.trim() || 'مساعدة الدعم الفني');
+  const code2 = needBackupHelp ? 'بحاجة لمساعدة' : (document.getElementById('backup2').value.trim() || '—');
+  const code3 = needBackupHelp ? 'بحاجة لمساعدة' : (document.getElementById('backup3').value.trim() || '—');
   const clubName = document.getElementById('eaClubName')?.value.trim() || '—';
 
   // Calculate final price in SAR
@@ -642,64 +641,28 @@ export async function handlePurchaseSubmit(event) {
     }
   }
 
-  const orderPayload = {
-    customerName,
-    customerPhone,
-    service: serviceDesc,
-    platform: currentPlatform,
-    priceSAR: finalPriceSAR,
-    pointsDiscount: pointsDiscountValSAR + couponDiscountValSAR,
-    pointsDeducted: pointsDeducted,
-    coinsAmount: currentCoins,
-    eaEmail: email,
-    eaPassword: password,
-    backupCode1: code1,
-    backupCode2: code2 !== '—' ? code2 : null,
-    backupCode3: code3 !== '—' ? code3 : null,
-    eaClubName: clubName !== '—' ? clubName : null,
-    couponCode: activeCoupon ? activeCoupon.code : null
-  };
+  // Add to Global Shopping Cart
+  if (window.trivelaCart) {
+    window.trivelaCart.addItem({
+      service: serviceDesc,
+      type: 'coins',
+      platform: currentPlatform.toUpperCase(),
+      priceSAR: finalPriceSAR,
+      eaEmail: email,
+      eaPassword: password,
+      backupCodes: [code1, code2, code3].filter(c => c && c !== '—'),
+      clubName: clubName !== '—' ? clubName : '',
+      details: `${formatCoins(currentCoins)} (${currentPlatform.toUpperCase()})`
+    });
 
-  try {
-    const data = await submitOrder(orderPayload);
+    _isSubmitting = false;
     if (submitBtn) {
       submitBtn.classList.remove('btn-loading');
       submitBtn.disabled = false;
     }
-    if (data.success && data.order) {
-      // Build WhatsApp pre-filled confirmation text
-      const messageText = `مرحباً متجر تريفيلا،
-لقد قمت بتقديم طلب شحن كوينز بنجاح! 🎉
-تفاصيل الطلب:
-- رقم الطلب: #${data.order.id}
-- الاسم: ${customerName}
-- المنصة: ${currentPlatform.toUpperCase()}
-- الكمية: ${formatCoins(currentCoins)}
-- إجمالي السعر المتوقع: ${finalPrice.toFixed(2)} ${res.symbol}
-
-بيانات الحساب للبدء بالشحن:
-- بريد EA: ${email}
-- كلمة مرور EA: ${password}
-- الرموز الاحتياطية:
-  1) ${code1}
-  2) ${code2}
-  3) ${code3}
-${clubCount > 1 ? `- اسم النادي: ${clubName}` : ''}
-يرجى تأكيد الحساب والبدء في الشحن. شكراً لكم.`;
-
-      closeDetailsModal();
-      showOrderSuccessPopup(data.order.id, dynamicSettings.whatsappPhone, messageText);
-    } else {
-      alert("حدث خطأ أثناء تسجيل طلبك.");
-    }
-  } catch (err) {
-    if (submitBtn) {
-      submitBtn.classList.remove('btn-loading');
-      submitBtn.disabled = false;
-    }
-    alert(err.message || "حدث خطأ في الاتصال بالخادم.");
+    return;
   }
-}
+
 
 // Coins Tabs
 export function switchCoinsTab(tabId) {
@@ -749,35 +712,21 @@ function triggerPriceSkeleton() {
 }
 
 function updateCheckoutProgress() {
-  let percent = 33;
-  
-  const name = document.getElementById('customerName')?.value.trim();
-  const phone = document.getElementById('customerPhone')?.value.trim();
-  const step3Active = !!(name && phone);
+  let percent = 50;
   
   const email = document.getElementById('eaEmail')?.value.trim();
   const password = document.getElementById('eaPassword')?.value.trim();
   const backup1 = document.getElementById('backup1')?.value.trim();
-  const step4Active = !!(email && password && backup1);
+  const needBackupHelp = document.getElementById('chkNeedBackupHelp')?.checked;
+  const step3Active = !!(email && password && (backup1 || needBackupHelp));
 
   const pStep3 = document.getElementById('pStep3');
-  const pStep4 = document.getElementById('pStep4');
-  
   if (pStep3) {
     if (step3Active) {
       pStep3.classList.add('active');
-      percent = 66;
-    } else {
-      pStep3.classList.remove('active');
-    }
-  }
-
-  if (pStep4) {
-    if (step3Active && step4Active) {
-      pStep4.classList.add('active');
       percent = 100;
     } else {
-      pStep4.classList.remove('active');
+      pStep3.classList.remove('active');
     }
   }
 
@@ -793,6 +742,21 @@ window.selectClubCount = selectClubCount;
 window.selectQuickAmount = selectQuickAmount;
 window.onSliderChange = onSliderChange;
 window.togglePasswordVisibility = togglePasswordVisibility;
+export function toggleCompactCoupon(btn) {
+  const wrapper = document.getElementById('couponInputWrapper');
+  const chevron = btn ? btn.querySelector('.toggle-chevron') : document.getElementById('couponChevron');
+  if (!wrapper) return;
+  const isHidden = wrapper.style.display === 'none' || wrapper.style.display === '';
+  wrapper.style.display = isHidden ? 'block' : 'none';
+  if (btn) btn.classList.toggle('open', isHidden);
+  if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+  if (isHidden) {
+    const inp = document.getElementById('couponCodeInput');
+    if (inp) inp.focus();
+  }
+}
+
+window.toggleCompactCoupon = toggleCompactCoupon;
 window.handleDiscountTypeChange = handleDiscountTypeChange;
 window.applyCouponCode = applyCouponCode;
 window.redeemPointsForCoupon = redeemPointsForCoupon;
@@ -842,3 +806,86 @@ function applyCoinsCMSContent() {
     if (step3Desc && cp.step3Desc) step3Desc.textContent = cp.step3Desc;
   }
 }
+
+let savedEaAccountData = null;
+
+async function checkSavedEaAccount() {
+  const token = localStorage.getItem('trivela_token');
+  if (!token) return;
+
+  try {
+    const res = await fetch('/api/auth/me', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (res.ok) {
+      const user = await res.json();
+      if (user) {
+        loggedInName = user.name || "";
+        loggedInPhone = user.phone || "";
+        
+        const nameInput = document.getElementById('customerName');
+        const phoneInput = document.getElementById('customerPhone');
+        if (nameInput && loggedInName) nameInput.value = loggedInName;
+        if (phoneInput && loggedInPhone) phoneInput.value = loggedInPhone;
+
+        const eaData = user.savedEA || user.savedEaAccount;
+        if (eaData && (eaData.email || eaData.eaEmail)) {
+          savedEaAccountData = eaData;
+          const banner = document.getElementById('savedEaAccountBanner');
+          const info = document.getElementById('lblSavedEaInfo');
+          if (banner) banner.style.display = 'flex';
+          if (info) {
+            const email = eaData.email || eaData.eaEmail;
+            const platform = eaData.platform || 'Console';
+            info.innerHTML = `الحساب المحفوظ: <strong>${email}</strong> (${platform}) — انقر للتعبئة الفورية.`;
+          }
+        }
+      }
+    }
+  } catch (_) {}
+}
+
+export function fillSavedEaAccount() {
+  if (!savedEaAccountData) return;
+  const emailIn = document.getElementById('eaEmail');
+  const b1 = document.getElementById('backup1');
+  const b2 = document.getElementById('backup2');
+  const b3 = document.getElementById('backup3');
+
+  const emailVal = savedEaAccountData.email || savedEaAccountData.eaEmail || '';
+  if (emailIn && emailVal) emailIn.value = emailVal;
+
+  let codes = savedEaAccountData.backupCodes || [
+    savedEaAccountData.backupCode1,
+    savedEaAccountData.backupCode2,
+    savedEaAccountData.backupCode3
+  ];
+
+  if (codes && codes.length > 0) {
+    if (b1) b1.value = codes[0] || '';
+    if (b2) b2.value = codes[1] || '';
+    if (b3) b3.value = codes[2] || '';
+  }
+
+  // Auto-select platform
+  if (savedEaAccountData.platform) {
+    if (savedEaAccountData.platform.toLowerCase().includes('pc')) {
+      selectPlatform('PC');
+    } else {
+      selectPlatform('Console');
+    }
+  }
+
+  const banner = document.getElementById('savedEaAccountBanner');
+  if (banner) {
+    banner.style.borderColor = '#10b981';
+    banner.style.background = 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(13, 21, 39, 0.95) 100%)';
+    const btn = banner.querySelector('button');
+    if (btn) {
+      btn.innerHTML = '<i class="fas fa-check-circle"></i> تم تعبئة الحساب بنجاح ✓';
+      btn.style.background = '#10b981';
+      btn.style.color = '#ffffff';
+    }
+  }
+}
+window.fillSavedEaAccount = fillSavedEaAccount;

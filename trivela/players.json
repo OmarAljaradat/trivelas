@@ -1,0 +1,54 @@
+[
+  {
+    "id": "sbc_85_x10",
+    "name": "تحدي ترقية 85+ x10 Upgrade",
+    "category": "sbc",
+    "sbcSubCategory": "upgrades",
+    "rating": 85,
+    "image": "service_sbc.jpg",
+    "priceSAR": 15,
+    "priceUSD": 4,
+    "pricePCSAR": 18,
+    "pricePCUSD": 5,
+    "desc": "حل فوري وسريع لتحدي باقة 10 لاعبين بتقييم 85+ بأقل تكلفة كوينز ممكنة."
+  },
+  {
+    "id": "sbc_icon_pick",
+    "name": "تحدي اختيار لاعب آيكون (Icon Pick)",
+    "category": "sbc",
+    "sbcSubCategory": "players",
+    "rating": 91,
+    "image": "service_sbc.jpg",
+    "priceSAR": 25,
+    "priceUSD": 7,
+    "pricePCSAR": 30,
+    "pricePCUSD": 8,
+    "desc": "حل جميع تشكيلات تحدي باقة اختيار لاعب آيكون أسطوري بأعلى سرعة وأمان."
+  },
+  {
+    "id": "sbc_potm_mbappe",
+    "name": "تحدي لاعب الشهر POTM Mbappé",
+    "category": "sbc",
+    "sbcSubCategory": "players",
+    "rating": 93,
+    "image": "service_sbc.jpg",
+    "priceSAR": 45,
+    "priceUSD": 12,
+    "pricePCSAR": 50,
+    "pricePCUSD": 14,
+    "desc": "إكمال جميع متطلبات وتشكيلات بطاقة لاعب الشهر بأفضل كفاءة وتوفير."
+  },
+  {
+    "id": "sbc_hybrid_leagues",
+    "name": "تحديات الأساسيات (Hybrid Leagues & Nations)",
+    "category": "sbc",
+    "sbcSubCategory": "foundation",
+    "rating": 86,
+    "image": "service_sbc.jpg",
+    "priceSAR": 20,
+    "priceUSD": 5.5,
+    "pricePCSAR": 24,
+    "pricePCUSD": 6.5,
+    "desc": "حل كامل لتحديات الهجين والدوريات الأساسية للحصول على الباكات الكبرى."
+  }
+]

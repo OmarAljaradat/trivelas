@@ -25,6 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
   initSmoothScroll();
   initAnnBar();
 
+  ['coachingModalOverlay', 'packageModalOverlay'].forEach(id => {
+    const modalEl = document.getElementById(id);
+    if (modalEl) {
+      modalEl.addEventListener('click', (e) => {
+        if (e.target === modalEl) {
+          closeModal(id);
+        }
+      });
+    }
+  });
+
   // Load Configurations, FAQs, Reviews
   auth.getPublicSettings().then(data => {
     if (data) {
@@ -109,7 +120,7 @@ async function checkUserSession() {
   const profileMobileLink = document.getElementById('profileMobileLink');
   
   if (user) {
-    const text = `<i class="fas fa-user-circle"></i> حسابي (${user.points || 0} ن)`;
+    const text = `<i class="fas fa-user-circle"></i> حسابي`;
     if (profileLink) {
       profileLink.innerHTML = text;
       profileLink.href = 'profile.html';
@@ -164,51 +175,144 @@ function initNavbar() {
 
 function updateNavbarMenu() {
   const menuEl = document.getElementById('navMenu');
+  const userSlotEl = document.getElementById('navUserSlot');
   if (!menuEl) return;
   
   const token = localStorage.getItem('trivela_token');
-  let userItemHTML = `<li><a href="login.html"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</a></li>`;
   
-  if (token) {
-    userItemHTML = `
-      <li class="dropdown user-dropdown">
-        <a href="javascript:void(0)" class="dropdown-toggle" onclick="event.stopPropagation()"><i class="fas fa-user-circle"></i> حسابي <i class="fas fa-chevron-down" style="font-size:0.7rem; margin-right:4px;"></i></a>
-        <ul class="dropdown-content">
-          <li><a href="profile.html"><i class="fas fa-user"></i> الملف الشخصي</a></li>
-          <li><a href="profile.html#orders"><i class="fas fa-history"></i> طلباتي</a></li>
-          <li><a href="javascript:void(0)" onclick="window.handleNavbarLogout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
-        </ul>
-      </li>
-    `;
+  if (userSlotEl) {
+    if (token) {
+      userSlotEl.innerHTML = `
+        <div class="dropdown user-dropdown">
+          <a href="javascript:void(0)" class="dropdown-toggle nav-user-btn" onclick="event.stopPropagation()">
+            <i class="fas fa-circle-user" style="color: #2563eb;"></i>
+            <span>حسابي</span>
+            <i class="fas fa-chevron-down nav-chevron"></i>
+          </a>
+          <ul class="dropdown-content">
+            <li>
+              <a href="profile.html">
+                <span class="drop-icon drop-blue"><i class="fas fa-user"></i></span>
+                <div class="drop-text">
+                  <strong>الملف الشخصي</strong>
+                  <small>إعدادات وبيانات الحساب</small>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="profile.html#orders">
+                <span class="drop-icon drop-gold"><i class="fas fa-receipt"></i></span>
+                <div class="drop-text">
+                  <strong>طلباتي</strong>
+                  <small>سجل وتفاصيل المشتريات</small>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="javascript:void(0)" onclick="window.handleNavbarLogout()">
+                <span class="drop-icon" style="background: #fee2e2; color: #ef4444;"><i class="fas fa-arrow-right-from-bracket"></i></span>
+                <div class="drop-text">
+                  <strong style="color: #ef4444;">تسجيل الخروج</strong>
+                  <small>إنهاء الجلسة الحالية</small>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      `;
+    } else {
+      userSlotEl.innerHTML = `
+        <a href="login.html" class="nav-login-btn">
+          <i class="fas fa-arrow-right-to-bracket"></i>
+          <span>دخول</span>
+        </a>
+      `;
+    }
   }
 
   menuEl.innerHTML = `
-    <li><a href="#coins-device">🪙 شحن الكوينز</a></li>
+    <li>
+      <a href="#coins-device" class="nav-link nav-highlight">
+        <i class="fas fa-bolt" style="color: #eab308;"></i>
+        <span>شحن الكوينز</span>
+      </a>
+    </li>
     <li class="dropdown">
-      <a href="javascript:void(0)" class="dropdown-toggle" onclick="event.stopPropagation()">الخدمات <i class="fas fa-chevron-down" style="font-size:0.7rem; margin-right:4px;"></i></a>
+      <a href="javascript:void(0)" class="dropdown-toggle nav-link" onclick="event.stopPropagation()">
+        <i class="fas fa-cubes"></i>
+        <span>الخدمات</span>
+        <i class="fas fa-chevron-down nav-chevron"></i>
+      </a>
       <ul class="dropdown-content">
-        <li><a href="buy-sbc.html">🧩 تحديات الـ SBC</a></li>
-        <li><a href="buy-objectives.html">📋 المهام (Objectives)</a></li>
-        <li><a href="buy-rivals.html">🏆 خدمة Rivals</a></li>
-        <li><a href="buy-champions.html">🥇 خدمة Champions</a></li>
+        <li>
+          <a href="buy-sbc.html">
+            <span class="drop-icon drop-purple"><i class="fas fa-puzzle-piece"></i></span>
+            <div class="drop-text">
+              <strong>تحديات الـ SBC</strong>
+              <small>حل فوري لجميع التحديات</small>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="buy-objectives.html">
+            <span class="drop-icon drop-green"><i class="fas fa-list-check"></i></span>
+            <div class="drop-text">
+              <strong>المهام (Objectives)</strong>
+              <small>إنهاء الحزم ومواسم الجوائز</small>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="buy-rivals.html">
+            <span class="drop-icon drop-blue"><i class="fas fa-shield-halved"></i></span>
+            <div class="drop-text">
+              <strong>ترقية Rivals</strong>
+              <small>رفع التصنيف الأسبوعي</small>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="buy-champions.html">
+            <span class="drop-icon drop-gold"><i class="fas fa-trophy"></i></span>
+            <div class="drop-text">
+              <strong>بطولة Champions</strong>
+              <small>حسم التصفيات والنهائيات</small>
+            </div>
+          </a>
+        </li>
       </ul>
     </li>
-    <li><a href="#coaching-section">🎓 الاستشارات</a></li>
-    <li><a href="#packages-section">📦 الباقات</a></li>
-    <li><a href="#features">مميزاتنا</a></li>
-    <li><a href="#faq">الأسئلة الشائعة</a></li>
-    ${userItemHTML}
+    <li>
+      <a href="#coaching-section" class="nav-link">
+        <i class="fas fa-headset"></i>
+        <span>الاستشارات</span>
+      </a>
+    </li>
+    <li>
+      <a href="reviews.html" class="nav-link">
+        <i class="fas fa-star" style="color: #eab308;"></i>
+        <span>التقييمات</span>
+      </a>
+    </li>
+    <li>
+      <a href="#faq" class="nav-link">
+        <i class="fas fa-circle-question"></i>
+        <span>الأسئلة الشائعة</span>
+      </a>
+    </li>
   `;
 
   // Bind click toggle for mobile/touch devices
-  menuEl.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+  document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
     toggle.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const content = toggle.nextElementSibling;
+      const parent = toggle.closest('.dropdown');
+      if (!parent) return;
+      const content = parent.querySelector('.dropdown-content');
       if (content) {
         const isOpen = content.style.display === 'block';
-        menuEl.querySelectorAll('.dropdown-content').forEach(c => {
+        document.querySelectorAll('.dropdown-content').forEach(c => {
           if (c !== content) c.style.display = 'none';
         });
         content.style.display = isOpen ? 'none' : 'block';
@@ -231,25 +335,20 @@ window.handleNavbarLogout = function() {
 
 function initCounters() {
   const els = document.querySelectorAll('.counter');
-  const io  = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const el  = e.target;
-      const end = parseInt(el.dataset.to, 10);
-      const dur = 1800;
-      const t0  = performance.now();
-      const step = ts => {
-        const p = Math.min((ts - t0) / dur, 1);
-        const v = Math.round(p * p * (3 - 2*p) * end); // smoothstep
-        const suffix = el.dataset.suffix || '';
-        el.textContent = new Intl.NumberFormat('en-US').format(v) + suffix;
-        if (p < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-      io.unobserve(el);
-    });
-  }, { threshold:0.5 });
-  els.forEach(el => io.observe(el));
+  els.forEach(el => {
+    const end = parseInt(el.dataset.to, 10);
+    if (isNaN(end)) return;
+    const dur = 1400;
+    const t0 = performance.now();
+    const step = ts => {
+      const p = Math.min((ts - t0) / dur, 1);
+      const v = Math.round(p * p * (3 - 2 * p) * end);
+      const suffix = el.dataset.suffix || '';
+      el.textContent = new Intl.NumberFormat('en-US').format(v) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
 }
 
 // Obsolete calculator on homepage
@@ -257,7 +356,7 @@ function initCalculator() {}
 
 // Support links updates
 function updateSupportLinks() {
-  const waLinks = document.querySelectorAll('a[href^="https://wa.me/"]');
+  const waLinks = document.querySelectorAll('a[href^="https://wa.me/"], a.wa-link');
   waLinks.forEach(link => {
     try {
       const urlObj = new URL(link.href);
@@ -404,9 +503,165 @@ function forceModalFixed(modalId) {
   }
 }
 
+let modalSelectedBookingDate = null;
+let modalSelectedBookingTime = null;
+let modalCoachingScheduleData = { workingDays: [0, 1, 2, 3, 4, 5, 6], startHour: 14, endHour: 23, slotDurationMinutes: 60, bookedSlots: [] };
+
+function resetModalCoachingCalendarState() {
+  modalSelectedBookingDate = null;
+  modalSelectedBookingTime = null;
+  const banner = document.getElementById('modalSelectedSlotBanner');
+  if (banner) banner.style.display = 'none';
+  const timeSlotsContainer = document.getElementById('modalTimeSlotsContainer');
+  if (timeSlotsContainer) {
+    timeSlotsContainer.innerHTML = '<div class="slot-placeholder-msg" style="grid-column: 1 / -1; text-align: center; font-size: 0.8rem; color: #94a3b8;">👈 اختر اليوم أولاً لعرض الأوقات المتاحة.</div>';
+  }
+}
+
+function loadModalCoachingCalendar() {
+  resetModalCoachingCalendarState();
+  fetch('/api/public/coaching-schedule')
+    .then(res => res.ok ? res.json() : null)
+    .then(data => {
+      if (data && Array.isArray(data.workingDays)) modalCoachingScheduleData = data;
+      renderModalCalendarDays();
+    })
+    .catch(() => {
+      renderModalCalendarDays();
+    });
+}
+
+function renderModalCalendarDays() {
+  const container = document.getElementById('modalCalendarDaysContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const dayNamesArabic = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+  const monthNamesArabic = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+
+  const today = new Date();
+  const workingDays = modalCoachingScheduleData.workingDays || [0, 1, 2, 3, 4, 5, 6];
+
+  let firstValid = null;
+
+  for (let i = 0; i < 14; i++) {
+    const d = new Date();
+    d.setDate(today.getDate() + i);
+
+    const dayOfWeek = d.getDay();
+    const dateIsoStr = d.toISOString().split('T')[0];
+    const isWorking = workingDays.includes(dayOfWeek);
+
+    const dayName = dayNamesArabic[dayOfWeek];
+    const dayNum = d.getDate();
+    const monthName = monthNamesArabic[d.getMonth()];
+
+    const chip = document.createElement('div');
+    chip.className = `day-chip ${isWorking ? '' : 'disabled'}`;
+    chip.dataset.date = dateIsoStr;
+    chip.innerHTML = `
+      <span class="day-name">${dayName}</span>
+      <span class="day-num">${dayNum}</span>
+      <span class="day-month">${monthName}</span>
+    `;
+
+    if (isWorking) {
+      chip.onclick = () => selectModalBookingDate(dateIsoStr, chip, dayName, dayNum, monthName);
+      if (!firstValid) firstValid = { dateIsoStr, chip, dayName, dayNum, monthName };
+    }
+
+    container.appendChild(chip);
+  }
+
+  if (firstValid) {
+    selectModalBookingDate(firstValid.dateIsoStr, firstValid.chip, firstValid.dayName, firstValid.dayNum, firstValid.monthName);
+  }
+}
+
+function selectModalBookingDate(dateIsoStr, chipElement, dayName, dayNum, monthName) {
+  modalSelectedBookingDate = dateIsoStr;
+  modalSelectedBookingTime = null;
+
+  const parent = chipElement.parentElement;
+  if (parent) {
+    const currentActive = parent.querySelector('.day-chip.active');
+    if (currentActive) currentActive.classList.remove('active');
+  }
+  chipElement.classList.add('active');
+
+  const banner = document.getElementById('modalSelectedSlotBanner');
+  if (banner) banner.style.display = 'none';
+
+  renderModalTimeSlots(dateIsoStr, `${dayName} ${dayNum} ${monthName}`);
+}
+
+function renderModalTimeSlots(dateIsoStr, formattedDayText) {
+  const container = document.getElementById('modalTimeSlotsContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const dateObj = new Date(dateIsoStr + 'T00:00:00');
+  const dayOfWeek = dateObj.getDay();
+
+  const daysConfig = modalCoachingScheduleData.daysConfig || {};
+  const dayCfg = daysConfig[dayOfWeek] || {};
+
+  const startHour = dayCfg.startHour !== undefined ? dayCfg.startHour : (modalCoachingScheduleData.startHour || 14);
+  const endHour = dayCfg.endHour !== undefined ? dayCfg.endHour : (modalCoachingScheduleData.endHour || 23);
+  const booked = modalCoachingScheduleData.bookedSlots || [];
+
+  let firstValidSlot = null;
+
+  for (let hour = startHour; hour < endHour; hour++) {
+    const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+    const periodStr = hour >= 12 ? 'مساءً' : 'صباحاً';
+    const timeLabel = `${displayHour.toString().padStart(2, '0')}:00 ${periodStr}`;
+
+    const isBooked = booked.some(b => b.date === dateIsoStr && (b.time === timeLabel || b.time === `${hour}:00`));
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `time-slot-btn ${isBooked ? 'booked' : ''}`;
+    btn.innerHTML = `<i class="far fa-clock"></i> <span>${timeLabel}</span>`;
+
+    if (isBooked) {
+      btn.title = 'هذا الموعد محجوز مسبقاً';
+    } else {
+      btn.onclick = () => selectModalBookingTime(timeLabel, btn, formattedDayText);
+      if (!firstValidSlot) firstValidSlot = { timeLabel, btn, formattedDayText };
+    }
+
+    container.appendChild(btn);
+  }
+
+  if (firstValidSlot) {
+    selectModalBookingTime(firstValidSlot.timeLabel, firstValidSlot.btn, firstValidSlot.formattedDayText);
+  }
+}
+
+function selectModalBookingTime(timeLabel, btnElement, formattedDayText) {
+  modalSelectedBookingTime = timeLabel;
+
+  const parent = btnElement.parentElement;
+  if (parent) {
+    const currentActive = parent.querySelector('.time-slot-btn.active');
+    if (currentActive) currentActive.classList.remove('active');
+  }
+  btnElement.classList.add('active');
+
+  const banner = document.getElementById('modalSelectedSlotBanner');
+  const txt = document.getElementById('modalLblSelectedSlotText');
+  if (banner && txt) {
+    txt.textContent = `${formattedDayText} — الساعة ${timeLabel}`;
+    banner.style.display = 'flex';
+  }
+}
+
 export function openStaticCoachingBooking(packageName, priceSAR) {
-  document.getElementById('modalCoachingTitle').textContent = `حجز باقة: ${packageName}`;
-  document.getElementById('modalCoachingPrice').textContent = `${priceSAR} ر.س`;
+  const titleEl = document.getElementById('modalCoachingTitle');
+  if (titleEl) titleEl.textContent = `حجز باقة: ${packageName}`;
+  const priceEl = document.getElementById('modalCoachingPrice');
+  if (priceEl) priceEl.textContent = `${priceSAR} ر.س`;
   
   selectedModalService = {
     id: `coaching_static_${packageName}`,
@@ -416,26 +671,42 @@ export function openStaticCoachingBooking(packageName, priceSAR) {
   };
   
   selectedPlatform = 'console';
-  selectModalPlatform('Console');
+  if (typeof selectModalPlatform === 'function') selectModalPlatform('Console');
   
-  document.getElementById('modalContactName').value = '';
-  const discordInput = document.getElementById('modalContactDiscord');
-  if (discordInput) discordInput.value = '';
-  document.getElementById('modalCoachingNotes').value = '';
+  const nameInput = document.getElementById('modalContactName');
+  if (nameInput) nameInput.value = '';
+  const instaInput = document.getElementById('modalContactInstagram');
+  if (instaInput) instaInput.value = '';
+  const notesInput = document.getElementById('modalCoachingNotes');
+  if (notesInput) notesInput.value = '';
   
-  auth.getMe().then(user => {
-    if (user && user.name) {
-      document.getElementById('modalContactName').value = user.name;
-    }
-  }).catch(() => {});
+  if (typeof auth !== 'undefined' && auth.getMe) {
+    auth.getMe().then(user => {
+      if (user && user.name && nameInput) {
+        nameInput.value = user.name;
+      }
+    }).catch(() => {});
+  }
+
+  loadModalCoachingCalendar();
 
   forceModalFixed('coachingModalOverlay');
-  document.getElementById('coachingModalOverlay').classList.add('open');
+  const modal = document.getElementById('coachingModalOverlay');
+  if (modal) {
+    modal.classList.add('open');
+    modal.style.display = 'flex';
+    document.documentElement.classList.add('modal-open');
+    document.body.classList.add('modal-open');
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
 }
 
 export function openStaticPackageBooking(packageName, priceSAR) {
-  document.getElementById('modalPackageTitle').textContent = `شراء ${packageName}`;
-  document.getElementById('modalPackagePrice').textContent = `${priceSAR} ر.س`;
+  const titleEl = document.getElementById('modalPackageTitle');
+  if (titleEl) titleEl.textContent = `شراء ${packageName}`;
+  const priceEl = document.getElementById('modalPackagePrice');
+  if (priceEl) priceEl.textContent = `${priceSAR} ر.س`;
   
   selectedModalService = {
     id: `package_static_${packageName}`,
@@ -445,16 +716,23 @@ export function openStaticPackageBooking(packageName, priceSAR) {
   };
   
   selectedPlatform = 'console';
-  selectModalPlatform('Console');
+  if (typeof selectModalPlatform === 'function') selectModalPlatform('Console');
   
-  document.getElementById('modalEaEmail').value = '';
-  document.getElementById('modalEaPassword').value = '';
-  document.getElementById('modalBackup1').value = '';
-  document.getElementById('modalBackup2').value = '';
-  document.getElementById('modalBackup3').value = '';
+  const emailInput = document.getElementById('modalEaEmail');
+  if (emailInput) emailInput.value = '';
+  const passInput = document.getElementById('modalEaPassword');
+  if (passInput) passInput.value = '';
   
   forceModalFixed('packageModalOverlay');
-  document.getElementById('packageModalOverlay').classList.add('open');
+  const modal = document.getElementById('packageModalOverlay');
+  if (modal) {
+    modal.classList.add('open');
+    modal.style.display = 'flex';
+    document.documentElement.classList.add('modal-open');
+    document.body.classList.add('modal-open');
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
 }
 
 export function openBookingModal(id, category) {
@@ -466,55 +744,86 @@ export function openBookingModal(id, category) {
   selectModalPlatform('Console');
 
   if (category === 'coaching') {
-    document.getElementById('modalCoachingTitle').textContent = `حجز ${service.name}`;
-    document.getElementById('modalCoachingPrice').textContent = `${service.priceSAR} ر.س`;
+    const titleEl = document.getElementById('modalCoachingTitle');
+    if (titleEl) titleEl.textContent = `حجز ${service.name}`;
+    const priceEl = document.getElementById('modalCoachingPrice');
+    if (priceEl) priceEl.textContent = `${service.priceSAR} ر.س`;
     
-    document.getElementById('modalContactName').value = '';
-    const discordInput = document.getElementById('modalContactDiscord');
-    if (discordInput) discordInput.value = '';
-    document.getElementById('modalCoachingNotes').value = '';
-    
-    auth.getMe().then(user => {
-      if (user && user.name) {
-        document.getElementById('modalContactName').value = user.name;
-      }
-    }).catch(() => {});
+    loadModalCoachingCalendar();
 
     forceModalFixed('coachingModalOverlay');
-    document.getElementById('coachingModalOverlay').classList.add('open');
+    const modal = document.getElementById('coachingModalOverlay');
+    if (modal) {
+      modal.classList.add('open');
+      modal.style.display = 'flex';
+      document.documentElement.classList.add('modal-open');
+      document.body.classList.add('modal-open');
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    }
   } else {
-    document.getElementById('modalPackageTitle').textContent = `شراء ${service.name}`;
-    document.getElementById('modalPackagePrice').textContent = `${service.priceSAR} ر.س`;
-    
-    document.getElementById('modalEaEmail').value = '';
-    document.getElementById('modalEaPassword').value = '';
-    document.getElementById('modalBackup1').value = '';
-    document.getElementById('modalBackup2').value = '';
-    document.getElementById('modalBackup3').value = '';
+    const titleEl = document.getElementById('modalPackageTitle');
+    if (titleEl) titleEl.textContent = `شراء ${service.name}`;
+    const priceEl = document.getElementById('modalPackagePrice');
+    if (priceEl) priceEl.textContent = `${service.priceSAR} ر.س`;
     
     forceModalFixed('packageModalOverlay');
-    document.getElementById('packageModalOverlay').classList.add('open');
+    const modal = document.getElementById('packageModalOverlay');
+    if (modal) {
+      modal.classList.add('open');
+      modal.style.display = 'flex';
+      document.documentElement.classList.add('modal-open');
+      document.body.classList.add('modal-open');
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    }
   }
 }
 
 export function closeModal(modalId) {
-  document.getElementById(modalId).classList.remove('open');
+  const el = document.getElementById(modalId || 'coachingModalOverlay');
+  if (el) {
+    el.classList.remove('open');
+    el.style.display = 'none';
+  }
+  const pkgModal = document.getElementById('packageModalOverlay');
+  if (pkgModal && (!modalId || modalId === 'packageModalOverlay')) {
+    pkgModal.classList.remove('open');
+    pkgModal.style.display = 'none';
+  }
+  document.documentElement.classList.remove('modal-open');
+  document.body.classList.remove('modal-open');
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
 }
 
 export function handleCoachingModalSubmit(event) {
   event.preventDefault();
   if (!selectedModalService) return;
+
+  if (!modalSelectedBookingDate || !modalSelectedBookingTime) {
+    alert("يرجى اختيار يوم ووقت الجلسة المباشرة من التقويم أولاً.");
+    return;
+  }
   
   const contactName = document.getElementById('modalContactName').value.trim();
   const contactPhone = document.getElementById('modalContactPhone').value.trim();
+  const instaInput = document.getElementById('modalContactInstagram');
+  const instagram = instaInput ? instaInput.value.trim() : '';
   const notes = document.getElementById('modalCoachingNotes').value.trim() || 'بدون ملاحظات إضافية';
-  
+
+  const bookingFormatted = `${modalSelectedBookingDate} الساعة ${modalSelectedBookingTime}`;
+
   const orderPayload = {
     customerName: contactName,
     customerPhone: contactPhone,
     service: `استشارة: ${selectedModalService.name}`,
     platform: selectedPlatform,
     priceSAR: selectedModalService.priceSAR,
+    instagramHandle: instagram,
+    orderNotes: notes,
+    bookingDate: modalSelectedBookingDate,
+    bookingTime: modalSelectedBookingTime,
     pointsDiscount: 0,
     pointsDeducted: 0
   };
@@ -523,11 +832,15 @@ export function handleCoachingModalSubmit(event) {
     .then(data => {
       closeModal('coachingModalOverlay');
       if (data.success && data.order) {
+        let extraInfo = '';
+        if (instagram) extraInfo += `\n- انستقرام: ${instagram}`;
+
         const messageText = `تفاصيل الطلب:
 - رقم الطلب: #${data.order.id}
 - العميل: ${contactName}
 - المنصة: ${selectedPlatform.toUpperCase()}
 - الخدمة: ${selectedModalService.name}
+- موعد الجلسة المباشرة: ${bookingFormatted}${extraInfo}
 - إجمالي السعر المتوقع: ${selectedModalService.priceSAR} ر.س`;
         showOrderSuccessPopup(data.order.id, dynamicSettings.whatsappPhone, messageText);
       } else {
@@ -595,7 +908,7 @@ function initReviews() {
     return;
   }
 
-  // Display only 6 reviews on the homepage
+  // Display top 6 reviews on the homepage
   const displayedReviews = REVIEWS.slice(0, 6);
 
   container.innerHTML = displayedReviews.map(r => `
@@ -604,12 +917,15 @@ function initReviews() {
         <div class="rc-avatar">${r.initial}</div>
         <div class="rc-info">
           <strong>${r.name}</strong>
-          <span>${r.badge ? r.badge + ' · ' : ''}${r.platform}</span>
+          <span>${r.badge ? r.badge + ' · ' : ''}<i class="fas fa-gamepad" style="margin-left: 3px;"></i> ${r.platform}</span>
         </div>
       </div>
-      <div class="rc-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
-      <p class="rc-text">${r.text}</p>
-      <span class="rc-platform">FIFA 27 FUT — ${r.platform}</span>
+      <div class="rc-stars" style="color: #f59e0b; margin: 8px 0; font-size: 0.95rem;">${'<i class="fas fa-star"></i>'.repeat(r.stars)}</div>
+      <p class="rc-text" style="line-height: 1.6; color: #334155; font-size: 0.9rem;">"${r.text}"</p>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px; border-top: 1px solid #f1f5f9; padding-top: 10px; font-size: 0.76rem; color: #64748b;">
+        <span style="color: #10b981; font-weight: 700;"><i class="fas fa-shield-check"></i> عملية شراء موثقة</span>
+        <span>FIFA 27 Ultimate Team</span>
+      </div>
     </div>
   `).join('');
 }
@@ -625,7 +941,7 @@ function initFAQ() {
   }
 
   list.innerHTML = FAQS.map((f, i) => `
-    <div class="faq-item" id="faq-item-${i}">
+    <div class="faq-item ${i === 0 ? 'open' : ''}" id="faq-item-${i}">
       <div class="faq-q" onclick="toggleFAQ(${i})">
         <span>${f.q}</span>
         <div class="faq-chevron"><i class="fas fa-chevron-down"></i></div>
@@ -817,6 +1133,7 @@ window.closeMenu = closeMenu;
 window.toggleFAQ = toggleFAQ;
 window.openBookingModal = openBookingModal;
 window.openStaticCoachingBooking = openStaticCoachingBooking;
+window.openStaticCoachingBookingModal = openStaticCoachingBooking;
 window.openStaticPackageBooking = openStaticPackageBooking;
 window.closeModal = closeModal;
 window.selectModalPlatform = selectModalPlatform;
@@ -854,12 +1171,12 @@ function applyCMSContent() {
 
     const statTime = document.getElementById('cms_statDeliveryTime');
     if (statTime && l.statDeliveryTime) {
-      statTime.setAttribute('data-to', l.statDeliveryTime.replace(/[^0-9]/g, ''));
-      const suffix = l.statDeliveryTime.replace(/[0-9]/g, '').trim();
-      if (suffix) {
-        statTime.setAttribute('data-suffix', ' ' + suffix);
-      } else {
-        statTime.removeAttribute('data-suffix');
+      statTime.setAttribute('data-to', l.statDeliveryTime.replace(/[^0-9]/g, '') || '60');
+      statTime.removeAttribute('data-suffix');
+      const suffix = l.statDeliveryTime.replace(/[0-9]/g, '').trim() || 'دقيقة';
+      const unitEl = document.getElementById('cms_statDeliveryUnit') || (statTime.nextElementSibling && statTime.nextElementSibling.tagName === 'SUP' ? statTime.nextElementSibling : null);
+      if (unitEl) {
+        unitEl.textContent = suffix;
       }
     }
 
@@ -1031,5 +1348,15 @@ function applyServiceToggles(settings) {
         }
       });
     });
+  });
+
+  // Hide order tracking links if disabled
+  const isTrackingEnabled = settings.enableOrderTracking !== false;
+  document.querySelectorAll('a[href*="track.html"]').forEach(el => {
+    if (el.closest('li')) {
+      el.closest('li').style.setProperty('display', isTrackingEnabled ? '' : 'none', 'important');
+    } else {
+      el.style.setProperty('display', isTrackingEnabled ? '' : 'none', 'important');
+    }
   });
 }

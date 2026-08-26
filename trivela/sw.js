@@ -1,53 +1,118 @@
-const CACHE_NAME = 'trivela-admin-v1';
+const CACHE_NAME = 'trivela-supplier-v1';
 const ASSETS = [
-  '/admin-mobile.html',
-  '/admin-mobile.js',
-  '/logo-official.png',
-  '/manifest.json'
+  '/supplier.html',
+  '/supplier.js',
+  '/logo-official.png'
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
+// Install Event
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(ASSETS);
-    }).then(() => self.skipWaiting())
+    })
   );
+  self.skipWaiting();
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
+// Activate Event
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys => {
       return Promise.all(
-        keys.map((key) => {
+        keys.map(key => {
           if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
         })
       );
-    }).then(() => self.clients.claim())
+    })
+  );
+  self.clients.claim();
+});
+
+// Fetch Event (Network-First Fallback to Cache)
+self.addEventListener('fetch', event => {
+  // Only intercept HTTP GET requests to local origin
+  if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+  
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        // Cache successful requests dynamically
+        if (response.status === 200) {
+          const resClone = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, resClone);
+          });
+        }
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });
 
-self.addEventListener('fetch', (e) => {
-  const url = new URL(e.request.url);
+// Push Event: Receive push notification from the server
+self.addEventListener('push', event => {
+  let data = { 
+    title: 'تريفيلا الموردين', 
+    body: 'لديك إشعار جديد بانتظار المراجعة!', 
+    url: '/supplier.html' 
+  };
   
-  // Do not cache API endpoints or admin actions
-  if (url.pathname.startsWith('/api/')) {
-    return;
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (e) {
+      data = { 
+        title: 'تريفيلا الموردين', 
+        body: event.data.text(), 
+        url: '/supplier.html' 
+      };
+    }
   }
+  
+  const options = {
+    body: data.body,
+    icon: '/logo-official.png',
+    badge: '/logo-official.png',
+    vibrate: [200, 100, 200, 100, 200],
+    data: {
+      url: data.url || '/supplier.html'
+    },
+    actions: [
+      { action: 'open', title: 'عرض الطلبات 📂' }
+    ]
+  };
+  
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
 
-  e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Fetch new version in background to update cache for next time
-        fetch(e.request).then((networkResponse) => {
-          if (networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, networkResponse));
-          }
-        }).catch(() => {});
-        return cachedResponse;
+// Notification Click Event: Open application when notification is clicked
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  
+  const targetUrl = event.notification.data.url;
+  
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      // If a window is already open at the supplier page, focus it and redirect
+      for (let client of windowClients) {
+        if (client.url.includes('/supplier.html') && 'focus' in client) {
+          client.navigate(targetUrl);
+          return client.focus();
+        }
       }
-      return fetch(e.request);
+      // Otherwise, open a new window
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
     })
   );
 });

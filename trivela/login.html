@@ -1,265 +1,1192 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <link rel="icon" type="image/png" href="logo-official.png"/>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>تسجيل الدخول / إنشاء حساب | Trivela</title>
+  <title>بطاقة حساب Trivela | تسجيل الدخول</title>
+  <meta name="description" content="سجل دخولك أو أنشئ حساباً جديداً في متجر Trivela مع نظام حماية OTP المتطور."/>
+  <meta property="og:title" content="بطاقة حساب Trivela | تسجيل الدخول"/>
+  <meta property="og:description" content="سجل دخولك عبر بطاقة FUT 27 التفاعلية."/>
+  <meta property="og:image" content="logo-official.png"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:locale" content="ar_SA"/>
+  <meta property="og:site_name" content="Trivela"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@800;900&family=Teko:wght@700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css?v=3.5"/>
   <style>
-    /* Premium Login & Register layout custom overrides */
-    .login-body {
-      background: var(--blue-50, #F4F9FF);
+    /* ══════════════════════════════════════════════════════════
+       3D INTERACTIVE FUT 27 PLAYER CARD LOGIN & OTP EXPERIENCE
+       ══════════════════════════════════════════════════════════ */
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --card-gold: #facc15;
+      --card-gold-dark: #ca8a04;
+      --card-gold-glow: rgba(250, 204, 21, 0.35);
+      --card-bg-dark: #070e1e;
+      --card-border: #facc15;
+      --fut-cyan: #00f2fe;
+    }
+
+    body.fut-3d-body {
       min-height: 100vh;
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: radial-gradient(circle at 50% 15%, rgba(13, 27, 62, 0.9) 0%, rgba(5, 10, 24, 0.98) 75%),
+                  url('fc27-cover-bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #ffffff;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      box-sizing: border-box;
+      justify-content: space-between;
+      overflow-x: hidden;
+      perspective: 1200px;
     }
-    .login-logo-header {
-      margin-bottom: 24px;
+
+    body.fut-3d-body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 600px;
+      background: radial-gradient(ellipse at center, rgba(250, 204, 21, 0.12) 0%, rgba(0, 242, 254, 0.08) 40%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── TOP NAVIGATION ── */
+    .fut-topbar {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
-    .login-logo-header img {
-      height: 48px;
-      width: auto;
-    }
-    .login-logo-header span {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: 1.8rem;
-      color: var(--blue-800, #0D1E39);
-    }
-    .login-card {
-      background: #ffffff;
-      border: 1px solid var(--blue-100, #E4EBF7);
-      box-shadow: 0 12px 40px rgba(48, 83, 136, 0.05);
-      border-radius: 28px;
+      padding: 20px 30px;
+      max-width: 1200px;
+      margin: 0 auto;
       width: 100%;
-      max-width: 460px;
-      padding: 32px;
-      box-sizing: border-box;
-    }
-    .login-tabs {
-      display: flex;
-      border-bottom: 2px solid var(--blue-100, #E4EBF7);
-      margin-bottom: 24px;
-      gap: 8px;
-    }
-    .login-tab-btn {
-      flex: 1;
-      background: transparent;
-      border: 0;
-      padding: 12px;
-      font-family: 'Cairo', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      color: var(--gray-400, #94A3B8);
-      cursor: pointer;
       position: relative;
-      transition: color 0.3s ease;
+      z-index: 10;
     }
-    .login-tab-btn.active {
-      color: var(--blue-800, #0D1E39);
+
+    .fut-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      background: rgba(8, 16, 36, 0.8);
+      border: 1.5px solid rgba(250, 204, 21, 0.3);
+      border-radius: 30px;
+      color: #f1f5f9;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 800;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      transition: all 0.25s ease;
     }
-    .login-tab-btn.active::after {
+    .fut-back-btn:hover {
+      background: rgba(250, 204, 21, 0.2);
+      border-color: var(--card-gold);
+      color: var(--card-gold);
+      transform: translateX(-4px);
+      box-shadow: 0 0 20px var(--card-gold-glow);
+    }
+
+    .fut-top-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .fut-top-logo img {
+      height: 38px;
+      width: auto;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6));
+    }
+
+    .fut-theme-btn {
+      width: 44px;
+      height: 44px;
+      background: rgba(8, 16, 36, 0.8);
+      border: 1.5px solid rgba(250, 204, 21, 0.3);
+      border-radius: 50%;
+      color: #f1f5f9;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      backdrop-filter: blur(16px);
+      transition: all 0.25s ease;
+    }
+    .fut-theme-btn:hover {
+      border-color: var(--card-gold);
+      color: var(--card-gold);
+      transform: scale(1.08);
+      box-shadow: 0 0 20px var(--card-gold-glow);
+    }
+
+    /* ── 3D CARD STAGE VIEWPORT ── */
+    .fut-stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 15px 50px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .fut-card-scene {
+      width: 100%;
+      max-width: 480px;
+      perspective: 1400px;
+    }
+
+    .fut-card-tilt {
+      width: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out;
+    }
+
+    .fut-card-3d {
+      position: relative;
+      width: 100%;
+      min-height: 680px;
+      transform-style: preserve-3d;
+      transition: transform 0.85s cubic-bezier(0.4, 0.2, 0.2, 1);
+    }
+
+    .fut-card-3d.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .fut-card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 34px;
+      background: linear-gradient(160deg, #0e1a38 0%, #070e22 55%, #040816 100%);
+      border: 2px solid var(--card-gold);
+      box-shadow: 
+        0 25px 60px -10px rgba(0, 0, 0, 0.85),
+        0 0 35px rgba(250, 204, 21, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        inset 0 0 30px rgba(250, 204, 21, 0.08);
+      padding: 28px 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .fut-card-front {
+      transform: rotateY(0deg);
+      z-index: 2;
+    }
+
+    .fut-card-back {
+      transform: rotateY(180deg);
+      border-color: var(--fut-cyan);
+      box-shadow: 
+        0 25px 60px -10px rgba(0, 0, 0, 0.85),
+        0 0 35px rgba(0, 242, 254, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        inset 0 0 30px rgba(0, 242, 254, 0.08);
+      z-index: 1;
+    }
+
+    .fut-card-3d.is-flipped .fut-card-front { z-index: 1; }
+    .fut-card-3d.is-flipped .fut-card-back { z-index: 5; }
+
+    .fut-card-face::before {
       content: '';
       position: absolute;
-      bottom: -2px;
+      inset: 0;
+      background: linear-gradient(
+        115deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.06) 45%,
+        rgba(250, 204, 21, 0.12) 50%,
+        transparent 55%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .fut-card-crown {
+      position: absolute;
+      top: 0;
       left: 0;
       right: 0;
-      height: 3px;
-      background: var(--blue-500, #305388);
-      border-radius: 2px;
+      height: 5px;
+      background: linear-gradient(90deg, transparent, #facc15, #00f2fe, #facc15, transparent);
+      z-index: 2;
     }
-    .login-form {
+    .fut-card-back .fut-card-crown {
+      background: linear-gradient(90deg, transparent, #00f2fe, #facc15, #00f2fe, transparent);
+    }
+
+    .fut-card-top-emblem {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 2;
     }
-    .login-form.hidden {
+
+    .fut-emblem-badge {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(250, 204, 21, 0.25), rgba(7, 14, 34, 0.9));
+      border: 2px solid var(--card-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      box-shadow: 0 0 25px rgba(250, 204, 21, 0.35);
+      margin-bottom: 6px;
+      transition: all 0.3s ease;
+    }
+    .fut-emblem-badge.cyan {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.25), rgba(7, 14, 34, 0.9));
+      border-color: var(--fut-cyan);
+      box-shadow: 0 0 25px rgba(0, 242, 254, 0.35);
+    }
+    .fut-emblem-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+    }
+
+    .fut-tier-pill {
+      display: inline-block;
+      padding: 3px 12px;
+      background: rgba(250, 204, 21, 0.15);
+      border: 1px solid rgba(250, 204, 21, 0.4);
+      border-radius: 20px;
+      color: var(--card-gold);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    .fut-tier-pill.cyan {
+      background: rgba(0, 242, 254, 0.15);
+      border-color: rgba(0, 242, 254, 0.4);
+      color: var(--fut-cyan);
+    }
+
+    .fut-name-bar {
+      background: linear-gradient(90deg, rgba(250, 204, 21, 0.18), rgba(250, 204, 21, 0.08), rgba(250, 204, 21, 0.18));
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      border-radius: 12px;
+      padding: 7px 12px;
+      text-align: center;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 2;
+    }
+    .fut-card-back .fut-name-bar {
+      border-color: rgba(0, 242, 254, 0.35);
+      background: linear-gradient(90deg, rgba(0, 242, 254, 0.18), rgba(0, 242, 254, 0.08), rgba(0, 242, 254, 0.18));
+    }
+
+    .fut-name-text {
+      font-family: 'Montserrat', 'Cairo', sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin: 0;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .fut-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .fut-fg {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: right;
+    }
+
+    .fut-label {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .fut-forgot-link {
+      font-size: 0.72rem;
+      color: var(--card-gold);
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .fut-forgot-link:hover {
+      text-decoration: underline;
+      opacity: 0.85;
+    }
+
+    .fut-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .fut-input-icon {
+      position: absolute;
+      right: 14px;
+      color: #64748b;
+      font-size: 0.92rem;
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+
+    .fut-input {
+      width: 100%;
+      padding: 11px 40px 11px 14px;
+      background: rgba(4, 9, 22, 0.75);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      color: #ffffff;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-sizing: border-box;
+      transition: all 0.25s ease;
+    }
+
+    .fut-input::placeholder { color: #475569; }
+
+    .fut-input:focus {
+      background: rgba(4, 9, 22, 0.95);
+      border-color: var(--card-gold);
+      outline: none;
+      box-shadow: 0 0 16px var(--card-gold-glow);
+    }
+    .fut-card-back .fut-input:focus {
+      border-color: var(--fut-cyan);
+      box-shadow: 0 0 16px rgba(0, 242, 254, 0.35);
+    }
+
+    .fut-input:focus + .fut-input-icon,
+    .fut-input-wrap:focus-within .fut-input-icon {
+      color: var(--card-gold);
+    }
+    .fut-card-back .fut-input:focus + .fut-input-icon,
+    .fut-card-back .fut-input-wrap:focus-within .fut-input-icon {
+      color: var(--fut-cyan);
+    }
+
+    .fut-eye-btn {
+      position: absolute;
+      left: 12px;
+      background: transparent;
+      border: 0;
+      color: #64748b;
+      cursor: pointer;
+      padding: 6px;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    .fut-eye-btn:hover { color: #ffffff; }
+
+    /* ── BUTTONS ── */
+    .fut-submit-btn {
+      background: linear-gradient(135deg, #facc15 0%, #ca8a04 100%);
+      color: #060b18;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 900;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 4px;
+      box-shadow: 0 8px 24px rgba(202, 138, 4, 0.4);
+      transition: all 0.25s ease;
+    }
+    .fut-submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(202, 138, 4, 0.6);
+      filter: brightness(1.1);
+    }
+    .fut-submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .fut-submit-btn.cyan {
+      background: linear-gradient(135deg, #00f2fe 0%, #0284c7 100%);
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.4);
+      color: #040816;
+    }
+    .fut-submit-btn.cyan:hover {
+      box-shadow: 0 12px 30px rgba(0, 242, 254, 0.6);
+    }
+
+    .fut-flip-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px;
+      color: #e2e8f0;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 8px;
+      position: relative;
+      z-index: 25;
+      transition: all 0.25s ease;
+    }
+    .fut-flip-trigger:hover {
+      background: rgba(250, 204, 21, 0.2);
+      border-color: var(--card-gold);
+      color: var(--card-gold);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(250, 204, 21, 0.25);
+    }
+    .fut-card-back .fut-flip-trigger:hover {
+      background: rgba(0, 242, 254, 0.2);
+      border-color: var(--fut-cyan);
+      color: var(--fut-cyan);
+      box-shadow: 0 4px 15px rgba(0, 242, 254, 0.25);
+    }
+
+    .fut-gift-banner {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px dashed #10b981;
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 0.76rem;
+      color: #34d399;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fut-alert {
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 10px;
       display: none;
+      align-items: center;
+      gap: 8px;
     }
-    .login-error-msg {
-      background: #fef2f2;
-      border: 1px solid #fee2e2;
+    .fut-alert.error {
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+    .fut-alert.success {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       OTP & FORGOT PASSWORD MODALS / OVERLAYS
+       ══════════════════════════════════════════════════════════ */
+    .fut-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .fut-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .fut-modal-card {
+      background: linear-gradient(160deg, #0e1a38 0%, #070e22 55%, #040816 100%);
+      border: 2px solid var(--card-gold);
+      border-radius: 28px;
+      padding: 30px 24px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 35px var(--card-gold-glow);
+      text-align: center;
+      position: relative;
+      transform: translateY(20px) scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .fut-modal-overlay.active .fut-modal-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .fut-modal-badge {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(250, 204, 21, 0.15);
+      border: 2px solid var(--card-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--card-gold);
+      margin: 0 auto 16px;
+      box-shadow: 0 0 20px var(--card-gold-glow);
+    }
+
+    .fut-modal-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .fut-modal-desc {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .fut-modal-desc strong {
+      color: var(--card-gold);
+      direction: ltr;
+      display: inline-block;
+    }
+
+    /* 6-Digit OTP Box Grid */
+    .otp-inputs-grid {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      direction: ltr;
+    }
+    .otp-digit {
+      width: 48px;
+      height: 56px;
+      background: rgba(4, 9, 22, 0.9);
+      border: 2px solid rgba(250, 204, 21, 0.35);
+      border-radius: 12px;
+      font-family: 'Montserrat', monospace;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--card-gold);
+      text-align: center;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .otp-digit:focus {
+      border-color: var(--card-gold);
+      box-shadow: 0 0 16px var(--card-gold-glow);
+      transform: scale(1.05);
+      background: #0d1b3e;
+    }
+
+    .otp-resend-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 14px;
+      padding: 0 4px;
+    }
+    .otp-resend-btn {
+      background: none;
+      border: none;
+      color: var(--card-gold);
+      font-weight: 800;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .otp-resend-btn:disabled {
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    .fut-modal-close-btn {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .fut-modal-close-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
       color: #ef4444;
-      padding: 12px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: none;
-      align-items: center;
-      gap: 8px;
     }
-    .login-success-msg {
-      background: #ecfdf5;
-      border: 1px solid #d1fae5;
-      color: #10b981;
-      padding: 12px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: none;
-      align-items: center;
-      gap: 8px;
+
+    /* Footer */
+    .fut-footer {
+      text-align: center;
+      padding: 18px;
+      font-size: 0.76rem;
+      color: #64748b;
+      position: relative;
+      z-index: 5;
+    }
+
+    @media (max-width: 500px) {
+      .fut-card-face {
+        padding: 24px 18px;
+        border-radius: 28px;
+      }
+      .fut-topbar {
+        padding: 14px 18px;
+      }
+      .otp-digit {
+        width: 40px;
+        height: 48px;
+        font-size: 1.3rem;
+      }
     }
   </style>
 </head>
-<body class="login-body light-theme">
+<body class="fut-3d-body rtl">
 
-  <!-- Logo Link -->
-  <a href="index.html" class="login-logo-header">
-    <img src="logo-official.png" alt="Trivela"/>
-    <span>Trivela</span>
-  </a>
+  <!-- Top Navigation -->
+  <header class="fut-topbar">
+    <a href="index.html" class="fut-back-btn">
+      <i class="fas fa-arrow-right"></i>
+      <span>العودة للمتجر</span>
+    </a>
 
-  <!-- Main Login Card -->
-  <div class="login-card">
-    <div class="login-tabs">
-      <button class="login-tab-btn active" id="tabLoginBtn" onclick="switchTab('login')">تسجيل الدخول</button>
-      <button class="login-tab-btn" id="tabRegisterBtn" onclick="switchTab('register')">إنشاء حساب جديد</button>
+    <div class="fut-top-logo">
+      <img src="logo-official.png" alt="Trivela"/>
     </div>
 
-    <!-- Error/Success displays -->
-    <div class="login-error-msg" id="errorBox">
-      <i class="fas fa-circle-exclamation"></i>
-      <span id="errorText">خطأ في البيانات</span>
-    </div>
-    <div class="login-success-msg" id="successBox">
-      <i class="fas fa-circle-check"></i>
-      <span>تم تسجيل الدخول بنجاح! جاري التوجيه...</span>
-    </div>
+    <button id="themeToggleBtn" class="fut-theme-btn" aria-label="تغيير المظهر">
+      <i class="fas fa-moon"></i>
+    </button>
+  </header>
 
-    <!-- LOGIN FORM -->
-    <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
-      <div class="fg">
-        <label>البريد الإلكتروني أو رقم الهاتف</label>
-        <div class="input-with-icon">
-          <i class="fas fa-user input-icon"></i>
-          <input type="text" id="loginField" placeholder="مثال: user@mail.com أو +966..." required/>
+  <!-- 3D Card Arena Stage -->
+  <main class="fut-stage">
+    <div class="fut-card-scene" id="cardScene">
+      
+      <!-- 3D Tilt Wrapper (Mouse Parallax) -->
+      <div class="fut-card-tilt" id="cardTilt">
+
+        <!-- The Flippable Card Container (180deg Flip) -->
+        <div class="fut-card-3d" id="futCard3D">
+
+          <!-- ══════════════════════════════════════════════════════════
+               FRONT FACE: LOGIN (بطاقة تسجيل الدخول)
+               ══════════════════════════════════════════════════════════ -->
+          <div class="fut-card-face fut-card-front">
+            <div class="fut-card-crown"></div>
+
+            <div>
+              <!-- Header -->
+              <div class="fut-card-top-emblem">
+                <div class="fut-emblem-badge">
+                  <img src="logo-official.png" alt="Trivela" class="fut-emblem-img"/>
+                </div>
+                <div class="fut-emblem-tag">
+                  <span class="fut-tier-pill">★ 99 VIP MEMBER ★</span>
+                </div>
+              </div>
+
+              <!-- Card Player Bar -->
+              <div class="fut-name-bar">
+                <h1 class="fut-name-text">تسجيل الدخول • LOGIN</h1>
+              </div>
+
+              <!-- Live Alerts -->
+              <div class="fut-alert error" id="loginErrorBox">
+                <i class="fas fa-circle-exclamation"></i>
+                <span id="loginErrorText">بيانات الدخول غير صحيحة</span>
+              </div>
+              <div class="fut-alert success" id="loginSuccessBox">
+                <i class="fas fa-circle-check"></i>
+                <span id="loginSuccessText">تم بنجاح! جاري التوجيه...</span>
+              </div>
+
+              <!-- Login Form -->
+              <form class="fut-form" id="loginForm" onsubmit="handle3DLogin(event)">
+                <div class="fut-fg">
+                  <label class="fut-label" for="loginField">البريد الإلكتروني أو رقم الهاتف</label>
+                  <div class="fut-input-wrap">
+                    <input type="text" id="loginField" class="fut-input" placeholder="user@mail.com أو +962..." required autocomplete="username"/>
+                    <i class="fas fa-user fut-input-icon"></i>
+                  </div>
+                </div>
+
+                <div class="fut-fg">
+                  <div class="fut-label">
+                    <span>كلمة المرور</span>
+                    <a href="javascript:void(0)" class="fut-forgot-link" onclick="openForgotPasswordModal()">نسيت كلمة المرور؟</a>
+                  </div>
+                  <div class="fut-input-wrap">
+                    <input type="password" id="loginPassword" class="fut-input" placeholder="أدخل كلمة المرور" required autocomplete="current-password"/>
+                    <i class="fas fa-lock fut-input-icon"></i>
+                    <button type="button" class="fut-eye-btn" onclick="toggle3DPass('loginPassword', this)" aria-label="إظهار كلمة المرور">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <button type="submit" class="fut-submit-btn" id="btnLoginSubmit">
+                  <span>دخول إلى حسابي</span>
+                  <i class="fas fa-arrow-left"></i>
+                </button>
+              </form>
+            </div>
+
+            <!-- Flip Trigger to Register -->
+            <button type="button" class="fut-flip-trigger" id="btnFlipToRegister">
+              <i class="fas fa-rotate"></i>
+              <span>ليس لديك حساب؟ <strong>اقلب البطاقة لإنشاء حساب</strong></span>
+            </button>
+          </div>
+
+          <!-- ══════════════════════════════════════════════════════════
+               BACK FACE: REGISTER (بطاقة إنشاء حساب جديد)
+               ══════════════════════════════════════════════════════════ -->
+          <div class="fut-card-face fut-card-back">
+            <div class="fut-card-crown"></div>
+
+            <div>
+              <!-- Header -->
+              <div class="fut-card-top-emblem">
+                <div class="fut-emblem-badge cyan">
+                  <img src="logo-official.png" alt="Trivela" class="fut-emblem-img"/>
+                </div>
+                <div class="fut-emblem-tag">
+                  <span class="fut-tier-pill cyan">★ NEW PLAYER PASS ★</span>
+                </div>
+              </div>
+
+              <!-- Card Player Bar -->
+              <div class="fut-name-bar">
+                <h2 class="fut-name-text">إنشاء حساب جديد • SIGN UP</h2>
+              </div>
+
+              <!-- Live Alerts -->
+              <div class="fut-alert error" id="regErrorBox">
+                <i class="fas fa-circle-exclamation"></i>
+                <span id="regErrorText">خطأ في البيانات المدخلة</span>
+              </div>
+              <div class="fut-alert success" id="regSuccessBox">
+                <i class="fas fa-circle-check"></i>
+                <span id="regSuccessText">تم إنشاء الحساب بنجاح!</span>
+              </div>
+
+              <!-- Register Form -->
+              <form class="fut-form" id="registerForm" onsubmit="handle3DRegister(event)">
+                <div class="fut-fg">
+                  <label class="fut-label" for="regName">الاسم الكامل</label>
+                  <div class="fut-input-wrap">
+                    <input type="text" id="regName" class="fut-input" placeholder="مثال: محمد الأحمد" required autocomplete="name"/>
+                    <i class="fas fa-id-card fut-input-icon"></i>
+                  </div>
+                </div>
+
+                <div class="fut-fg">
+                  <label class="fut-label" for="regPhone">
+                    <span>رقم الواتساب</span>
+                    <span style="font-size: 0.7rem; color: #94a3b8;">(مع رمز الدولة)</span>
+                  </label>
+                  <div class="fut-input-wrap">
+                    <input type="tel" id="regPhone" class="fut-input" placeholder="مثال: +9627xxxxxxxx" required autocomplete="tel" dir="ltr" style="text-align: right;"/>
+                    <i class="fab fa-whatsapp fut-input-icon" style="color: #10b981;"></i>
+                  </div>
+                </div>
+
+                <div class="fut-fg">
+                  <label class="fut-label" for="regEmail">البريد الإلكتروني (لتأكيد الحساب عبر OTP)</label>
+                  <div class="fut-input-wrap">
+                    <input type="email" id="regEmail" class="fut-input" placeholder="user@mail.com" required autocomplete="email" dir="ltr" style="text-align: right;"/>
+                    <i class="fas fa-envelope fut-input-icon"></i>
+                  </div>
+                </div>
+
+                <div class="fut-fg">
+                  <label class="fut-label" for="regPassword">كلمة المرور (6 خانات على الأقل)</label>
+                  <div class="fut-input-wrap">
+                    <input type="password" id="regPassword" class="fut-input" placeholder="اختر كلمة مرور قوية" required minlength="6" autocomplete="new-password"/>
+                    <i class="fas fa-lock fut-input-icon"></i>
+                    <button type="button" class="fut-eye-btn" onclick="toggle3DPass('regPassword', this)" aria-label="إظهار كلمة المرور">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Referral Bonus Banner -->
+                <div id="referralBanner" class="fut-gift-banner" style="display: none;">
+                  <i class="fas fa-gift"></i>
+                  <span>كود إحالة نشط: <strong>تم تفعيل مكافأة الصديق بنجاح!</strong></span>
+                </div>
+
+                <button type="submit" class="fut-submit-btn cyan" id="btnRegSubmit">
+                  <span>إنشاء حساب وتأكيد OTP</span>
+                  <i class="fas fa-arrow-left"></i>
+                </button>
+              </form>
+            </div>
+
+            <!-- Flip Trigger to Login -->
+            <button type="button" class="fut-flip-trigger" id="btnFlipToLogin">
+              <i class="fas fa-rotate"></i>
+              <span>لديك حساب بالفعل؟ <strong>اقلب البطاقة لتسجيل الدخول</strong></span>
+            </button>
+          </div>
+
         </div>
       </div>
+    </div>
+  </main>
 
-      <div class="fg">
-        <label>كلمة المرور</label>
-        <div class="input-with-icon">
-          <i class="fas fa-lock input-icon"></i>
-          <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required/>
-          <button type="button" class="eye-toggle" onclick="togglePass('loginPassword', 'eyeIconLogin')">
-            <i class="fas fa-eye" id="eyeIconLogin"></i>
+  <!-- ══════════════════════════════════════════════════════════
+       OTP VERIFICATION MODAL OVERLAY
+       ══════════════════════════════════════════════════════════ -->
+  <div class="fut-modal-overlay" id="otpModalOverlay">
+    <div class="fut-modal-card">
+      <button class="fut-modal-close-btn" onclick="closeOTPModal()" aria-label="إغلاق">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div class="fut-modal-badge">
+        <i class="fas fa-shield-halved"></i>
+      </div>
+
+      <h3 class="fut-modal-title">تأكيد رمز التحقق (OTP)</h3>
+      <p class="fut-modal-desc">
+        تم إرسال كود التحقق المكون من 6 أرقام إلى بريدك الإلكتروني:<br/>
+        <strong id="otpMaskedEmailDisplay">user***@mail.com</strong>
+      </p>
+
+      <!-- Modal Alert -->
+      <div class="fut-alert error" id="otpErrorBox">
+        <i class="fas fa-circle-exclamation"></i>
+        <span id="otpErrorText">رمز التحقق غير صحيح</span>
+      </div>
+      <div class="fut-alert success" id="otpSuccessBox">
+        <i class="fas fa-circle-check"></i>
+        <span id="otpSuccessText">تم التحقق بنجاح! جاري التوجيه...</span>
+      </div>
+
+      <!-- 6-digit OTP Inputs -->
+      <form id="otpForm" onsubmit="handleOTPVerify(event)">
+        <div class="otp-inputs-grid">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]*" required autocomplete="one-time-code"/>
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]*" required/>
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]*" required/>
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]*" required/>
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]*" required/>
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]*" required/>
+        </div>
+
+        <button type="submit" class="fut-submit-btn" id="btnVerifyOtpSubmit" style="width: 100%;">
+          <span>تأكيد الرمز ودخول الحساب</span>
+          <i class="fas fa-check-circle"></i>
+        </button>
+
+        <div class="otp-resend-row">
+          <span>لم يصلك الكود؟</span>
+          <button type="button" class="otp-resend-btn" id="btnResendOTP" onclick="handleResendOTP()">
+            إعادة إرسال (<span id="resendCountdown">60</span>s)
           </button>
         </div>
-      </div>
-
-      <button type="submit" class="cta-primary w-full" style="height: 52px; margin-top: 10px;">
-        <i class="fas fa-right-to-bracket"></i> تسجيل الدخول
-      </button>
-    </form>
-
-    <!-- REGISTER FORM -->
-    <form class="login-form hidden" id="registerForm" onsubmit="handleRegister(event)">
-      <div class="fg">
-        <label>الاسم الكامل</label>
-        <div class="input-with-icon">
-          <i class="fas fa-user input-icon"></i>
-          <input type="text" id="regName" placeholder="محمد الأحمد" required/>
-        </div>
-      </div>
-
-      <div class="fg">
-        <label>رقم الواتساب</label>
-        <div class="input-with-icon">
-          <i class="fab fa-whatsapp input-icon"></i>
-          <input type="tel" id="regPhone" placeholder="مثال: +966500000000" required/>
-        </div>
-        <span style="font-size: 0.75rem; color: var(--gray-400, #94A3B8);">يجب تضمين رمز الدولة (مثال: +9665...)</span>
-      </div>
-
-      <div class="fg">
-        <label>البريد الإلكتروني</label>
-        <div class="input-with-icon">
-          <i class="fas fa-envelope input-icon"></i>
-          <input type="email" id="regEmail" placeholder="user@mail.com" required/>
-        </div>
-      </div>
-
-      <div class="fg">
-        <label>كلمة المرور</label>
-        <div class="input-with-icon">
-          <i class="fas fa-lock input-icon"></i>
-          <input type="password" id="regPassword" placeholder="اختر كلمة مرور قوية" required/>
-          <button type="button" class="eye-toggle" onclick="togglePass('regPassword', 'eyeIconReg')">
-            <i class="fas fa-eye" id="eyeIconReg"></i>
-          </button>
-        </div>
-      </div>
-
-      <button type="submit" class="cta-primary w-full" style="height: 52px; margin-top: 10px;">
-        <i class="fas fa-user-plus"></i> إنشاء حساب والبدء كسب النقاط
-      </button>
-    </form>
+      </form>
+    </div>
   </div>
 
+  <!-- ══════════════════════════════════════════════════════════
+       FORGOT PASSWORD MODAL OVERLAY
+       ══════════════════════════════════════════════════════════ -->
+  <div class="fut-modal-overlay" id="forgotModalOverlay">
+    <div class="fut-modal-card">
+      <button class="fut-modal-close-btn" onclick="closeForgotPasswordModal()" aria-label="إغلاق">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div class="fut-modal-badge">
+        <i class="fas fa-key"></i>
+      </div>
+
+      <h3 class="fut-modal-title">استعادة كلمة المرور</h3>
+      
+      <!-- Live Alerts -->
+      <div class="fut-alert error" id="forgotErrorBox">
+        <i class="fas fa-circle-exclamation"></i>
+        <span id="forgotErrorText">خطأ</span>
+      </div>
+      <div class="fut-alert success" id="forgotSuccessBox">
+        <i class="fas fa-circle-check"></i>
+        <span id="forgotSuccessText">تم بنجاح!</span>
+      </div>
+
+      <!-- Step 1: Request OTP -->
+      <div id="forgotStep1">
+        <p class="fut-modal-desc">أدخل بريدك الإلكتروني المسجل وسنرسل لك رمز OTP لإعادة تعيين كلمة المرور فوراً.</p>
+        <form class="fut-form" onsubmit="handleForgotSendCode(event)">
+          <div class="fut-fg">
+            <div class="fut-input-wrap">
+              <input type="email" id="forgotEmailInput" class="fut-input" placeholder="user@mail.com" required dir="ltr" style="text-align: right;"/>
+              <i class="fas fa-envelope fut-input-icon"></i>
+            </div>
+          </div>
+          <button type="submit" class="fut-submit-btn" id="btnForgotSendSubmit" style="width: 100%;">
+            <span>إرسال كود التحقق</span>
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Step 2: Reset Password with OTP -->
+      <div id="forgotStep2" style="display: none;">
+        <p class="fut-modal-desc">أدخل رمز OTP الذي وصلك إلى بريدك الإلكتروني، مع كلمة المرور الجديدة.</p>
+        <form class="fut-form" onsubmit="handleForgotResetSubmit(event)">
+          <div class="fut-fg">
+            <label class="fut-label" for="resetOtpCode">رمز التحقق (6 أرقام)</label>
+            <div class="fut-input-wrap">
+              <input type="text" id="resetOtpCode" class="fut-input" placeholder="123456" required maxlength="6" dir="ltr" style="text-align: center; letter-spacing: 4px; font-weight: 800; font-family: monospace; font-size: 1.1rem;"/>
+              <i class="fas fa-shield-alt fut-input-icon"></i>
+            </div>
+          </div>
+
+          <div class="fut-fg">
+            <label class="fut-label" for="resetNewPassword">كلمة المرور الجديدة</label>
+            <div class="fut-input-wrap">
+              <input type="password" id="resetNewPassword" class="fut-input" placeholder="6 خانات على الأقل" required minlength="6"/>
+              <i class="fas fa-lock fut-input-icon"></i>
+            </div>
+          </div>
+
+          <button type="submit" class="fut-submit-btn" id="btnResetPassSubmit" style="width: 100%;">
+            <span>حفظ كلمة المرور والدخول</span>
+            <i class="fas fa-check-circle"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="fut-footer">
+    حقوق الطبع والنشر © 2026 Trivela. جميع الحقوق محفوظة.
+  </footer>
+
   <script>
-    // Tab switcher
-    function switchTab(mode) {
-      const tabLoginBtn = document.getElementById('tabLoginBtn');
-      const tabRegisterBtn = document.getElementById('tabRegisterBtn');
-      const loginForm = document.getElementById('loginForm');
-      const registerForm = document.getElementById('registerForm');
-      const errorBox = document.getElementById('errorBox');
-      const successBox = document.getElementById('successBox');
+    // ═══════ 3D FLIP CONTROLLERS ═══════
+    const futCard3D = document.getElementById('futCard3D');
+    const cardTilt = document.getElementById('cardTilt');
 
-      errorBox.style.display = 'none';
-      successBox.style.display = 'none';
-
-      if (mode === 'login') {
-        tabLoginBtn.classList.add('active');
-        tabRegisterBtn.classList.remove('active');
-        loginForm.classList.remove('hidden');
-        registerForm.classList.add('hidden');
-      } else {
-        tabRegisterBtn.classList.add('active');
-        tabLoginBtn.classList.remove('active');
-        registerForm.classList.remove('hidden');
-        loginForm.classList.add('hidden');
-      }
+    function flipToRegister(e) {
+      if (e) e.preventDefault();
+      if (futCard3D) futCard3D.classList.add('is-flipped');
     }
 
-    // Toggle password visibility helper
-    function togglePass(inputId, iconId) {
+    function flipToLogin(e) {
+      if (e) e.preventDefault();
+      if (futCard3D) futCard3D.classList.remove('is-flipped');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnReg = document.getElementById('btnFlipToRegister');
+      const btnLog = document.getElementById('btnFlipToLogin');
+      if (btnReg) btnReg.addEventListener('click', flipToRegister);
+      if (btnLog) btnLog.addEventListener('click', flipToLogin);
+    });
+
+    // ═══════ 3D PARALLAX TILT ON MOUSE MOVE ═══════
+    const stage = document.querySelector('.fut-stage');
+    const scene = document.getElementById('cardScene');
+
+    if (stage && scene && cardTilt && window.innerWidth > 768) {
+      stage.addEventListener('mousemove', (e) => {
+        const rect = scene.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        const rotateX = (-y / 28).toFixed(2);
+        const rotateY = (x / 28).toFixed(2);
+
+        cardTilt.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      });
+
+      stage.addEventListener('mouseleave', () => {
+        cardTilt.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      });
+    }
+
+    // ═══════ PASSWORD TOGGLE ═══════
+    function toggle3DPass(inputId, btn) {
       const input = document.getElementById(inputId);
-      const icon = document.getElementById(iconId);
+      const icon = btn.querySelector('i');
+      if (!input || !icon) return;
+
       if (input.type === 'password') {
         input.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
+        icon.className = 'fas fa-eye-slash';
       } else {
         input.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
+        icon.className = 'fas fa-eye';
       }
     }
 
-    // Form logic
-    function handleLogin(e) {
+    // ═══════ REFERRAL DETECTOR ═══════
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref) {
+        sessionStorage.setItem('trivela_ref', ref);
+        const refBanner = document.getElementById('referralBanner');
+        if (refBanner) refBanner.style.display = 'flex';
+        flipToRegister();
+      }
+    });
+
+    // ═══════ STATE FOR OTP ═══════
+    let currentPendingAuth = {
+      userId: null,
+      email: null,
+      maskedEmail: null
+    };
+    let resendTimerInterval = null;
+
+    // ═══════ OTP MODAL CONTROLS ═══════
+    function openOTPModal(userId, maskedEmail, rawEmail) {
+      currentPendingAuth.userId = userId;
+      currentPendingAuth.email = rawEmail || null;
+      currentPendingAuth.maskedEmail = maskedEmail;
+
+      document.getElementById('otpMaskedEmailDisplay').textContent = maskedEmail || 'بريدك الإلكتروني';
+      document.getElementById('otpErrorBox').style.display = 'none';
+      document.getElementById('otpSuccessBox').style.display = 'none';
+
+      // Clear digit inputs
+      const digits = document.querySelectorAll('.otp-digit');
+      digits.forEach(d => d.value = '');
+
+      document.getElementById('otpModalOverlay').classList.add('active');
+      if (digits[0]) digits[0].focus();
+
+      startResendTimer(60);
+    }
+
+    function closeOTPModal() {
+      document.getElementById('otpModalOverlay').classList.remove('active');
+      if (resendTimerInterval) clearInterval(resendTimerInterval);
+    }
+
+    function startResendTimer(seconds) {
+      const btn = document.getElementById('btnResendOTP');
+      const counter = document.getElementById('resendCountdown');
+      btn.disabled = true;
+      let left = seconds;
+      counter.textContent = left;
+
+      if (resendTimerInterval) clearInterval(resendTimerInterval);
+      resendTimerInterval = setInterval(() => {
+        left -= 1;
+        counter.textContent = left;
+        if (left <= 0) {
+          clearInterval(resendTimerInterval);
+          btn.disabled = false;
+          btn.innerHTML = 'إعادة إرسال الرمز';
+        }
+      }, 1000);
+    }
+
+    // ═══════ OTP DIGIT INPUT NAVIGATION & PASTE ═══════
+    const otpDigits = document.querySelectorAll('.otp-digit');
+    otpDigits.forEach((digit, idx) => {
+      digit.addEventListener('input', (e) => {
+        const val = e.target.value;
+        if (val.length === 1 && idx < otpDigits.length - 1) {
+          otpDigits[idx + 1].focus();
+        }
+      });
+
+      digit.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !digit.value && idx > 0) {
+          otpDigits[idx - 1].focus();
+        }
+      });
+
+      digit.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text').trim();
+        if (/^\d{6}$/.test(text)) {
+          text.split('').forEach((char, i) => {
+            if (otpDigits[i]) otpDigits[i].value = char;
+          });
+          otpDigits[5].focus();
+        }
+      });
+    });
+
+    // ═══════ LOGIN HANDLER ═══════
+    function handle3DLogin(e) {
       e.preventDefault();
       const loginField = document.getElementById('loginField').value.trim();
       const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('btnLoginSubmit');
+      const errorBox = document.getElementById('loginErrorBox');
+      const successBox = document.getElementById('loginSuccessBox');
 
-      const errorBox = document.getElementById('errorBox');
-      const successBox = document.getElementById('successBox');
       errorBox.style.display = 'none';
+      successBox.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>جاري التحقق والدخول...</span>';
 
       fetch('/api/auth/login', {
         method: 'POST',
@@ -268,45 +1195,52 @@
       })
       .then(res => res.json())
       .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = '<span>دخول إلى حسابي</span> <i class="fas fa-arrow-left"></i>';
+
         if (data.error) {
-          document.getElementById('errorText').textContent = data.error;
+          document.getElementById('loginErrorText').textContent = data.error;
           errorBox.style.display = 'flex';
+        } else if (data.needsVerification) {
+          // Account unverified -> open OTP modal
+          openOTPModal(data.userId, data.email, loginField.includes('@') ? loginField : null);
         } else {
+          // Login successful
           localStorage.setItem('trivela_token', data.token);
+          localStorage.setItem('trivela_user', JSON.stringify(data.user || {}));
+          document.getElementById('loginSuccessText').textContent = 'تم تسجيل الدخول بنجاح! جاري التوجيه...';
           successBox.style.display = 'flex';
           setTimeout(() => {
             const params = new URLSearchParams(window.location.search);
             const redirect = params.get('redirect') || 'profile.html';
             window.location.href = redirect;
-          }, 1200);
+          }, 1000);
         }
       })
-      .catch(err => {
-        document.getElementById('errorText').textContent = "حدث خطأ في الاتصال بالخادم.";
+      .catch(() => {
+        document.getElementById('loginErrorText').textContent = 'حدث خطأ في الاتصال بالخادم، يرجى المحاولة لاحقاً.';
         errorBox.style.display = 'flex';
+        btn.disabled = false;
+        btn.innerHTML = '<span>دخول إلى حسابي</span> <i class="fas fa-arrow-left"></i>';
       });
     }
 
-    // Capture referral parameter on load
-    document.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
-      const ref = params.get('ref');
-      if (ref) {
-        sessionStorage.setItem('trivela_ref', ref);
-      }
-    });
-
-    function handleRegister(e) {
+    // ═══════ REGISTER HANDLER ═══════
+    function handle3DRegister(e) {
       e.preventDefault();
       const name = document.getElementById('regName').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
       const email = document.getElementById('regEmail').value.trim();
       const password = document.getElementById('regPassword').value;
       const referralCode = sessionStorage.getItem('trivela_ref') || null;
+      const btn = document.getElementById('btnRegSubmit');
+      const errorBox = document.getElementById('regErrorBox');
+      const successBox = document.getElementById('regSuccessBox');
 
-      const errorBox = document.getElementById('errorBox');
-      const successBox = document.getElementById('successBox');
       errorBox.style.display = 'none';
+      successBox.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>جاري إنشاء الحساب وإرسال OTP...</span>';
 
       fetch('/api/auth/register', {
         method: 'POST',
@@ -315,27 +1249,220 @@
       })
       .then(res => res.json())
       .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = '<span>إنشاء حساب وتأكيد OTP</span> <i class="fas fa-arrow-left"></i>';
+
         if (data.error) {
-          document.getElementById('errorText').textContent = data.error;
+          document.getElementById('regErrorText').textContent = data.error;
+          errorBox.style.display = 'flex';
+        } else if (data.needsVerification) {
+          sessionStorage.removeItem('trivela_ref');
+          openOTPModal(data.userId, data.email, email);
+        }
+      })
+      .catch(() => {
+        document.getElementById('regErrorText').textContent = 'حدث خطأ في الاتصال بالخادم، يرجى المحاولة لاحقاً.';
+        errorBox.style.display = 'flex';
+        btn.disabled = false;
+        btn.innerHTML = '<span>إنشاء حساب وتأكيد OTP</span> <i class="fas fa-arrow-left"></i>';
+      });
+    }
+
+    // ═══════ VERIFY OTP HANDLER ═══════
+    function handleOTPVerify(e) {
+      e.preventDefault();
+      const digits = Array.from(document.querySelectorAll('.otp-digit')).map(d => d.value).join('');
+      if (digits.length !== 6) {
+        document.getElementById('otpErrorText').textContent = 'يرجى إدخال كافة أرقام الرمز الستة';
+        document.getElementById('otpErrorBox').style.display = 'flex';
+        return;
+      }
+
+      const btn = document.getElementById('btnVerifyOtpSubmit');
+      const errorBox = document.getElementById('otpErrorBox');
+      const successBox = document.getElementById('otpSuccessBox');
+
+      errorBox.style.display = 'none';
+      successBox.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>جاري التحقق...</span>';
+
+      fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: digits,
+          userId: currentPendingAuth.userId,
+          email: currentPendingAuth.email
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = '<span>تأكيد الرمز ودخول الحساب</span> <i class="fas fa-check-circle"></i>';
+
+        if (data.error) {
+          document.getElementById('otpErrorText').textContent = data.error;
           errorBox.style.display = 'flex';
         } else {
-          // Clear used referral code
-          sessionStorage.removeItem('trivela_ref');
           localStorage.setItem('trivela_token', data.token);
-          successBox.querySelector('span').textContent = "تم إنشاء الحساب بنجاح! جاري التوجيه...";
+          localStorage.setItem('trivela_user', JSON.stringify(data.user || {}));
+          document.getElementById('otpSuccessText').textContent = 'تم تأكيد الحساب بنجاح! جاري التوجيه...';
           successBox.style.display = 'flex';
           setTimeout(() => {
             const params = new URLSearchParams(window.location.search);
             const redirect = params.get('redirect') || 'profile.html';
             window.location.href = redirect;
+          }, 1000);
+        }
+      })
+      .catch(() => {
+        document.getElementById('otpErrorText').textContent = 'حدث خطأ في الاتصال بالخادم.';
+        errorBox.style.display = 'flex';
+        btn.disabled = false;
+        btn.innerHTML = '<span>تأكيد الرمز ودخول الحساب</span> <i class="fas fa-check-circle"></i>';
+      });
+    }
+
+    // ═══════ RESEND OTP HANDLER ═══════
+    function handleResendOTP() {
+      const btn = document.getElementById('btnResendOTP');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+
+      fetch('/api/auth/resend-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentPendingAuth.userId,
+          email: currentPendingAuth.email
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          document.getElementById('otpErrorText').textContent = data.error;
+          document.getElementById('otpErrorBox').style.display = 'flex';
+          btn.disabled = false;
+          btn.innerHTML = 'إعادة إرسال الرمز';
+        } else {
+          startResendTimer(60);
+          document.getElementById('otpSuccessText').textContent = 'تم إرسال رمز جديد إلى بريدك!';
+          document.getElementById('otpSuccessBox').style.display = 'flex';
+          setTimeout(() => { document.getElementById('otpSuccessBox').style.display = 'none'; }, 4000);
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        btn.innerHTML = 'إعادة إرسال الرمز';
+      });
+    }
+
+    // ═══════ FORGOT PASSWORD MODAL ═══════
+    let forgotUserEmail = '';
+
+    function openForgotPasswordModal() {
+      document.getElementById('forgotStep1').style.display = 'block';
+      document.getElementById('forgotStep2').style.display = 'none';
+      document.getElementById('forgotErrorBox').style.display = 'none';
+      document.getElementById('forgotSuccessBox').style.display = 'none';
+      document.getElementById('forgotEmailInput').value = '';
+      document.getElementById('forgotModalOverlay').classList.add('active');
+    }
+
+    function closeForgotPasswordModal() {
+      document.getElementById('forgotModalOverlay').classList.remove('active');
+    }
+
+    function handleForgotSendCode(e) {
+      e.preventDefault();
+      const email = document.getElementById('forgotEmailInput').value.trim();
+      const btn = document.getElementById('btnForgotSendSubmit');
+      const errorBox = document.getElementById('forgotErrorBox');
+      const successBox = document.getElementById('forgotSuccessBox');
+
+      errorBox.style.display = 'none';
+      successBox.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>جاري الإرسال...</span>';
+
+      fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+      .then(res => res.json())
+      .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = '<span>إرسال كود التحقق</span> <i class="fas fa-paper-plane"></i>';
+
+        if (data.error) {
+          document.getElementById('forgotErrorText').textContent = data.error;
+          errorBox.style.display = 'flex';
+        } else {
+          forgotUserEmail = email;
+          document.getElementById('forgotStep1').style.display = 'none';
+          document.getElementById('forgotStep2').style.display = 'block';
+          document.getElementById('forgotSuccessText').textContent = data.message || 'تم إرسال رمز التحقق إلى بريدك الإلكتروني.';
+          successBox.style.display = 'flex';
+        }
+      })
+      .catch(() => {
+        document.getElementById('forgotErrorText').textContent = 'حدث خطأ في الاتصال.';
+        errorBox.style.display = 'flex';
+        btn.disabled = false;
+        btn.innerHTML = '<span>إرسال كود التحقق</span> <i class="fas fa-paper-plane"></i>';
+      });
+    }
+
+    function handleForgotResetSubmit(e) {
+      e.preventDefault();
+      const code = document.getElementById('resetOtpCode').value.trim();
+      const newPassword = document.getElementById('resetNewPassword').value;
+      const btn = document.getElementById('btnResetPassSubmit');
+      const errorBox = document.getElementById('forgotErrorBox');
+      const successBox = document.getElementById('forgotSuccessBox');
+
+      errorBox.style.display = 'none';
+      successBox.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>جاري الحفظ...</span>';
+
+      fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: forgotUserEmail,
+          code,
+          newPassword
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = '<span>حفظ كلمة المرور والدخول</span> <i class="fas fa-check-circle"></i>';
+
+        if (data.error) {
+          document.getElementById('forgotErrorText').textContent = data.error;
+          errorBox.style.display = 'flex';
+        } else {
+          localStorage.setItem('trivela_token', data.token);
+          localStorage.setItem('trivela_user', JSON.stringify(data.user || {}));
+          document.getElementById('forgotSuccessText').textContent = 'تم تعيين كلمة المرور بنجاح! جاري التوجيه...';
+          successBox.style.display = 'flex';
+          setTimeout(() => {
+            window.location.href = 'profile.html';
           }, 1200);
         }
       })
-      .catch(err => {
-        document.getElementById('errorText').textContent = "حدث خطأ في الاتصال بالخادم.";
+      .catch(() => {
+        document.getElementById('forgotErrorText').textContent = 'حدث خطأ أثناء الاتصال.';
         errorBox.style.display = 'flex';
+        btn.disabled = false;
+        btn.innerHTML = '<span>حفظ كلمة المرور والدخول</span> <i class="fas fa-check-circle"></i>';
       });
     }
   </script>
+  <script type="module" src="src/core/theme.js"></script>
 </body>
 </html>

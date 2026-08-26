@@ -1,7 +1,6 @@
-// Configuration & Exchange Rates
 let dynamicSettings = {
-  whatsappPhone: "966555555555",
-  instagramUrl: "https://instagram.com/TrivelaOfficial",
+  whatsappPhone: "962775585112",
+  instagramUrl: "https://www.instagram.com/trivelacoins",
   maintenanceMode: false,
   baseRateConsole: 2.80,
   baseRatePC: 2.40,
@@ -20,44 +19,118 @@ const CURRENCIES = {
   EGP: { symbol: 'ج.م', rate: 49.5, dec: 1 }
 };
 
-// Current State
-let currentPlatform = 'console';
-let activePlayers = [];
-// Loyalty & Coupon State
-/* dynamicCoupons removed */
-let activeCoupon = null;
-let usePointsActive = false;
-let userPoints = 0;
-let loggedInName = "";
-let loggedInPhone = "";
-
-// Helper: Toggle Checkbox Card styling
-window.toggleCheckboxCard = function(cardId) {
-  const card = document.getElementById(cardId);
-  if (card) {
-    const checkbox = card.querySelector('input[type="checkbox"]');
-    if (checkbox) {
-      card.classList.toggle('active', checkbox.checked);
-    }
+// ══════════ EA FC IN-GAME OBJECTIVES DATA ══════════
+const OBJECTIVES_DATA = {
+  rush: {
+    id: "rush",
+    name: "مهام نمط الـ Rush الأسبوعية",
+    icon: "fas fa-bolt",
+    time: "متوسط الإنجاز: 2 - 4 ساعات",
+    priceUSD: 15,
+    priceSAR: 55,
+    finalRewardSub: "حزمة ميجا نادرة + 5x لاعبين 83+ + نقاط أهداف كاملة",
+    rewardPills: [
+      { icon: "fas fa-gem", text: "+20,000 Rush SP" },
+      { icon: "fas fa-box-open", text: "2x باقات جامبو" },
+      { icon: "fas fa-users", text: "5x لاعبين 83+" }
+    ],
+    subtasks: [
+      { num: 1, name: "العب 5 مباريات في نمط الـ Rush الأسبوعي", desc: "المشاركة في مباريات النمط مع تسجيل الأهداف", reward: "✨ +1,000 XP" },
+      { num: 2, name: "سجل 10 أهداف بتمريرات بينية سريعة", desc: "إنهاء الهجمات بتمريرات مباشرة دقيقة", reward: "🎁 حزمة لاعبين ذهبيين" },
+      { num: 3, name: "اصنع 5 أهداف بتمريرات حاسمة بالقدم الضعيفة", desc: "صناعة اللعب بلاعبي خط الوسط والهجوم", reward: "✨ +1,500 XP" },
+      { num: 4, name: "حقق 4 انتصارات في الـ Rush مع تقييم 8.0+", desc: "تحقيق الفوز بأداء فردي وجماعي متميز", reward: "🎁 باقة 83+ x2" }
+    ]
+  },
+  cup: {
+    id: "cup",
+    name: "كأس البطولة الودي (Live Friendly Cup)",
+    icon: "fas fa-trophy",
+    time: "متوسط الإنجاز: 3 - 5 ساعات",
+    priceUSD: 18,
+    priceSAR: 70,
+    finalRewardSub: "باقة 85+ x3 نادرة + بطاقة لاعب سيزون خاص + 2,500 XP",
+    rewardPills: [
+      { icon: "fas fa-trophy", text: "10 انتصارات كاملة" },
+      { icon: "fas fa-box-open", text: "باقة 85+ x3" },
+      { icon: "fas fa-star", text: "+2,500 XP" }
+    ],
+    subtasks: [
+      { num: 1, name: "سجل في 6 مباريات منفصلة في الكأس الودي", desc: "التسجيل في كل مباراة بأي لاعب", reward: "🎁 باقة ذهبية ممتازة" },
+      { num: 2, name: "اصنع 4 أهداف باستخدام لاعبي الدوري الإنجليزي", desc: "صناعة الفرص المحققة", reward: "✨ +800 XP" },
+      { num: 3, name: "حافظ على نظافة الشباك في 3 مباريات", desc: "إنهاء المباريات بدون استقبال أهداف", reward: "🎁 باقة لاعبين 82+ x3" },
+      { num: 4, name: "حقق 10 انتصارات كاملة في كأس البطولة", desc: "تأمين الحد الأقصى من مكافآت الكأس", reward: "🎁 باقة 84+ x5" }
+    ]
+  },
+  player: {
+    id: "player",
+    name: "مهام لاعب الأسبوع المجاني (Player Objective)",
+    icon: "fas fa-user-ninja",
+    time: "متوسط الإنجاز: 2 - 4 ساعات",
+    priceUSD: 17,
+    priceSAR: 65,
+    finalRewardSub: "بطاقة اللاعب الخاصة الرسمية تقييم 89 OVR غير قابلة للمقايضة",
+    rewardPills: [
+      { icon: "fas fa-id-card", text: "بطاقة لاعب 89 OVR" },
+      { icon: "fas fa-bolt", text: "PlayStyle+ مدمج" },
+      { icon: "fas fa-gift", text: "4x باقات متنوعة" }
+    ],
+    subtasks: [
+      { num: 1, name: "سجل 8 أهداف بتسديدة ساقطة أو مقوسة Finesse", desc: "في مباريات الرايفلز أو السكواد باتلز (نصف محترف+)", reward: "🎁 باقة 80+ x2" },
+      { num: 2, name: "اصنع 5 أهداف بلاعبين يملكون 4 نجوم مهارة على الأقل", desc: "باستخدام مهارات المراوغة والتمرير", reward: "✨ +1,000 XP" },
+      { num: 3, name: "العب 7 مباريات مع تشكيلة تحتوي 3 لاعبين من نفس الدوري", desc: "المشاركة بالتشكيلة المطلوبة", reward: "🎁 باقة 82+ x2" },
+      { num: 4, name: "فز في 5 مباريات منفصلة بفارق هدفين على الأقل", desc: "تحقيق الفوز المريح", reward: "🏆 كارت اللاعب 89 OVR" }
+    ]
+  },
+  evo: {
+    id: "evo",
+    name: "تطوير Evolution المتقدم (Full Tier)",
+    icon: "fas fa-dna",
+    time: "متوسط الإنجاز: 4 - 8 ساعات",
+    priceUSD: 25,
+    priceSAR: 95,
+    finalRewardSub: "إنهاء كافة مستويات التطوير Level 1 / 2 / 3 وترقية بطاقة لاعبك بالكامل",
+    rewardPills: [
+      { icon: "fas fa-arrow-up", text: "+6 OVR ترقية كاملة" },
+      { icon: "fas fa-star", text: "5★ مهارات أو قدم" },
+      { icon: "fas fa-shield-halved", text: "PlayStyle+ إضافي" }
+    ],
+    subtasks: [
+      { num: 1, name: "Level 1: العب 3 مباريات واصنع هدفين باللاعب", desc: "إنهاء متطلبات المستوى الأول", reward: "⚡ ترقية السرعة والتسديد" },
+      { num: 2, name: "Level 2: فز في 4 مباريات بشباك نظيفة مع إشراك اللاعب", desc: "إنهاء متطلبات المستوى الثاني", reward: "⚡ ترقية الدفاع والبدنية" },
+      { num: 3, name: "Level 3: سجل 5 أهداف باللاعب في الرايفلز أو الأبطال", desc: "إنهاء متطلبات المستوى الثالث والأخير", reward: "⚡ الترقية النهائية + PlayStyle+" }
+    ]
+  },
+  xp: {
+    id: "xp",
+    name: "حزمة تسريع السيزون (+10,000 XP)",
+    icon: "fas fa-star",
+    time: "متوسط الإنجاز: 3 - 6 ساعات",
+    priceUSD: 16,
+    priceSAR: 60,
+    finalRewardSub: "تجميع 10,000 نقطة XP مضمونة لفتح مراتب السيزون وباكات الـ 87+",
+    rewardPills: [
+      { icon: "fas fa-star", text: "+10,000 Season XP" },
+      { icon: "fas fa-layer-group", text: "فتح 10 مستويات" },
+      { icon: "fas fa-gift", text: "باقة الموسم 87+" }
+    ],
+    subtasks: [
+      { num: 1, name: "إنهاء حزمة المهام اليومية لـ 7 أيام متتالية", desc: "تسجيل الدخول ولعب المباريات اليومية", reward: "✨ +3,500 XP" },
+      { num: 2, name: "إنهاء المهام الأسبوعية الشاملة والتحديات الإقليمية", desc: "إتمام شروط الأهداف الموسمية", reward: "✨ +4,000 XP" },
+      { num: 3, name: "تجميع مهام الأطوار والمباريات السريعة", desc: "حصد كافة نقاط الـ XP المتبقية", reward: "✨ +2,500 XP" }
+    ]
   }
 };
 
-// Fetch settings from server
+let activeGroupId = "rush";
+let selectedGroupIds = new Set();
+
+// Dynamic settings & coupons
 function fetchSettings() {
   return fetch('/api/public/content')
     .then(res => res.json())
     .then(data => {
-      if (data.settings) {
-        dynamicSettings = data.settings;
-
-        // Redirect if service is disabled
-        if (dynamicSettings.enableServiceObjectives === false) {
-          alert("عذراً، خدمة إنجاز المهام متوقفة مؤقتاً. سيتم تحويلك للرئيسية.");
-          window.location.href = "/";
-          return;
-        }
-
-        // Apply Exchange Rate Overrides
+      if (data && data.settings) {
+        dynamicSettings = Object.assign(dynamicSettings, data.settings);
         if (dynamicSettings.customExchangeRates) {
           for (const code in dynamicSettings.customExchangeRates) {
             if (CURRENCIES[code]) {
@@ -67,639 +140,411 @@ function fetchSettings() {
         }
       }
     })
+    .catch(err => console.warn("Could not fetch settings dynamically:", err));
+}
+
+function fetchDynamicObjectives() {
+  return fetch('/api/public/objectives')
+    .then(res => res.json())
+    .then(data => {
+      if (Array.isArray(data) && data.length > 0) {
+        Object.keys(OBJECTIVES_DATA).forEach(k => delete OBJECTIVES_DATA[k]);
+        data.forEach(item => {
+          OBJECTIVES_DATA[item.id] = item;
+        });
+      }
+      renderGroupListSidebar();
+      const firstKey = Object.keys(OBJECTIVES_DATA)[0] || 'rush';
+      showGroupDetail(firstKey);
+      updateAllPricesAndSummary();
+    })
     .catch(err => {
-      console.warn("Could not fetch settings dynamically:", err);
+      console.warn("Could not fetch dynamic objectives, using fallback:", err);
+      renderGroupListSidebar();
+      showGroupDetail('rush');
+      updateAllPricesAndSummary();
     });
 }
 
-function applyCMSPageContent() {
-  const content = dynamicSettings.content;
-  if (!content || !content.objectivesPage) return;
-  const cp = content.objectivesPage;
-  
-  const title = document.getElementById('cms_objectivesTitle');
-  if (title && cp.title) title.textContent = cp.title;
+function renderGroupListSidebar() {
+  const container = document.getElementById('fcGroupList');
+  if (!container) return;
 
-  const desc = document.getElementById('cms_objectivesDesc');
-  if (desc && cp.desc) desc.textContent = cp.desc;
+  const groupKeys = Object.keys(OBJECTIVES_DATA);
+  if (groupKeys.length === 0) return;
 
-  const hint = document.getElementById('cms_objectivesHint');
-  if (hint && cp.hint) hint.textContent = cp.hint;
-}
+  if (!OBJECTIVES_DATA[activeGroupId]) {
+    activeGroupId = groupKeys[0];
+  }
 
-
-let dynamicCoupons = {};
-function fetchDynamicCoupons() {
-  return fetch('/api/public/coupons')
-    .then(res => res.json())
-    .then(coupons => {
-      dynamicCoupons = {};
-      (coupons || []).forEach(c => {
-        const isExpired = new Date(c.expiryDate) < new Date();
-        const isLimitReached = (c.usedCount || 0) >= (c.maxUses || 999);
-        if (!isExpired && !isLimitReached) {
-          dynamicCoupons[c.code.toUpperCase()] = c.percent;
-        }
-      });
-    })
-    .catch(err => console.warn("Could not fetch coupons dynamically:", err));
+  container.innerHTML = groupKeys.map(k => {
+    const g = OBJECTIVES_DATA[k];
+    const isSelected = selectedGroupIds.has(k) ? 'is-selected' : '';
+    const isActive = activeGroupId === k ? 'active-view' : '';
+    const formattedPrice = formatPrice(g.priceUSD, g.priceSAR);
+    return `
+      <div class="fc-group-card ${isActive} ${isSelected}" id="groupCard_${g.id}" onclick="showGroupDetail('${g.id}')">
+        <div class="fc-group-card-left">
+          <div class="fc-group-icon"><i class="${g.icon || 'fas fa-bolt'}"></i></div>
+          <div class="fc-group-meta">
+            <span class="fc-group-title">${g.name}</span>
+            <span class="fc-group-sub">${g.subtasks ? g.subtasks.length + ' مهام فرعية' : 'تحديات رسمية'}</span>
+          </div>
+        </div>
+        <div class="fc-group-card-right">
+          <span class="fc-group-price-pill">${formattedPrice}</span>
+          <div class="fc-group-select-checkbox"><i class="fas fa-check"></i></div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  Promise.all([fetchSettings(), fetchDynamicCoupons()]).then(() => {
-    applyCMSPageContent();
-    // Platform is fixed to PlayStation Console only
-    currentPlatform = 'console';
+  fetchSettings().then(() => {
+    fetchDynamicObjectives();
 
-    // Check loyalty points and load dynamic players
-    loadUserLoyalty();
-    loadDynamicPlayers();
-    
-    setTimeout(() => {
-      const el = document.getElementById('stepBlock3');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 450);
+    const currencySelect = document.getElementById('currencySelect');
+    if (currencySelect) {
+      currencySelect.addEventListener('change', () => {
+        renderGroupListSidebar();
+        updateAllPricesAndSummary();
+      });
+    }
   });
 });
 
-// Load user points if logged in
-function loadUserLoyalty() {
-  const token = localStorage.getItem('trivela_token');
-  if (!token) return;
+// ══════════ SHOW GROUP IN DETAIL STAGE ══════════
+window.showGroupDetail = function(groupId) {
+  const group = OBJECTIVES_DATA[groupId];
+  if (!group) return;
 
-  fetch('/api/auth/me', {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${token}` }
-  })
-  .then(res => res.json())
-  .then(user => {
-    if (user) {
-      loggedInName = user.name || "";
-      loggedInPhone = user.phone || "";
-      
-      const nameInput = document.getElementById('customerName');
-      const phoneInput = document.getElementById('customerPhone');
-      if (nameInput && loggedInName) nameInput.value = loggedInName;
-      if (phoneInput && loggedInPhone) phoneInput.value = loggedInPhone;
+  activeGroupId = groupId;
 
-      if (user.points > 0) {
-        userPoints = user.points;
-        const lblPointsBalance = document.getElementById('lblLoyaltyPointsBalance');
-        if (lblPointsBalance) lblPointsBalance.textContent = userPoints;
-        updatePointsDisplayVal();
-        
-        const loyaltyRow = document.getElementById('loyaltyOptionRow');
-        const loyaltyDivider = document.getElementById('loyaltyPointsDivider');
-        if (loyaltyRow) loyaltyRow.style.display = 'block';
-        if (loyaltyDivider) loyaltyDivider.style.display = 'block';
-        
-        document.getElementById('loyaltyPointsBlock').style.display = 'block';
-        const loyaltyDividerMain = document.getElementById('loyaltyDivider');
-        if (loyaltyDividerMain) loyaltyDividerMain.style.display = 'block';
-      }
-    }
-  })
-  .catch(err => console.log("User not logged in or session expired."));
-}
+  // Highlight active in left list
+  document.querySelectorAll('.fc-group-card').forEach(card => {
+    card.classList.remove('active-view');
+  });
+  const activeCard = document.getElementById(`groupCard_${groupId}`);
+  if (activeCard) activeCard.classList.add('active-view');
 
-function updatePointsDisplayVal() {
-  const currencySelect = document.getElementById('currencySelect');
-  const selectedCurrency = currencySelect ? currencySelect.value : 'SAR';
-  const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
+  // Update Header in Detail Stage
+  const stageIcon = document.getElementById('stageIcon');
+  const stageTitle = document.getElementById('stageTitle');
+  const stageTime = document.getElementById('stageTime');
+  const stageRewardSubtitle = document.getElementById('stageRewardSubtitle');
+  const stageRewardPills = document.getElementById('stageRewardPills');
+  const stageSubtasksList = document.getElementById('stageSubtasksList');
 
-  const valUSD = userPoints / 37.5;
-  const valConverted = valUSD * cur.rate;
+  if (stageIcon) stageIcon.innerHTML = `<i class="${group.icon}"></i>`;
+  if (stageTitle) stageTitle.textContent = group.name;
+  if (stageTime) stageTime.innerHTML = `<i class="far fa-clock"></i> ${group.time}`;
+  if (stageRewardSubtitle) stageRewardSubtitle.textContent = group.finalRewardSub;
 
-  const formattedVal = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: cur.dec,
-    maximumFractionDigits: cur.dec
-  }).format(valConverted) + ' ' + cur.symbol;
-
-  const lblDiscount = document.getElementById('lblPointsDiscountSAR');
-  if (lblDiscount) lblDiscount.textContent = formattedVal;
-}
-
-function handleDiscountTypeChange() {
-  const radCoupon = document.getElementById('radCoupon');
-  const couponWrapper = document.getElementById('couponInputWrapper');
-  const pointsWrapper = document.getElementById('pointsInputWrapper');
-
-  if (radCoupon && radCoupon.checked) {
-    if (couponWrapper) couponWrapper.style.display = 'block';
-    if (pointsWrapper) pointsWrapper.style.display = 'none';
-    
-    usePointsActive = false;
-    const link = document.getElementById('btnApplyPoints');
-    if (link) {
-      link.textContent = "اضغط هنا للتفعيل";
-      link.style.color = "#ca8a04";
-    }
-  } else {
-    if (couponWrapper) couponWrapper.style.display = 'none';
-    if (pointsWrapper) pointsWrapper.style.display = 'block';
-    
-    activeCoupon = null;
-    const msg = document.getElementById('couponStatusMessage');
-    if (msg) {
-      msg.textContent = "";
-      msg.className = "coupon-status-msg";
-    }
-    const couponInput = document.getElementById('couponCodeInput');
-    if (couponInput) couponInput.value = "";
-  }
-  updatePriceAndSummary();
-}
-
-function applyCouponCode() {
-  const input = document.getElementById('couponCodeInput');
-  const msg = document.getElementById('couponStatusMessage');
-  if (!input || !msg) return;
-
-  const code = input.value.trim().toUpperCase();
-  if (!code) {
-    msg.textContent = "يرجى إدخال رمز الكوبون.";
-    msg.className = "coupon-status-msg error";
-    activeCoupon = null;
-    updatePriceAndSummary();
-    return;
+  if (stageRewardPills) {
+    stageRewardPills.innerHTML = group.rewardPills.map(p => `
+      <span class="fc-reward-chip"><i class="${p.icon}"></i> ${p.text}</span>
+    `).join('');
   }
 
-  if (dynamicCoupons[code] !== undefined) {
-    activeCoupon = {
-      code: code,
-      percent: dynamicCoupons[code]
-    };
-    msg.className = "coupon-status-msg success";
-    msg.textContent = `تم تطبيق الكوبون بنجاح! خصم ${dynamicCoupons[code]}%`;
-  } else {
-    activeCoupon = null;
-    msg.className = "coupon-status-msg error";
-    msg.textContent = "رمز الكوبون غير صحيح أو منتهي الصلاحية.";
-  }
-  updatePriceAndSummary();
-}
-
-function togglePointsUsage(event) {
-  if (event) event.preventDefault();
-  const link = document.getElementById('btnApplyPoints');
-  if (!link) return;
-
-  if (usePointsActive) {
-    usePointsActive = false;
-    link.textContent = "اضغط هنا للتفعيل";
-    link.style.color = "#ca8a04";
-  } else {
-    usePointsActive = true;
-    link.textContent = "تم التفعيل (اضغط للإلغاء)";
-    link.style.color = "#10b981";
-  }
-  updatePriceAndSummary();
-}
-
-window.handleDiscountTypeChange = handleDiscountTypeChange;
-window.applyCouponCode = applyCouponCode;
-window.togglePointsUsage = togglePointsUsage;
-
-// Format expiration countdown label helper
-function getExpiryInfo(expirationDate) {
-  if (!expirationDate) return null;
-  const diff = new Date(expirationDate).getTime() - Date.now();
-  if (diff <= 0) return { label: 'منتهي', urgent: true };
-
-  const days = Math.floor(diff / (24 * 60 * 60 * 1000));
-  if (days >= 1) {
-    return { label: `${days} يوم`, urgent: false };
-  }
-  const hours = Math.floor(diff / (60 * 60 * 1000));
-  if (hours >= 1) {
-    return { label: `${hours} ساعة`, urgent: true };
-  }
-  const mins = Math.floor(diff / (60 * 1000));
-  return { label: `${mins} دقيقة`, urgent: true };
-}
-
-// Load players dynamically from database
-function loadDynamicPlayers() {
-  fetch('/api/players')
-    .then(res => res.json())
-    .then(data => {
-      activePlayers = data.filter(p => p.category === 'objectives');
-      renderActivePlayersGrid();
-    })
-    .catch(err => {
-      console.warn("Could not fetch active players from database server:", err);
-    });
-}
-
-// Render dynamic players grid as checkbox cards inside the unified grid
-function renderActivePlayersGrid() {
-  const grid = document.getElementById('allObjectivesGrid');
-  if (!grid) return;
-
-  // Clear previous dynamic cards to avoid duplicates
-  const prevDynamicCards = grid.querySelectorAll('.dynamic-objective-card');
-  prevDynamicCards.forEach(c => c.remove());
-
-  if (activePlayers.length === 0) {
-    return;
-  }
-
-  const currencySelect = document.getElementById('currencySelect');
-  const selectedCurrency = currencySelect ? currencySelect.value : 'SAR';
-  const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
-
-  activePlayers.forEach(p => {
-    let finalPrice = p.priceSAR;
-    if (selectedCurrency !== 'SAR') {
-      finalPrice = p.priceUSD * cur.rate;
-    }
-    const formattedPrice = new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: cur.dec,
-      maximumFractionDigits: cur.dec
-    }).format(finalPrice) + ' ' + cur.symbol;
-
-    let badgesHTML = '';
-    const expiry = getExpiryInfo(p.expirationDate);
-    if (expiry) {
-      const urgentClass = expiry.urgent ? 'urgent' : '';
-      badgesHTML += `<span class="badge" style="font-size: 0.7rem; background: #fee2e2; color: #ef4444; padding: 2px 6px; border-radius: 4px; margin-left: 6px;"><i class="far fa-clock"></i> ${expiry.label}</span>`;
-    }
-
-    let metaText = p.version || "مهام";
-    if (p.rating > 0) {
-      metaText += ` | ${p.rating} ${p.position}`;
-    }
-
-    const cardId = `dynamicCard_${p.id}`;
-    const card = document.createElement('label');
-    card.className = 'objective-checkbox-card dynamic-objective-card';
-    card.id = cardId;
-    card.innerHTML = `
-      <input type="checkbox" name="dynamicObjective" value="مهام اللاعب: ${p.name}" data-price-sar="${p.priceSAR}" data-price-usd="${p.priceUSD}" data-id="${p.id}" onchange="toggleCheckboxCard('${cardId}'); updatePriceAndSummary()"/>
-      <div class="obj-card-details">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <img src="${p.image}" alt="${p.name}" style="height: 60px; width: auto; border-radius: 8px; background: rgba(0,0,0,0.05); padding: 2px;"/>
-          <div style="display: flex; flex-direction: column;">
-            <span class="obj-card-title" style="padding-left: 0; font-size: 0.95rem; margin-top: 0;">${p.name}</span>
-            <span class="obj-card-desc" style="margin-top: 4px;">${metaText} ${badgesHTML}</span>
+  if (stageSubtasksList) {
+    stageSubtasksList.innerHTML = group.subtasks.map(t => `
+      <div class="fc-subtask-item">
+        <div class="fc-subtask-info">
+          <div class="fc-subtask-num">${t.num}</div>
+          <div class="fc-subtask-details">
+            <span class="fc-subtask-name">${t.name}</span>
+            <span class="fc-subtask-desc">${t.desc}</span>
           </div>
         </div>
+        <div class="fc-subtask-reward-tag">${t.reward}</div>
       </div>
-      <div class="obj-card-price">${formattedPrice}</div>
-    `;
+    `).join('');
+  }
 
-    grid.appendChild(card);
-  });
+  updateStageButtonState();
+};
+
+// ══════════ TOGGLE SELECTION ══════════
+window.toggleActiveGroupSelection = function() {
+  if (selectedGroupIds.has(activeGroupId)) {
+    selectedGroupIds.delete(activeGroupId);
+  } else {
+    selectedGroupIds.add(activeGroupId);
+  }
+
+  updateGroupCardSelectionState(activeGroupId);
+  updateStageButtonState();
+  updateAllPricesAndSummary();
+};
+
+function updateGroupCardSelectionState(groupId) {
+  const card = document.getElementById(`groupCard_${groupId}`);
+  if (!card) return;
+
+  if (selectedGroupIds.has(groupId)) {
+    card.classList.add('is-selected');
+  } else {
+    card.classList.remove('is-selected');
+  }
 }
 
-// Update Price & Converted Labels for all selected options
-function updatePriceAndSummary() {
+function updateStageButtonState() {
+  const btn = document.getElementById('btnStageToggle');
+  const label = document.getElementById('stageBtnLabel');
+  if (!btn || !label) return;
+
+  const group = OBJECTIVES_DATA[activeGroupId];
+  const formattedPrice = formatPrice(group.priceUSD, group.priceSAR);
+
+  if (selectedGroupIds.has(activeGroupId)) {
+    btn.classList.add('added');
+    btn.innerHTML = `<i class="fas fa-check"></i> <span>تمت الإضافة للطلب (${formattedPrice})</span>`;
+  } else {
+    btn.classList.remove('added');
+    btn.innerHTML = `<i class="fas fa-plus"></i> <span>إضافة للطلب (${formattedPrice})</span>`;
+  }
+}
+
+function formatPrice(usd, sar) {
   const currencySelect = document.getElementById('currencySelect');
   const selectedCurrency = currencySelect ? currencySelect.value : 'SAR';
   const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
 
-  if (userPoints > 0) {
-    updatePointsDisplayVal();
+  let priceVal = sar;
+  if (selectedCurrency !== 'SAR') {
+    priceVal = usd * cur.rate;
   }
 
-  let totalRawPrice = 0;
-  let selectedNames = [];
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: cur.dec,
+    maximumFractionDigits: cur.dec
+  }).format(priceVal) + ' ' + cur.symbol;
+}
 
-  // 1. Process Static checkboxes
-  const staticChecked = document.querySelectorAll('input[name="staticObjective"]:checked');
-  staticChecked.forEach(chk => {
-    const priceUSD = parseFloat(chk.dataset.price);
-    const priceConverted = priceUSD * cur.rate;
-    totalRawPrice += priceConverted;
-    selectedNames.push(chk.value);
-  });
+// ══════════ UPDATE ALL PRICES & SUMMARY BAR ══════════
+function updateAllPricesAndSummary() {
+  const currencySelect = document.getElementById('currencySelect');
+  const selectedCurrency = currencySelect ? currencySelect.value : 'SAR';
+  const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
 
-  // 2. Process Dynamic checkboxes
-  const dynamicChecked = document.querySelectorAll('input[name="dynamicObjective"]:checked');
-  dynamicChecked.forEach(chk => {
-    const priceSAR = parseFloat(chk.dataset.priceSar);
-    const priceUSD = parseFloat(chk.dataset.priceUsd);
-    
-    let priceConverted = priceSAR;
-    if (selectedCurrency !== 'SAR') {
-      priceConverted = priceUSD * cur.rate;
-    }
-    totalRawPrice += priceConverted;
-    selectedNames.push(chk.value);
-  });
-
-  // Update static card prices labels in real-time
-  const staticCards = document.querySelectorAll('.objective-checkbox-card:not([id^="dynamicCard"])');
-  staticCards.forEach(card => {
-    const chk = card.querySelector('input[type="checkbox"]');
-    if (chk) {
-      const priceUSD = parseFloat(chk.dataset.price);
-      const convertedPrice = priceUSD * cur.rate;
-      const formattedPrice = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: cur.dec,
-        maximumFractionDigits: cur.dec
-      }).format(convertedPrice) + ' ' + cur.symbol;
-
-      const priceTag = card.querySelector('.obj-card-price');
-      if (priceTag) priceTag.textContent = formattedPrice;
+  // Update prices on cards
+  Object.keys(OBJECTIVES_DATA).forEach(k => {
+    const card = document.getElementById(`groupCard_${k}`);
+    if (card) {
+      const pill = card.querySelector('.fc-group-price-pill');
+      if (pill) {
+        pill.textContent = formatPrice(OBJECTIVES_DATA[k].priceUSD, OBJECTIVES_DATA[k].priceSAR);
+      }
     }
   });
 
-  // 1. Coupon Discount
-  let couponDiscountValue = 0;
-  if (activeCoupon) {
-    couponDiscountValue = totalRawPrice * (activeCoupon.percent / 100);
-    totalRawPrice -= couponDiscountValue;
-  }
+  // Calculate total for selected items
+  let totalRaw = 0;
+  const selectedNames = [];
 
-  // 2. Loyalty Points Discount
-  let pointsDiscountValue = 0;
-  let pointsDeducted = 0;
-
-  if (usePointsActive && userPoints > 0) {
-    const maxDiscountUSD = userPoints / 37.5;
-    const maxDiscountConverted = maxDiscountUSD * cur.rate;
-
-    pointsDiscountValue = Math.min(totalRawPrice, maxDiscountConverted);
-    totalRawPrice -= pointsDiscountValue;
-    pointsDeducted = Math.round((pointsDiscountValue / cur.rate) * 37.5);
-  }
+  selectedGroupIds.forEach(id => {
+    const g = OBJECTIVES_DATA[id];
+    if (g) {
+      let priceVal = g.priceSAR;
+      if (selectedCurrency !== 'SAR') {
+        priceVal = g.priceUSD * cur.rate;
+      }
+      totalRaw += priceVal;
+      selectedNames.push(g.name);
+    }
+  });
 
   const finalFormattedPrice = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: cur.dec,
     maximumFractionDigits: cur.dec
-  }).format(totalRawPrice) + ' ' + cur.symbol;
+  }).format(totalRaw) + ' ' + cur.symbol;
 
   const summaryPrice = document.getElementById('summaryPrice');
   const summaryServiceText = document.getElementById('summaryServiceText');
 
   if (summaryPrice) summaryPrice.textContent = finalFormattedPrice;
-  
   if (summaryServiceText) {
     if (selectedNames.length > 0) {
-      summaryServiceText.textContent = selectedNames.join(' | ');
+      summaryServiceText.textContent = `تم اختيار (${selectedNames.length}) مجموعات: ` + selectedNames.join(' + ');
     } else {
-      summaryServiceText.textContent = "لم يتم اختيار أي مهمة بعد";
+      summaryServiceText.textContent = "يرجى اختيار مجموعة أهداف واحدة على الأقل";
     }
   }
+
+  updateStageButtonState();
 }
 
-// Form Submission
-function handlePurchaseSubmit(event) {
+// ══════════ UNIFIED ACCOUNT HELPERS ══════════
+window.selectClubCount = function(count) {
+  const b1 = document.getElementById('clubOne');
+  const b2 = document.getElementById('clubTwo');
+  const clubNameGroup = document.getElementById('clubNameGroup');
+  if (b1 && b2) {
+    b1.classList.toggle('active', count === 1);
+    b2.classList.toggle('active', count === 2);
+  }
+  if (clubNameGroup) {
+    clubNameGroup.style.display = count === 2 ? 'block' : 'none';
+  }
+};
+
+window.togglePasswordVisibility = function() {
+  const passInput = document.getElementById('sonyPassword');
+  const eyeIcon = document.getElementById('eyeIcon');
+  if (passInput && eyeIcon) {
+    if (passInput.type === 'password') {
+      passInput.type = 'text';
+      eyeIcon.classList.remove('fa-eye');
+      eyeIcon.classList.add('fa-eye-slash');
+    } else {
+      passInput.type = 'password';
+      eyeIcon.classList.remove('fa-eye-slash');
+      eyeIcon.classList.add('fa-eye');
+    }
+  }
+};
+
+// ══════════ SUBMIT PURCHASE ══════════
+window.handlePurchaseSubmit = function(event) {
   event.preventDefault();
 
-  const staticChecked = document.querySelectorAll('input[name="staticObjective"]:checked');
-  const dynamicChecked = document.querySelectorAll('input[name="dynamicObjective"]:checked');
-  
-  if (staticChecked.length === 0 && dynamicChecked.length === 0) {
-    alert("يرجى اختيار مهمة واحدة على الأقل لإتمام العملية.");
+  if (selectedGroupIds.size === 0) {
+    alert("⚠️ يرجى اختيار مجموعة أهداف واحدة على الأقل للمتابعة.");
+    const list = document.getElementById('fcGroupList');
+    if (list) {
+      list.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
     return;
   }
 
-  const currencySelect = document.getElementById('currencySelect');
-  const selectedCurrency = currencySelect ? currencySelect.value : 'SAR';
-  const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
+  const selectedItems = Array.from(selectedGroupIds).map(id => OBJECTIVES_DATA[id]);
+  let totalSAR = 0;
+  const names = [];
 
-  let totalRawPrice = 0;
-  let selectedServices = [];
-
-  staticChecked.forEach(chk => {
-    const priceUSD = parseFloat(chk.dataset.price);
-    totalRawPrice += (priceUSD * cur.rate);
-    selectedServices.push(chk.value);
+  selectedItems.forEach(item => {
+    totalSAR += item.priceSAR;
+    names.push(item.name);
   });
 
-  dynamicChecked.forEach(chk => {
-    const priceSAR = parseFloat(chk.dataset.priceSar);
-    const priceUSD = parseFloat(chk.dataset.priceUsd);
-    let priceConverted = priceSAR;
-    if (selectedCurrency !== 'SAR') {
-      priceConverted = priceUSD * cur.rate;
-    }
-    totalRawPrice += priceConverted;
-    selectedServices.push(chk.value);
-  });
-
-  let couponDiscountValue = 0;
-  let couponDiscountText = '';
-  if (activeCoupon) {
-    couponDiscountValue = totalRawPrice * (activeCoupon.percent / 100);
-    totalRawPrice -= couponDiscountValue;
-    
-    const formattedDiscount = new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: cur.dec,
-      maximumFractionDigits: cur.dec
-    }).format(couponDiscountValue) + ' ' + cur.symbol;
-    
-    couponDiscountText = `🏷️ كوبون خصم (${activeCoupon.code}): -${formattedDiscount} (${activeCoupon.percent}%)`;
+  const confirmCheck = document.getElementById('sonyConfirmCheck');
+  if (confirmCheck && !confirmCheck.checked) {
+    alert("⚠️ يُرجى تأكيد صحة بيانات الحساب عبر تحديد المربع للمتابعة وإتمام الطلب.");
+    confirmCheck.focus();
+    return;
   }
 
-  let pointsDeducted = 0;
-  let pointsDiscountValue = 0;
-  let pointsDiscountText = '';
-  
-  if (usePointsActive && userPoints > 0) {
-    const maxDiscountUSD = userPoints / 37.5;
-    const maxDiscountConverted = maxDiscountUSD * cur.rate;
-    
-    pointsDiscountValue = Math.min(totalRawPrice, maxDiscountConverted);
-    totalRawPrice -= pointsDiscountValue;
-    pointsDeducted = Math.round((pointsDiscountValue / cur.rate) * 37.5);
-    
-    const formattedDiscount = new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: cur.dec,
-      maximumFractionDigits: cur.dec
-    }).format(pointsDiscountValue) + ' ' + cur.symbol;
-    
-    pointsDiscountText = `🎁 خصم نقاط الولاء: -${formattedDiscount} (${pointsDeducted} نقطة مستخدمة)`;
-  }
+  const email = document.getElementById('sonyEmail').value.trim();
+  const password = document.getElementById('sonyPassword').value;
+  const chkBackupHelp = document.getElementById('chkNeedBackupHelp');
+  const isBackupHelp = chkBackupHelp ? chkBackupHelp.checked : false;
+  const code1 = isBackupHelp ? 'مساعدة الدعم الفني' : document.getElementById('backup1').value.trim();
+  const code2 = isBackupHelp ? '—' : (document.getElementById('backup2').value.trim() || '—');
+  const code3 = isBackupHelp ? '—' : (document.getElementById('backup3').value.trim() || '—');
+  const orderNotes = (document.getElementById('eaOrderNotes')?.value || '').trim();
 
-  const finalFormattedPrice = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: cur.dec,
-    maximumFractionDigits: cur.dec
-  }).format(totalRawPrice) + ' ' + cur.symbol;
-
-  const customerName = document.getElementById('customerName').value.trim();
-  const customerPhone = document.getElementById('customerPhone').value.trim();
-  const sonyEmail = document.getElementById('sonyEmail').value.trim();
-  const sonyPassword = document.getElementById('sonyPassword').value;
-  const sonyCode1 = document.getElementById('sonyBackup1').value.trim();
-  const sonyCode2 = document.getElementById('sonyBackup2').value.trim();
-  const sonyCode3 = document.getElementById('sonyBackup3').value.trim();
-  const eaEmail = document.getElementById('eaEmail').value.trim();
-  const eaPassword = document.getElementById('eaPassword').value;
-  const eaCode1 = document.getElementById('eaBackup1').value.trim();
-  const eaCode2 = document.getElementById('eaBackup2').value.trim();
-  const eaCode3 = document.getElementById('eaBackup3').value.trim();
-  const platformName = 'سوني بلايستيشن (PlayStation Only)';
-
-  let msg = `🎮 طلب إنجاز مهام (أهداف) متعددة — Trivela\n\n` +
-            `👤 الاسم: ${customerName}\n` +
-            `📱 رقم التواصل: ${customerPhone}\n` +
-            `🕹️ الجهاز: ${platformName}\n` +
-            `📦 المهام المطلوبة:\n — ` + selectedServices.join('\n — ') + `\n\n` +
-            `💵 الإجمالي المطلوب: ${finalFormattedPrice}\n`;
-
-  if (couponDiscountText) {
-    msg += `${couponDiscountText}\n`;
-  }
-  if (pointsDiscountText) {
-    msg += `${pointsDiscountText}\n`;
-  }
-
-  msg += `\n🔑 [القسم 1] بيانات حساب السوني (PSN):\n` +
-         `📧 الايميل: ${sonyEmail}\n` +
-         `🔒 كلمة المرور: ${sonyPassword}\n` +
-         `🔐 رموز السوني الاحتياطية: ${sonyCode1} - ${sonyCode2} - ${sonyCode3}\n\n` +
-         `🔑 [القسم 2] بيانات حساب الـ EA (Origin):\n` +
-         `📧 الايميل: ${eaEmail}\n` +
-         `🔒 كلمة المرور: ${eaPassword}\n` +
-         `🔐 رموز الـ EA الاحتياطية: ${eaCode1} - ${eaCode2} - ${eaCode3}\n\n` +
-         `_أرسل تلقائياً من Trivela.com_`;
-
-  let totalRawPriceSAR = 0;
-  staticChecked.forEach(chk => {
-    const priceUSD = parseFloat(chk.dataset.price);
-    totalRawPriceSAR += (priceUSD * 3.75);
-  });
-  dynamicChecked.forEach(chk => {
-    totalRawPriceSAR += parseFloat(chk.dataset.priceSar);
-  });
-  
-  const couponDiscountSAR = activeCoupon ? (totalRawPriceSAR * (activeCoupon.percent / 100)) : 0;
-  const remainingAfterCouponSAR = totalRawPriceSAR - couponDiscountSAR;
-  const pointsDiscountSAR = (pointsDeducted / 37.5) * 3.75;
-  const finalPriceSAR = Math.max(0, remainingAfterCouponSAR - pointsDiscountSAR);
-
-  const orderPayload = {
-    customerName: customerName,
-    customerPhone: customerPhone,
-    service: "خدمة مهام متعددة: " + selectedServices.join(', '),
-    platform: 'console',
-    priceSAR: finalPriceSAR,
-    pointsDiscount: pointsDiscountSAR + couponDiscountSAR,
-    pointsDeducted: pointsDeducted,
-    couponCode: activeCoupon ? activeCoupon.code : null,
-    eaEmail: eaEmail,
-    eaPassword: eaPassword,
-    backupCode1: eaCode1,
-    backupCode2: eaCode2,
-    backupCode3: eaCode3,
-    sonyEmail: sonyEmail,
-    sonyPassword: sonyPassword,
-    sonyBackupCode1: sonyCode1,
-    sonyBackupCode2: sonyCode2,
-    sonyBackupCode3: sonyCode3
+  const cartItem = {
+    id: 'cart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    addedAt: new Date().toISOString(),
+    service: `إنجاز مهام Objectives: ${names.join(' + ')}`,
+    type: 'objectives',
+    platform: 'سوني وإكس بوكس (Console)',
+    priceSAR: totalSAR,
+    eaEmail: email,
+    eaPassword: password,
+    backupCodes: [code1, code2, code3].filter(c => c && c !== '—'),
+    clubName: clubName !== '—' ? clubName : '',
+    notes: orderNotes
   };
 
-  fetch('/api/orders', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(orderPayload)
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.success && data.order) {
-      showOrderSuccessPopup(data.order.id, dynamicSettings.whatsappPhone || '966500000000', msg);
-    } else {
-      alert("حدث خطأ أثناء تسجيل طلبك في السيرفر.");
+  try {
+    const existing = localStorage.getItem('trivela_cart');
+    const items = existing ? JSON.parse(existing) : [];
+    items.push(cartItem);
+    localStorage.setItem('trivela_cart', JSON.stringify(items));
+    if (window.trivelaCart) {
+      window.trivelaCart.items = items;
+      window.trivelaCart.updateBadge();
     }
-  })
-  .catch(err => {
-    console.warn("Could not log order details:", err);
-    alert("حدث خطأ في الاتصال بالخادم.");
-  });
-}
+  } catch(e) {
+    console.error("Cart save error:", e);
+  }
 
-// Success Popup Helpers
-function showOrderSuccessPopup(orderId, whatsappPhone, messageText) {
-  let overlay = document.getElementById('orderSuccessOverlay');
+  window.location.href = 'cart.html';
+};
+
+// ══════════ PAYMENT METHOD SWITCHER ══════════
+window.currentSelectedPaymentMethod = 'paytabs';
+window.selectPaymentMethod = function(method) {
+  window.currentSelectedPaymentMethod = method;
+  const cardPayTabs = document.getElementById('payOptionPayTabs');
+  const cardWhatsApp = document.getElementById('payOptionWhatsApp');
+  const radioPayTabs = cardPayTabs ? cardPayTabs.querySelector('input') : null;
+  const radioWhatsApp = cardWhatsApp ? cardWhatsApp.querySelector('input') : null;
+  const submitBtn = document.getElementById('btnSubmitOrder');
+
+  if (method === 'paytabs') {
+    if (cardPayTabs) cardPayTabs.classList.add('active');
+    if (cardWhatsApp) cardWhatsApp.classList.remove('active');
+    if (radioPayTabs) radioPayTabs.checked = true;
+    if (radioWhatsApp) radioWhatsApp.checked = false;
+    if (submitBtn) {
+      submitBtn.innerHTML = '<span>الدفع الإلكتروني الفوري (PayTabs)</span> <i class="fas fa-credit-card"></i>';
+    }
+  } else {
+    if (cardPayTabs) cardPayTabs.classList.remove('active');
+    if (cardWhatsApp) cardWhatsApp.classList.add('active');
+    if (radioPayTabs) radioPayTabs.checked = false;
+    if (radioWhatsApp) radioWhatsApp.checked = true;
+    if (submitBtn) {
+      submitBtn.innerHTML = '<span>تأكيد الطلب والدفع بالواتساب</span> <i class="fab fa-whatsapp"></i>';
+    }
+  }
+};
+
+
+function showPurchaseReceipt(orderData) {
+  let overlay = document.getElementById('purchaseReceiptOverlay');
   if (!overlay) {
     overlay = document.createElement('div');
-    overlay.id = 'orderSuccessOverlay';
-    overlay.className = 'order-success-overlay';
+    overlay.id = 'purchaseReceiptOverlay';
+    overlay.className = 'receipt-modal-overlay';
     document.body.appendChild(overlay);
   }
 
-  // Parse details from messageText
-  let customerName = 'غير محدد';
-  let serviceName = 'إنجاز مهام';
-  let platform = 'CONSOLE';
-  let priceStr = '0.00 ر.س';
-
-  try {
-    const lines = messageText.split('\n');
-    lines.forEach(line => {
-      const trimmed = line.trim();
-      if (trimmed.includes('الاسم:')) {
-        customerName = trimmed.split(':')[1].trim();
-      } else if (trimmed.includes('المنصة:') || trimmed.includes('الجهاز:')) {
-        platform = trimmed.split(':')[1].trim().toUpperCase();
-      } else if (trimmed.includes('المهام المطلوبة:')) {
-        serviceName = 'مهام: ' + trimmed.split(':')[1].trim();
-      } else if (trimmed.includes('الاجمالي:') || trimmed.includes('إجمالي السعر:')) {
-        priceStr = trimmed.split(':')[1].trim();
-      }
-    });
-  } catch (err) {
-    console.warn("Error parsing messageText:", err);
-  }
-
   overlay.innerHTML = `
-    <div class="order-success-card receipt-style">
-      <div class="receipt-header">
-        <img src="logo-official.png" class="receipt-logo" alt="Trivela" />
-        <h3 class="receipt-title">سند استلام إلكتروني</h3>
-        <p class="receipt-subtitle">متجر تريفيلا — متجر خدمات FIFA 27 المعتمد</p>
+    <div class="receipt-card">
+      <div class="receipt-header success">
+        <div class="receipt-icon"><i class="fas fa-check-circle"></i></div>
+        <h2>تم استلام طلبك بنجاح!</h2>
+        <p>شكراً لثقتك بمتجر Trivela — جاري بدء إنجاز المهام في حسابك</p>
       </div>
       
       <div class="receipt-body">
         <div class="receipt-row">
           <span class="label">رقم الطلب:</span>
-          <span class="value" style="font-family: 'Montserrat', sans-serif; font-weight: 800;">#${orderId}</span>
-        </div>
-        <div class="receipt-row">
-          <span class="label">العميل:</span>
-          <span class="value">${customerName}</span>
+          <span class="value font-mono">#${orderData.orderId}</span>
         </div>
         <div class="receipt-row">
           <span class="label">الخدمة:</span>
-          <span class="value" style="max-width: 250px; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${serviceName}</span>
+          <span class="value">${orderData.serviceName}</span>
         </div>
         <div class="receipt-row">
           <span class="label">المنصة:</span>
-          <span class="value" style="font-family: 'Montserrat', sans-serif; font-weight: 700;">${platform}</span>
-        </div>
-        <div class="receipt-row">
-          <span class="label">تاريخ الطلب:</span>
-          <span class="value">${new Date().toLocaleDateString('ar-SA')}</span>
+          <span class="value">بلايستيشن (PlayStation)</span>
         </div>
         <div class="receipt-row total">
           <span class="label">المبلغ الإجمالي:</span>
-          <span class="value">${priceStr}</span>
+          <span class="value">${orderData.priceFormatted}</span>
         </div>
       </div>
       
-      <div class="receipt-footer-msg">
-        <i class="fas fa-info-circle"></i>
-        تم تسجيل طلبك بنجاح في النظام. يرجى الانتظار، وسيقوم أحد ممثلي الدعم الفني بالتواصل معك قريباً على رقم الجوال/الواتساب لتأكيد الدفع وإتمام الطلب.
-      </div>
-      
-      <button type="button" class="order-success-btn" id="btnRedirectWhatsapp" style="width: 100%; justify-content: center; display: flex; align-items: center; gap: 8px;">
-        <span>حسناً، بانتظاركم</span>
+      <button type="button" class="order-success-btn" onclick="window.location.href='track.html?id=${orderData.orderId}'">
+        <span>متابعة حالة الطلب</span>
+        <i class="fas fa-arrow-left"></i>
       </button>
-      
-      <div class="receipt-bottom-decoration"></div>
     </div>
   `;
 
   overlay.classList.add('open');
-
-  const btn = document.getElementById('btnRedirectWhatsapp');
-  if (btn) {
-    btn.onclick = () => {
-      overlay.classList.remove('open');
-      window.location.href = 'index.html';
-    };
-  }
 }

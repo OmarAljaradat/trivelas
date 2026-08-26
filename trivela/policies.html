@@ -5,9 +5,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>سياسات المتجر والشروط والأحكام — Trivela</title>
+  <meta name="description" content="سياسات متجر Trivela: الخصوصية، شروط الاستخدام، الاسترجاع، الضمان، الكاش باك، وتأكيد الدفع."/>
+  <meta property="og:title" content="سياسات المتجر والشروط والأحكام | Trivela"/>
+  <meta property="og:description" content="سياسات متجر Trivela: الخصوصية، شروط الاستخدام، الاسترجاع، الضمان."/>
+  <meta property="og:image" content="logo-official.png"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:locale" content="ar_SA"/>
+  <meta property="og:site_name" content="Trivela"/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3.5">
   <style>
     body {
       font-family: 'Cairo', sans-serif;
@@ -193,16 +200,19 @@
 </head>
 <body>
 
-  <!-- NAVBAR -->
-  <nav class="navbar solid" id="navbar">
-    <div class="container nav-container">
-      <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 8px;">
-        <img src="logo-official.png" alt="Trivela Logo" style="height: 32px; width: auto;">
-        <div class="logo-text"><span class="logo-main" style="font-family: 'Montserrat', sans-serif; font-weight: 800; letter-spacing: 1px; color: var(--blue-800); text-transform: uppercase;">Trivela</span></div>
-      </a>
-      <a href="index.html" class="cta-primary"><i class="fas fa-arrow-right" style="margin-left: 6px;"></i> العودة للرئيسية</a>
+  <!-- ══════════ TOP BAR ══════════ -->
+  <header class="buy-header">
+    <div class="buy-header-inner">
+      <a href="index.html" class="back-link"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+      <div class="buy-logo">
+        <img src="logo-official.png" alt="Trivela" />
+        <span>Trivela</span>
+      </div>
+      <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="تغيير المظهر">
+        <i class="fas fa-moon"></i>
+      </button>
     </div>
-  </nav>
+  </header>
 
   <!-- MAIN POLICIES SECTION -->
   <div class="policies-container">
@@ -375,9 +385,9 @@
         </div>
         <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
         <div class="footer-socials">
-          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+          <a href="https://wa.me/962775585112" aria-label="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://www.instagram.com/trivelacoins" aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://tiktok.com/@Trivela" aria-label="TikTok" target="_blank"><i class="fab fa-tiktok"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -390,6 +400,7 @@
       </div>
       <div class="footer-col">
         <h4>سياسات متجر Trivela</h4>
+        <a href="track.html" style="color: var(--gold-primary); font-weight: bold;"><i class="fas fa-magnifying-glass"></i> تتبع طلبك هنا</a>
         <a href="policies.html#privacy">سياسة الخصوصية</a>
         <a href="policies.html#terms">شروط الاستخدام</a>
         <a href="policies.html#refund">سياسة الاسترجاع</a>
@@ -442,6 +453,6 @@
       }
     });
   </script>
-
+  <script type="module" src="src/core/theme.js"></script>
 </body>
 </html>

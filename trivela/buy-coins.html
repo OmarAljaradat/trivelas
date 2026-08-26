@@ -5,36 +5,21 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>خطوات شحن كوينز FC27 | Trivela</title>
+  <meta name="description" content="شحن كوينز FIFA 27 بطريقة Comfort Trade الآمنة لجميع المنصات — بلايستيشن، اكس بوكس، وبي سي. توصيل سريع وضمان كامل."/>
+  <meta property="og:title" content="شحن كوينز FC27 | Trivela"/>
+  <meta property="og:description" content="شحن كوينز FIFA 27 بطريقة Comfort Trade الآمنة لجميع المنصات. توصيل سريع وضمان كامل."/>
+  <meta property="og:image" content="logo-official.png"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:locale" content="ar_SA"/>
+  <meta property="og:site_name" content="Trivela"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css?v=3.5"/>
   <style>
-    /* Sleek info toggle bar under calculator */
     .info-toggle-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: rgba(202, 138, 4, 0.06);
-      border: 1.5px dashed #ca8a04;
-      border-radius: 14px;
-      padding: 14px;
-      margin-top: 20px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      font-weight: 700;
-      color: #ca8a04;
-      font-size: 0.92rem;
-      text-align: center;
-    }
-    .info-toggle-bar:hover {
-      background: rgba(202, 138, 4, 0.12);
-      transform: scale(1.01);
-    }
-    .info-toggle-bar i {
-      font-size: 1.1rem;
+      display: none !important;
     }
 
     /* Modal Backdrop style with blur backdrop filter */
@@ -431,8 +416,8 @@
       <div class="catalog-hero-banner" style="margin-bottom: 25px;">
         <div class="catalog-hero-content" style="display: block; text-align: center;">
           <div class="catalog-hero-text" style="display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; text-align: center;">
-            <h1 class="catalog-hero-title" id="coins_cms_title" style="text-align: center; border-bottom: 0; padding-bottom: 0;">خطوات شحن كوينز FC 27 (فيفا 27)</h1>
-            <p class="catalog-hero-desc" id="coins_cms_desc" style="text-align: center; margin: 0 auto; max-width: 800px;">حدد كمية الكوينز المطلوبة وجهازك، واملأ بيانات حسابك لمعرفة السعر الفوري والشحن بطريقة آمنة ومضمونة 100%.</p>
+            <h1 class="catalog-hero-title" id="coins_cms_title" style="text-align: center; border-bottom: 0; padding-bottom: 0;">شحن الكوينز</h1>
+            <p class="catalog-hero-desc" id="coins_cms_desc" style="text-align: center; margin: 0 auto; max-width: 800px;">طريقة الشحن الآمنة والسلسة لشحن كوينز حسابك مباشرة بواسطة خبرائنا</p>
             <div class="catalog-hero-hint" style="margin-top: 6px; justify-content: center; width: fit-content; display: inline-flex;">
               <i class="far fa-lightbulb"></i>
               <span>ادخل بيانات حسابك بشكل صحيح لتأكيد وشحن طلبك فوراً</span>
@@ -449,8 +434,8 @@
         <div class="step-badge-title">
           <span class="step-number">01</span>
           <div class="step-info-text">
-            <h3 id="coins_cms_step1Title">اختيار الجهاز</h3>
-            <p id="coins_cms_step1Desc">حدد منصة اللعب الخاصة بك للمتابعة</p>
+            <h3 id="coins_cms_step1Title">اختر الكمية والمنصة</h3>
+            <p id="coins_cms_step1Desc">حدد كمية الكوينز ومنصتك المفضلة لمعرفة السعر الإجمالي بالعملة المفضلة لديك.</p>
           </div>
         </div>
         
@@ -481,8 +466,8 @@
         <div class="step-badge-title">
           <span class="step-number">02</span>
           <div class="step-info-text">
-            <h3>الكمية والعملة</h3>
-            <p>حدد كمية الكوينز والعملة المفضلة</p>
+            <h3>الكمية</h3>
+            <p>حدد كمية الكوينز المطلوبة للشحن</p>
           </div>
         </div>
         
@@ -525,6 +510,14 @@
               <button type="button" class="qa-btn" data-val="5000000" onclick="selectQuickAmount(this, 5000000)">5M</button>
               <button type="button" class="qa-btn" data-val="10000000" onclick="selectQuickAmount(this, 10000000)">10M</button>
             </div>
+
+            <!-- Custom Large Quantity Button -->
+            <div style="text-align: center; margin-top: 14px;">
+              <button type="button" onclick="openCustomAmountModal()" style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.84rem; font-weight: 800; color: #ca8a04; background: rgba(202, 138, 4, 0.08); border: 1.5px solid rgba(202, 138, 4, 0.3); padding: 10px 20px; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; font-family: Cairo, sans-serif;">
+                <i class="fas fa-gem"></i>
+                <span>كميتك المطلوبة غير موجودة أو تحتاج كمية كبيرة؟ (اضغط هنا للطلب المباشر)</span>
+              </button>
+            </div>
           </div>
 
           <!-- Total Price display banner -->
@@ -545,10 +538,23 @@
             </div>
           </div>
 
-          <!-- SLEEK DOTTED TOGGLE BAR (Avoids clutter) -->
-          <div class="info-toggle-bar" onclick="openDetailsModal()">
-            <i class="fas fa-shield-halved"></i>
-            <span>لقراءة شروط الشحن والضمانات الأمنية وطريقة العمل (اضغط هنا)</span>
+          <!-- Compact Collapsible Coupon Section -->
+          <div class="compact-coupon-wrapper">
+            <button type="button" class="compact-coupon-toggle" onclick="toggleCompactCoupon(this)" id="btnToggleCoupon">
+              <i class="fas fa-ticket-simple"></i>
+              <span>هل لديك كوبون خصم؟</span>
+              <i class="fas fa-chevron-down toggle-chevron"></i>
+            </button>
+            <div class="compact-coupon-body" id="couponInputWrapper" style="display: none;">
+              <div class="compact-coupon-input-group">
+                <div class="compact-coupon-input-box">
+                  <i class="fas fa-percent"></i>
+                  <input type="text" id="couponCodeInput" placeholder="أدخل رمز الكوبون..." onkeydown="if(event.key==='Enter'){event.preventDefault();applyCouponCode();}">
+                </div>
+                <button type="button" class="compact-coupon-btn" id="btnApplyCoupon" onclick="applyCouponCode()">تطبيق</button>
+              </div>
+              <div id="couponStatusMessage" class="coupon-status-msg"></div>
+            </div>
           </div>
 
         </div>
@@ -556,208 +562,221 @@
 
       <hr class="step-divider"/>
 
-      <!-- DISCOUNTS AND GIFTS -->
-      <div class="buy-step-block" id="discountsGiftsBlock">
+      <!-- STEP 2: UNIFIED EA ACCOUNT DETAILS -->
+      <div class="buy-step-block unified-account-section" id="stepBlock3">
         <div class="step-badge-title">
-          <span class="step-number" style="background: rgba(202,138,4,0.15); color: #ca8a04;"><i class="fas fa-gift"></i></span>
+          <span class="step-number" style="background: rgba(37, 99, 235, 0.12); color: #2563eb;">03</span>
           <div class="step-info-text">
-            <h3>الخصومات والهدايا</h3>
-            <p>اختر وسيلة الخصم المناسبة لطلبك</p>
-          </div>
-        </div>
-        <div class="step-content">
-          <div class="discounts-gifts-card">
-            
-            <!-- Tab 1: Coupon Code -->
-            <div class="discount-option-row">
-              <label class="discount-radio-label">
-                <input type="radio" name="discountType" value="coupon" id="radCoupon" checked onchange="handleDiscountTypeChange()"/>
-                <span class="custom-radio-circle"></span>
-                <span class="discount-label-text">تفعيل كوبون الخصم</span>
-              </label>
-              
-              <div class="discount-input-wrapper" id="couponInputWrapper">
-                <div class="coupon-field-group">
-                  <button type="button" class="coupon-btn" id="btnApplyCoupon" onclick="applyCouponCode()">تفعيل</button>
-                  <div class="coupon-input-relative">
-                    <input type="text" id="couponCodeInput" placeholder="كوبون الهدية / الخصم؟"/>
-                    <i class="fas fa-percent coupon-icon"></i>
-                  </div>
-                </div>
-                <div id="couponStatusMessage" class="coupon-status-msg"></div>
-              </div>
-            </div>
-
-            <div class="discount-divider" id="loyaltyPointsDivider" style="display: none;"></div>
-
-            <!-- Tab 2: Loyalty Points -->
-            <div class="discount-option-row" id="loyaltyOptionRow" style="display: none;">
-              <label class="discount-radio-label">
-                <input type="radio" name="discountType" value="points" id="radPoints" onchange="handleDiscountTypeChange()"/>
-                <span class="custom-radio-circle"></span>
-                <span class="discount-label-text"><span id="lblLoyaltyPointsBalance">0</span> نقطة رصيدك من نقاط الولاء</span>
-              </label>
-              
-              <div class="discount-input-wrapper" id="pointsInputWrapper" style="display: none;">
-                <p class="points-helper-text" style="display: none;">
-                  <i class="fas fa-info-circle"></i>
-                  يمكنك الاستفادة من رصيدك بقيمة خصم <strong id="lblPointsDiscountSAR" style="color: #ca8a04;">0.00</strong> ر.س، <a href="#" onclick="togglePointsUsage(event)" id="btnApplyPoints" class="points-action-link">اضغط هنا للتفعيل</a>
-                </p>
-
-                <!-- Redeem Points Section -->
-                <div class="redeem-rewards-section" style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed rgba(48,83,136,0.15);">
-                  <span style="font-size: 0.85rem; font-weight: 700; color: var(--blue-600); display: block; margin-bottom: 8px;">🎁 أو استبدل نقاطك بمكافآت حصرية:</span>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
-                    <button type="button" class="redeem-reward-btn" id="btnRedeemCoins50k" onclick="redeemPointsForCoupon('coins50k')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
-                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.9rem;">+50K كوينز مجاناً</span>
-                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 1000 نقطة</span>
-                    </button>
-                    <button type="button" class="redeem-reward-btn" id="btnRedeemCoins100k" onclick="redeemPointsForCoupon('coins100k')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
-                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.9rem;">+100K كوينز مجاناً</span>
-                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 1800 نقطة</span>
-                    </button>
-                    <button type="button" class="redeem-reward-btn" id="btnRedeemCoins250k" onclick="redeemPointsForCoupon('coins250k')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
-                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.9rem;">+250K كوينز مجاناً</span>
-                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 4000 نقطة</span>
-                    </button>
-                    <button type="button" class="redeem-reward-btn" id="btnRedeemDiscount15" onclick="redeemPointsForCoupon('discount15')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
-                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.9rem;">خصم 15 ر.س</span>
-                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 800 نقطة</span>
-                    </button>
-                    <button type="button" class="redeem-reward-btn" id="btnRedeemDiscount40" onclick="redeemPointsForCoupon('discount40')" onmouseover="this.style.borderColor='var(--blue-500)'; this.style.background='var(--blue-50)'" onmouseout="this.style.borderColor='var(--blue-200)'; this.style.background='white'" style="background: white; border: 1px solid var(--blue-200); padding: 8px; border-radius: 8px; font-family: Cairo; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.3s ease;">
-                      <span style="font-weight: 700; color: var(--gold-primary); font-size: 0.9rem;">خصم 40 ر.س</span>
-                      <span style="color: var(--text-gray); font-size: 0.7rem;">تكلفة: 2000 نقطة</span>
-                    </button>
-                  </div>
-                  <div id="redeemStatusMessage" style="margin-top: 8px; font-size: 0.75rem; font-weight: 700; text-align: center;"></div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <hr class="step-divider" id="loyaltyDivider"/>
-
-      <!-- STEP 3: CONTACT INFO -->
-      <div class="buy-step-block" id="stepBlock3">
-        <div class="step-badge-title">
-          <span class="step-number">03</span>
-          <div class="step-info-text">
-            <h3 id="coins_cms_step3Title">بيانات التواصل</h3>
-            <p id="coins_cms_step3Desc">يرجى إدخال اسمك ورقم الواتساب للتواصل وتأكيد الطلب</p>
+            <h3>بيانات الحساب</h3>
+            <p>أدخل بيانات حساب EA والرموز الاحتياطية لتنفيذ طلبك بأمان تام</p>
           </div>
         </div>
         
         <div class="step-content">
-          <div class="ea-form-grid">
-            
-            <!-- Customer Name -->
-            <div class="ea-input-group">
-              <div class="input-with-icon">
-                <i class="fas fa-user input-icon"></i>
-                <input type="text" id="customerName" placeholder="الاسم الكامل" required/>
+          <!-- Saved EA Account Quick Fill Banner -->
+          <div id="savedEaAccountBanner" style="display: none; grid-column: 1 / -1; margin-bottom: 18px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(13, 21, 39, 0.95) 100%); border: 1.5px solid rgba(245, 158, 11, 0.35); border-radius: 16px; padding: 16px 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(245, 158, 11, 0.2); color: #fbbf24; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid #f59e0b;">
+                <i class="fas fa-bolt"></i>
+              </div>
+              <div>
+                <strong style="display: block; font-family: 'Cairo', sans-serif; font-weight: 800; color: #f8fafc; font-size: 0.96rem;">بيانات حساب EA محفوظة في بروفايلك!</strong>
+                <span style="font-size: 0.82rem; color: #94a3b8; font-family: 'Cairo', sans-serif;" id="lblSavedEaInfo">يمكنك تعبئة الإيميل والرموز الاحتياطية بنقرة واحدة للشحن السريع.</span>
               </div>
             </div>
-
-            <!-- Customer Phone -->
-            <div class="ea-input-group">
-              <div class="input-with-icon">
-                <i class="fab fa-whatsapp input-icon"></i>
-                <input type="tel" id="customerPhone" placeholder="رقم الواتساب للتواصل (مثال: +9665xxxxxxxx)" required/>
-              </div>
-            </div>
-
+            <button type="button" class="btn-use-saved-ea" onclick="fillSavedEaAccount()" style="background: #f59e0b; color: #0b0f19; border: 0; font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 0.88rem; padding: 10px 20px; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(245,158,11,0.3); transition: all 0.2s ease;">
+              <i class="fas fa-magic"></i> تعبئة الحساب بنقرة واحدة
+            </button>
           </div>
-        </div>
-      </div>
 
-      <hr class="step-divider"/>
-
-      <!-- STEP 4: EA DATA -->
-      <div class="buy-step-block" id="stepBlock4">
-        <div class="step-badge-title">
-          <span class="step-number">04</span>
-          <div class="step-info-text">
-            <h3 id="coins_cms_step2Title">بيانات حساب الـ EA</h3>
-            <p id="coins_cms_step2Desc">يرجى ملء البيانات الخاصة بحسابك لشحن الكوينز</p>
-          </div>
-        </div>
-        
-        <div class="step-content">
           <div class="ea-form-grid">
             
             <!-- Email Input -->
             <div class="ea-input-group">
+              <label class="input-label-tag">البريد الإلكتروني لحساب الـ EA</label>
               <div class="input-with-icon">
                 <i class="fas fa-envelope input-icon"></i>
-                <input type="email" id="eaEmail" placeholder="الايميل" required/>
+                <input type="email" id="eaEmail" placeholder="ایميل حساب الـ EA / Origin"/>
               </div>
               <span class="detail-ea-label" style="font-size: 0.82rem; color: #64748b; margin-top: 6px; display: block; font-weight: bold;">
                 لمعرفة كيفية استخراج ايميل الاورجين - 
-                <a href="https://ea.com" class="detail-ea-link" style="color: #ca8a04; text-decoration: none; font-weight: 700;" target="_blank">👈 من هنا</a>
+                <a href="https://myaccount.ea.com/cp-portal/security/index" class="detail-ea-link" style="color: #2563eb; text-decoration: none; font-weight: 700;" target="_blank">👈 من هنا</a>
               </span>
             </div>
 
             <!-- Password Input -->
             <div class="ea-input-group">
+              <label class="input-label-tag">كلمة المرور</label>
               <div class="input-with-icon">
                 <i class="fas fa-lock input-icon"></i>
-                <input type="password" id="eaPassword" placeholder="كلمة المرور" required/>
+                <input type="password" id="eaPassword" placeholder="كلمة مرور حساب الـ EA"/>
                 <button type="button" class="eye-toggle" onclick="togglePasswordVisibility()"><i class="fas fa-eye" id="eyeIcon"></i></button>
               </div>
               <span class="detail-ea-label" style="font-size: 0.82rem; color: #64748b; margin-top: 6px; display: block; font-weight: bold;">
                 لمعرفة كيفية استخراج كلمة المرور - 
-                <a href="https://ea.com" class="detail-ea-link" style="color: #ca8a04; text-decoration: none; font-weight: 700;" target="_blank">👈 من هنا</a>
+                <a href="https://myaccount.ea.com/cp-portal/security/index" class="detail-ea-link" style="color: #2563eb; text-decoration: none; font-weight: 700;" target="_blank">👈 من هنا</a>
               </span>
             </div>
 
             <!-- Backup Codes -->
             <div class="ea-input-group full-width">
               <label class="input-label-tag">الرموز الاحتياطية</label>
-              <div class="backup-codes-row">
-                <input type="text" class="backup-code-box" id="backup1" placeholder="رمز 1" maxlength="8" required/>
-                <input type="text" class="backup-code-box" id="backup2" placeholder="رمز 2" maxlength="8"/>
-                <input type="text" class="backup-code-box" id="backup3" placeholder="رمز 3" maxlength="8"/>
+              
+              <div class="backup-codes-wrapper" style="position: relative;">
+                <div class="backup-codes-row" id="backupCodesRow">
+                  <input type="text" class="backup-code-box" id="backup1" placeholder="رمز 1" maxlength="8"/>
+                  <input type="text" class="backup-code-box" id="backup2" placeholder="رمز 2" maxlength="8"/>
+                  <input type="text" class="backup-code-box" id="backup3" placeholder="رمز 3" maxlength="8"/>
+                </div>
+                
+                <!-- Lock State Banner when help is checked -->
+                <div class="backup-locked-banner" id="backupLockedBanner" style="display: none;">
+                  <i class="fas fa-lock lock-icon"></i>
+                  <div class="locked-text">
+                    <strong>تم إيقاف إدخال الرموز 🔒</strong>
+                    <span>سيتواصل معك الدعم الفني لمساعدتك في استخراج الرموز بسهولة وسرعة بعد الدفع.</span>
+                  </div>
+                </div>
               </div>
-              <span class="detail-ea-label" style="font-size: 0.82rem; color: #64748b; margin-top: 6px; display: block; font-weight: bold;">
+
+              <div style="margin-top: 10px;">
+                <label class="backup-help-toggle-label">
+                  <input type="checkbox" id="chkNeedBackupHelp" onchange="toggleBackupHelp(this.checked)" style="width: 18px; height: 18px; accent-color: #d97706; cursor: pointer;"/>
+                  <span><i class="fas fa-hand-holding-hand"></i> لا أعرف طريقة استخراج الرموز (أحتاج مساعدة الدعم الفني)</span>
+                </label>
+              </div>
+              
+              <span class="detail-ea-label" id="backupCodesHelperLink" style="font-size: 0.82rem; color: #64748b; margin-top: 6px; display: block; font-weight: bold;">
                 لمعرفة كيفية استخراج الرموز الاحتياطية - 
-                <a href="https://ea.com" class="detail-ea-link" style="color: #ca8a04; text-decoration: none; font-weight: 700;" target="_blank">👈 من هنا</a>
+                <a href="https://help.ea.com/ar/help/account/ea-login-verification-information/" class="detail-ea-link" style="color: #2563eb; text-decoration: none; font-weight: 700;" target="_blank">👈 من هنا</a>
               </span>
+
+              <script>
+              window.toggleBackupHelp = function(isHelpNeeded) {
+                var row = document.getElementById('backupCodesRow');
+                var lockBanner = document.getElementById('backupLockedBanner');
+                var helperLink = document.getElementById('backupCodesHelperLink');
+                var b1 = document.getElementById('backup1');
+                var b2 = document.getElementById('backup2');
+                var b3 = document.getElementById('backup3');
+                var inputs = [b1, b2, b3];
+                
+                if (isHelpNeeded) {
+                  if (row) row.style.setProperty('display', 'none', 'important');
+                  if (lockBanner) lockBanner.style.setProperty('display', 'flex', 'important');
+                  if (helperLink) helperLink.style.setProperty('display', 'none', 'important');
+                  inputs.forEach(function(inp) {
+                    if (inp) {
+                      inp.disabled = true;
+                      inp.value = '';
+                      inp.removeAttribute('required');
+                    }
+                  });
+                } else {
+                  if (row) row.style.setProperty('display', 'flex', 'important');
+                  if (lockBanner) lockBanner.style.setProperty('display', 'none', 'important');
+                  if (helperLink) helperLink.style.setProperty('display', 'block', 'important');
+                  inputs.forEach(function(inp) {
+                    if (inp) {
+                      inp.disabled = false;
+                      if (inp.id === 'backup1') inp.setAttribute('required', 'required');
+                    }
+                  });
+                }
+              };
+              </script>
             </div>
 
             <!-- Club Count Selector -->
             <div class="ea-input-group full-width">
-              <label class="input-label-tag">كم نادي لديك؟</label>
-              <div class="club-toggles">
-                <button type="button" class="club-toggle-btn active" id="clubOne" onclick="selectClubCount(1)">واحد</button>
-                <button type="button" class="club-toggle-btn" id="clubTwo" onclick="selectClubCount(2)">اثنين فأكثر</button>
+              <label class="input-label-tag">كم نادٍ لديك في حساب الـ Ultimate Team؟</label>
+              <div class="club-segmented-control">
+                <button type="button" class="club-toggle-btn active" id="clubOne" onclick="selectClubCount(1)">
+                  <i class="fas fa-shield-halved"></i>
+                  <span>نادٍ واحد فقط (الافتراضي)</span>
+                </button>
+                <button type="button" class="club-toggle-btn" id="clubTwo" onclick="selectClubCount(2)">
+                  <i class="fas fa-layer-group"></i>
+                  <span>ناديين أو أكثر (متعدد الأندية)</span>
+                </button>
               </div>
             </div>
 
             <!-- Dynamic Club Name Input -->
             <div class="ea-input-group full-width" id="clubNameGroup" style="display: none;">
-              <label class="input-label-tag" for="eaClubName">اسم النادي</label>
+              <label class="input-label-tag" for="eaClubName">اسم النادي المطلوب شحنه</label>
               <div class="input-with-icon">
                 <i class="fas fa-shield input-icon"></i>
                 <input type="text" id="eaClubName" placeholder="أدخل اسم النادي هنا..."/>
               </div>
             </div>
 
+            <!-- 15K Coins Alert Banner -->
+            <div class="unified-warning-box">
+              <i class="fas fa-triangle-exclamation"></i>
+              <span><strong>تنبيه هـام:</strong> يجب توفر 15,000 كوينز (15K) على الأقل في حسابك لكي يتم معالجة النقل والتنفيذ بأعلى سرعة وأمان.</span>
+            </div>
+
+            <!-- Closed Web App Option Callout Card -->
+            <div class="web-app-status-box" style="grid-column: 1 / -1; background: rgba(16, 185, 129, 0.06); border: 1.5px solid rgba(16, 185, 129, 0.25); border-radius: 16px; padding: 16px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; color: #047857; font-size: 0.92rem;">
+                  <i class="fas fa-lock" style="font-size: 1.1rem; color: #10b981;"></i>
+                  <span>سوق الانتقالات مقفل في الويب آب بحسابك؟</span>
+                </div>
+                <span style="font-size: 0.78rem; background: #10b981; color: #fff; padding: 3px 10px; border-radius: 12px; font-weight: 800;">شحن خاص متاح ⚡</span>
+              </div>
+              <p style="margin: 0; font-size: 0.84rem; color: #475569; font-weight: 600; line-height: 1.5;">
+                حتى لو كان الويب آب مقفلاً في حسابك، يمكننا شحن الكمية المحددة لك مباشرة بالتواصل عبر الواتساب.
+              </p>
+              <button type="button" onclick="handleClosedWebAppWhatsApp()" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #16a34a; color: #ffffff; border: none; padding: 11px 18px; border-radius: 12px; font-family: Cairo, sans-serif; font-weight: 800; font-size: 0.88rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">
+                <i class="fab fa-whatsapp" style="font-size: 1.1rem;"></i>
+                <span>شحن حساب مقفل الويب آب بالكمية والسعر المحددين عبر الواتساب</span>
+              </button>
+            </div>
+
+            <!-- Order Notes Field (Optional) -->
+            <div class="ea-input-group full-width">
+              <label class="input-label-tag" for="eaOrderNotes">ملاحظات خاصة بطلبك (اختياري)</label>
+              <div class="input-with-icon">
+                <i class="fas fa-comment-dots input-icon"></i>
+                <input type="text" id="eaOrderNotes" placeholder="أدخل أي ملاحظة خاصة بطلبك هنا (مثال: أوقات الشحن المفضلة...)" />
+              </div>
+            </div>
+
             <!-- Terms Checkbox -->
-            <div class="ea-input-group full-width terms-row">
-              <label class="terms-label" style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
-                <input type="checkbox" id="marketOpenCheck" required style="width: 18px; height: 18px; margin-top: 2px;"/>
-                <span style="font-size: 0.88rem; color: #64748b; font-weight: 600; line-height: 1.5;">من الضروري ان يكون سوق الانتقالات مفتوح بحسابك في تطبيق فيفا الويب آب، تحقق قبل الشراء</span>
+
+
+            <!-- Required Market Open Confirmation Checkbox -->
+            <div class="ea-input-group full-width terms-row" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 12px 16px; margin-top: 8px;">
+              <label class="terms-label" style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; user-select: none;">
+                <input type="checkbox" id="marketOpenCheck" required style="width: 20px; height: 20px; margin-top: 2px; accent-color: #2563eb; cursor: pointer; flex-shrink: 0;"/>
+                <span style="font-size: 0.88rem; color: #0f172a; font-weight: 700; line-height: 1.5;">أقر وأؤكد بأن سوق الانتقالات مفتوح بحسابي في تطبيق فيفا الويب آب (Web App) <span style="color: #ef4444;">*</span></span>
               </label>
+            </div>
+
+            <!-- Direct Support Help Button inside EA Form -->
+            <div style="grid-column: 1 / -1; text-align: center; margin-top: 4px; margin-bottom: 8px;">
+              <a href="https://wa.me/962775585112" target="_blank" class="unified-support-chip">
+                <i class="fab fa-whatsapp"></i>
+                <span>تواجه صعوبة أو استفسار بطلبك؟ تواصل مباشرة مع الدعم الفني فوراً</span>
+              </a>
             </div>
 
             <!-- Trust Seals -->
             <div class="ea-input-group full-width trust-seals-grid">
-              <div class="trust-seal-item"><i class="fas fa-shield-halved"></i><span>تشفير آمن لبياناتك 256-bit</span></div>
-              <div class="trust-seal-item"><i class="fas fa-rotate-left"></i><span>ضمان استرجاع الأموال 100%</span></div>
-              <div class="trust-seal-item"><i class="fas fa-user-lock"></i><span>حماية كاملة للملف التعريفي</span></div>
+              <div class="trust-seal-item">
+                <i class="fas fa-shield-halved"></i>
+                <span>تشفير بنكي آمن لبياناتك 256-bit</span>
+              </div>
+              <div class="trust-seal-item">
+                <i class="fas fa-rotate-left"></i>
+                <span>ضمان استرجاع الأموال 100%</span>
+              </div>
+              <div class="trust-seal-item">
+                <i class="fas fa-user-shield"></i>
+                <span>حماية كاملة للملف التعريفي</span>
+              </div>
             </div>
 
           </div>
@@ -783,9 +802,9 @@
         <button type="button" class="detail-tab-toggle-btn" id="btnTabSteps" onclick="switchCoinsTab('steps')">كيف نعمل؟</button>
       </div>
       
-      <!-- TAB 1: Safety & Comfort Trade -->
+      <!-- TAB 1: Safety & Guarantee -->
       <div class="tab-content-panel active" id="panelSafety">
-        <h4 style="margin-top: 0; color: #1b355a; font-weight: 800; margin-bottom: 6px;"><i class="fas fa-shield-halved" style="color: #ca8a04; margin-left: 8px;"></i> نظام شحن آمن Comfort Trade</h4>
+        <h4 style="margin-top: 0; color: #1b355a; font-weight: 800; margin-bottom: 6px;"><i class="fas fa-shield-halved" style="color: #ca8a04; margin-left: 8px;"></i> نظام شحن آمن ومضمون 100%</h4>
         <p style="margin-bottom: 12px; font-weight: 600; color: #475569; font-size: 0.88rem;">
           نعتمد الطريقة الأكثر أماناً لشحن الكوينز يدوياً بواسطة محترفين ذوي خبرة وبأوقات نقل محمية وموزعة، مع تقديم ضمان ذهبي شامل وموحد لجميع عملائنا مجاناً لحماية حسابك بالكامل.
         </p>
@@ -825,10 +844,10 @@
           إليك الخطوات البسيطة التي تتم من لحظة تأكيد الدفع وحتى وصول الكوينز لحسابك:
         </p>
         <ol style="padding-right: 20px; line-height: 1.6; color: #334155; font-size: 0.85rem; font-weight: 600;">
-          <li style="margin-bottom: 6px;">احسب الكمية وادخل بيانات الحساب (الايميل، كلمة المرور، الرموز الاحتياطية).</li>
-          <li style="margin-bottom: 6px;">أتمّ عملية الطلب وسيقوم فريق الدعم بمراسلتك على الواتساب فوراً لتأكيد الدفع وبدء شحن الحساب.</li>
-          <li style="margin-bottom: 6px;">يقوم فريقنا بتسجيل الدخول للحساب عبر خوادمنا الآمنة ونقل الكوينز المحددة.</li>
-          <li style="margin-bottom: 6px;">تتلقى إشعاراً فورياً على الواتساب بنجاح الشحن، ويمكنك الدخول وتغيير كلمة مرورك فوراً للسلامة المطلقة.</li>
+          <li style="margin-bottom: 6px;">حدد الكمية وأدخل بيانات الحساب (الإيميل، كلمة المرور، الرموز الاحتياطية).</li>
+          <li style="margin-bottom: 6px;">أتمّ عملية الدفع الإلكتروني الفوري والآمن (مدى، فيزا، ماستركارد، Apple Pay) لتأكيد طلبك.</li>
+          <li style="margin-bottom: 6px;">يقوم فريقنا بتسجيل الدخول للحساب عبر خوادمنا الآمنة ونقل الكوينز المحددة فوراً.</li>
+          <li style="margin-bottom: 6px;">تتلقى إشعاراً فورياً بنجاح الشحن، ويمكنك الدخول وتغيير كلمة مرورك فوراً للسلامة المطلقة.</li>
         </ol>
       </div>
 
@@ -846,9 +865,9 @@
         </div>
         <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
         <div class="footer-socials">
-          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+          <a href="https://wa.me/962775585112" aria-label="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://www.instagram.com/trivelacoins" aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://tiktok.com/@Trivela" aria-label="TikTok" target="_blank"><i class="fab fa-tiktok"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -880,7 +899,7 @@
     <div class="summary-inner">
       <!-- Right: Coin amount & Price info -->
       <div class="summary-right-details">
-        <div class="summary-total-price" id="summaryPrice">0.00 ر.س</div>
+        <div class="summary-total-price" id="summaryPrice">37.50 ر.س</div>
         <div class="summary-divider-line"></div>
         <div class="summary-coins">
           <i class="fas fa-coins font-gold"></i>
@@ -889,14 +908,151 @@
       </div>
       
       <!-- Left: Action button -->
-      <button type="submit" form="purchaseForm" class="summary-complete-btn" id="btnSubmitOrder">
-        <span>اتمام العملية</span>
-        <i class="fas fa-arrow-left"></i>
+      <button type="button" onclick="handlePurchaseSubmit(event)" class="summary-complete-btn" id="btnSubmitOrder">
+        <span>إضافة إلى السلة</span>
+        <i class="fas fa-cart-plus"></i>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ══════════ CUSTOM AMOUNT REQUEST MODAL ══════════ -->
+  <div class="coins-modal-backdrop" id="customAmountModal" style="display: none; position: fixed !important; z-index: 99999 !important;">
+    <div class="coins-modal-card" style="max-width: 480px; text-align: center; border-radius: 20px; padding: 25px;">
+      <div class="coins-modal-header" style="justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="font-size: 1.1rem; color: #1e3a8a; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-gem" style="color: #ca8a04;"></i> طلب كمية كوينز مخصصة
+        </h3>
+        <button type="button" class="coins-modal-close" onclick="closeCustomAmountModal()">&times;</button>
+      </div>
+      
+      <p style="font-size: 0.88rem; color: #475569; font-weight: 600; margin-bottom: 18px; line-height: 1.5;">
+        أدخل كمية الكوينز التي ترغب بشرائها وسنقوم بمراسلتك فوراً بالسعر الخاص وتفاصيل الشحن:
+      </p>
+
+      <div style="margin-bottom: 20px;">
+        <div style="position: relative; max-width: 340px; margin: 0 auto;">
+          <i class="fas fa-coins" style="color: #ca8a04; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;"></i>
+          <input type="text" id="customAmountInput" placeholder="مثال: 15 مليون أو 25M" style="width: 100%; box-sizing: border-box; padding: 12px 42px 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 12px; font-family: Cairo, Montserrat, sans-serif; font-size: 1rem; font-weight: 700; text-align: center; outline: none; background: #ffffff;" />
+        </div>
+      </div>
+
+      <button type="button" onclick="submitCustomAmountToWhatsApp()" style="width: 100%; background: #16a34a; color: #ffffff; border: none; padding: 14px; border-radius: 12px; font-family: Cairo, sans-serif; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.25);">
+        <i class="fab fa-whatsapp" style="font-size: 1.3rem;"></i>
+        <span>إرسال الطلب عبر الواتساب فوراً</span>
       </button>
     </div>
   </div>
 
+  <!-- ══════════ TECH SUPPORT ISSUE MODAL ══════════ -->
+  <div class="coins-modal-backdrop" id="techSupportIssueModal" style="display: none; position: fixed !important; z-index: 99999 !important;">
+    <div class="coins-modal-card" style="max-width: 520px; padding: 28px;">
+      <div class="coins-modal-header" style="margin-bottom: 16px;">
+        <h3 style="display: flex; align-items: center; gap: 10px; color: #16a34a; font-weight: 900; font-size: 1.15rem; margin: 0;">
+          <i class="fab fa-whatsapp" style="font-size: 1.3rem;"></i>
+          <span>الدعم الفني المباشر — وصف المشكلة</span>
+        </h3>
+        <button type="button" class="coins-modal-close" onclick="closeTechSupportIssueModal()">&times;</button>
+      </div>
+
+      <p style="font-size: 0.88rem; color: #475569; font-weight: 600; line-height: 1.5; margin-bottom: 16px;">
+        اكتب تفاصيل الصعوبة أو المشكلة التي تواجهها وسيقوم فريق الدعم بمساعدتك فوراً عبر الواتساب:
+      </p>
+
+      <!-- Quick Shortcuts -->
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
+        <button type="button" onclick="setSupportShortcut('🔑 لا أعرف كيفية استخراج الرموز الاحتياطية لحسابي')" style="font-size: 0.78rem; font-weight: 700; background: rgba(37, 99, 235, 0.08); color: #2563eb; border: 1px solid rgba(37, 99, 235, 0.25); padding: 6px 12px; border-radius: 14px; cursor: pointer; font-family: Cairo, sans-serif;">🔑 استخراج الرموز</button>
+        <button type="button" onclick="setSupportShortcut('🔒 سوق الانتقالات مقفل في الويب آب ومحتاج شحن خاص')" style="font-size: 0.78rem; font-weight: 700; background: rgba(16, 185, 129, 0.08); color: #059669; border: 1px solid rgba(16, 185, 129, 0.25); padding: 6px 12px; border-radius: 14px; cursor: pointer; font-family: Cairo, sans-serif;">🔒 سوق الانتقالات مقفل</button>
+        <button type="button" onclick="setSupportShortcut('💳 استفسار عن طرق الدفع المتاحة وتأكيد الطلب')" style="font-size: 0.78rem; font-weight: 700; background: rgba(217, 119, 6, 0.08); color: #d97706; border: 1px solid rgba(217, 119, 6, 0.25); padding: 6px 12px; border-radius: 14px; cursor: pointer; font-family: Cairo, sans-serif;">💳 طرق الدفع</button>
+      </div>
+
+      <!-- Textarea Input -->
+      <div style="margin-bottom: 20px;">
+        <textarea id="techSupportProblemInput" rows="4" placeholder="اكتب تفاصيل مشكلتك هنا..." style="width: 100%; box-sizing: border-box; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 14px; font-family: Cairo, sans-serif; font-size: 0.9rem; font-weight: 600; color: #1e293b; outline: none; resize: none; background: #ffffff;"></textarea>
+      </div>
+
+      <button type="button" onclick="submitTechSupportProblemToWhatsApp()" style="width: 100%; background: #16a34a; color: #ffffff; border: none; padding: 14px; border-radius: 14px; font-family: Cairo, sans-serif; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.25);">
+        <i class="fab fa-whatsapp" style="font-size: 1.3rem;"></i>
+        <span>إرسال المشكلة للدعم الفني عبر الواتساب 💬</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+  window.openCustomAmountModal = function() {
+    const modal = document.getElementById('customAmountModal');
+    if (modal) modal.style.display = 'flex';
+  };
+  window.closeCustomAmountModal = function() {
+    const modal = document.getElementById('customAmountModal');
+    if (modal) modal.style.display = 'none';
+  };
+  window.submitCustomAmountToWhatsApp = function() {
+    const input = document.getElementById('customAmountInput');
+    const val = input ? input.value.trim() : '';
+    if (!val) {
+      alert('يرجى كتابة كمية الكوينز المطلوبة');
+      return;
+    }
+    const phone = window.dynamicSettings?.whatsappPhone || '962775585112';
+    const msg = `مرحباً متجر تريفيلا 👋\nأود طلب كمية كوينز مخصصة قدرها: (${val}).\nهل يمكنك تزويدي بالسعر وتفاصيل الشحن؟`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    closeCustomAmountModal();
+  };
+
+  window.handleClosedWebAppWhatsApp = function() {
+    const coinsText = document.getElementById('liveCoins')?.textContent || '1,000,000';
+    const priceText = document.getElementById('displayPrice')?.textContent || '';
+    const platform = window.currentPlatform || 'Console';
+    const phone = window.dynamicSettings?.whatsappPhone || '962775585112';
+
+    const msg = `مرحباً متجر تريفيلا 👋\nسوق الانتقالات مقفل في الويب آب بحسابي وأرغب بشحن كوينز:\n- المنصة: ${platform.toUpperCase()}\n- الكمية المحددة: ${coinsText} كوينز\n- السعر الفوري المحدّد بالصفحة: ${priceText}\n\nهل يمكنكم بدء شحن حسابي المقفل مباشرة؟`;
+
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+  };
+
+  window.openTechSupportIssueModal = function() {
+    const modal = document.getElementById('techSupportIssueModal');
+    if (modal) modal.style.display = 'flex';
+  };
+  window.closeTechSupportIssueModal = function() {
+    const modal = document.getElementById('techSupportIssueModal');
+    if (modal) modal.style.display = 'none';
+  };
+  window.setSupportShortcut = function(text) {
+    const input = document.getElementById('techSupportProblemInput');
+    if (input) input.value = text;
+  };
+  window.submitTechSupportProblemToWhatsApp = function() {
+    const input = document.getElementById('techSupportProblemInput');
+    const problem = input ? input.value.trim() : '';
+    if (!problem) {
+      alert('يرجى كتابة وصف المشكلة أو التساؤل أولاً');
+      return;
+    }
+    const phone = window.dynamicSettings?.whatsappPhone || '962775585112';
+    const msg = `مرحباً الدعم الفني متجر تريفيلا 👋\nتواجهني المشكلة/التساؤل التالي في صفحة الشحن:\n"${problem}"\n\nيرجى مساعدتي في حلها ومتابعة الطلب.`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    closeTechSupportIssueModal();
+  };
+
+  window.toggleCollapsibleCoupon = function() {
+    const box = document.getElementById('collapsibleCouponBox');
+    const chevron = document.getElementById('couponChevron');
+    if (box) {
+      const isHidden = box.style.display === 'none' || !box.style.display;
+      box.style.display = isHidden ? 'block' : 'none';
+      if (chevron) {
+        chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+      }
+    }
+  };
+  </script>
+
   <script src="src/core/global-currency.js"></script>
-  <script type="module" src="src/features/coins/coinsUI.js?v=2.5"></script>
+  <script src="src/core/cart.js?v=1.0"></script>
+  <script src="buy-coins.js?v=3.0"></script>
 </body>
 </html>
+
+

@@ -24,9 +24,46 @@ let statsEndDate = null;
 let globalChampionsRanks = {};
 let globalRivalsRanks = {};
 let currentOrderFilter = 'all';
+let allSuppliers = [];
+let adminEventSource = null;
 
-// DOM Content Loaded Initializer
+function setupAdminSSE() {
+  const token = localStorage.getItem('trivela_token');
+  if (!token) return;
+  
+  if (adminEventSource) {
+    adminEventSource.close();
+  }
+  
+  adminEventSource = new EventSource(`/api/common/live-updates?adminToken=${token}`);
+  adminEventSource.onmessage = function(event) {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type === 'order_update') {
+        console.log("⚡ SSE: Order updated, reloading admin orders & stats...", data.orderId);
+        loadOrdersList();
+        loadQuickStats();
+        // If renderAdminAnalyticsCharts is active/initialized, refresh charts
+        if (typeof renderAdminAnalyticsCharts === 'function') {
+          renderAdminAnalyticsCharts(false);
+        }
+      }
+    } catch (err) {
+      console.error("Error processing admin SSE update:", err);
+    }
+  };
+  adminEventSource.onerror = function() {
+    console.log("Admin SSE disconnected. Retrying...");
+  };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  setupAdminSSE();
+  try {
+    initScratchpad();
+  } catch (e) {
+    console.warn("Failed to init scratchpad:", e);
+  }
   console.log('DOMContentLoaded: Started loading...');
   // Guard already displayed 🔒 block? do nothing further
   if (window.__adminGuardBlocked) return;
@@ -44,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
   loadStoreSettings();
   console.log('DOMContentLoaded: Loading orders...');
   loadOrdersList();
+  console.log('DOMContentLoaded: Loading suppliers...');
+  loadAllSuppliers();
   console.log('DOMContentLoaded: Loading logs...');
   loadAdminLogs();
   console.log('DOMContentLoaded: Loading FAQs...');
@@ -113,30 +152,42 @@ document.addEventListener('DOMContentLoaded', () => {
   // Restore last active panel if any
   const savedPanel = localStorage.getItem('adminActivePanel');
   const panelToMainTab = {
+    // Stats & Reports
+    'stat-overview': 'stats-reports',
     'profit-dashboard-panel': 'stats-reports',
     'weekly-report-panel': 'stats-reports',
     'visitors-analytics-panel': 'stats-reports',
     'orders-analytics-panel': 'stats-reports',
-    'stat-overview': 'stats-reports',
-    'orders-panel': 'store-products',
-    'coins-settings-panel': 'store-products',
-    'challenges-panel': 'store-products',
-    'rivals-champions-settings-panel': 'store-products',
-    'coaching-settings-panel': 'store-products',
-    'coupons-panel': 'store-products',
+    // Customers & Marketing
+    'users-crm-panel': 'customers-marketing',
+    'marketing-hub-panel': 'customers-marketing',
+    'coupons-panel': 'customers-marketing',
+    'reviews-panel': 'customers-marketing',
+    'email-marketing-panel': 'customers-marketing',
+    'loyalty-settings-panel': 'customers-marketing',
     'users-panel': 'customers-marketing',
-    'reviews-panel': 'content-design',
-    'faqs-panel': 'content-design',
+    // Order Fulfillment & Suppliers
+    'orders-panel': 'orders-fulfillment',
+    'supplier-fulfillment-panel': 'orders-fulfillment',
+    'store-status-settings-panel': 'orders-fulfillment',
+    // Pricing & Catalog
+    'coins-settings-panel': 'pricing-catalog',
+    'supplier-prices-panel': 'pricing-catalog',
+    'challenges-panel': 'pricing-catalog',
+    'rivals-champions-settings-panel': 'pricing-catalog',
+    'coaching-settings-panel': 'pricing-catalog',
+    // Content & Design
     'landing-content-panel': 'content-design',
     'coins-content-panel': 'content-design',
     'services-content-panel': 'content-design',
     'coaching-packages-panel': 'content-design',
+    'faqs-panel': 'content-design',
     'features-panel': 'content-design',
-    'users-crm-panel': 'customers-marketing',
-    'marketing-hub-panel': 'customers-marketing',
-    'email-marketing-panel': 'customers-marketing',
-    'settings-panel': 'system',
-    'logs-panel': 'system'
+    // System & Security
+    'system-general-settings-panel': 'system',
+    'supplier-accounts-panel': 'system',
+    'logs-panel': 'system',
+    'settings-panel': 'system'
   };
 
   if (savedPanel && panelToMainTab[savedPanel]) {
@@ -248,6 +299,33 @@ async function loadStoreSettings() {
     const inputInstagram = document.getElementById('settingInstagram');
     if (inputInstagram) inputInstagram.value = settings.instagramUrl || "";
 
+    const inputTelegramToken = document.getElementById('settingTelegramToken');
+    if (inputTelegramToken) inputTelegramToken.value = settings.telegramBotToken || "";
+    const inputTelegramChatId = document.getElementById('settingTelegramChatId');
+    if (inputTelegramChatId) inputTelegramChatId.value = settings.telegramChatId || "";
+    const toggleTelegram = document.getElementById('toggleEnableTelegram');
+    if (toggleTelegram) toggleTelegram.checked = settings.enableTelegramAlerts !== false;
+
+    const inBundleCoins = document.getElementById('settingBundleCoinsDiscount');
+    if (inBundleCoins) inBundleCoins.value = settings.bundleCoinsDiscountPercent !== undefined ? settings.bundleCoinsDiscountPercent : 5;
+    const inBundleBoost = document.getElementById('settingBundleBoostingDiscount');
+    if (inBundleBoost) inBundleBoost.value = settings.bundleBoostingDiscountPercent !== undefined ? settings.bundleBoostingDiscountPercent : 15;
+    const inBundleSbc = document.getElementById('settingBundleSbcDiscount');
+    if (inBundleSbc) inBundleSbc.value = settings.bundleSbcDiscountPercent !== undefined ? settings.bundleSbcDiscountPercent : 0;
+    const inBundleCap = document.getElementById('settingMaxBundleDiscountCap');
+    if (inBundleCap) inBundleCap.value = settings.maxBundleDiscountCap || 150;
+
+    const pBundleCoins = document.getElementById('panelBundleCoinsDiscount');
+    if (pBundleCoins) pBundleCoins.value = settings.bundleCoinsDiscountPercent !== undefined ? settings.bundleCoinsDiscountPercent : 5;
+    const pBundleBoost = document.getElementById('panelBundleBoostingDiscount');
+    if (pBundleBoost) pBundleBoost.value = settings.bundleBoostingDiscountPercent !== undefined ? settings.bundleBoostingDiscountPercent : 15;
+    const pBundleSbc = document.getElementById('panelBundleSbcDiscount');
+    if (pBundleSbc) pBundleSbc.value = settings.bundleSbcDiscountPercent !== undefined ? settings.bundleSbcDiscountPercent : 0;
+    const pBundleCap = document.getElementById('panelMaxBundleDiscountCap');
+    if (pBundleCap) pBundleCap.value = settings.maxBundleDiscountCap || 150;
+    const pTogglePackages = document.getElementById('panelEnableServicePackages');
+    if (pTogglePackages) pTogglePackages.checked = settings.enableServicePackages !== false;
+
     const inputRateConsole = document.getElementById('settingRateConsole');
     if (inputRateConsole) inputRateConsole.value = settings.baseRateConsole || 2.80;
 
@@ -279,6 +357,15 @@ async function loadStoreSettings() {
     const toggleCoaching = document.getElementById('toggleServiceCoaching');
     if (toggleCoaching) toggleCoaching.checked = settings.enableServiceCoaching !== false;
 
+    const toggleLoyalty = document.getElementById('toggleEnableLoyaltyPoints');
+    if (toggleLoyalty) toggleLoyalty.checked = settings.enableLoyaltyPoints !== false;
+
+    const toggleTracking = document.getElementById('settingEnableTracking');
+    if (toggleTracking) toggleTracking.checked = settings.enableOrderTracking !== false;
+
+    const toggleSupplier = document.getElementById('settingEnableSupplier');
+    if (toggleSupplier) toggleSupplier.checked = settings.enableSupplierPortal !== false;
+
     // Exchange Rates
     const rates = settings.customExchangeRates || {};
     const inputAED = document.getElementById('rateAED');
@@ -304,6 +391,11 @@ async function loadStoreSettings() {
 
     const inputCoinsPC = document.getElementById('coinsRatePC');
     if (inputCoinsPC) inputCoinsPC.value = settings.baseRatePC || 2.40;
+
+    const quickConsole = document.getElementById('quickRateConsoleInput');
+    if (quickConsole) quickConsole.value = settings.baseRateConsole ? (settings.baseRateConsole * 10).toFixed(1) : "28.0";
+    const quickPC = document.getElementById('quickRatePCInput');
+    if (quickPC) quickPC.value = settings.baseRatePC ? (settings.baseRatePC * 10).toFixed(1) : "24.0";
 
     const toggle = document.getElementById('settingMaintenance');
     if (toggle) toggle.checked = !!settings.maintenanceMode;
@@ -476,6 +568,9 @@ async function loadStoreSettings() {
       if (typeof window.renderCoachingPackages === 'function') {
         window.renderCoachingPackages(settings.content.coaching || []);
       }
+      if (typeof window.loadAdminCoachingSchedule === 'function') {
+        window.loadAdminCoachingSchedule();
+      }
     }
   } catch (err) {
     showStatus("خطأ في تحميل إعدادات المتجر.", "error");
@@ -491,6 +586,22 @@ async function saveStoreSettings(event) {
 
     settings.whatsappPhone = document.getElementById('settingWhatsapp').value.trim();
     settings.instagramUrl = document.getElementById('settingInstagram').value.trim();
+    
+    const inputTgToken = document.getElementById('settingTelegramToken');
+    if (inputTgToken) settings.telegramBotToken = inputTgToken.value.trim();
+    const inputTgChatId = document.getElementById('settingTelegramChatId');
+    if (inputTgChatId) settings.telegramChatId = inputTgChatId.value.trim();
+    const toggleTg = document.getElementById('toggleEnableTelegram');
+    if (toggleTg) settings.enableTelegramAlerts = toggleTg.checked;
+
+    const inBundleCoins = document.getElementById('settingBundleCoinsDiscount');
+    if (inBundleCoins) settings.bundleCoinsDiscountPercent = parseFloat(inBundleCoins.value) || 0;
+    const inBundleBoost = document.getElementById('settingBundleBoostingDiscount');
+    if (inBundleBoost) settings.bundleBoostingDiscountPercent = parseFloat(inBundleBoost.value) || 0;
+    const inBundleSbc = document.getElementById('settingBundleSbcDiscount');
+    if (inBundleSbc) settings.bundleSbcDiscountPercent = parseFloat(inBundleSbc.value) || 0;
+    const inBundleCap = document.getElementById('settingMaxBundleDiscountCap');
+    if (inBundleCap) settings.maxBundleDiscountCap = parseFloat(inBundleCap.value) || 150;
     const rateConsoleEl = document.getElementById('settingRateConsole');
     if (rateConsoleEl) {
       settings.baseRateConsole = parseFloat(rateConsoleEl.value);
@@ -523,6 +634,15 @@ async function saveStoreSettings(event) {
     if (togglePackages) settings.enableServicePackages = togglePackages.checked;
     const toggleCoaching = document.getElementById('toggleServiceCoaching');
     if (toggleCoaching) settings.enableServiceCoaching = toggleCoaching.checked;
+
+    const toggleLoyalty = document.getElementById('toggleEnableLoyaltyPoints');
+    if (toggleLoyalty) settings.enableLoyaltyPoints = toggleLoyalty.checked;
+
+    const toggleTracking = document.getElementById('settingEnableTracking');
+    if (toggleTracking) settings.enableOrderTracking = toggleTracking.checked;
+
+    const toggleSupplier = document.getElementById('settingEnableSupplier');
+    if (toggleSupplier) settings.enableSupplierPortal = toggleSupplier.checked;
 
     // Read Exchange Rates
     settings.customExchangeRates = {
@@ -682,6 +802,13 @@ async function loadOrdersList() {
 function renderOrdersList(orders) {
   const fullOrdersList = adminActiveOrders && adminActiveOrders.length > 0 ? adminActiveOrders : (orders || []);
   
+  // Update action center warnings
+  try {
+    updateUrgentAlerts(fullOrdersList);
+  } catch (e) {
+    console.warn("Failed to update urgent alerts:", e);
+  }
+  
   // Dashboard mini-table (top 5 pending)
   const miniTbody = document.getElementById('dashboardOrdersTableBody');
   if (miniTbody) {
@@ -730,12 +857,16 @@ function renderOrdersList(orders) {
       const email = String(o.eaEmail || o.sonyEmail || '').toLowerCase();
       const service = String(o.service || '').toLowerCase();
       
+      const supplier = allSuppliers ? allSuppliers.find(s => s.id === o.assignedSupplierId) : null;
+      const supplierName = supplier ? String(supplier.name || '').toLowerCase() : '';
+      
       return orderId.includes(searchQuery) || 
              shortId.includes(searchQuery) || 
              name.includes(searchQuery) || 
              phone.includes(searchQuery) || 
              email.includes(searchQuery) || 
-             service.includes(searchQuery);
+             service.includes(searchQuery) ||
+             supplierName.includes(searchQuery);
     }
     return true;
   });
@@ -848,10 +979,22 @@ function renderOrdersList(orders) {
         <button onclick="cancelOrder('${o.id}')" style="background:#fef2f2;color:#ef4444;border:1px solid #fecaca;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700;font-size:0.8rem;"><i class="fas fa-times"></i></button>
       </div>`;
     } else if (o.status === 'paid') {
+      const supplierOptions = allSuppliers.map(s => `
+        <option value="${s.id}" ${o.assignedSupplierId === s.id ? 'selected' : ''}>${s.name}</option>
+      `).join('');
+
       actions = `<div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
-        <div style="display:flex;gap:8px;align-items:flex-end;">
-          <div style="flex:1;"><label style="font-size:0.72rem;color:var(--text-gray);font-weight:700;display:block;margin-bottom:3px;">تكلفة المورد ($)</label>
-            <input type="number" id="supplier_cost_${o.id}" class="admin-input" placeholder="0" style="padding:8px 12px;font-size:0.9rem;margin:0;font-family:Montserrat,sans-serif;font-weight:700;" value="${o.supplierCost || ''}"/>
+        <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+          <div style="flex:1;min-width:120px;">
+            <label style="font-size:0.72rem;color:var(--text-gray);font-weight:700;display:block;margin-bottom:3px;">المورد المسؤول</label>
+            <select id="assigned_supplier_${o.id}" class="admin-input" style="padding:8px 12px;font-size:0.85rem;margin:0;font-family:Cairo,sans-serif;font-weight:700;height:40px;width:100%;box-sizing:border-box;">
+              <option value="">-- اختر مورد --</option>
+              ${supplierOptions}
+            </select>
+          </div>
+          <div style="flex:1;min-width:120px;">
+            <label style="font-size:0.72rem;color:var(--text-gray);font-weight:700;display:block;margin-bottom:3px;">تكلفة المورد (USD)</label>
+            <input type="number" id="supplier_cost_${o.id}" class="admin-input" placeholder="0" style="padding:8px 12px;font-size:0.9rem;margin:0;font-family:Montserrat,sans-serif;font-weight:700;height:40px;width:100%;box-sizing:border-box;" value="${o.supplierCost ? (o.supplierCost / 3.75).toFixed(2) : ''}"/>
           </div>
         </div>
         <div style="display:flex;gap:8px;">
@@ -875,24 +1018,44 @@ function renderOrdersList(orders) {
       </div>`;
     }
 
+    const assignedSupplier = allSuppliers.find(s => s.id === o.assignedSupplierId);
+    const supplierBadge = assignedSupplier ? `<div style="margin-top:6px;font-family:Cairo;font-size:0.75rem;font-weight:bold;color:#7c3aed;"><i class="fas fa-truck-ramp-box"></i> المورد: ${assignedSupplier.name}</div>` : '';
+    const errorBadge = o.credentialsError ? `<span style="background:#fef2f2;color:#ef4444;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:800;display:flex;align-items:center;gap:4px;"><i class="fas fa-exclamation-triangle" style="font-size:0.7rem;"></i> خطأ بالأكواد</span>` : '';
+
     return `<div class="order-card" style="background:var(--card-bg);border-radius:16px;border:1px solid rgba(0,0,0,0.05);padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.03);">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;cursor:pointer;" onclick="openAdminOrderDetailsModal('${o.id}')" title="انقر لفتح تفاصيل العميل والطلب">
         <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-family:Montserrat,sans-serif;font-weight:900;font-size:0.9rem;color:var(--text-dark);">#${shortId}</span>
+          <span style="font-family:Montserrat,sans-serif;font-weight:900;font-size:0.95rem;color:#2563eb;background:rgba(37,99,235,0.08);padding:3px 10px;border-radius:8px;border:1px solid rgba(37,99,235,0.2);">#${shortId}</span>
           <span style="background:${st.bg};color:${st.color};padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:800;display:flex;align-items:center;gap:4px;"><i class="${st.icon}" style="font-size:0.7rem;"></i> ${st.label}</span>
+          ${errorBadge}
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:0.78rem;color:var(--text-gray);font-family:Montserrat,sans-serif;">${dateStr}</span>
-          <button onclick="deleteOrder('${o.id}')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:0.95rem;padding:4px;display:flex;align-items:center;" title="حذف الطلب نهائياً"><i class="fas fa-trash-alt"></i></button>
+          <button onclick="event.stopPropagation(); deleteOrder('${o.id}')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:0.95rem;padding:4px;display:flex;align-items:center;" title="حذف الطلب نهائياً"><i class="fas fa-trash-alt"></i></button>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:16px;align-items:start;">
-        <div><div style="font-size:0.7rem;color:var(--text-gray);font-weight:700;margin-bottom:3px;">العميل</div><div style="font-weight:800;color:var(--text-dark);font-size:0.95rem;">${o.customerName}</div><div style="font-size:0.8rem;color:var(--text-gray);margin-top:2px;direction:ltr;text-align:right;">${o.customerPhone||'—'}</div></div>
-        <div><div style="font-size:0.7rem;color:var(--text-gray);font-weight:700;margin-bottom:3px;">الخدمة</div><div style="font-weight:800;color:var(--gold-primary);font-size:0.9rem;">${o.service}</div><div style="margin-top:4px;"><span style="background:${platformColor}15;color:${platformColor};padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:800;">${platformLabel}</span></div></div>
-        <div><div style="font-size:0.7rem;color:var(--text-gray);font-weight:700;margin-bottom:3px;">السعر</div><div style="font-family:Montserrat,sans-serif;font-weight:900;color:#10b981;font-size:1.15rem;">$${o.priceSAR.toLocaleString()}</div>${o.couponCode?`<div style="font-size:0.72rem;color:#a855f7;font-weight:700;margin-top:2px;">🎟️ ${o.couponCode}</div>`:''}</div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-          <button onclick="contactCustomerWhatsApp('${o.id}')" style="width:42px;height:42px;border-radius:50%;background:#25d366;color:#fff;border:0;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;" title="واتساب"><i class="fab fa-whatsapp"></i></button>
-          <span style="font-size:0.6rem;color:var(--text-gray);">واتساب</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:16px;align-items:start;cursor:pointer;" onclick="openAdminOrderDetailsModal('${o.id}')">
+        <div>
+          <div style="font-size:0.7rem;color:var(--text-gray);font-weight:700;margin-bottom:3px;">العميل</div>
+          <div style="font-weight:800;color:var(--text-dark);font-size:0.95rem;display:flex;align-items:center;gap:6px;">
+            <i class="fas fa-user" style="color:#2563eb;font-size:0.8rem;"></i>
+            <span>${o.customerName}</span>
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-gray);margin-top:2px;direction:ltr;text-align:right;">${o.customerPhone||'—'}</div>
+        </div>
+        <div>
+          <div style="font-size:0.7rem;color:var(--text-gray);font-weight:700;margin-bottom:3px;">الخدمة</div>
+          <div style="font-weight:800;color:var(--gold-primary);font-size:0.9rem;">${o.service}</div>
+          <div style="margin-top:4px;"><span style="background:${platformColor}15;color:${platformColor};padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:800;">${platformLabel}</span></div>${supplierBadge}
+        </div>
+        <div>
+          <div style="font-size:0.7rem;color:var(--text-gray);font-weight:700;margin-bottom:3px;">السعر</div>
+          <div style="font-family:Montserrat,sans-serif;font-weight:900;color:#10b981;font-size:1.15rem;">${(o.priceSAR || 0).toLocaleString()} <span style="font-size:0.75rem;">ر.س</span></div>
+          ${o.couponCode?`<div style="font-size:0.72rem;color:#a855f7;font-weight:700;margin-top:2px;">🎟️ ${o.couponCode}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;" onclick="event.stopPropagation();">
+          <button onclick="contactCustomerWhatsApp('${o.id}')" style="width:42px;height:42px;border-radius:50%;background:#25d366;color:#fff;border:0;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(37,211,102,0.3);" title="واتساب"><i class="fab fa-whatsapp"></i></button>
+          <span style="font-size:0.6rem;color:var(--text-gray);font-weight:700;">واتساب</span>
         </div>
       </div>
       ${creds}
@@ -901,9 +1064,13 @@ function renderOrdersList(orders) {
       
       <!-- Advanced Order Controls Panel -->
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:12px; border-top:1px dashed var(--border-color); flex-wrap:wrap; gap:8px;">
-        <div style="display:flex; gap:8px;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button onclick="openAdminOrderDetailsModal('${o.id}')" class="admin-btn" style="background:#2563eb; color:#ffffff; border:0; padding:7px 14px; border-radius:8px; cursor:pointer; font-family:Cairo,sans-serif; font-weight:800; font-size:0.8rem; display:flex; align-items:center; gap:6px; margin:0; box-shadow: 0 2px 6px rgba(37,99,235,0.25);">
+            <i class="fas fa-id-card"></i> تفاصيل العميل والطلب الكاملة
+          </button>
+          
           <button onclick="openEditOrderModal('${o.id}')" class="admin-btn" style="background:#f1f5f9; color:#475569; border:0; padding:6px 12px; border-radius:6px; cursor:pointer; font-family:Cairo,sans-serif; font-weight:700; font-size:0.75rem; display:flex; align-items:center; gap:6px; margin:0;">
-            <i class="fas fa-edit"></i> تعديل البيانات والملاحظات
+            <i class="fas fa-edit"></i> تعديل
           </button>
           
           ${(o.eaEmail || o.sonyEmail) ? `
@@ -927,6 +1094,7 @@ function renderOrdersList(orders) {
       </div>
     </div>`;
   }).join('');
+
 }
 
 // ── Order filter state ──
@@ -963,10 +1131,18 @@ window.confirmPayment = function(orderId, defaultAmount) {
 }
 
 window.sendToSupplier = function(orderId) {
+  const select = document.getElementById('assigned_supplier_' + orderId);
+  const supplierId = select ? select.value : '';
+  if (!supplierId) { alert("يرجى اختيار مورد أولاً."); return; }
+
   const input = document.getElementById('supplier_cost_' + orderId);
   const cost = parseFloat(input?.value);
   if (isNaN(cost) || cost < 0) { alert("أدخل تكلفة المورد أولاً."); return; }
-  updateOrderStatus(orderId, 'in_progress', { supplierCost: cost });
+  
+  updateOrderStatus(orderId, 'in_progress', { 
+    supplierCost: cost,
+    assignedSupplierId: supplierId
+  });
 }
 
 window.markSupplierDone = function(orderId) {
@@ -1139,6 +1315,8 @@ window.toggleManualEntryMode = function(isManual) {
       document.getElementById('priceUSD').value = 0;
       document.getElementById('pricePCUSD').value = 0;
       document.getElementById('pricePCSAR').value = 0;
+      const estDelEl = document.getElementById('estimatedDelivery');
+      if (estDelEl) estDelEl.value = "";
     }
   } else {
     if (urlGroup) urlGroup.style.display = 'block';
@@ -1227,6 +1405,7 @@ export async function savePlayerToStore() {
   const priceUSD = parseFloat(document.getElementById('priceUSD').value) || 0;
   const pricePCSAR = parseFloat(document.getElementById('pricePCSAR').value) || 0;
   const pricePCUSD = parseFloat(document.getElementById('pricePCUSD').value) || 0;
+  const estimatedDelivery = document.getElementById('estimatedDelivery') ? document.getElementById('estimatedDelivery').value.trim() : "";
 
   if (!name) {
     alert("يرجى إدخال اسم اللاعب أو التحدي.");
@@ -1254,7 +1433,8 @@ export async function savePlayerToStore() {
     priceUSD,
     pricePCSAR,
     pricePCUSD,
-    category
+    category,
+    estimatedDelivery
   };
 
   if (category === 'sbc' || category === 'objectives') {
@@ -1385,6 +1565,8 @@ window.editPlayer = function(id) {
   document.getElementById('priceUSD').value = p.priceUSD;
   document.getElementById('pricePCUSD').value = p.pricePCUSD || p.priceUSD;
   document.getElementById('pricePCSAR').value = p.pricePCSAR || p.priceSAR;
+  const estDelEl = document.getElementById('estimatedDelivery');
+  if (estDelEl) estDelEl.value = p.estimatedDelivery || "";
 
   const container = document.getElementById('scraperCardTitle');
   if (container) container.scrollIntoView({ behavior: 'smooth' });
@@ -2048,10 +2230,21 @@ function showStatus(text, type) {
     document.body.appendChild(toast);
   }
 
-  toast.textContent = text;
+  const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+  const iconColor = type === 'success' ? '#10b981' : '#ef4444';
+  
+  toast.innerHTML = `
+    <div class="toast-card-content">
+      <i class="fa-solid ${icon}" style="color: ${iconColor}; font-size: 1.3rem;"></i>
+      <span class="toast-text">${text}</span>
+    </div>
+  `;
+
   toast.className = `status-toast-overlay show ${type}`;
 
-  setTimeout(() => {
+  if (window.toastTimeout) clearTimeout(window.toastTimeout);
+
+  window.toastTimeout = setTimeout(() => {
     toast.classList.remove('show');
   }, 3500);
 }
@@ -2068,6 +2261,411 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
+// ── Quick Pricing Controller ──
+window.updateQuickRates = async function() {
+  try {
+    const typedConsoleVal = parseFloat(document.getElementById('quickRateConsoleInput').value);
+    const typedPCVal = parseFloat(document.getElementById('quickRatePCInput').value);
+    
+    if (isNaN(typedConsoleVal) || isNaN(typedPCVal)) {
+      return showStatus("الرجاء إدخال قيم صحيحة للأسعار.", "error");
+    }
+
+    const quickConsoleVal = typedConsoleVal / 10;
+    const quickPCVal = typedPCVal / 10;
+
+    const settings = await adminService.getStoreSettings();
+    if (!settings) return;
+    
+    settings.baseRateConsole = quickConsoleVal;
+    settings.baseRatePC = quickPCVal;
+    
+    await adminService.saveStoreSettings(settings);
+    showStatus("✅ تم تحديث أسعار الكوينز بنجاح وتطبيقها في المتجر!", "success");
+    
+    // Sync settings-panel inputs
+    const settingRateConsole = document.getElementById('settingRateConsole');
+    if (settingRateConsole) settingRateConsole.value = quickConsoleVal;
+    const settingRatePC = document.getElementById('settingRatePC');
+    if (settingRatePC) settingRatePC.value = quickPCVal;
+
+    // Sync coins panel inputs
+    const coinsRateConsole = document.getElementById('coinsRateConsole');
+    if (coinsRateConsole) coinsRateConsole.value = quickConsoleVal;
+    const coinsRatePC = document.getElementById('coinsRatePC');
+    if (coinsRatePC) coinsRatePC.value = quickPCVal;
+
+    // Sync quick rate inputs
+    const quickConsole = document.getElementById('quickRateConsoleInput');
+    if (quickConsole) quickConsole.value = typedConsoleVal;
+    const quickPC = document.getElementById('quickRatePCInput');
+    if (quickPC) quickPC.value = typedPCVal;
+
+    // Refresh dashboard rate labels if they exist
+    const dashConsole = document.getElementById('dashboardConsoleRate');
+    if (dashConsole) dashConsole.textContent = `$${quickConsoleVal.toFixed(2)} / 100K`;
+    const dashPc = document.getElementById('dashboardPcRate');
+    if (dashPc) dashPc.textContent = `$${quickPCVal.toFixed(2)} / 100K`;
+
+    loadQuickStats();
+  } catch (err) {
+    showStatus("فشل حفظ الأسعار: " + err.message, "error");
+  }
+};
+
+// ── Sticky Scratchpad Auto-save ──
+function initScratchpad() {
+  const pad = document.getElementById('quickAdminScratchpad');
+  if (!pad) return;
+
+  pad.value = localStorage.getItem('adminScratchpad') || '';
+
+  let timeout = null;
+  pad.addEventListener('input', () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      localStorage.setItem('adminScratchpad', pad.value);
+    }, 500);
+  });
+}
+
+// ── Urgent Action Alerts Center ──
+function updateUrgentAlerts(orders) {
+  const container = document.getElementById('urgentAlertsContainer');
+  if (!container) return;
+
+  const activeOrders = orders || adminActiveOrders || [];
+  const alerts = [];
+
+  // 1. Unassigned paid orders older than 15 minutes
+  const fifteenMinsAgo = Date.now() - 15 * 60 * 1000;
+  const unassignedPaid = activeOrders.filter(o => o.status === 'paid' && !o.assignedSupplierId && new Date(o.timestamp).getTime() < fifteenMinsAgo);
+  
+  unassignedPaid.forEach(o => {
+    const shortId = o.id.substring(6, 14);
+    const timeDiff = Math.round((Date.now() - new Date(o.timestamp).getTime()) / (60 * 1000));
+    alerts.push({
+      type: 'danger',
+      icon: 'fas fa-exclamation-circle',
+      title: `طلب مدفوع غير مسند منذ ${timeDiff} دقيقة!`,
+      message: `الطلب <a href="#" onclick="switchMainTab('store-products'); setTimeout(() => { const btn = document.querySelector('#sub-bar-store .sub-tab-btn'); if(btn) switchTabWithSub('orders-panel', btn); document.getElementById('orderSearchInput').value = '${o.id}'; triggerOrdersFilter(); }, 50); return false;" style="color: inherit; text-decoration: underline; font-weight: 800;">#${shortId}</a> تم دفعه ولم يتم تعيين مورد له لبدء الشحن.`
+    });
+  });
+
+  // 2. Orders with credentials error flag active
+  const credsErrors = activeOrders.filter(o => o.status === 'in_progress' && o.credentialsError === true);
+  credsErrors.forEach(o => {
+    const shortId = o.id.substring(6, 14);
+    const supplier = allSuppliers ? allSuppliers.find(s => s.id === o.assignedSupplierId) : null;
+    const supName = supplier ? supplier.name : 'المورد';
+    alerts.push({
+      type: 'warning',
+      icon: 'fas fa-key',
+      title: `خطأ في بيانات دخول الطلب #${shortId}!`,
+      message: `أفاد المورد (${supName}) بوجود مشكلة في الحساب (EA/Sony). بانتظار تصحيح العميل للأكواد أو كلمة المرور.`
+    });
+  });
+
+  // 3. Supplier Overload Check
+  if (allSuppliers) {
+    allSuppliers.forEach(s => {
+      const activeCount = activeOrders.filter(o => o.status === 'in_progress' && o.assignedSupplierId === s.id).length;
+      if (activeCount >= 3) {
+        alerts.push({
+          type: 'info',
+          icon: 'fas fa-tasks',
+          title: `المورد (${s.name}) يواجه ضغط عمل حالياً!`,
+          message: `لدى هذا المورد ${activeCount} طلبات نشطة (قيد الشحن) في نفس الوقت. يفضل عدم إسناد طلبات إضافية له حتى ينجز ما لديه.`
+        });
+      }
+    });
+  }
+
+  // Render Alerts
+  if (alerts.length === 0) {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+
+  container.style.display = 'flex';
+  container.innerHTML = alerts.map(a => {
+    let bg = '#fee2e2', border = '#fecaca', color = '#991b1b'; // danger default
+    if (a.type === 'warning') {
+      bg = '#fef3c7'; border = '#fde68a'; color = '#92400e';
+    } else if (a.type === 'info') {
+      bg = '#eff6ff'; border = '#bfdbfe'; color = '#1e40af';
+    }
+    
+    return `
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-radius: 12px; background: ${bg}; border: 1px solid ${border}; color: ${color}; font-size: 0.85rem; font-family: Cairo, sans-serif; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); direction: rtl; text-align: right;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="${a.icon}" style="font-size: 1.1rem;"></i>
+          <div>
+            <strong style="display: block; font-weight: 800; margin-bottom: 2px;">${a.title}</strong>
+            <span style="font-size: 0.78rem; opacity: 0.95;">${a.message}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.updateUrgentAlerts = updateUrgentAlerts;
+window.initScratchpad = initScratchpad;
+
+
+// ── Favorites / Quick Access Dashboard Management ──
+let defaultFavorites = [
+  'orders-panel',
+  'profit-dashboard-panel',
+  'supplier-accounts-panel'
+];
+
+function getFavorites() {
+  const stored = localStorage.getItem('adminFavorites');
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (_) {
+      return defaultFavorites;
+    }
+  }
+  return defaultFavorites;
+}
+
+function saveFavorites(favorites) {
+  localStorage.setItem('adminFavorites', JSON.stringify(favorites));
+}
+
+// Map panelId to display attributes
+const FAV_METADATA_MAP = {
+  // Stats & Reports
+  'profit-dashboard-panel': { title: 'لوحة الأرباح', category: 'الإحصائيات والتقارير', icon: 'fas fa-chart-line', color: '#10b981', desc: 'متابعة الأرباح الصافية بعد خصم تكاليف الموردين والمصروفات الإدارية.' },
+  'weekly-report-panel': { title: 'التقرير الأسبوعي', category: 'الإحصائيات والتقارير', icon: 'fas fa-clipboard', color: '#ca8a04', desc: 'تحليل الأداء المالي الأسبوعي وتتبع الأهداف والمبيعات ونمو المتجر.' },
+  'visitors-analytics-panel': { title: 'تحليل الزوار', category: 'الإحصائيات والتقارير', icon: 'fas fa-search', color: '#a855f7', desc: 'رصد ترافيك الموقع، أوقات الذروة، الدول الأكثر زيارة، ومصادر الزيارات.' },
+  'orders-analytics-panel': { title: 'تحليل الطلبات', category: 'الإحصائيات والتقارير', icon: 'fas fa-shopping-cart', color: '#6366f1', desc: 'توزيع الطلبات حسب الفئة والمنصة، تتبع نسب الإلغاء وتفضيلات العملاء.' },
+  'stat-overview': { title: 'الإحصائيات العامة', category: 'الإحصائيات والتقارير', icon: 'fas fa-chart-bar', color: '#3b82f6', desc: 'نظرة شاملة وسريعة على عدد المستخدمين والزيارات النشطة اليوم.' },
+  
+  // Order Fulfillment & Suppliers
+  'orders-panel': { title: 'الطلبات الواردة', category: 'تشغيل الطلبات والموردين', icon: 'fas fa-shopping-cart', color: '#3b82f6', desc: 'مراجعة وتعديل وإسناد طلبات شحن الكوينز وإنجاز التحديات للموردين.' },
+  'supplier-fulfillment-panel': { title: 'كشوف مستحقات الموردين', category: 'تشغيل الطلبات والموردين', icon: 'fas fa-file-invoice-dollar', color: '#10b981', desc: 'تفاصيل الطلبات المسندة لكل مورد ومستحقاتهم المالية.' },
+  'store-status-settings-panel': { title: 'استقبال الطلبات', category: 'تشغيل الطلبات والموردين', icon: 'fas fa-toggle-on', color: '#6366f1', desc: 'التحكم بتفعيل وإيقاف استقبال طلبات كل خدمة من خدمات المتجر.' },
+  
+  // Pricing & Catalog
+  'coins-settings-panel': { title: 'أسعار بيع الكوينز', category: 'التسعير والمنتجات', icon: 'fas fa-coins', color: '#ca8a04', desc: 'إعداد أسعار بيع ملايين الكوينز لكل منصة وإدارة الشرائح السعرية.' },
+  'supplier-prices-panel': { title: 'أسعار شراء الموردين', category: 'التسعير والمنتجات', icon: 'fas fa-truck-moving', color: '#10b981', desc: 'تحديد سعر شراء الكوينز بالمليون من كل مورد لحساب صافي الأرباح.' },
+  'challenges-panel': { title: 'التحديات والمهام', category: 'التسعير والمنتجات', icon: 'fas fa-gamepad', color: '#6366f1', desc: 'إضافة وتحديث تحديات الـ SBC ومهام الموسم النشطة في اللعبة وأسعارها.' },
+  'rivals-champions-settings-panel': { title: 'رايفلز وشامبيونز', category: 'التسعير والمنتجات', icon: 'fas fa-trophy', color: '#ec4899', desc: 'تخصيص رتب وجوائز وتصنيفات الـ Division Rivals والـ Champions.' },
+  'coaching-settings-panel': { title: 'التعليم والاستشارات', category: 'التسعير والمنتجات', icon: 'fas fa-chalkboard-teacher', color: '#10b981', desc: 'إعداد باقات التدريب الاحترافي والاستشارات المباشرة وتعديل أسعارها.' },
+  
+  // Customers & Marketing
+  'users-crm-panel': { title: 'إدارة العملاء CRM', category: 'العملاء والتسويق', icon: 'fas fa-user-friends', color: '#3b82f6', desc: 'تتبع بيانات العملاء، فئات الولاء (VIP، ذهبي، فضي)، والمبيعات الفردية.' },
+  'email-marketing-panel': { title: 'التسويق البريدي', category: 'العملاء والتسويق', icon: 'fas fa-envelope', color: '#f59e0b', desc: 'إرسال حملات البريد الإلكتروني الجماعية للعملاء المسجلين بالمتجر.' },
+  'coupons-panel': { title: 'الكوبونات', category: 'العملاء والتسويق', icon: 'fas fa-ticket-alt', color: '#a855f7', desc: 'إنشاء وتحديث خصومات الكوبونات للعملاء وتتبع عدد مرات استخدامها.' },
+  'loyalty-settings-panel': { title: 'نقاط الولاء', category: 'العملاء والتسويق', icon: 'fas fa-award', color: '#ca8a04', desc: 'إعداد نظام نقاط الولاء والمكافآت وتعديل معدل الخصم لكل عميل.' },
+  
+  // Content & Design
+  'faqs-panel': { title: 'الأسئلة الشائعة', category: 'المحتوى والتصميم', icon: 'fas fa-question-circle', color: '#84cc16', desc: 'تعديل وتحديث أسئلة وأجوبة المتجر الشائعة للعملاء.' },
+  'reviews-panel': { title: 'مراجعات المتجر', category: 'المحتوى والتصميم', icon: 'fas fa-comment-alt', color: '#06b6d4', desc: 'إدارة وتفعيل تقييمات ومراجعات العملاء المعروضة بالصفحة الرئيسية.' },
+  
+  // System & Security
+  'supplier-accounts-panel': { title: 'حسابات الموردين', category: 'النظام والأمان', icon: 'fas fa-user-shield', color: '#ef4444', desc: 'إضافة الموردين وتعيين بيانات دخولهم للبوابة الخاصة وإدارة صلاحياتهم.' },
+  'system-general-settings-panel': { title: 'إعدادات المتجر', category: 'النظام والأمان', icon: 'fas fa-cog', color: '#64748b', desc: 'إدارة أرقام واتساب، حسابات التواصل، أسعار صرف العملات ووضع الصيانة.' },
+  'logs-panel': { title: 'سجلات النظام', category: 'النظام والأمان', icon: 'fas fa-history', color: '#64748b', desc: 'سجل كامل ومفصل لعمليات الأدمن والموردين لمراقبة الأمان والنزاهة.' }
+};
+
+window.toggleFavoritesManager = function() {
+  const manager = document.getElementById('favoritesCustomizer');
+  if (manager) {
+    manager.style.display = manager.style.display === 'none' ? 'block' : 'none';
+  }
+};
+
+window.saveFavoritesConfiguration = function() {
+  const checkboxes = document.querySelectorAll('.fav-toggle-cb');
+  const selected = [];
+  checkboxes.forEach(cb => {
+    if (cb.checked) {
+      selected.push(cb.getAttribute('data-panel'));
+    }
+  });
+
+  saveFavorites(selected);
+  
+  // Close customizer drawer
+  const manager = document.getElementById('favoritesCustomizer');
+  if (manager) manager.style.display = 'none';
+  
+  renderFavoritesDashboard();
+};
+
+window.removeFavoriteDirect = function(panelId) {
+  let favs = getFavorites();
+  favs = favs.filter(id => id !== panelId);
+  saveFavorites(favs);
+  renderFavoritesDashboard();
+};
+
+window.navigateToFavoritePanel = function(panelId) {
+  // Use panelToMainTab-style lookup for routing
+  const panelToTab = {
+    // Stats & Reports
+    'stat-overview': 'stats-reports',
+    'profit-dashboard-panel': 'stats-reports',
+    'weekly-report-panel': 'stats-reports',
+    'visitors-analytics-panel': 'stats-reports',
+    'orders-analytics-panel': 'stats-reports',
+    // Customers & Marketing
+    'users-crm-panel': 'customers-marketing',
+    'email-marketing-panel': 'customers-marketing',
+    'coupons-panel': 'customers-marketing',
+    'loyalty-settings-panel': 'customers-marketing',
+    'reviews-panel': 'customers-marketing',
+    'marketing-hub-panel': 'customers-marketing',
+    // Order Fulfillment
+    'orders-panel': 'orders-fulfillment',
+    'supplier-fulfillment-panel': 'orders-fulfillment',
+    'store-status-settings-panel': 'orders-fulfillment',
+    // Pricing & Catalog
+    'coins-settings-panel': 'pricing-catalog',
+    'supplier-prices-panel': 'pricing-catalog',
+    'challenges-panel': 'pricing-catalog',
+    'rivals-champions-settings-panel': 'pricing-catalog',
+    'coaching-settings-panel': 'pricing-catalog',
+    // Content & Design
+    'faqs-panel': 'content-design',
+    'landing-content-panel': 'content-design',
+    'coins-content-panel': 'content-design',
+    'services-content-panel': 'content-design',
+    'coaching-packages-panel': 'content-design',
+    'features-panel': 'content-design',
+    // System & Security
+    'supplier-accounts-panel': 'system',
+    'system-general-settings-panel': 'system',
+    'logs-panel': 'system',
+    'settings-panel': 'system'
+  };
+
+  const parentTabId = panelToTab[panelId] || '';
+  if (!parentTabId) return;
+
+  // 1. Switch main tab
+  switchMainTab(parentTabId);
+  
+  // 2. Click the corresponding sub-tab button
+  setTimeout(() => {
+    const subButtons = document.querySelectorAll('.sub-tabs-bar .sub-tab-btn');
+    let foundButton = null;
+    subButtons.forEach(btn => {
+      const clickAttr = btn.getAttribute('onclick') || '';
+      if (clickAttr.includes(panelId)) {
+        foundButton = btn;
+      }
+    });
+    
+    if (foundButton) {
+      switchTabWithSub(panelId, foundButton);
+    } else {
+      // Fallback: manually activate panel if sub-tab bar is hidden
+      document.querySelectorAll('.admin-panel').forEach(p => {
+        p.classList.toggle('active', p.id === panelId);
+      });
+    }
+  }, 50);
+};
+
+
+function renderFavoritesDashboard() {
+  const favs = getFavorites();
+  
+  // Update customizer checkboxes state
+  const checkboxes = document.querySelectorAll('.fav-toggle-cb');
+  checkboxes.forEach(cb => {
+    cb.checked = favs.includes(cb.getAttribute('data-panel'));
+  });
+
+  const gridEl = document.getElementById('favoritesLaunchpadGrid');
+  const emptyStateEl = document.getElementById('favoritesEmptyState');
+  
+  if (!gridEl) return;
+  
+  if (favs.length === 0) {
+    gridEl.style.display = 'none';
+    if (emptyStateEl) emptyStateEl.style.display = 'block';
+    return;
+  }
+  
+  gridEl.style.display = 'grid';
+  if (emptyStateEl) emptyStateEl.style.display = 'none';
+  
+  let html = '';
+  favs.forEach(panelId => {
+    const meta = FAV_METADATA_MAP[panelId];
+    if (!meta) return;
+    
+    // Determine context metrics if applicable
+    let metricHTML = '';
+    if (panelId === 'orders-panel' && adminActiveOrders) {
+      const pendingCount = adminActiveOrders.filter(o => o.status === 'paid').length;
+      const inProgressCount = adminActiveOrders.filter(o => o.status === 'in_progress').length;
+      if (pendingCount > 0) {
+        metricHTML = `<span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 20px; font-weight: bold; background: #fee2e2; color: #ef4444; font-family: Montserrat;">${pendingCount} بانتظار الشحن</span>`;
+      } else if (inProgressCount > 0) {
+        metricHTML = `<span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 20px; font-weight: bold; background: #f3e8ff; color: #a855f7; font-family: Montserrat;">${inProgressCount} قيد الشحن</span>`;
+      } else {
+        metricHTML = `<span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 20px; font-weight: bold; background: #f1f5f9; color: #64748b; font-family: Cairo;">لا توجد طلبات جديدة</span>`;
+      }
+    } else if (panelId === 'profit-dashboard-panel') {
+      const salesVal = document.getElementById('pr-total-sales') ? document.getElementById('pr-total-sales').textContent : '$0.00';
+      metricHTML = `<span style="font-size: 0.75rem; font-weight: 800; color: #10b981; font-family: Montserrat;">مبيعات: ${salesVal}</span>`;
+    } else if (panelId === 'supplier-accounts-panel' && allSuppliers) {
+      metricHTML = `<span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 20px; font-weight: bold; background: #f0fdf4; color: #15803d; font-family: Cairo;">${allSuppliers.length} موردين نشطين</span>`;
+    } else if (panelId === 'supplier-fulfillment-panel' && allSuppliers) {
+      metricHTML = `<span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 20px; font-weight: bold; background: #f0fdf4; color: #15803d; font-family: Cairo;">${allSuppliers.length} موردين نشطين</span>`;
+    } else {
+      metricHTML = `<span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 20px; font-weight: bold; background: #f8fafc; color: #64748b; font-family: Cairo;">${meta.category}</span>`;
+    }
+    
+    html += `
+      <div class="admin-card fav-card" style="border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(48,83,136,0.04); border: 1px solid var(--border-color); background: #ffffff; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s ease-in-out; position: relative; min-height: 160px; direction: rtl; text-align: right;">
+        
+        <!-- Star Toggle Direct Button -->
+        <button onclick="removeFavoriteDirect('${panelId}')" title="إزالة من المفضلة" style="position: absolute; left: 15px; top: 15px; background: transparent; border: 0; outline: none; cursor: pointer; color: var(--gold-primary); font-size: 1.1rem; transition: transform 0.15s ease;">
+          <i class="fas fa-star"></i>
+        </button>
+        
+        <div onclick="navigateToFavoritePanel('${panelId}')" style="cursor: pointer; flex-grow: 1;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(30,41,59,0.04); display: flex; align-items: center; justify-content: center; color: ${meta.color}; font-size: 1.2rem;">
+              <i class="${meta.icon}"></i>
+            </div>
+            <div>
+              <h4 style="margin: 0; font-family: Cairo; font-weight: 800; font-size: 0.95rem; color: var(--text-dark);">${meta.title}</h4>
+              <span style="font-size: 0.7rem; color: var(--text-gray); font-family: Cairo;">${meta.category}</span>
+            </div>
+          </div>
+          <p style="margin: 0 0 16px 0; font-family: Cairo; font-size: 0.78rem; color: var(--text-gray); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+            ${meta.desc}
+          </p>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: 8px;">
+          ${metricHTML}
+          <button onclick="navigateToFavoritePanel('${panelId}')" style="background: transparent; border: 0; color: var(--blue-500); font-family: Cairo; font-weight: 700; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+            دخول القسم <i class="fas fa-chevron-left" style="font-size: 0.7rem;"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  });
+  
+  gridEl.innerHTML = html;
+}
+
+// Expose render function to global scope
+window.renderFavoritesDashboard = renderFavoritesDashboard;
+
 // ── Navigation helpers ──
 function switchMainTab(tabId) {
   document.querySelectorAll('.nav-tab-btn').forEach(btn => {
@@ -2076,58 +2674,39 @@ function switchMainTab(tabId) {
   });
 
   // Hide all sub-tab bars
-  const barStats = document.getElementById('sub-bar-stats');
-  const barStore = document.getElementById('sub-bar-store');
-  const barMarketing = document.getElementById('sub-bar-marketing');
-  const barContent = document.getElementById('sub-bar-content');
-  const barSystem = document.getElementById('sub-bar-system');
-  if (barStats) barStats.style.display = 'none';
-  if (barStore) barStore.style.display = 'none';
-  if (barMarketing) barMarketing.style.display = 'none';
-  if (barContent) barContent.style.display = 'none';
-  if (barSystem) barSystem.style.display = 'none';
+  const allSubBars = document.querySelectorAll('.sub-tabs-bar');
+  allSubBars.forEach(bar => bar.style.display = 'none');
 
   // Hide all panels
   document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
 
-  if (tabId === 'stats-reports') {
-    if (barStats) barStats.style.display = 'flex';
-    const activeSub = document.querySelector('#sub-bar-stats .sub-tab-btn.active') || document.querySelector('#sub-bar-stats .sub-tab-btn');
-    if (activeSub) {
-      const panelId = activeSub.getAttribute('onclick').match(/'([^']+)'/)[1];
-      switchTabWithSub(panelId, activeSub);
-    }
-  } 
-  else if (tabId === 'store-products') {
-    if (barStore) barStore.style.display = 'flex';
-    const activeSub = document.querySelector('#sub-bar-store .sub-tab-btn.active') || document.querySelector('#sub-bar-store .sub-tab-btn');
-    if (activeSub) {
-      const panelId = activeSub.getAttribute('onclick').match(/'([^']+)'/)[1];
-      switchTabWithSub(panelId, activeSub);
-    }
-  } 
-  else if (tabId === 'customers-marketing') {
-    if (barMarketing) barMarketing.style.display = 'flex';
-    const activeSub = document.querySelector('#sub-bar-marketing .sub-tab-btn.active') || document.querySelector('#sub-bar-marketing .sub-tab-btn');
-    if (activeSub) {
-      const panelId = activeSub.getAttribute('onclick').match(/'([^']+)'/)[1];
-      switchTabWithSub(panelId, activeSub);
-    }
-  } 
-  else if (tabId === 'content-design') {
-    if (barContent) barContent.style.display = 'flex';
-    const activeSub = document.querySelector('#sub-bar-content .sub-tab-btn.active') || document.querySelector('#sub-bar-content .sub-tab-btn');
-    if (activeSub) {
-      const panelId = activeSub.getAttribute('onclick').match(/'([^']+)'/)[1];
-      switchTabWithSub(panelId, activeSub);
-    }
-  } 
-  else if (tabId === 'system') {
-    if (barSystem) barSystem.style.display = 'flex';
-    const activeSub = document.querySelector('#sub-bar-system .sub-tab-btn.active') || document.querySelector('#sub-bar-system .sub-tab-btn');
-    if (activeSub) {
-      const panelId = activeSub.getAttribute('onclick').match(/'([^']+)'/)[1];
-      switchTabWithSub(panelId, activeSub);
+  const subBarMap = {
+    'stats-reports':      'sub-bar-stats',
+    'store-products':     'sub-bar-store',
+    'customers-marketing':'sub-bar-marketing',
+    'orders-fulfillment': 'sub-bar-fulfillment',
+    'pricing-catalog':    'sub-bar-pricing',
+    'content-design':     'sub-bar-content',
+    'system':             'sub-bar-system'
+  };
+
+  if (tabId === 'favorites-tab') {
+    const p = document.getElementById('favorites-panel');
+    if (p) p.classList.add('active');
+    renderFavoritesDashboard();
+    return;
+  }
+
+  const barId = subBarMap[tabId];
+  if (barId) {
+    const bar = document.getElementById(barId);
+    if (bar) {
+      bar.style.display = 'flex';
+      const activeSub = bar.querySelector('.sub-tab-btn.active') || bar.querySelector('.sub-tab-btn');
+      if (activeSub) {
+        const match = activeSub.getAttribute('onclick').match(/'([^']+)'/);
+        if (match) switchTabWithSub(match[1], activeSub);
+      }
     }
   }
 }
@@ -2139,6 +2718,16 @@ function switchTabWithSub(panelId, btn) {
     btn.classList.add('active');
   }
 
+  // Sync sidebar active class
+  document.querySelectorAll('.menu-item').forEach(el => {
+    const isActive = el.getAttribute('onclick') && el.getAttribute('onclick').includes(`'${panelId}'`);
+    el.classList.toggle('active', !!isActive);
+    if (isActive) {
+      const titleEl = document.getElementById('currentActivePanelTitle');
+      if (titleEl) titleEl.textContent = el.textContent.trim();
+    }
+  });
+
   // Toggle active content panel
   document.querySelectorAll('.admin-panel').forEach(panel => {
     panel.classList.toggle('active', panel.id === panelId);
@@ -2149,6 +2738,12 @@ function switchTabWithSub(panelId, btn) {
   // Specific view loaders
   if (panelId === 'orders-panel') {
     loadOrdersList();
+  } else if (panelId === 'bundle-builder-settings-panel' || panelId === 'settings-panel') {
+    loadStoreSettings();
+  } else if (panelId === 'coaching-settings-panel') {
+    if (typeof window.loadAdminCoachingSchedule === 'function') {
+      window.loadAdminCoachingSchedule();
+    }
   } else if (panelId === 'orders-analytics-panel') {
     if (adminActiveOrders && adminActiveOrders.length > 0) {
       window.initOrdersAnalytics(adminActiveOrders);
@@ -2167,6 +2762,14 @@ function switchTabWithSub(panelId, btn) {
     loadAllUsers();
   } else if (panelId === 'email-marketing-panel') {
     loadEmailCampaigns();
+  } else if (panelId === 'loyalty-settings-panel') {
+    if (typeof loadLoyaltySettingsPanel === 'function') loadLoyaltySettingsPanel();
+  } else if (panelId === 'supplier-accounts-panel' || panelId === 'supplier-fulfillment-panel' || panelId === 'supplier-prices-panel') {
+    if (typeof loadSuppliersPanel === 'function') loadSuppliersPanel();
+  } else if (panelId === 'store-status-settings-panel' || panelId === 'system-general-settings-panel') {
+    if (typeof loadStoreSettings === 'function') loadStoreSettings();
+  } else if (panelId === 'logs-panel') {
+    if (typeof loadAdminLogs === 'function') loadAdminLogs();
   }
 }
 
@@ -2383,7 +2986,51 @@ function exportOrdersToCSV() {
   document.body.removeChild(link);
 }
 
+// Sidebar and panel helper function
+function activateAdminPanel(panelId, parentTabId, linkElement) {
+  // Highlight the sidebar item
+  document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+  if (linkElement) {
+    linkElement.classList.add('active');
+  } else {
+    // Find item by panelId
+    const item = document.querySelector(`.menu-item[onclick*="'${panelId}'"]`);
+    if (item) item.classList.add('active');
+  }
+
+  // 1. Activate main category using switchMainTab (which handles backend state etc.)
+  switchMainTab(parentTabId);
+
+  // 2. Activate specific panel
+  switchTabWithSub(panelId, null);
+
+  // 3. Update topbar title text
+  const titleEl = document.getElementById('currentActivePanelTitle');
+  if (titleEl && linkElement) {
+    titleEl.textContent = linkElement.textContent.trim();
+  }
+
+  // Close sidebar on mobile
+  const sidebar = document.querySelector('.admin-sidebar');
+  if (sidebar) sidebar.classList.remove('open');
+}
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.admin-sidebar');
+  if (sidebar) sidebar.classList.toggle('open');
+}
+
+function handleLogout() {
+  if (confirm("هل أنت متأكد من رغبتك في تسجيل الخروج من لوحة التحكم؟")) {
+    localStorage.removeItem('trivela_token');
+    window.location.href = '/login.html?redirect=/admin.html';
+  }
+}
+
 // Bind to window to allow HTML inline handlers to work seamlessly
+window.activateAdminPanel = activateAdminPanel;
+window.toggleSidebar = toggleSidebar;
+window.handleLogout = handleLogout;
 window.switchTab = switchTab;
 window.switchMainTab = switchMainTab;
 window.switchTabWithSub = switchTabWithSub;
@@ -2572,6 +3219,9 @@ window.onChampionsRankChange = function() {
   document.getElementById('champsRankName').value = rank.name || "";
   document.getElementById('champsRankWins').value = rank.wins || "";
   document.getElementById('champsRankPrice').value = rank.priceUSD || 0;
+  if (document.getElementById('champsRankDelivery')) {
+    document.getElementById('champsRankDelivery').value = rank.estimatedDelivery || "";
+  }
   
   const rewardsArr = rank.rewards || [];
   document.getElementById('champsRankRewards').value = rewardsArr.map(r => r.name).join('\n');
@@ -2586,6 +3236,9 @@ window.onRivalsRankChange = function() {
   document.getElementById('rivalsRankName').value = rank.name || "";
   document.getElementById('rivalsRankWins').value = rank.wins || "";
   document.getElementById('rivalsRankPrice').value = rank.priceUSD || 0;
+  if (document.getElementById('rivalsRankDelivery')) {
+    document.getElementById('rivalsRankDelivery').value = rank.estimatedDelivery || "";
+  }
 
   const rewardsArr = rank.rewards || [];
   document.getElementById('rivalsRankRewards').value = rewardsArr.map(r => r.name).join('\n');
@@ -2607,6 +3260,7 @@ window.saveChampionsRankConfig = async function(event) {
     name: document.getElementById('champsRankName').value.trim(),
     wins: document.getElementById('champsRankWins').value.trim(),
     priceUSD: parseFloat(document.getElementById('champsRankPrice').value),
+    estimatedDelivery: document.getElementById('champsRankDelivery') ? document.getElementById('champsRankDelivery').value.trim() : "",
     rewards
   };
 
@@ -2634,6 +3288,7 @@ window.saveRivalsRankConfig = async function(event) {
     name: document.getElementById('rivalsRankName').value.trim(),
     wins: document.getElementById('rivalsRankWins').value.trim(),
     priceUSD: parseFloat(document.getElementById('rivalsRankPrice').value),
+    estimatedDelivery: document.getElementById('rivalsRankDelivery') ? document.getElementById('rivalsRankDelivery').value.trim() : "",
     rewards
   };
 
@@ -2724,6 +3379,205 @@ window.deletePricingTier = async function(minCoins) {
     showStatus("فشل حذف الشريحة: " + err.message, "error");
   }
 };
+
+let loyaltyItemsList = [];
+let loyaltyPointsConfig = {};
+
+async function loadLoyaltySettingsPanel() {
+  try {
+    const token = localStorage.getItem('admin_token');
+    const settings = await adminService.getStoreSettings();
+    loyaltyPointsConfig = settings.loyaltyPointsConfig || {};
+    
+    document.getElementById('loyaltyCoinsRate').value = loyaltyPointsConfig.coinsPointsPer100K !== undefined ? loyaltyPointsConfig.coinsPointsPer100K : 100;
+    document.getElementById('loyaltyDefaultServiceRate').value = loyaltyPointsConfig.defaultServicePointsPerSAR !== undefined ? loyaltyPointsConfig.defaultServicePointsPerSAR : 5;
+    document.getElementById('loyaltyWelcomePoints').value = loyaltyPointsConfig.loyaltyWelcomePoints !== undefined ? loyaltyPointsConfig.loyaltyWelcomePoints : 50;
+    document.getElementById('loyaltyExchangeRate').value = loyaltyPointsConfig.loyaltyExchangeRate !== undefined ? loyaltyPointsConfig.loyaltyExchangeRate : 10;
+
+    const content = await fetch('/api/public/content').then(r => r.json());
+    const players = await fetch('/api/players', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then(r => r.json());
+
+    loyaltyItemsList = [];
+
+    if (content.rivals_ranks) {
+      Object.entries(content.rivals_ranks).forEach(([id, rank]) => {
+        loyaltyItemsList.push({
+          id: id,
+          name: rank.name,
+          category: 'Rivals (رايفلز)',
+          price: rank.priceSAR || (rank.priceUSD * 3.75)
+        });
+      });
+    }
+
+    if (content.champions_ranks) {
+      Object.entries(content.champions_ranks).forEach(([id, rank]) => {
+        loyaltyItemsList.push({
+          id: id,
+          name: rank.name,
+          category: 'Champions (شامبيونز)',
+          price: rank.priceSAR || (rank.priceUSD * 3.75)
+        });
+      });
+    }
+
+    const staticObjectives = [
+      { id: 'obj_rush_weekly', name: 'مهام الـ Rush الأسبوعية', category: 'Objectives (المهام)', price: 15 * 3.75 },
+      { id: 'obj_cup_weekly', name: 'تحديات الكأس الودية (Cup)', category: 'Objectives (المهام)', price: 18 * 3.75 },
+      { id: 'obj_evo_1', name: 'تطوير Evolution (المستوى 1)', category: 'Objectives (المهام)', price: 20 * 3.75 },
+      { id: 'obj_evo_2', name: 'تطوير Evolution (المستوى 2)', category: 'Objectives (المهام)', price: 30 * 3.75 },
+      { id: 'obj_milestones', name: 'تحديات المايلستون (Milestones)', category: 'Objectives (المهام)', price: 25 * 3.75 },
+      { id: 'obj_champions', name: 'مهام الأبطال (FUT Champions)', category: 'Objectives (المهام)', price: 35 * 3.75 }
+    ];
+    staticObjectives.forEach(obj => loyaltyItemsList.push(obj));
+
+    if (players) {
+      players.forEach(p => {
+        let catText = 'أخرى';
+        if (p.category === 'sbc') catText = 'SBC (التحديات)';
+        else if (p.category === 'coaching') catText = 'Coaching (التدريب)';
+        else if (p.category === 'objectives') catText = 'Objectives (المهام)';
+        else if (p.category === 'packages') catText = 'Packages (الباقات)';
+        
+        loyaltyItemsList.push({
+          id: p.id,
+          name: p.name,
+          category: catText,
+          price: p.priceSAR || (p.priceUSD * 3.75)
+        });
+      });
+    }
+
+    renderLoyaltyItemsTable();
+  } catch (err) {
+    console.error("Failed to load loyalty settings:", err);
+  }
+}
+
+let currentLoyaltyCategory = 'all';
+
+function renderLoyaltyItemsTable() {
+  const tbody = document.getElementById('loyaltyItemsTableBody');
+  if (!tbody) return;
+
+  if (loyaltyItemsList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-gray); padding: 30px;">لا توجد منتجات أو خدمات متاحة حالياً.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = '';
+  loyaltyItemsList.forEach(item => {
+    const val = loyaltyPointsConfig[item.id] !== undefined ? loyaltyPointsConfig[item.id] : "";
+    const tr = document.createElement('tr');
+    tr.className = 'loyalty-item-row';
+    
+    let dataCat = 'other';
+    const catLower = item.category.toLowerCase();
+    if (catLower.includes('rivals')) dataCat = 'rivals';
+    else if (catLower.includes('champions')) dataCat = 'champions';
+    else if (catLower.includes('objectives') || catLower.includes('مهام')) dataCat = 'objectives';
+    else if (catLower.includes('sbc') || catLower.includes('تحديات')) dataCat = 'sbc';
+    else if (catLower.includes('coaching') || catLower.includes('تدريب')) dataCat = 'coaching';
+    else if (catLower.includes('packages') || catLower.includes('باقات')) dataCat = 'packages';
+    
+    tr.dataset.category = dataCat;
+
+    tr.innerHTML = `
+      <td style="font-weight: 700; color: var(--blue-800);">${item.name}</td>
+      <td><span class="admin-status-badge" style="background: var(--blue-50); color: var(--blue-700); border: 1px solid var(--blue-100); font-size: 0.75rem;">${item.category}</span></td>
+      <td style="font-family: Montserrat; font-weight: 700; color: #10b981;">${Math.round(item.price)} ر.س</td>
+      <td>
+        <input type="number" class="admin-input loyalty-pts-input" data-id="${item.id}" placeholder="الافتراضي: حسب سعر الطلب" value="${val}" style="max-width: 200px; padding: 6px 12px; margin: 0; font-family: Montserrat; font-weight: 700;"/>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Re-apply current category filter if set
+  filterLoyaltyByCategory(currentLoyaltyCategory, null);
+}
+
+function filterLoyaltyByCategory(category, btn) {
+  currentLoyaltyCategory = category;
+  
+  const container = document.getElementById('loyalty-category-tabs');
+  if (container) {
+    container.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  }
+  
+  if (!btn) {
+    const activeBtn = document.querySelector(`#loyalty-category-tabs button[onclick*="'${category}'"]`) || document.querySelector(`#loyalty-category-tabs button[onclick*='"${category}"']`);
+    if (activeBtn) activeBtn.classList.add('active');
+  } else {
+    btn.classList.add('active');
+  }
+
+  const rows = document.querySelectorAll('.loyalty-item-row');
+  const q = document.getElementById('searchLoyaltyItems').value.toLowerCase().trim();
+  
+  rows.forEach(row => {
+    const rowCategory = row.dataset.category || '';
+    const text = row.innerText.toLowerCase();
+    
+    let matchesCategory = false;
+    if (category === 'all') {
+      matchesCategory = true;
+    } else {
+      matchesCategory = (rowCategory === category);
+    }
+
+    const matchesSearch = text.includes(q);
+    row.style.display = (matchesCategory && matchesSearch) ? '' : 'none';
+  });
+}
+
+function filterLoyaltyItems() {
+  filterLoyaltyByCategory(currentLoyaltyCategory, null);
+}
+
+async function saveLoyaltySettings(e) {
+  e.preventDefault();
+  
+  const coinsRate = parseInt(document.getElementById('loyaltyCoinsRate').value, 10) || 100;
+  const defaultServiceRate = parseFloat(document.getElementById('loyaltyDefaultServiceRate').value) || 5;
+  const welcomePoints = parseInt(document.getElementById('loyaltyWelcomePoints').value, 10) || 50;
+  const exchangeRate = parseInt(document.getElementById('loyaltyExchangeRate').value, 10) || 10;
+
+  const newConfig = {
+    coinsPointsPer100K: coinsRate,
+    defaultServicePointsPerSAR: defaultServiceRate,
+    loyaltyWelcomePoints: welcomePoints,
+    loyaltyExchangeRate: exchangeRate
+  };
+
+  const inputs = document.querySelectorAll('.loyalty-pts-input');
+  inputs.forEach(input => {
+    const id = input.dataset.id;
+    const val = input.value.trim();
+    if (val !== "") {
+      newConfig[id] = parseInt(val, 10) || 0;
+    }
+  });
+
+  try {
+    const token = localStorage.getItem('admin_token');
+    const settings = await adminService.getStoreSettings();
+    settings.loyaltyPointsConfig = newConfig;
+
+    await adminService.saveStoreSettings(settings);
+    showStatus("✅ تم حفظ إعدادات نقاط ومكافآت الولاء بنجاح!", "success");
+    loadLoyaltySettingsPanel();
+  } catch (err) {
+    showStatus("فشل حفظ الإعدادات: " + err.message, "error");
+  }
+}
+
+window.loadLoyaltySettingsPanel = loadLoyaltySettingsPanel;
+window.filterLoyaltyItems = filterLoyaltyItems;
+window.filterLoyaltyByCategory = filterLoyaltyByCategory;
+window.saveLoyaltySettings = saveLoyaltySettings;
 
 window.loadQuickStats = loadQuickStats;
 window.loadOrdersList = loadOrdersList;
@@ -2995,6 +3849,143 @@ window.saveCoachingPackageConfig = async function(event) {
   } catch (err) {
     showStatus("فشل حفظ الباقة التدريبية: " + err.message, "error");
   }
+};
+
+// ==========================================
+// COACHING SCHEDULE PER-DAY SYSTEM
+// ==========================================
+const WEEK_DAYS_ADMIN = [
+  { id: 4, name: "الخميس" },
+  { id: 5, name: "الجمعة" },
+  { id: 6, name: "السبت" },
+  { id: 0, name: "الأحد" },
+  { id: 1, name: "الاثنين" },
+  { id: 2, name: "الثلاثاء" },
+  { id: 3, name: "الأربعاء" }
+];
+
+window.loadAdminCoachingSchedule = function() {
+  renderAdminCoachingSchedule({});
+  fetch('/api/public/coaching-schedule')
+    .then(res => res.json())
+    .then(schedule => {
+      if (schedule && typeof schedule === 'object') {
+        renderAdminCoachingSchedule(schedule);
+      }
+    })
+    .catch(() => {});
+};
+
+function renderAdminCoachingSchedule(schedule) {
+  const container = document.getElementById('adminScheduleDaysList');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const workingDays = (schedule.workingDays && Array.isArray(schedule.workingDays) && schedule.workingDays.length > 0) ? schedule.workingDays : [4, 5, 6, 0];
+  const daysConfig = schedule.daysConfig || {};
+  const globalStart = schedule.startHour || 16;
+  const globalEnd = schedule.endHour || 23;
+
+  WEEK_DAYS_ADMIN.forEach(day => {
+    const isChecked = workingDays.includes(day.id);
+    const dayCfg = daysConfig[day.id] || { startHour: globalStart, endHour: globalEnd };
+    const startH = dayCfg.startHour || globalStart;
+    const endH = dayCfg.endHour || globalEnd;
+
+    const row = document.createElement('div');
+    row.className = 'day-schedule-row';
+    row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; flex-wrap: wrap; gap: 12px;';
+
+    let hoursOptionsStart = '';
+    let hoursOptionsEnd = '';
+
+    const hours = [
+      { val: 10, label: '10:00 صباحاً' },
+      { val: 12, label: '12:00 ظهرًا' },
+      { val: 14, label: '02:00 عصراً' },
+      { val: 16, label: '04:00 عصراً' },
+      { val: 18, label: '06:00 مساءً' },
+      { val: 20, label: '08:00 مساءً' },
+      { val: 22, label: '10:00 مساءً' },
+      { val: 23, label: '11:00 مساءً' },
+      { val: 24, label: '12:00 منتصف الليل' }
+    ];
+
+    hours.forEach(h => {
+      hoursOptionsStart += `<option value="${h.val}" ${h.val === startH ? 'selected' : ''}>${h.label}</option>`;
+      hoursOptionsEnd += `<option value="${h.val}" ${h.val === endH ? 'selected' : ''}>${h.label}</option>`;
+    });
+
+    row.innerHTML = `
+      <label style="font-family: Cairo; font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; min-width: 130px; cursor: pointer; color: var(--text-dark);">
+        <input type="checkbox" class="day-active-cb" data-day="${day.id}" ${isChecked ? 'checked' : ''}/>
+        <span>${day.name}</span>
+      </label>
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: #64748b;">من:</span>
+        <select class="admin-input day-start-hour" data-day="${day.id}" style="width: 140px; font-family: Cairo, Montserrat; font-weight: bold; padding: 6px 10px;">
+          ${hoursOptionsStart}
+        </select>
+        <span style="font-size: 0.8rem; font-weight: 700; color: #64748b;">إلى:</span>
+        <select class="admin-input day-end-hour" data-day="${day.id}" style="width: 140px; font-family: Cairo, Montserrat; font-weight: bold; padding: 6px 10px;">
+          ${hoursOptionsEnd}
+        </select>
+      </div>
+    `;
+
+    container.appendChild(row);
+  });
+}
+
+window.saveCoachingScheduleSettings = function(e) {
+  if (e) e.preventDefault();
+
+  const workingDays = [];
+  const daysConfig = {};
+
+  const cbs = document.querySelectorAll('.day-active-cb');
+  cbs.forEach(cb => {
+    const dayId = parseInt(cb.getAttribute('data-day'), 10);
+    const isChecked = cb.checked;
+    
+    const startSelect = document.querySelector(`.day-start-hour[data-day="${dayId}"]`);
+    const endSelect = document.querySelector(`.day-end-hour[data-day="${dayId}"]`);
+
+    const startH = startSelect ? parseInt(startSelect.value, 10) : 16;
+    const endH = endSelect ? parseInt(endSelect.value, 10) : 23;
+
+    if (isChecked) {
+      workingDays.push(dayId);
+    }
+
+    daysConfig[dayId] = {
+      enabled: isChecked,
+      startHour: startH,
+      endHour: endH
+    };
+  });
+
+  fetch('/api/admin/coaching-schedule', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      enabled: true,
+      workingDays: workingDays,
+      daysConfig: daysConfig,
+      slotDurationMinutes: 60
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert("✅ تم حفظ جدول مواعيد وساعات التدريب المخصصة لكل يوم بنجاح!");
+    } else {
+      alert("حدث خطأ أثناء حفظ جدول المواعيد.");
+    }
+  })
+  .catch(err => {
+    alert("خطأ في الاتصال بالخادم.");
+  });
 };
 
 // ==========================================
@@ -3301,7 +4292,6 @@ window.initOrdersAnalytics = function(orders) {
   drawDailySalesChart(filteredOrders);
   drawPlatformShareChart(filteredOrders);
   drawServicesShareChart(filteredOrders);
-  drawRevenueProfitTimelineChart(filteredOrders);
   populatePlatformPerformance(filteredOrders);
   populateTopServicesTable(filteredOrders);
   drawOrderStatusFunnelChart(filteredOrders);
@@ -3319,7 +4309,7 @@ window.initOrdersAnalytics = function(orders) {
 };
 
 function drawDailySalesChart(orders) {
-  // Aggregate sales by date
+  // Aggregate sales and profits by date
   const salesByDate = {};
   
   // Initialize date list based on selected range
@@ -3330,27 +4320,35 @@ function drawDailySalesChart(orders) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const dateKey = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      salesByDate[dateKey] = 0;
+      salesByDate[dateKey] = { revenue: 0, profit: 0 };
     }
   }
 
   orders.forEach(o => {
     if (o.status === 'cancelled') return;
     const priceSAR = o.priceSAR || (o.priceUSD ? o.priceUSD * 3.75 : 0);
+    const costSAR = o.status === 'completed' ? (o.supplierCost || 0) : 0;
+    const profitSAR = o.status === 'completed' ? (priceSAR - costSAR) : 0;
     const dateObj = new Date(o.timestamp || o.createdAt);
     const dateKey = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     
     if (daysToLoad > 0) {
       if (salesByDate[dateKey] !== undefined) {
-        salesByDate[dateKey] += priceSAR;
+        salesByDate[dateKey].revenue += priceSAR;
+        salesByDate[dateKey].profit += profitSAR;
       }
     } else {
-      salesByDate[dateKey] = (salesByDate[dateKey] || 0) + priceSAR;
+      if (!salesByDate[dateKey]) {
+        salesByDate[dateKey] = { revenue: 0, profit: 0 };
+      }
+      salesByDate[dateKey].revenue += priceSAR;
+      salesByDate[dateKey].profit += profitSAR;
     }
   });
 
   const labels = Object.keys(salesByDate);
-  const data = Object.values(salesByDate);
+  const revenueData = Object.values(salesByDate).map(v => v.revenue);
+  const profitData = Object.values(salesByDate).map(v => v.profit);
 
   const ctx = document.getElementById('chartDailySales');
   if (!ctx) return;
@@ -3363,25 +4361,43 @@ function drawDailySalesChart(orders) {
     type: 'line',
     data: {
       labels: labels,
-      datasets: [{
-        label: 'المبيعات اليومية (ر.س)',
-        data: data,
-        borderColor: '#305388',
-        backgroundColor: 'rgba(48, 83, 136, 0.1)',
-        borderWidth: 3,
-        fill: true,
-        tension: 0.3,
-        pointBackgroundColor: '#ca8a04',
-        pointBorderColor: '#fff',
-        pointRadius: 4,
-        pointHoverRadius: 6
-      }]
+      datasets: [
+        {
+          label: 'إجمالي المبيعات (ر.س)',
+          data: revenueData,
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.04)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.3,
+          pointBackgroundColor: '#2563eb',
+          pointBorderColor: '#fff',
+          pointRadius: 4,
+          pointHoverRadius: 6
+        },
+        {
+          label: 'صافي الأرباح (ر.س)',
+          data: profitData,
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.04)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.3,
+          pointBackgroundColor: '#059669',
+          pointBorderColor: '#fff',
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }
+      ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { display: false }
+        legend: {
+          display: true,
+          labels: { font: { family: 'Cairo', size: 11, weight: 'bold' } }
+        }
       },
       scales: {
         y: {
@@ -4203,6 +5219,227 @@ window.closeEditOrderModal = function() {
   document.getElementById('editOrderModal').style.display = 'none';
 };
 
+// ══════════ FULL ADMIN ORDER & CUSTOMER DETAILS MODAL ══════════
+window.openAdminOrderDetailsModal = function(orderId) {
+  try {
+    const order = (adminActiveOrders || []).find(o => String(o.id) === String(orderId));
+    if (!order) {
+      alert("الطلب غير موجود.");
+      return;
+    }
+
+    const shortId = order.id.substring(6, 14);
+    const dateStr = new Date(order.timestamp).toLocaleString('ar-EG', {
+      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+    });
+
+    const statusMap = {
+      pending:     { label: 'معلق', bg: '#fff7ed', color: '#f97316' },
+      paid:        { label: 'تم الدفع', bg: '#eff6ff', color: '#3b82f6' },
+      in_progress: { label: 'قيد التنفيذ', bg: '#faf5ff', color: '#a855f7' },
+      completed:   { label: 'تم التنفيذ', bg: '#ecfdf5', color: '#10b981' },
+      cancelled:   { label: 'ملغي', bg: '#fef2f2', color: '#ef4444' }
+    };
+    const st = statusMap[order.status] || statusMap.pending;
+
+    // Header info
+    document.getElementById('odmOrderId').textContent = '#' + shortId;
+    document.getElementById('odmOrderId').setAttribute('data-full-id', order.id);
+    const stBadge = document.getElementById('odmStatusBadge');
+    if (stBadge) {
+      stBadge.textContent = st.label;
+      stBadge.style.background = st.bg;
+      stBadge.style.color = st.color;
+    }
+    const platBadge = document.getElementById('odmPlatformBadge');
+    if (platBadge) {
+      platBadge.textContent = order.platform === 'pc' ? 'PC' : 'Console';
+      platBadge.style.background = order.platform === 'pc' ? '#6366f1' : '#2563eb';
+    }
+    const payBadge = document.getElementById('odmPaymentBadge');
+    if (payBadge) {
+      const isWA = order.paymentMethod === 'whatsapp' || (order.service && order.service.includes('واتساب'));
+      payBadge.textContent = isWA ? 'تحويل واتساب' : 'دفع إلكتروني (PayTabs)';
+      payBadge.style.background = isWA ? '#16a34a' : '#2563eb';
+    }
+    document.getElementById('odmDateStr').textContent = dateStr;
+
+    // Customer Card
+    document.getElementById('odmCustomerName').textContent = order.customerName || 'زائر';
+    document.getElementById('odmCustomerPhone').textContent = order.customerPhone || 'غير محدد';
+    document.getElementById('odmCustomerEmail').textContent = order.customerEmail || order.eaEmail || '—';
+    
+    // WhatsApp direct link
+    const waLink = document.getElementById('odmWhatsAppLink');
+    if (waLink) {
+      const cleanPhone = (order.customerPhone || '').replace(/[^0-9]/g, '');
+      const waMsg = encodeURIComponent(`مرحباً ${order.customerName || ''} 👋، بخصوص طلبك رقم #${shortId} (${order.service || ''}) من متجر Trivela:`);
+      waLink.href = `https://wa.me/${cleanPhone || '962775585112'}?text=${waMsg}`;
+    }
+
+    // Points / Coupon info
+    const couponDisc = document.getElementById('odmCouponDiscount');
+    if (couponDisc) {
+      const parts = [];
+      if (order.couponCode) parts.push(`كوبون: ${order.couponCode}`);
+      if (order.pointsUsed) parts.push(`نقاط: ${order.pointsUsed}`);
+      couponDisc.textContent = parts.length > 0 ? parts.join(' | ') : 'لا يوجد خصم إضافي';
+    }
+
+    // Service & Financials
+    document.getElementById('odmServiceDesc').textContent = order.service || '—';
+    document.getElementById('odmPriceSAR').textContent = `${(order.priceSAR || 0).toLocaleString()} ر.س`;
+    document.getElementById('odmPaymentMethodText').textContent = order.paymentMethod === 'whatsapp' ? '📱 تحويل مباشر عبر الواتساب' : '💳 دفع إلكتروني فوري (PayTabs)';
+    
+    const profitText = document.getElementById('odmProfitText');
+    if (profitText) {
+      const cost = order.supplierCost || 0;
+      const profit = (order.priceSAR || 0) - cost;
+      profitText.textContent = `تكلفة: ${cost} ر.س | ربح: ${profit.toLocaleString()} ر.س`;
+    }
+
+    // EA Credentials & Codes
+    const eaCard = document.getElementById('odmEaCredentialsCard');
+    const eaEmail = order.eaEmail || order.sonyEmail || '';
+    const eaPass = order.eaPassword || order.sonyPassword || '';
+    const codes = (order.backupCodes && order.backupCodes.length > 0)
+      ? order.backupCodes
+      : [order.backupCode1 || order.sonyBackupCode1, order.backupCode2 || order.sonyBackupCode2, order.backupCode3 || order.sonyBackupCode3].filter(Boolean);
+
+    if (eaEmail || eaPass || codes.length > 0) {
+      if (eaCard) eaCard.style.display = 'block';
+      document.getElementById('odmEaEmail').textContent = eaEmail || '—';
+      const passEl = document.getElementById('odmEaPassword');
+      if (passEl) {
+        passEl.setAttribute('data-raw', eaPass);
+        passEl.textContent = '••••••••';
+      }
+
+      const codesRow = document.getElementById('odmBackupCodesRow');
+      if (codesRow) {
+        if (codes.length === 0) {
+          codesRow.innerHTML = '<span style="color:#94a3b8; font-size:0.85rem;">لم يتم إدخال رموز احتياطية (قد يحتاج مساعدة الدعم)</span>';
+        } else {
+          codesRow.innerHTML = codes.map((c, i) => `
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 6px 12px; display: flex; align-items: center; gap: 8px;">
+              <span style="font-size:0.75rem; color:#1e40af; font-weight:700;">رمز ${i+1}:</span>
+              <strong style="font-family:'Montserrat',sans-serif; font-size:0.9rem; letter-spacing:1px; color:#0f172a;">${c}</strong>
+              <button type="button" onclick="copyText('${c}')" style="background:none; border:0; color:#2563eb; cursor:pointer; font-size:0.85rem;" title="نسخ"><i class="fas fa-copy"></i></button>
+            </div>
+          `).join('');
+        }
+      }
+    } else {
+      if (eaCard) eaCard.style.display = 'none';
+    }
+
+    // Notes
+    document.getElementById('odmCustomerNotes').textContent = order.notes || order.orderNotes || 'لا توجد ملاحظات من العميل.';
+    document.getElementById('odmAdminNotesInput').value = order.adminNotes || '';
+
+    // Action buttons display logic based on status
+    const btnConfirmPay = document.getElementById('odmBtnConfirmPay');
+    const btnSendSupplier = document.getElementById('odmBtnSendSupplier');
+    const btnDone = document.getElementById('odmBtnDone');
+    const btnCancel = document.getElementById('odmBtnCancel');
+
+    if (btnConfirmPay) btnConfirmPay.style.display = order.status === 'pending' ? 'inline-flex' : 'none';
+    if (btnSendSupplier) btnSendSupplier.style.display = order.status === 'paid' ? 'inline-flex' : 'none';
+    if (btnDone) btnDone.style.display = order.status === 'in_progress' ? 'inline-flex' : 'none';
+    if (btnCancel) btnCancel.style.display = order.status !== 'completed' && order.status !== 'cancelled' ? 'inline-flex' : 'none';
+
+    document.getElementById('adminOrderDetailsModal').style.display = 'flex';
+  } catch (err) {
+    console.error("Error opening admin order details modal:", err);
+  }
+};
+
+window.closeAdminOrderDetailsModal = function() {
+  document.getElementById('adminOrderDetailsModal').style.display = 'none';
+};
+
+window.toggleOdmPassVisibility = function() {
+  const passEl = document.getElementById('odmEaPassword');
+  const icon = document.getElementById('odmPassEyeIcon');
+  if (!passEl) return;
+  const raw = passEl.getAttribute('data-raw') || '';
+  if (passEl.textContent === '••••••••') {
+    passEl.textContent = raw;
+    if (icon) icon.className = 'fas fa-eye-slash';
+  } else {
+    passEl.textContent = '••••••••';
+    if (icon) icon.className = 'fas fa-eye';
+  }
+};
+
+window.copyAllEaDetailsModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  const order = (adminActiveOrders || []).find(o => String(o.id) === String(orderId));
+  if (!order) return;
+  const email = order.eaEmail || order.sonyEmail || '';
+  const pass = order.eaPassword || order.sonyPassword || '';
+  const codes = (order.backupCodes && order.backupCodes.length > 0)
+    ? order.backupCodes
+    : [order.backupCode1 || order.sonyBackupCode1, order.backupCode2 || order.sonyBackupCode2, order.backupCode3 || order.sonyBackupCode3].filter(Boolean);
+
+  const text = `بيانات حساب الطلب #${order.id.substring(6, 14)}:\nالبريد: ${email}\nكلمة المرور: ${pass}\nالرموز الاحتياطية:\n${codes.map((c, i) => `${i+1}) ${c}`).join('\n')}`;
+  copyText(text);
+};
+
+window.saveAdminOrderNotesModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  const notes = document.getElementById('odmAdminNotesInput').value.trim();
+  fetch(`/api/admin/orders/${orderId}/notes`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ adminNotes: notes })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data && data.success) {
+      alert("✅ تم حفظ الملاحظات بنجاح!");
+      const order = (adminActiveOrders || []).find(o => String(o.id) === String(orderId));
+      if (order) order.adminNotes = notes;
+      renderOrdersList(adminActiveOrders);
+    } else {
+      alert("حدث خطأ أثناء حفظ الملاحظات.");
+    }
+  });
+};
+
+window.contactCustomerModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  contactCustomerWhatsApp(orderId);
+};
+
+window.confirmPaymentModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  const order = (adminActiveOrders || []).find(o => String(o.id) === String(orderId));
+  if (order) {
+    confirmPayment(orderId, order.priceSAR);
+    closeAdminOrderDetailsModal();
+  }
+};
+
+window.sendToSupplierModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  sendToSupplier(orderId);
+  closeAdminOrderDetailsModal();
+};
+
+window.markDoneModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  markSupplierDone(orderId);
+  closeAdminOrderDetailsModal();
+};
+
+window.cancelOrderModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  cancelOrder(orderId);
+  closeAdminOrderDetailsModal();
+};
+
+
 async function handleEditOrderDetailsSubmit(e) {
   e.preventDefault();
 
@@ -4237,114 +5474,29 @@ async function handleEditOrderDetailsSubmit(e) {
   }
 }
 
-// ── Revenue vs Profit Timeline Chart ──
-function drawRevenueProfitTimelineChart(orders) {
-  const dataMap = {};
-  const daysToLoad = analyticsTimeRange === '7d' ? 7 : (analyticsTimeRange === '30d' ? 30 : 0);
-  
-  if (daysToLoad > 0) {
-    for (let i = daysToLoad - 1; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const dateKey = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      dataMap[dateKey] = { revenue: 0, cost: 0, profit: 0 };
-    }
+window.saveBundlePanelSettings = async function(event) {
+  event.preventDefault();
+  try {
+    const settings = await adminService.getStoreSettings();
+    if (!settings) return;
+
+    const coinsIn = document.getElementById('panelBundleCoinsDiscount');
+    if (coinsIn) settings.bundleCoinsDiscountPercent = parseFloat(coinsIn.value) || 0;
+    const boostIn = document.getElementById('panelBundleBoostingDiscount');
+    if (boostIn) settings.bundleBoostingDiscountPercent = parseFloat(boostIn.value) || 0;
+    const sbcIn = document.getElementById('panelBundleSbcDiscount');
+    if (sbcIn) settings.bundleSbcDiscountPercent = parseFloat(sbcIn.value) || 0;
+    const capIn = document.getElementById('panelMaxBundleDiscountCap');
+    if (capIn) settings.maxBundleDiscountCap = parseFloat(capIn.value) || 150;
+    const pToggle = document.getElementById('panelEnableServicePackages');
+    if (pToggle) settings.enableServicePackages = pToggle.checked;
+
+    await adminService.saveStoreSettings(settings);
+    alert('⚡ تم حفظ إعدادات ونسب خصم نظام بناء الحزم بنجاح!');
+  } catch (err) {
+    alert('حدث خطأ أثناء حفظ الإعدادات: ' + (err.message || err));
   }
-
-  orders.forEach(o => {
-    if (o.status === 'cancelled') return;
-    const dateObj = new Date(o.timestamp || o.createdAt);
-    const dateKey = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    
-    const revenue = o.priceSAR || 0;
-    const cost = o.status === 'completed' ? (o.supplierCost || 0) : 0;
-    const profit = o.status === 'completed' ? (revenue - cost) : 0;
-
-    if (daysToLoad > 0) {
-      if (dataMap[dateKey] !== undefined) {
-        dataMap[dateKey].revenue += revenue;
-        dataMap[dateKey].cost += cost;
-        dataMap[dateKey].profit += profit;
-      }
-    } else {
-      if (!dataMap[dateKey]) {
-        dataMap[dateKey] = { revenue: 0, cost: 0, profit: 0 };
-      }
-      dataMap[dateKey].revenue += revenue;
-      dataMap[dateKey].cost += cost;
-      dataMap[dateKey].profit += profit;
-    }
-  });
-
-  const labels = Object.keys(dataMap);
-  const revenues = Object.values(dataMap).map(v => v.revenue);
-  const costs = Object.values(dataMap).map(v => v.cost);
-  const profits = Object.values(dataMap).map(v => v.profit);
-
-  const ctx = document.getElementById('chartRevenueProfitTimeline');
-  if (!ctx) return;
-
-  if (chartRevenueProfitTimelineInstance) {
-    chartRevenueProfitTimelineInstance.destroy();
-  }
-
-  chartRevenueProfitTimelineInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: 'الإيرادات ($)',
-          data: revenues,
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.05)',
-          borderWidth: 2,
-          fill: false,
-          tension: 0.3
-        },
-        {
-          label: 'تكلفة التوريد ($)',
-          data: costs,
-          borderColor: '#ef4444',
-          backgroundColor: 'rgba(239, 68, 68, 0.05)',
-          borderWidth: 2,
-          fill: false,
-          tension: 0.3
-        },
-        {
-          label: 'صافي الربح ($)',
-          data: profits,
-          borderColor: '#10b981',
-          backgroundColor: 'rgba(16, 185, 129, 0.05)',
-          borderWidth: 2.5,
-          fill: false,
-          tension: 0.3
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          labels: { font: { family: 'Cairo', size: 10, weight: 'bold' } }
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            font: { family: 'Cairo' },
-            callback: value => '$' + value
-          }
-        },
-        x: {
-          ticks: { font: { family: 'Cairo', size: 10 } }
-        }
-      }
-    }
-  });
-}
+};
 
 // ── Platform Details performance populator ──
 function populatePlatformPerformance(orders) {
@@ -5186,9 +6338,9 @@ window.initWeeklyReport = function(orders) {
         if (prevW && prevW.revenue > 0) {
           const diffPct = ((currentWeek.revenue - prevW.revenue) / prevW.revenue) * 100;
           if (diffPct > 0) {
-            growthText = `زيادة إيجابية ملحوظة بمعدل **+${diffPct.toFixed(1)}%** مقارنة بالأسبوع المنصرم`;
+            growthText = `زيادة إيجابية ملحوظة بمعدل <strong>+${diffPct.toFixed(1)}%</strong> مقارنة بالأسبوع المنصرم`;
           } else if (diffPct < 0) {
-            growthText = `تراجع طفيف بمعدل **${diffPct.toFixed(1)}%** مقارنة بالأسبوع الماضي`;
+            growthText = `تراجع طفيف بمعدل <strong>${diffPct.toFixed(1)}%</strong> مقارنة بالأسبوع الماضي`;
           }
         }
       }
@@ -5205,9 +6357,9 @@ window.initWeeklyReport = function(orders) {
     }
 
     textSummaryEl.innerHTML = `
-      خلال الأسبوع الجاري الممتد من **${startStr}** إلى **${endStr}**، سجل المتجر حجم مبيعات بلغ **$${currentWeek.revenue.toFixed(2)}** من خلال إتمام **${currentWeek.completedCount}** طلب بنجاح.
+      خلال الأسبوع الجاري الممتد من <strong>${startStr}</strong> إلى <strong>${endStr}</strong>، سجل المتجر حجم مبيعات بلغ <strong>$${currentWeek.revenue.toFixed(2)}</strong> من خلال إتمام <strong>${currentWeek.completedCount}</strong> طلب بنجاح.
       <br/><br/>
-      تشير الأرقام إلى **${growthText}**. ${statusGoalText} كما تشهد خدمات التوريد كفاءة جيدة في سرعة التسليم.
+      تشير الأرقام إلى <strong>${growthText}</strong>. ${statusGoalText} كما تشهد خدمات التوريد كفاءة جيدة في سرعة التسليم.
     `;
   }
 
@@ -5373,21 +6525,21 @@ window.openCrmCustomerProfileModal = function(userId) {
     targetSpend = 2500;
     const remaining = targetSpend - totalSpent;
     nextTierProgress = Math.min(100, Math.round((totalSpent / targetSpend) * 100));
-    progressText = `أنفق **${remaining.toFixed(2)} ر.س** إضافية للوصول للفئة البلاتينية`;
+    progressText = `أنفق <strong>${remaining.toFixed(2)} ر.س</strong> إضافية للوصول للفئة البلاتينية`;
   } else if (totalSpent >= 250) {
     tierName = "فضي";
     nextTierName = "ذهبي VIP";
     targetSpend = 1000;
     const remaining = targetSpend - totalSpent;
     nextTierProgress = Math.min(100, Math.round((totalSpent / targetSpend) * 100));
-    progressText = `أنفق **${remaining.toFixed(2)} ر.س** إضافية للوصول للفئة الذهبية`;
+    progressText = `أنفق <strong>${remaining.toFixed(2)} ر.س</strong> إضافية للوصول للفئة الذهبية`;
   } else {
     tierName = "برونزي";
     nextTierName = "فضي";
     targetSpend = 250;
     const remaining = targetSpend - totalSpent;
     nextTierProgress = Math.min(100, Math.round((totalSpent / targetSpend) * 100));
-    progressText = `أنفق **${remaining.toFixed(2)} ر.س** إضافية للوصول للفئة الفضية`;
+    progressText = `أنفق <strong>${remaining.toFixed(2)} ر.س</strong> إضافية للوصول للفئة الفضية`;
   }
 
   // Populate Tier Progress UI
@@ -6160,6 +7312,223 @@ window.promptResetUserPassword = async function() {
   } catch (err) {
     console.error("Failed to reset customer password:", err);
     alert("حدث خطأ أثناء الاتصال بالسيرفر لتغيير كلمة المرور.");
+  }
+};
+
+// Supplier Management functions for Admin
+function loadAllSuppliers() {
+  fetch('/api/admin/suppliers')
+    .then(r => r.json())
+    .then(data => {
+      allSuppliers = data;
+      // Re-render current list to display supplier dropdowns if ready
+      if (typeof renderOrdersList === 'function' && adminActiveOrders.length > 0) {
+        renderOrdersList(adminActiveOrders);
+      }
+      renderSuppliersTable();
+      
+      // Update dues dropdown reactively
+      const select = document.getElementById('duesSupplierSelect');
+      if (select) {
+        const currentVal = select.value;
+        select.innerHTML = '<option value="">-- اختر مورد من القائمة --</option>' + 
+          allSuppliers.map(s => `<option value="${s.id}">${s.name} (${s.username})</option>`).join('');
+        select.value = currentVal;
+        if (currentVal) {
+          loadSupplierDuesReport();
+        }
+      }
+    })
+    .catch(err => console.error("Error loading suppliers:", err));
+}
+
+function renderSuppliersTable() {
+  const tbody = document.getElementById('suppliersTableBody');
+  if (!tbody) return;
+
+  if (allSuppliers.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-gray); font-family: Cairo; padding: 20px;">لا يوجد موردين مضافين حالياً.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = allSuppliers.map(s => {
+    return `
+      <tr>
+        <td style="font-family: Cairo; font-weight: bold; color: var(--text-dark);">${s.name}</td>
+        <td style="font-family: Montserrat; font-weight: 700; color: var(--text-gray);">${s.username}</td>
+        <td style="font-family: Montserrat; font-weight: 700; color: var(--text-gray);">${s.password}</td>
+        <td style="font-family: Montserrat; font-weight: 800; color: #10b981;">$${s.pricePerMillionConsole ? s.pricePerMillionConsole.toFixed(2) : '0.00'}</td>
+        <td style="font-family: Montserrat; font-weight: 800; color: #10b981;">$${s.pricePerMillionPC ? s.pricePerMillionPC.toFixed(2) : '0.00'}</td>
+        <td style="font-family: Montserrat; font-size: 0.8rem; color: var(--text-gray);">${new Date(s.createdAt).toLocaleDateString('ar-SA')}</td>
+        <td>
+          <div style="display: flex; gap: 8px;">
+            <button class="action-btn" onclick="editSupplier('${s.id}')" style="background: #fef3c7; color: #d97706; padding: 6px 12px; border-radius: 6px; border: 0; font-family: Cairo; cursor: pointer; font-weight: bold;"><i class="fas fa-edit"></i> تعديل</button>
+            <button class="action-btn" onclick="deleteSupplier('${s.id}')" style="background: #fef2f2; color: #ef4444; padding: 6px 12px; border-radius: 6px; border: 0; font-family: Cairo; cursor: pointer; font-weight: bold;"><i class="fas fa-trash"></i> حذف</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+window.showAddSupplierForm = function() {
+  document.getElementById('supplierFormContainer').style.display = 'block';
+  document.getElementById('supplierFormTitle').textContent = 'إضافة مورد جديد';
+  document.getElementById('supplierIdInput').value = '';
+  document.getElementById('supplierNameInput').value = '';
+  document.getElementById('supplierUsernameInput').value = '';
+  document.getElementById('supplierPasswordInput').value = '';
+};
+
+window.hideSupplierForm = function() {
+  document.getElementById('supplierFormContainer').style.display = 'none';
+};
+
+window.editSupplier = function(id) {
+  const supplier = allSuppliers.find(s => s.id === id);
+  if (!supplier) return;
+
+  document.getElementById('supplierFormContainer').style.display = 'block';
+  document.getElementById('supplierFormTitle').textContent = 'تعديل بيانات المورد';
+  document.getElementById('supplierIdInput').value = supplier.id;
+  document.getElementById('supplierNameInput').value = supplier.name;
+  document.getElementById('supplierUsernameInput').value = supplier.username;
+  document.getElementById('supplierPasswordInput').value = supplier.password;
+};
+
+window.deleteSupplier = function(id) {
+  if (!confirm("هل أنت متأكد من حذف هذا المورد؟ لا يمكن التراجع عن هذا الإجراء.")) return;
+
+  fetch(`/api/admin/suppliers/${id}`, {
+    method: 'DELETE'
+  }).then(r => r.json()).then(data => {
+    if (data.success) {
+      loadAllSuppliers();
+    } else {
+      alert(data.error || "فشل حذف المورد.");
+    }
+  }).catch(() => alert("فشل الاتصال بالسيرفر."));
+};
+
+window.handleSupplierFormSubmit = function(event) {
+  event.preventDefault();
+  const id = document.getElementById('supplierIdInput').value;
+  const name = document.getElementById('supplierNameInput').value.trim();
+  const username = document.getElementById('supplierUsernameInput').value.trim();
+  const password = document.getElementById('supplierPasswordInput').value.trim();
+
+  fetch('/api/admin/suppliers', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: id || undefined, name, username, password })
+  }).then(r => r.json()).then(data => {
+    if (data.success) {
+      hideSupplierForm();
+      loadAllSuppliers();
+    } else {
+      alert(data.error || "فشل حفظ المورد.");
+    }
+  }).catch(() => alert("فشل الاتصال بالسيرفر."));
+};
+
+window.loadSuppliersPanel = function() {
+  renderSuppliersTable();
+  
+  // Populate the dues supplier select dropdown
+  const select = document.getElementById('duesSupplierSelect');
+  if (select) {
+    const currentVal = select.value;
+    select.innerHTML = '<option value="">-- اختر مورد من القائمة --</option>' + 
+      allSuppliers.map(s => `<option value="${s.id}">${s.name} (${s.username})</option>`).join('');
+    select.value = currentVal;
+  }
+};
+
+window.loadSupplierDuesReport = function() {
+  const select = document.getElementById('duesSupplierSelect');
+  const tbody = document.getElementById('supplierDuesTableBody');
+  if (!select || !tbody) return;
+  
+  const supplierId = select.value;
+  if (!supplierId) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-gray); padding: 25px; font-family: Cairo;">الرجاء اختيار مورد من القائمة لعرض كشف حساب تفصيلي بطلباته.</td></tr>`;
+    document.getElementById('duesCompletedCount').textContent = '0';
+    document.getElementById('duesTotalSAR').innerHTML = '$0.00 <span style="font-size: 0.75rem; font-family: Cairo; color: #64748b; font-weight: normal;">(0 ر.س)</span>';
+    document.getElementById('duesActiveCount').textContent = '0';
+    return;
+  }
+  
+  const matchedOrders = (adminActiveOrders || []).filter(o => o.assignedSupplierId === supplierId);
+  
+  let completedCount = 0;
+  let totalSAR = 0;
+  let activeCount = 0;
+  
+  matchedOrders.forEach(o => {
+    if (o.status === 'completed') {
+      completedCount++;
+      totalSAR += (o.supplierCost || 0);
+    } else if (o.status === 'paid' || o.status === 'in_progress') {
+      activeCount++;
+    }
+  });
+  
+  const totalUSD = totalSAR / 3.75;
+  
+  document.getElementById('duesCompletedCount').textContent = completedCount;
+  document.getElementById('duesTotalSAR').innerHTML = `$${totalUSD.toFixed(2)} <span style="font-size: 0.78rem; font-family: Cairo; color: #64748b; font-weight: normal;">(${totalSAR.toFixed(0)} ر.س)</span>`;
+  document.getElementById('duesActiveCount').textContent = activeCount;
+  
+  if (matchedOrders.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-gray); padding: 25px; font-family: Cairo;">لم يتم إسناد أي طلبات لهذا المورد حتى الآن.</td></tr>`;
+    return;
+  }
+  
+  tbody.innerHTML = matchedOrders.map(o => {
+    const shortId = o.id.substring(6, 14);
+    const dateStr = o.timestamp ? new Date(o.timestamp).toLocaleString('ar-SA') : 'غير محدد';
+    const costUSD = o.supplierCost ? (o.supplierCost / 3.75).toFixed(2) : '0.00';
+    
+    const statusMap = {
+      'pending': { label: 'معلق بانتظار الدفع', color: '#64748b' },
+      'paid': { label: 'مدفوع - جاهز', color: '#2563eb' },
+      'in_progress': { label: 'قيد الشحن', color: '#7c3aed' },
+      'completed': { label: 'مكتمل بنجاح', color: '#10b981' },
+      'cancelled': { label: 'ملغي', color: '#ef4444' }
+    };
+    const currentStatus = statusMap[o.status] || { label: o.status, color: '#64748b' };
+    
+    return `
+      <tr style="border-bottom: 1px solid #e2e8f0;">
+        <td style="padding: 12px; font-family: Montserrat; font-weight: bold; color: var(--text-dark);">#${shortId}</td>
+        <td style="padding: 12px; font-family: Cairo; font-weight: bold; color: #4b46c5;">${o.service} <span style="font-size: 0.75rem; color: #64748b; font-weight: normal;">(${o.platform})</span></td>
+        <td style="padding: 12px; font-family: Montserrat; font-size: 0.8rem; color: #64748b;">${dateStr}</td>
+        <td style="padding: 12px; font-family: Montserrat; font-weight: 800; color: #10b981;">$${costUSD} <span style="font-size: 0.72rem; color: #64748b; font-family: Cairo; font-weight: normal;">(${o.supplierCost || 0} ر.س)</span></td>
+        <td style="padding: 12px; font-family: Cairo;"><span style="font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 20px; background: ${currentStatus.color}15; color: ${currentStatus.color};">${currentStatus.label}</span></td>
+        <td style="padding: 12px; font-family: Cairo; font-size: 0.8rem; color: #64748b; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${o.supplierNotes || ''}">${o.supplierNotes || 'لا يوجد'}</td>
+      </tr>
+    `;
+  }).join('');
+};
+
+window.testTelegramAlert = async function() {
+  const token = document.getElementById('settingTelegramToken').value.trim();
+  const chatId = document.getElementById('settingTelegramChatId').value.trim();
+
+  if (!token || !chatId) {
+    alert("يرجى كتابة Token و Chat ID أولاً لاختبار الإرسال.");
+    return;
+  }
+
+  try {
+    const data = await adminService.testTelegramNotification(token, chatId);
+    if (data && data.success) {
+      alert("✅ " + data.message);
+    } else {
+      alert("❌ " + ((data && data.error) || "فشل إرسال إشعار التجربة. يرجى التأكد من Token و Chat ID والضغط على Start بداخل البوت."));
+    }
+  } catch (err) {
+    alert("حدث خطأ أثناء الاتصال: " + (err.message || err));
   }
 };
 

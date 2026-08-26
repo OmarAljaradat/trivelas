@@ -27,6 +27,43 @@
         }
       });
     }
+
+    // Capture coupon from URL query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCoupon = urlParams.get('coupon');
+    if (urlCoupon) {
+      sessionStorage.setItem('trivela_coupon_auto', urlCoupon.trim().toUpperCase());
+    }
+
+    // Automatically apply coupon code if stored in sessionStorage
+    const storedCoupon = sessionStorage.getItem('trivela_coupon_auto');
+    if (storedCoupon) {
+      const couponInput = document.getElementById('couponCodeInput');
+      if (couponInput) {
+        couponInput.value = storedCoupon;
+        
+        // Ensure radCoupon is selected and couponInputWrapper is visible
+        const radCoupon = document.getElementById('radCoupon');
+        const couponWrapper = document.getElementById('couponInputWrapper');
+        if (radCoupon) {
+          radCoupon.checked = true;
+          if (couponWrapper) couponWrapper.style.display = 'block';
+          if (typeof handleDiscountTypeChange === 'function') {
+            handleDiscountTypeChange();
+          }
+        }
+
+        // Wait a short timeout for settings and page details to load, then trigger coupon application
+        setTimeout(() => {
+          const btnApply = document.getElementById('btnApplyCoupon') || document.querySelector('button[onclick="applyCouponCode()"]');
+          if (typeof window.applyCouponCode === 'function') {
+            window.applyCouponCode();
+          } else if (btnApply) {
+            btnApply.click();
+          }
+        }, 600);
+      }
+    }
   });
 
   // Check and initialize Flash Deals if query parameter is set

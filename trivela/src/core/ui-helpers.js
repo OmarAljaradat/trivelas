@@ -120,6 +120,10 @@ export function showOrderSuccessPopup(orderId, whatsappPhone, messageText) {
           <span class="label">تاريخ الطلب:</span>
           <span class="value">${new Date().toLocaleDateString('ar-SA')}</span>
         </div>
+        <div class="receipt-row">
+          <span class="label">حالة الدفع:</span>
+          <span class="value" style="color: #10b981; font-weight: 700;"><i class="fas fa-check-circle"></i> مؤكد إلكترونياً</span>
+        </div>
         <div class="receipt-row total">
           <span class="label">المبلغ الإجمالي:</span>
           <span class="value">${priceStr}</span>
@@ -127,12 +131,13 @@ export function showOrderSuccessPopup(orderId, whatsappPhone, messageText) {
       </div>
       
       <div class="receipt-footer-msg">
-        <i class="fas fa-info-circle"></i>
-        تم تسجيل طلبك بنجاح في النظام. يرجى الانتظار، وسيقوم أحد ممثلي الدعم الفني بالتواصل معك قريباً على رقم الجوال/الواتساب لتأكيد الدفع وإتمام الطلب.
+        <i class="fas fa-shield-check" style="color: #10b981;"></i>
+        تم تأكيد واستلام طلبك بنجاح! جاري توجيه طلبك للتنفيذ الفوري من قبل الفريق المختص. يمكنك متابعة تقدم الطلب في أي وقت برقم طلبك.
       </div>
       
       <button type="button" class="order-success-btn" id="btnRedirectWhatsapp" style="width: 100%; justify-content: center; display: flex; align-items: center; gap: 8px;">
-        <span>حسناً، بانتظاركم</span>
+        <span>متابعة حالة الطلب</span>
+        <i class="fas fa-arrow-left"></i>
       </button>
       
       <div class="receipt-bottom-decoration"></div>
@@ -144,7 +149,7 @@ export function showOrderSuccessPopup(orderId, whatsappPhone, messageText) {
   const btn = document.getElementById('btnRedirectWhatsapp');
   if (btn) {
     btn.onclick = () => {
-      showPostOrderReviewForm(overlay, customerName, platform);
+      window.location.href = `track.html?id=${orderId}`;
     };
   }
 }

@@ -27,6 +27,10 @@ class AdminService {
     return await api.post('/admin/settings', settings);
   }
 
+  async testTelegramNotification(token, chatId) {
+    return await api.post('/admin/test-telegram', { token, chatId });
+  }
+
   async saveStoreContent(content) {
     return await api.post('/admin/content', content);
   }

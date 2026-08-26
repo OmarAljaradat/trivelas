@@ -3,13 +3,212 @@
 <head>
   <link rel="icon" type="image/png" href="logo-official.png"/>
   <meta charset="UTF-8"/>
+  <script>window.location.replace("index.html#coaching");</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>الاستشارات الفنية وبناء التشكيلات | Trivela</title>
+  <title>خدمات الاستشارات والتدريب التكتيكي (Coaching & Squad Building) | Trivela</title>
+  <meta name="description" content="جلسات تدريب فيفا وبناء التشكيلات التنافسية مع مدربين ومحترفين مصنفين. تطوير مستواك في الرايفلز والفوت تشامبيونز بأفضل التكتيكات."/>
+  <meta property="og:title" content="خدمات الاستشارات والتدريب التكتيكي | Trivela"/>
+  <meta property="og:description" content="بناء تشكيلات وتدريب تكتيكي مباشر مع نخبة محترفي Ultimate Team."/>
+  <meta property="og:image" content="logo-official.png"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:locale" content="ar_SA"/>
+  <meta property="og:site_name" content="Trivela"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css?v=3.5"/>
+  <style>
+    /* ═══════════ COACHING & SQUAD BUILDING STYLES ═══════════ */
+    .coaching-packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 20px;
+      margin-top: 14px;
+    }
+
+    .coaching-card {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 24px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .coaching-card:hover {
+      border-color: #93c5fd;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+    }
+
+    .coaching-card.active {
+      border-color: #2563eb;
+      background: #f8faff;
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.14);
+    }
+
+    .coaching-card.popular::after {
+      content: 'الأكثر طلباً 🔥';
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
+    }
+
+    .coaching-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .coaching-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .coaching-card.tier-1 .coaching-card-icon { background: rgba(59, 130, 246, 0.1); color: #2563eb; }
+    .coaching-card.tier-2 .coaching-card-icon { background: rgba(245, 158, 11, 0.12); color: #d97706; }
+    .coaching-card.tier-3 .coaching-card-icon { background: rgba(168, 85, 247, 0.12); color: #7c3aed; }
+
+    .coaching-card-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    .coaching-card-duration {
+      font-size: 0.78rem;
+      color: #64748b;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .coaching-price-tag {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1.5px solid #f1f5f9;
+    }
+
+    .coaching-price-amount {
+      font-family: 'Montserrat', 'Cairo', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #1e293b;
+    }
+
+    .coaching-card.active .coaching-price-amount {
+      color: #2563eb;
+    }
+
+    .coaching-features-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .coaching-feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.86rem;
+      color: #334155;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .coaching-feature-item i {
+      color: #10b981;
+      font-size: 0.85rem;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .coaching-select-btn {
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .coaching-card.active .coaching-select-btn {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Style Tags Selector */
+    .playstyle-pills-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .playstyle-pill-btn {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 18px;
+      color: #334155;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .playstyle-pill-btn:hover {
+      border-color: #93c5fd;
+      background: #f8fafc;
+    }
+
+    .playstyle-pill-btn.active {
+      background: rgba(37, 99, 235, 0.08);
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+  </style>
 </head>
 <body class="buy-coins-body light-theme">
 
@@ -43,186 +242,303 @@
   <!-- ══════════ MAIN CONTENT ══════════ -->
   <main class="buy-main-container">
     <div class="buy-card">
+      
       <!-- Premium Gaming Hero Banner -->
       <div class="catalog-hero-banner" style="margin-bottom: 25px;">
         <div class="catalog-hero-content" style="display: block; text-align: center;">
           <div class="catalog-hero-text" style="display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; text-align: center;">
-            <h1 class="catalog-hero-title" id="cms_coachingTitle" style="text-align: center; border-bottom: 0; padding-bottom: 0;">حجز الاستشارات وبناء التشكيلات الفنية</h1>
-            <p class="catalog-hero-desc" id="cms_coachingDesc" style="text-align: center; margin: 0 auto; max-width: 800px;">احجز جلستك المباشرة مع مدربينا المحترفين لتحليل حسابك وتطوير مهارات اللعب وبناء أقوى تشكيلة منافسة.</p>
+            <h1 class="catalog-hero-title" id="cms_coachingTitle" style="text-align: center; border-bottom: 0; padding-bottom: 0;">الاستشارات الفنية والتدريب التكتيكي (Coaching)</h1>
+            <p class="catalog-hero-desc" id="cms_coachingDesc" style="text-align: center; margin: 0 auto; max-width: 800px;">ارتقِ بمستواك في Ultimate Team مع أفضل المدربين والمحترفين — بناء تشكيلات تنافسية، تكتيكات مخصصة، وجلسات تدريب فردية مباشرة.</p>
             <div class="catalog-hero-hint" style="margin-top: 6px; justify-content: center; width: fit-content; display: inline-flex;">
               <i class="far fa-lightbulb"></i>
-              <span id="cms_coachingHint">اختر الخدمة الفنية الاستشارية المفضلة لإتمام الحجز</span>
+              <span id="cms_coachingHint">اختر باقة التدريب المناسبة لك، وسيتواصل معك المدرب المختص فوراً لتحديد الموعد والبدء</span>
             </div>
           </div>
         </div>
       </div>
-      
-      <form id="purchaseForm" onsubmit="handlePurchaseSubmit(event)">
-        
-        <!-- STEP 1: SELECT DEVICE -->
+
+      <form id="coachingForm" onsubmit="handleCoachingSubmit(event)">
+
+        <!-- STEP 01: SELECT PACKAGE -->
         <div class="buy-step-block">
           <div class="step-badge-title">
-            <span class="step-number">01</span>
+            <span class="step-number" style="background: rgba(37, 99, 235, 0.12); color: #2563eb;">01</span>
             <div class="step-info-text">
-              <h3>اختيار المنصة</h3>
-              <p>حدد منصة اللعب التي تلعب عليها</p>
+              <h3 style="color: #1b355a;">اختر باقة الاستشارة أو التدريب</h3>
+              <p>حدد نوع الخدمة التي تلبي أهدافك لتطوير فريقك وأسلوب لعبك</p>
             </div>
           </div>
-          
+
           <div class="step-content">
-            <div class="inline-device-picker">
-              <button type="button" class="inline-device-btn active" id="btnConsole" onclick="selectPlatform('Console')">
-                <div class="console-inline-icons">
-                  <i class="fab fa-playstation"></i>
-                  <i class="fab fa-xbox"></i>
-                </div>
-                <span>بلايستيشن واكس بوكس</span>
-              </button>
-              <button type="button" class="inline-device-btn" id="btnPC" onclick="selectPlatform('PC')">
-                <svg class="pc-inline-logo" viewBox="0 0 120 80" fill="currentColor">
-                  <path d="M15 15 H55 C65 15 70 23 70 32 C70 42 63 48 53 48 H33 V75 H15 Z M33 28 V35 H52 C55 35 55 28 52 28 Z" />
-                  <path d="M105 28 C100 20 90 15 78 15 C60 15 50 30 50 48 C50 65 60 80 78 80 C90 80 100 75 105 67 L95 58 C90 63 85 67 78 67 C68 67 63 58 63 48 C63 37 68 28 78 28 C85 28 90 32 95 37 Z" />
-                </svg>
-                <span>بي سي</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <hr class="step-divider"/>
-
-        <!-- STEP 2: SELECT SERVICE -->
-        <div class="buy-step-block">
-          <div class="step-badge-title">
-            <span class="step-number">02</span>
-            <div class="step-info-text">
-              <h3>اختر الخدمة الفنية المطلوبة</h3>
-              <p>الاستشارات الفنية وخدمات التدريب وبناء التشكيلات المتاحة</p>
-            </div>
-          </div>
-          
-          <div class="step-content">
-
-
-            <!-- Dynamic Coaching Cards Grid -->
-            <div class="player-cards-grid" id="coachingGrid" style="margin-top: 15px;">
-              <!-- Loaded dynamically -->
-            </div>
-            <div id="noCoachingText" style="display: none; text-align: center; padding: 30px; color: var(--gray-500); font-weight: bold;">
-              ⚠️ لا توجد خدمات استشارية متاحة حالياً، يرجى مراجعة لوحة التحكم أو التواصل مع الدعم الفني.
-            </div>
-          </div>
-        </div>
-
-        <hr class="step-divider"/>
-
-        <!-- STEP: DISCOUNTS & GIFTS -->
-        <div class="buy-step-block" id="loyaltyPointsBlock" style="display: none; margin-top: 20px;">
-          <div class="step-badge-title">
-            <span class="step-number"><i class="fas fa-gift"></i></span>
-            <div class="step-info-text">
-              <h3>الخصومات والهدايا</h3>
-              <p>اختر وسيلة الخصم المناسبة لطلبك</p>
-            </div>
-          </div>
-          <div class="step-content">
-            <div class="discounts-gifts-card">
-              <!-- Option 1: Coupon Code -->
-              <div class="discount-option-row">
-                <label class="discount-radio-label">
-                  <input type="radio" name="discountType" value="coupon" id="radCoupon" checked onchange="handleDiscountTypeChange()"/>
-                  <span class="custom-radio-circle"></span>
-                  <span class="discount-label-text">تفعيل كوبون الخصم</span>
-                </label>
-                <div class="discount-input-wrapper" id="couponInputWrapper">
-                  <div class="coupon-field-group">
-                    <div class="coupon-input-relative">
-                      <input type="text" id="couponCodeInput" placeholder="كوبون الهدية / الخصم؟"/>
-                      <i class="fas fa-percent coupon-icon"></i>
+            <div class="coaching-packages-grid">
+              
+              <!-- Package 1: Squad & Tactics -->
+              <div class="coaching-card tier-1" id="pkg_squad" onclick="selectCoachingPackage('squad')">
+                <div>
+                  <div class="coaching-card-header">
+                    <div class="coaching-card-icon"><i class="fas fa-chess"></i></div>
+                    <div>
+                      <h4 class="coaching-card-title">بناء التشكيلة والتكتيكات</h4>
+                      <div class="coaching-card-duration">تسليم فوري ومفصل عبر الواتساب</div>
                     </div>
-                    <button type="button" class="coupon-btn" id="btnApplyCoupon" onclick="applyCouponCode()">تفعيل</button>
                   </div>
-                  <div id="couponStatusMessage" class="coupon-status-msg"></div>
+
+                  <div class="coaching-price-tag">
+                    <span class="coaching-price-amount" id="pricePkg_squad">45.00 ر.س</span>
+                  </div>
+
+                  <ul class="coaching-features-list">
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span>بناء تشكيلة تنافسية بتناغم كامل 33/33</span></li>
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span>استغلال ميزانية الكوينز وأفضل كروت الميتا</span></li>
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span>تكتيكات وCustom Tactics وتعليمات اللاعبين</span></li>
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span>ملف وسكرين شوت توضيحي شامل للتشكيلة</span></li>
+                  </ul>
                 </div>
+
+                <button type="button" class="coaching-select-btn" id="btnSelect_squad">
+                  <span>اختيار هذه الباقة</span>
+                  <i class="fas fa-arrow-left"></i>
+                </button>
               </div>
 
-              <div class="discount-divider" id="loyaltyPointsDivider" style="display: none;"></div>
+              <!-- Package 2: 1-on-1 Live Coaching (Popular) -->
+              <div class="coaching-card tier-2 popular active" id="pkg_live" onclick="selectCoachingPackage('live')">
+                <div>
+                  <div class="coaching-card-header">
+                    <div class="coaching-card-icon"><i class="fas fa-headset"></i></div>
+                    <div>
+                      <h4 class="coaching-card-title">تدريب فردي مباشر (1-on-1)</h4>
+                      <div class="coaching-card-duration">جلسة تدريب ساعة كاملة (صوت + شاشة)</div>
+                    </div>
+                  </div>
 
-              <!-- Option 2: Loyalty Points -->
-              <div class="discount-option-row" id="loyaltyOptionRow" style="display: none;">
-                <label class="discount-radio-label">
-                  <input type="radio" name="discountType" value="points" id="radPoints" onchange="handleDiscountTypeChange()"/>
-                  <span class="custom-radio-circle"></span>
-                  <span class="discount-label-text"><span id="lblLoyaltyPointsBalance">0</span> نقطة رصيدك من نقاط الولاء</span>
-                </label>
-                <div class="discount-input-wrapper" id="pointsInputWrapper" style="display: none;">
-                  <p class="points-helper-text" style="font-size: 0.82rem; color: #64748b; margin-top: 8px;">
-                    <i class="fas fa-info-circle"></i>
-                    يمكنك الاستفادة من رصيدك بقيمة خصم <strong id="lblPointsDiscountSAR" style="color: #ca8a04;">0.00</strong>، <a href="#" onclick="togglePointsUsage(event)" id="btnApplyPoints" class="points-action-link" style="color: #ca8a04; font-weight: 700; text-decoration: none; margin-right: 4px;">اضغط هنا للتفعيل</a>
-                  </p>
+                  <div class="coaching-price-tag">
+                    <span class="coaching-price-amount" id="pricePkg_live">85.00 ر.س</span>
+                  </div>
+
+                  <ul class="coaching-features-list">
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span>جلسة صوتية وشاشة مباشرة (ديسكورد / واتساب)</span></li>
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span>تحليل مبارياتك ومعالجة أخطاء الدفاع والتمركز</span></li>
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span>تدريب على مهارات الإنهاء والتسجيل الاحترافي</span></li>
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span>خطة تكتيكية مخصصة لرفع رانكك بالشامبيونز</span></li>
+                  </ul>
                 </div>
+
+                <button type="button" class="coaching-select-btn" id="btnSelect_live">
+                  <i class="fas fa-check"></i>
+                  <span>الباقة المختارة حالياً</span>
+                </button>
               </div>
+
+              <!-- Package 3: VIP Masterclass -->
+              <div class="coaching-card tier-3" id="pkg_vip" onclick="selectCoachingPackage('vip')">
+                <div>
+                  <div class="coaching-card-header">
+                    <div class="coaching-card-icon"><i class="fas fa-crown"></i></div>
+                    <div>
+                      <h4 class="coaching-card-title">باقة النخبة الشاملة (VIP)</h4>
+                      <div class="coaching-card-duration">جلستان كاملتان + متابعة ودعم شهري</div>
+                    </div>
+                  </div>
+
+                  <div class="coaching-price-tag">
+                    <span class="coaching-price-amount" id="pricePkg_vip">150.00 ر.س</span>
+                  </div>
+
+                  <ul class="coaching-features-list">
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span><strong>جلستان تدريبيتان كاملتان</strong> (ساعتان مكثفتان)</span></li>
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span>تحليل تسجيل كامل لمباريات الفوت تشامبيونز</span></li>
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span>بناء التشكيلة وتكتيكات 3 خطط (دفاعية/هجومية)</span></li>
+                    <li class="coaching-feature-item"><i class="fas fa-circle-check"></i> <span>دعم وتحديث مستمر للتكتيكات طوال الشهر</span></li>
+                  </ul>
+                </div>
+
+                <button type="button" class="coaching-select-btn" id="btnSelect_vip">
+                  <span>اختيار هذه الباقة</span>
+                  <i class="fas fa-arrow-left"></i>
+                </button>
+              </div>
+
             </div>
           </div>
         </div>
 
-        <hr class="step-divider" id="loyaltyDivider" style="display: none;"/>
+        <hr class="step-divider"/>
 
-        <!-- STEP 3: CONTACT DATA (Custom fields for coaching) -->
-        <div class="buy-step-block" id="stepBlock3">
+        <!-- STEP 02: SQUAD DETAILS & PLAYSTYLE -->
+        <div class="buy-step-block">
           <div class="step-badge-title">
-            <span class="step-number">03</span>
+            <span class="step-number" style="background: rgba(37, 99, 235, 0.12); color: #2563eb;">02</span>
             <div class="step-info-text">
-              <h3>معلومات التواصل وتفاصيل الطلب</h3>
-              <p>يرجى تحديد طريقة التواصل المفضلة وتفاصيل طلبك الفني</p>
+              <h3 style="color: #1b355a;">تفاصيل ناديك وأسلوب لعبك</h3>
+              <p>ساعد المدرب على فهم فريقك لتقديم أفضل توجيه وتكتيك مناسب لك</p>
             </div>
           </div>
-          
+
           <div class="step-content">
             <div class="ea-form-grid">
-              <!-- Discord Username Input -->
-              <div class="ea-input-group">
-                <label class="input-label-tag">حساب الديسكورد للتواصل (أو تيليجرام)</label>
-                <div class="input-with-icon">
-                  <i class="fab fa-discord input-icon"></i>
-                  <input type="text" id="contactDiscord" placeholder="Discord#1234 (اختياري)"/>
-                </div>
-              </div>
-
-              <!-- Full Name / WhatsApp Alternate Contact -->
-              <div class="ea-input-group">
-                <label class="input-label-tag">الاسم واللقب</label>
-                <div class="input-with-icon">
-                  <i class="fas fa-user input-icon"></i>
-                  <input type="text" id="contactName" placeholder="الاسم الكامل" required/>
-                </div>
-              </div>
-
-              <!-- Phone Number Input -->
-              <div class="ea-input-group">
-                <label class="input-label-tag">رقم الواتساب للتواصل (مع رمز الدولة)</label>
-                <div class="input-with-icon">
-                  <i class="fab fa-whatsapp input-icon"></i>
-                  <input type="tel" id="customerPhone" placeholder="مثال: +9665xxxxxxxx" required/>
-                </div>
-              </div>
-
-              <!-- Special Request Notes / Team details -->
+              
+              <!-- Playstyle Selector -->
               <div class="ea-input-group full-width">
-                <label class="input-label-tag">تفاصيل حول تشكيلتك وميزانيتك أو طلبك الفني:</label>
-                <textarea id="coachingNotes" rows="4" style="width: 100%; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 12px; font-family: inherit; font-size: 0.9rem; outline: none; box-sizing: border-box;" placeholder="مثال: ميزانيتي 3 مليون كوينز وألعب بخطة 4-3-2-1 وأحتاج تكتيك وتشكيلة متناسقة بالكامل..."></textarea>
+                <label class="input-label-tag">أسلوب اللعب المفضل لديك في المباريات:</label>
+                <div class="playstyle-pills-row">
+                  <button type="button" class="playstyle-pill-btn active" onclick="selectPlaystyle(this, 'هجوم مرتد وسريع')">
+                    <i class="fas fa-bolt"></i> هجوم مرتد وسريع (Counter Attack)
+                  </button>
+                  <button type="button" class="playstyle-pill-btn" onclick="selectPlaystyle(this, 'استحواذ وبناء منظم')">
+                    <i class="fas fa-futbol"></i> استحواذ وبناء منظم (Tiki-Taka)
+                  </button>
+                  <button type="button" class="playstyle-pill-btn" onclick="selectPlaystyle(this, 'ضغط عالي واسترجاع سريع')">
+                    <i class="fas fa-shield-halved"></i> ضغط عالي متقدم (High Press)
+                  </button>
+                  <button type="button" class="playstyle-pill-btn" onclick="selectPlaystyle(this, 'توازن وتكتيك مرن')">
+                    <i class="fas fa-scale-balanced"></i> توازن وتكتيك مرن (Balanced)
+                  </button>
+                </div>
               </div>
+
+              <!-- Coins Budget & Untradeables Grid -->
+              <div class="ea-input-group">
+                <label class="input-label-tag" for="budgetCoins">ميزانية الكوينز المتاحة في حسابك (اختياري)</label>
+                <div class="input-with-icon">
+                  <i class="fas fa-coins input-icon"></i>
+                  <input type="text" id="budgetCoins" placeholder="مثال: 500,000 كوينز أو ميزانية مفتوحة"/>
+                </div>
+              </div>
+
+              <div class="ea-input-group">
+                <label class="input-label-tag" for="untradeablePlayers">لاعبون ترغب بتثبيتهم بالتشكيلة (Untradeables)</label>
+                <div class="input-with-icon">
+                  <i class="fas fa-user-lock input-icon"></i>
+                  <input type="text" id="untradeablePlayers" placeholder="مثال: مبابي، خوليت، فان دايك..."/>
+                </div>
+              </div>
+
+              <!-- Squad Upload Drop Zone (Optional) -->
+              <div class="ea-input-group full-width" style="margin-top: 4px;">
+                <label class="input-label-tag">إرفاق سكرين شوت لتشكيلتك الحالية (اختياري):</label>
+                <div class="squad-upload-zone" id="squadDropZone" onclick="document.getElementById('coachingSquadInput').click()" style="padding: 24px 16px;">
+                  <input type="file" id="coachingSquadInput" accept="image/*" style="display: none;" onchange="handleCoachingImageSelect(event)"/>
+                  
+                  <div id="uploadPrompt">
+                    <div class="upload-icon-circle" style="background: rgba(37, 99, 235, 0.1); color: #2563eb; width: 48px; height: 48px; font-size: 1.3rem;">
+                      <i class="fas fa-cloud-arrow-up"></i>
+                    </div>
+                    <h4 style="margin: 8px 0 4px; font-weight: 800; color: #1e293b; font-size: 0.95rem;">اضغط هنا لرفع سكرين شوت لتشكيلتك</h4>
+                    <p style="margin: 0; font-size: 0.8rem; color: #64748b; font-weight: 600;">صورة واضحة من اللعبة أو تطبيق الويب آب لمساعدة المدرب</p>
+                  </div>
+
+                  <!-- Image Preview Box -->
+                  <div id="imagePreviewContainer" style="display: none; width: 100%; text-align: center;">
+                    <div style="position: relative; display: inline-block; max-width: 100%; border-radius: 12px; overflow: hidden; border: 2px solid #10b981;">
+                      <img id="squadImgPreview" src="" alt="تشكيلة العميل" style="max-height: 240px; max-width: 100%; display: block; object-fit: contain; background: #0f172a;"/>
+                      <button type="button" onclick="event.stopPropagation(); removeCoachingImage();" title="حذف الصورة" style="position: absolute; top: 8px; left: 8px; background: rgba(239, 68, 68, 0.95); color: #fff; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                    <div style="margin-top: 8px; font-weight: 700; color: #059669; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                      <i class="fas fa-circle-check"></i> تم إرفاق صورة التشكيلة بنجاح
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
 
-        
-            
-            <!-- Left: Action button -->
-            <button type="submit" form="purchaseForm" class="summary-complete-btn" id="btnCheckoutSubmit">
-              <span class="spinner" id="btnSpinner" style="display: none;"></span>
-              <span>تأكيد وإرسال الطلب</span>
-            </button>
+        <hr class="step-divider"/>
+
+        <!-- STEP 03: CONTACT & BOOKING DETAILS -->
+        <div class="buy-step-block">
+          <div class="step-badge-title">
+            <span class="step-number" style="background: rgba(37, 99, 235, 0.12); color: #2563eb;">03</span>
+            <div class="step-info-text">
+              <h3 style="color: #1b355a;">بيانات التواصل وتحديد الموعد</h3>
+              <p>أدخل بياناتك ليتواصل معك المدرب مباشرة فور إتمام الطلب</p>
+            </div>
+          </div>
+
+          <div class="step-content">
+            <div class="ea-form-grid">
+              
+              <!-- Customer Name -->
+              <div class="ea-input-group">
+                <label class="input-label-tag" for="customerName">اسمك الكريم</label>
+                <div class="input-with-icon">
+                  <i class="fas fa-user input-icon"></i>
+                  <input type="text" id="customerName" placeholder="الاسم الأول أو اللقب" required/>
+                </div>
+              </div>
+
+              <!-- Customer WhatsApp -->
+              <div class="ea-input-group">
+                <label class="input-label-tag" for="customerPhone">رقم الواتساب للتواصل وتأكيد الموعد</label>
+                <div class="input-with-icon">
+                  <i class="fab fa-whatsapp input-icon" style="color: #10b981;"></i>
+                  <input type="tel" id="customerPhone" placeholder="مثال: 0775585112 أو 962775585112" required/>
+                </div>
+              </div>
+
+              <!-- Preferred Timing -->
+              <div class="ea-input-group">
+                <label class="input-label-tag" for="preferredTime">الوقت المفضل للجلسة / التواصل</label>
+                <div class="input-with-icon">
+                  <i class="far fa-clock input-icon"></i>
+                  <select id="preferredTime" class="admin-input" style="width: 100%; border: 1.5px solid #e2e8f0; border-radius: 12px; height: 50px; padding: 0 42px 0 16px; font-weight: 700;">
+                    <option value="مساءً (4:00 م - 8:00 م)">مساءً (4:00 م - 8:00 م)</option>
+                    <option value="ليلاً (8:00 م - 12:00 منتصف الليل)">ليلاً (8:00 م - 12:00 منتصف الليل)</option>
+                    <option value="عصراً (1:00 م - 4:00 م)">عصراً (1:00 م - 4:00 م)</option>
+                    <option value="أي وقت متاح للمدرب">أي وقت متاح للمدرب اليوم</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Discord Username (Optional) -->
+              <div class="ea-input-group">
+                <label class="input-label-tag" for="discordUser">يوزر الديسكورد Discord (اختياري للجلسات المباشرة)</label>
+                <div class="input-with-icon">
+                  <i class="fab fa-discord input-icon" style="color: #5865F2;"></i>
+                  <input type="text" id="discordUser" placeholder="مثال: PlayerName#1234"/>
+                </div>
+              </div>
+
+              <!-- Notes -->
+              <div class="ea-input-group full-width">
+                <label class="input-label-tag" for="coachingNotes">ملاحظات أو أسئلة ترغب بالتركيز عليها بالجلسة (اختياري)</label>
+                <div class="input-with-icon">
+                  <i class="fas fa-comment-dots input-icon"></i>
+                  <input type="text" id="coachingNotes" placeholder="مثال: أحتاج تركيز خاص على الدفاع ضد التمريرات الطويلة وطرق كسر التكتل..."/>
+                </div>
+              </div>
+
+              <!-- Direct WhatsApp Support Chip -->
+
+
+              <div style="grid-column: 1 / -1; text-align: center; margin-top: 6px; margin-bottom: 8px;">
+                <a href="https://wa.me/962775585112" target="_blank" class="unified-support-chip">
+                  <i class="fab fa-whatsapp"></i>
+                  <span>لديك استفسار قبل الحجز؟ تواصل مباشرة مع فريق التدريب عبر الواتساب</span>
+                </a>
+              </div>
+
+              <!-- Trust Seals Grid -->
+              <div class="ea-input-group full-width trust-seals-grid">
+                <div class="trust-seal-item">
+                  <i class="fas fa-crown"></i>
+                  <span>مدربون ومحللون مصنفون برانكات النخبة</span>
+                </div>
+                <div class="trust-seal-item">
+                  <i class="fas fa-rotate-left"></i>
+                  <span>ضمان الرضا وتطوير المستوى الفعلي</span>
+                </div>
+                <div class="trust-seal-item">
+                  <i class="fas fa-calendar-check"></i>
+                  <span>تحديد مرن وسريع لمواعيد الجلسات</span>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
 
@@ -230,63 +546,69 @@
     </div>
   </main>
 
-  
-<!-- ══════════ FOOTER ══════════ -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-top">
-      <div class="footer-brand">
-        <div class="logo">
-          <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
-          <span class="logo-main">Trivela</span>
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="logo">
+            <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
+            <span class="logo-main">Trivela</span>
+          </div>
+          <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، واستشارات تدريبية.</p>
+          <div class="footer-socials">
+            <a href="https://wa.me/962775585112" aria-label="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.instagram.com/trivelacoins" aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://tiktok.com/@Trivela" aria-label="TikTok" target="_blank"><i class="fab fa-tiktok"></i></a>
+          </div>
         </div>
-        <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
-        <div class="footer-socials">
-          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        <div class="footer-col">
+          <h4>الخدمات</h4>
+          <a href="index.html#coins-device">💰 الكوينز</a>
+          <a href="buy-sbc.html">🧩 SBC</a>
+          <a href="buy-objectives.html">📋 المهام</a>
+          <a href="buy-rivals.html">⚔️ الرايفلز</a>
+          <a href="buy-champions.html">🎮 FUT Champions</a>
+          <a href="buy-coaching.html">🧠 الاستشارات والتدريب</a>
+        </div>
+        <div class="footer-col">
+          <h4>سياسات متجر Trivela</h4>
+          <a href="policies.html#privacy">سياسة الخصوصية</a>
+          <a href="policies.html#terms">شروط الاستخدام</a>
+          <a href="policies.html#refund">سياسة الاسترجاع</a>
+          <a href="policies.html#warranty">سياسة الضمان</a>
+          <a href="index.html#faq">الأسئلة الشائعة</a>
         </div>
       </div>
-      <div class="footer-col">
-        <h4>الخدمات</h4>
-        <a href="index.html#coins-device">💰 الكوينز</a>
-        <a href="buy-sbc.html">🧩 SBC</a>
-        <a href="buy-objectives.html">📋 المهام</a>
-        <a href="buy-rivals.html">⚔️ الرايفلز</a>
-        <a href="buy-champions.html">🎮 FUT Champions</a>
-      </div>
-      <div class="footer-col">
-        <h4>سياسات متجر Trivela</h4>
-        <a href="policies.html#privacy">سياسة الخصوصية</a>
-        <a href="policies.html#terms">شروط الاستخدام</a>
-        <a href="policies.html#refund">سياسة الاسترجاع</a>
-        <a href="policies.html#warranty">سياسة الضمان</a>
-        <a href="index.html#faq">الأسئلة الشائعة</a>
+      <div class="footer-bottom">
+        <span>© 2026 Trivela — جميع الحقوق محفوظة</span>
+        <span>هذا الموقع غير مرتبط بـ EA Sports</span>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© 2026 Trivela — جميع الحقوق محفوظة</span>
-      <span>هذا الموقع غير مرتبط بـ EA Sports</span>
+  </footer>
+
+  <!-- ══════════ STICKY BOTTOM SUMMARY BAR ══════════ -->
+  <div class="sticky-summary-bar">
+    <div class="summary-inner">
+      <div class="summary-right-details">
+        <div class="summary-total-price" id="summaryPrice">85.00 ر.س</div>
+        <div class="summary-divider-line"></div>
+        <div class="summary-coins">
+          <i class="fas fa-headset font-gold"></i>
+          <span id="summaryServiceText" style="margin-right: 6px;">تدريب فردي مباشر (1-on-1 Pro Coaching)</span>
+        </div>
+      </div>
+      
+      <button type="submit" form="coachingForm" class="summary-complete-btn" id="btnSubmitOrder">
+        <span>إضافة إلى السلة</span>
+        <i class="fas fa-cart-plus"></i>
+      </button>
     </div>
   </div>
-</footer>
-<!-- ══════════ STICKY BOTTOM BAR ══════════ -->
-<div class="sticky-summary-bar">
-<div class="summary-inner">
-<!-- Right: Service details & Price info -->
-<div class="summary-right-details">
-<div class="summary-total-price" id="summaryPrice">0.00 ر.س</div>
-<div class="summary-divider-line"></div>
-<div class="summary-coins">
-  <i class="fas fa-chalkboard-teacher font-gold"></i>
-  <span id="summaryCoins" style="margin-right: 6px;">لم يتم اختيار خدمة</span>
-</div>
-</div>
 
-
-
-
-<script src="src/core/global-currency.js"></script>
-  <script src="buy-coaching.js?v=2.2"></script>
+  <script src="src/core/global-currency.js"></script>
+  <script src="src/core/cart.js?v=1.0"></script>
+  <script src="buy-coaching.js"></script>
 </body>
+
 </html>

@@ -25,6 +25,7 @@ function fetchDynamicCoupons() {
           dynamicCoupons[c.code.toUpperCase()] = c;
         }
       });
+      window.couponsLoaded = true;
     })
     .catch(err => console.warn("Could not fetch coupons dynamically:", err));
 }
@@ -52,17 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Load User profile & Points
 async function loadUserLoyalty() {
-  const loyaltyBlock = document.getElementById('loyaltyPointsBlock');
-  const optionRow = document.getElementById('loyaltyOptionRow');
-  const divider = document.getElementById('loyaltyPointsDivider');
-  const radPoints = document.getElementById('radPoints');
-  const loyaltyDividerMain = document.getElementById('loyaltyDivider');
-
-  if (loyaltyBlock) loyaltyBlock.style.display = 'block';
-  if (optionRow) optionRow.style.display = 'block';
-  if (divider) divider.style.display = 'block';
-  if (loyaltyDividerMain) loyaltyDividerMain.style.display = 'block';
-
   const user = await auth.getMe();
   if (user) {
     loggedInName = user.name || "";
@@ -72,28 +62,6 @@ async function loadUserLoyalty() {
     const phoneInput = document.getElementById('customerPhone');
     if (nameInput && loggedInName) nameInput.value = loggedInName;
     if (phoneInput && loggedInPhone) phoneInput.value = loggedInPhone;
-
-    userPoints = user.points || 0;
-    const lblPointsBalance = document.getElementById('lblLoyaltyPointsBalance');
-    if (lblPointsBalance) lblPointsBalance.textContent = userPoints;
-    
-    updatePointsDisplayVal();
-
-    if (userPoints > 0) {
-      if (radPoints) radPoints.disabled = false;
-    } else {
-      if (radPoints) radPoints.disabled = true;
-      const labelText = document.querySelector('#loyaltyOptionRow .discount-label-text');
-      if (labelText) {
-        labelText.innerHTML = `رصيدك الحالي 0 نقطة من نقاط الولاء (اجمع المزيد عند إتمام الطلبات)`;
-      }
-    }
-  } else {
-    if (radPoints) radPoints.disabled = true;
-    const labelText = document.querySelector('#loyaltyOptionRow .discount-label-text');
-    if (labelText) {
-      labelText.innerHTML = `استخدام نقاط الولاء (<a href="login.html" style="color: var(--blue-500); text-decoration: underline; font-weight: 700;">سجل دخولك أولاً</a>)`;
-    }
   }
 }
 
@@ -576,9 +544,11 @@ export async function handleOrderSubmit(event) {
   }
   let totalFinalSAR = totalAfterCouponSAR;
 
-  // Get inputs
-  const customerName = document.getElementById('customerName').value.trim();
-  const customerPhone = document.getElementById('customerPhone').value.trim();
+  // Customer Info
+  const nameInput = document.getElementById('customerName');
+  const phoneInput = document.getElementById('customerPhone');
+  const customerName = nameInput ? nameInput.value.trim() : (loggedInName || "عميل تريفيلا");
+  const customerPhone = phoneInput ? phoneInput.value.trim() : (loggedInPhone || "—");
   
   // Sony Account
   const sonyEmail = document.getElementById('sonyEmail').value.trim();
@@ -594,6 +564,14 @@ export async function handleOrderSubmit(event) {
   const eaB2 = document.getElementById('eaBackup2').value.trim() || '—';
   const eaB3 = document.getElementById('eaBackup3').value.trim() || '—';
 
+  const selectedItemIds = [];
+  staticChecked.forEach(chk => {
+    if (chk.dataset.id) selectedItemIds.push(chk.dataset.id);
+  });
+  dynamicChecked.forEach(chk => {
+    if (chk.dataset.id) selectedItemIds.push(chk.dataset.id);
+  });
+
   const serviceDescription = `إنجاز مهام التحديات: [${selectedNames.join(' + ')}]`;
 
   const orderPayload = {
@@ -604,7 +582,8 @@ export async function handleOrderSubmit(event) {
     priceSAR: totalFinalSAR,
     pointsDiscount: pointsDiscountSAR + couponDiscountSAR,
     pointsDeducted: pointsDeducted,
-    couponCode: activeCoupon ? activeCoupon.code : null
+    couponCode: activeCoupon ? activeCoupon.code : null,
+    itemIds: selectedItemIds
   };
 
   try {
@@ -692,7 +671,22 @@ export async function handleOrderSubmit(event) {
   }
 }
 
+export function toggleCompactCoupon(btn) {
+  const wrapper = document.getElementById('couponInputWrapper');
+  const chevron = btn ? btn.querySelector('.toggle-chevron') : document.getElementById('couponChevron');
+  if (!wrapper) return;
+  const isHidden = wrapper.style.display === 'none' || wrapper.style.display === '';
+  wrapper.style.display = isHidden ? 'block' : 'none';
+  if (btn) btn.classList.toggle('open', isHidden);
+  if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+  if (isHidden) {
+    const inp = document.getElementById('couponCodeInput');
+    if (inp) inp.focus();
+  }
+}
+
 // Bind to window to allow HTML inline handlers to work seamlessly
+window.toggleCompactCoupon = toggleCompactCoupon;
 window.selectPlatform      = selectPlatform;
 window.toggleObjectiveCard  = toggleObjectiveCard;
 window.toggleCheckboxCard  = toggleObjectiveCard; // Keep old name as alias just in case

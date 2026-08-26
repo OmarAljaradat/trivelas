@@ -3,8 +3,39 @@ let allUsers = [];
 let adminActivePlayers = [];
 let adminActiveOrders = [];
 let currentOrderFilter = 'all';
+let adminEventSource = null;
+
+function setupAdminSSE() {
+  const adminId = 'admin_1784204488832';
+  const token = btoa(adminId);
+  
+  if (adminEventSource) {
+    adminEventSource.close();
+  }
+  
+  adminEventSource = new EventSource(`/api/common/live-updates?adminToken=${token}`);
+  adminEventSource.onmessage = function(event) {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type === 'order_update') {
+        console.log("⚡ SSE: Order updated, reloading admin orders & stats...", data.orderId);
+        loadOrdersList();
+        loadQuickStats();
+        if (typeof renderAdminAnalyticsCharts === 'function') {
+          renderAdminAnalyticsCharts(false); // Reload analytics data without re-creating charts entirely
+        }
+      }
+    } catch (err) {
+      console.error("Error processing admin SSE update:", err);
+    }
+  };
+  adminEventSource.onerror = function() {
+    console.log("Admin SSE disconnected. Retrying...");
+  };
+}
 
 document.addEventListener('DOMContentLoaded', () => {
+  setupAdminSSE();
   loadActivePlayers();
   loadAllUsers();
   loadQuickStats();
@@ -110,6 +141,10 @@ function switchTabWithSub(panelId, btn) {
   document.querySelectorAll('.admin-panel').forEach(panel => {
     panel.classList.toggle('active', panel.id === panelId);
   });
+
+  if (panelId === 'coaching-settings-panel' && typeof window.loadAdminCoachingSchedule === 'function') {
+    window.loadAdminCoachingSchedule();
+  }
 }
 
 // Load statistics details
@@ -155,6 +190,9 @@ function loadStoreSettings() {
         document.getElementById('settingMaintenance').checked = !!settings.maintenanceMode;
         document.getElementById('settingWhatsapp').value = settings.whatsappPhone || '';
         document.getElementById('settingInstagram').value = settings.instagramUrl || '';
+        if (document.getElementById('settingTiktok')) {
+          document.getElementById('settingTiktok').value = settings.tiktokUrl || '';
+        }
         document.getElementById('settingRateConsole').value = settings.baseRateConsole || 2.80;
         document.getElementById('settingRatePC').value = settings.baseRatePC || 2.40;
 
@@ -186,10 +224,11 @@ function saveStoreSettings(event) {
   const maintenanceMode = document.getElementById('settingMaintenance').checked;
   const whatsappPhone = document.getElementById('settingWhatsapp').value.trim();
   const instagramUrl = document.getElementById('settingInstagram').value.trim();
+  const tiktokUrl = document.getElementById('settingTiktok') ? document.getElementById('settingTiktok').value.trim() : '';
   const baseRateConsole = parseFloat(document.getElementById('settingRateConsole').value);
   const baseRatePC = parseFloat(document.getElementById('settingRatePC').value);
 
-  const payload = { maintenanceMode, whatsappPhone, instagramUrl, baseRateConsole, baseRatePC };
+  const payload = { maintenanceMode, whatsappPhone, instagramUrl, tiktokUrl, baseRateConsole, baseRatePC };
 
   fetch('/api/admin/settings', {
     method: 'POST',
@@ -219,8 +258,9 @@ function toggleMaintenanceModeDirectly() {
       const settings = data.settings || {};
       const payload = {
         maintenanceMode: checked,
-        whatsappPhone: settings.whatsappPhone || "966500000000",
-        instagramUrl: settings.instagramUrl || "https://instagram.com/Trivela",
+        whatsappPhone: settings.whatsappPhone || "962775585112",
+        instagramUrl: settings.instagramUrl || "https://www.instagram.com/trivelacoins",
+        tiktokUrl: settings.tiktokUrl || "https://tiktok.com/@Trivela",
         baseRateConsole: settings.baseRateConsole || 2.80,
         baseRatePC: settings.baseRatePC || 2.40
       };
@@ -1563,3 +1603,602 @@ function exportOrdersToCSV() {
   link.click();
   document.body.removeChild(link);
 }
+
+// Coaching Schedule Admin Handler
+const WEEK_DAYS_ADMIN = [
+  { id: 4, name: "الخميس" },
+  { id: 5, name: "الجمعة" },
+  { id: 6, name: "السبت" },
+  { id: 0, name: "الأحد" },
+  { id: 1, name: "الاثنين" },
+  { id: 2, name: "الثلاثاء" },
+  { id: 3, name: "الأربعاء" }
+];
+
+window.loadAdminCoachingSchedule = function() {
+  renderAdminCoachingSchedule({});
+  fetch('/api/public/coaching-schedule')
+    .then(res => res.json())
+    .then(schedule => {
+      if (schedule && typeof schedule === 'object') {
+        renderAdminCoachingSchedule(schedule);
+      }
+    })
+    .catch(() => {});
+};
+
+function renderAdminCoachingSchedule(schedule) {
+  const container = document.getElementById('adminScheduleDaysList');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const workingDays = schedule.workingDays || [4, 5, 6, 0];
+  const daysConfig = schedule.daysConfig || {};
+  const globalStart = schedule.startHour || 16;
+  const globalEnd = schedule.endHour || 23;
+
+  WEEK_DAYS_ADMIN.forEach(day => {
+    const isChecked = workingDays.includes(day.id);
+    const dayCfg = daysConfig[day.id] || { startHour: globalStart, endHour: globalEnd };
+    const startH = dayCfg.startHour || globalStart;
+    const endH = dayCfg.endHour || globalEnd;
+
+    const row = document.createElement('div');
+    row.className = 'day-schedule-row';
+    row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; flex-wrap: wrap; gap: 12px;';
+
+    let hoursOptionsStart = '';
+    let hoursOptionsEnd = '';
+
+    const hours = [
+      { val: 10, label: '10:00 صباحاً' },
+      { val: 12, label: '12:00 ظهرًا' },
+      { val: 14, label: '02:00 عصراً' },
+      { val: 16, label: '04:00 عصراً' },
+      { val: 18, label: '06:00 مساءً' },
+      { val: 20, label: '08:00 مساءً' },
+      { val: 22, label: '10:00 مساءً' },
+      { val: 23, label: '11:00 مساءً' },
+      { val: 24, label: '12:00 منتصف الليل' }
+    ];
+
+    hours.forEach(h => {
+      hoursOptionsStart += `<option value="${h.val}" ${h.val === startH ? 'selected' : ''}>${h.label}</option>`;
+      hoursOptionsEnd += `<option value="${h.val}" ${h.val === endH ? 'selected' : ''}>${h.label}</option>`;
+    });
+
+    row.innerHTML = `
+      <label style="font-family: Cairo; font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; min-width: 130px; cursor: pointer; color: var(--text-dark);">
+        <input type="checkbox" class="day-active-cb" data-day="${day.id}" ${isChecked ? 'checked' : ''}/>
+        <span>${day.name}</span>
+      </label>
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: #64748b;">من:</span>
+        <select class="admin-input day-start-hour" data-day="${day.id}" style="width: 140px; font-family: Cairo, Montserrat; font-weight: bold; padding: 6px 10px;">
+          ${hoursOptionsStart}
+        </select>
+        <span style="font-size: 0.8rem; font-weight: 700; color: #64748b;">إلى:</span>
+        <select class="admin-input day-end-hour" data-day="${day.id}" style="width: 140px; font-family: Cairo, Montserrat; font-weight: bold; padding: 6px 10px;">
+          ${hoursOptionsEnd}
+        </select>
+      </div>
+    `;
+
+    container.appendChild(row);
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    window.loadAdminCoachingSchedule();
+  });
+} else {
+  window.loadAdminCoachingSchedule();
+}
+
+window.saveCoachingScheduleSettings = function(e) {
+  if (e) e.preventDefault();
+
+  const workingDays = [];
+  const daysConfig = {};
+
+  const cbs = document.querySelectorAll('.day-active-cb');
+  cbs.forEach(cb => {
+    const dayId = parseInt(cb.getAttribute('data-day'), 10);
+    const isChecked = cb.checked;
+    
+    const startSelect = document.querySelector(`.day-start-hour[data-day="${dayId}"]`);
+    const endSelect = document.querySelector(`.day-end-hour[data-day="${dayId}"]`);
+
+    const startH = startSelect ? parseInt(startSelect.value, 10) : 16;
+    const endH = endSelect ? parseInt(endSelect.value, 10) : 23;
+
+    if (isChecked) {
+      workingDays.push(dayId);
+    }
+
+    daysConfig[dayId] = {
+      enabled: isChecked,
+      startHour: startH,
+      endHour: endH
+    };
+  });
+
+  fetch('/api/admin/coaching-schedule', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      enabled: true,
+      workingDays: workingDays,
+      daysConfig: daysConfig,
+      slotDurationMinutes: 60
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert("✅ تم حفظ جدول مواعيد وساعات التدريب المخصصة لكل يوم بنجاح!");
+    } else {
+      alert("حدث خطأ أثناء حفظ جدول المواعيد.");
+    }
+  })
+  .catch(err => {
+    alert("خطأ في الاتصال بالخادم.");
+  });
+};
+
+// ══════════ AI OBJECTIVES IMPORTER & MANAGER ══════════
+let currentImportedObjective = null;
+
+window.importObjectiveFromFutgg = function() {
+  const urlInput = document.getElementById('objFutggUrl');
+  const url = urlInput ? urlInput.value.trim() : '';
+  const btn = document.getElementById('btnObjScrape');
+  const spinner = document.getElementById('objScrapeSpinner');
+  const icon = document.getElementById('objScrapeIcon');
+  const statusMsg = document.getElementById('objScrapeStatus');
+  const previewBox = document.getElementById('objPreviewContainer');
+
+  if (!url) {
+    showObjStatus("يرجى إدخال رابط المهمة من FUT.GG أو FUTBIN أولاً.", "error");
+    return;
+  }
+
+  if (btn) btn.disabled = true;
+  if (spinner) spinner.style.display = 'inline-block';
+  if (icon) icon.style.display = 'none';
+  if (statusMsg) statusMsg.style.display = 'none';
+  if (previewBox) previewBox.style.display = 'none';
+
+  fetch('/api/admin/objectives/import-url', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url: url })
+  })
+  .then(res => {
+    if (!res.ok) {
+      return res.json().then(err => { throw new Error(err.error || "تعذر معالجة الرابط") });
+    }
+    return res.json();
+  })
+  .then(data => {
+    if (data && data.success && data.objective) {
+      currentImportedObjective = data.objective;
+      renderImportedObjectivePreview(data.objective);
+      showObjStatus("✨ تم سحب وتحليل المهمة بنجاح! راجع التفاصيل واضغط 'نشر بالمتجر'.", "success");
+    } else {
+      throw new Error("فشل استخراج تفاصيل المهمة");
+    }
+  })
+  .catch(err => {
+    showObjStatus(err.message, "error");
+  })
+  .finally(() => {
+    if (btn) btn.disabled = false;
+    if (spinner) spinner.style.display = 'none';
+    if (icon) icon.style.display = 'inline-block';
+  });
+};
+
+function showObjStatus(msg, type) {
+  const statusEl = document.getElementById('objScrapeStatus');
+  if (!statusEl) return;
+  statusEl.textContent = msg;
+  statusEl.className = `status-msg ${type}`;
+  statusEl.style.display = 'block';
+}
+
+function renderImportedObjectivePreview(obj) {
+  const box = document.getElementById('objPreviewContainer');
+  if (!box) return;
+
+  const nameInput = document.getElementById('objPreviewName');
+  const priceSAR = document.getElementById('objPreviewPriceSAR');
+  const priceUSD = document.getElementById('objPreviewPriceUSD');
+  const rewardText = document.getElementById('objPreviewRewardText');
+  const pillsCont = document.getElementById('objPreviewPillsContainer');
+  const tasksList = document.getElementById('objPreviewSubtasksList');
+
+  if (nameInput) nameInput.value = obj.name;
+  if (priceSAR) priceSAR.value = obj.priceSAR || 65;
+  if (priceUSD) priceUSD.value = obj.priceUSD || 17;
+  if (rewardText) rewardText.textContent = obj.finalRewardSub;
+
+  if (pillsCont && obj.rewardPills) {
+    pillsCont.innerHTML = obj.rewardPills.map(p => `
+      <span style="background: #ffffff; border: 1px solid #fde68a; color: #b45309; font-size: 0.76rem; font-weight: 800; padding: 3px 8px; border-radius: 6px;">
+        <i class="${p.icon}"></i> ${p.text}
+      </span>
+    `).join('');
+  }
+
+  if (tasksList && obj.subtasks) {
+    tasksList.innerHTML = obj.subtasks.map(t => `
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="background: #e2e8f0; width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem;">${t.num}</span>
+          <span style="font-weight: 700; font-size: 0.85rem; color: #1e293b;">${t.name}</span>
+        </div>
+        <span style="background: #ffffff; border: 1px solid #e2e8f0; padding: 2px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 700; color: #2563eb;">${t.reward}</span>
+      </div>
+    `).join('');
+  }
+
+  box.style.display = 'block';
+}
+
+window.saveImportedObjective = function() {
+  if (!currentImportedObjective) return;
+
+  const nameInput = document.getElementById('objPreviewName');
+  const priceSAR = document.getElementById('objPreviewPriceSAR');
+  const priceUSD = document.getElementById('objPreviewPriceUSD');
+
+  currentImportedObjective.name = nameInput ? nameInput.value.trim() : currentImportedObjective.name;
+  currentImportedObjective.priceSAR = priceSAR ? parseFloat(priceSAR.value) : currentImportedObjective.priceSAR;
+  currentImportedObjective.priceUSD = priceUSD ? parseFloat(priceUSD.value) : currentImportedObjective.priceUSD;
+
+  fetch('/api/admin/objectives/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(currentImportedObjective)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data && data.success) {
+      alert(`✅ تم نشر مهمة "${currentImportedObjective.name}" في المتجر بنجاح!`);
+      const box = document.getElementById('objPreviewContainer');
+      const urlInput = document.getElementById('objFutggUrl');
+      if (box) box.style.display = 'none';
+      if (urlInput) urlInput.value = '';
+      currentImportedObjective = null;
+      loadAdminObjectivesTable();
+    } else {
+      alert("حدث خطأ أثناء حفظ المهمة.");
+    }
+  })
+  .catch(err => {
+    alert("خطأ في الاتصال بالخادم: " + err.message);
+  });
+};
+
+window.loadAdminObjectivesTable = function() {
+  const tbody = document.getElementById('objectivesTableBody');
+  if (!tbody) return;
+
+  fetch('/api/admin/objectives')
+    .then(res => res.json())
+    .then(data => {
+      if (!Array.isArray(data) || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-gray);">لا توجد مهام حالية. الصق رابط مهمة بالأعلى لاستيرادها فوراً!</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = data.map(o => {
+        const isEnabled = o.enabled !== false;
+        const statusBadge = isEnabled
+          ? `<span style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.78rem;"><i class="fas fa-check-circle"></i> معروض بالمتجر</span>`
+          : `<span style="background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.78rem;"><i class="fas fa-pause-circle"></i> متوقف / منتهي</span>`;
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight: 800; color: var(--text-dark);">${o.name}</div>
+              <div style="font-size: 0.76rem; color: var(--text-gray);">${o.time || 'متوسط 2-4 ساعات'}</div>
+            </td>
+            <td>
+              <span style="font-size: 0.82rem; color: #b45309; font-weight: 700;">${o.finalRewardSub || 'مكافأة كاملة'}</span>
+            </td>
+            <td style="font-weight: 700; text-align: center;">${o.subtasks ? o.subtasks.length : 4} مهام</td>
+            <td>
+              <span style="font-weight: 800; color: #2563eb;">${o.priceSAR} ر.س</span>
+              <span style="font-size: 0.78rem; color: var(--text-gray);">(${o.priceUSD} $)</span>
+            </td>
+            <td>${statusBadge}</td>
+            <td>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button type="button" class="admin-btn" onclick="toggleObjectiveStatus('${o.id}')" style="padding: 4px 10px; font-size: 0.78rem; background: ${isEnabled ? '#e2e8f0' : '#10b981'}; color: ${isEnabled ? '#334155' : '#fff'}; border: 0; border-radius: 6px; cursor: pointer;">
+                  ${isEnabled ? 'إيقاف مؤقت' : 'تفعيل'}
+                </button>
+                <button type="button" class="admin-btn" onclick="deleteObjectiveItem('${o.id}')" style="padding: 4px 10px; font-size: 0.78rem; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 0; border-radius: 6px; cursor: pointer;" title="حذف">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    })
+    .catch(err => {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444;">تعذر تحميل المهام: ${err.message}</td></tr>`;
+    });
+};
+
+window.toggleObjectiveStatus = function(id) {
+  fetch('/api/admin/objectives/toggle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: id })
+  })
+  .then(res => res.json())
+  .then(data => {
+    loadAdminObjectivesTable();
+  })
+  .catch(err => alert("خطأ في تحديث الحالة."));
+};
+
+window.deleteObjectiveItem = function(id) {
+  if (!confirm("هل أنت متأكد من رغبتك في حذف هذه المجموعة من المتجر؟")) return;
+  fetch('/api/admin/objectives/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: id })
+  })
+  .then(res => res.json())
+  .then(data => {
+    loadAdminObjectivesTable();
+  })
+  .catch(err => alert("خطأ أثناء الحذف."));
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.loadAdminObjectivesTable) {
+    window.loadAdminObjectivesTable();
+  }
+});
+
+// ══════════ FULL ADMIN ORDER & CUSTOMER DETAILS MODAL ══════════
+window.openAdminOrderDetailsModal = function(orderId) {
+  try {
+    const order = (adminActiveOrders || []).find(o => String(o.id) === String(orderId));
+    if (!order) {
+      alert("الطلب غير موجود.");
+      return;
+    }
+
+    const shortId = order.id.substring(6, 14);
+    const dateStr = new Date(order.timestamp).toLocaleString('ar-EG', {
+      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+    });
+
+    const statusMap = {
+      pending:     { label: 'معلق', bg: '#fff7ed', color: '#f97316' },
+      paid:        { label: 'تم الدفع', bg: '#eff6ff', color: '#3b82f6' },
+      in_progress: { label: 'قيد التنفيذ', bg: '#faf5ff', color: '#a855f7' },
+      completed:   { label: 'تم التنفيذ', bg: '#ecfdf5', color: '#10b981' },
+      cancelled:   { label: 'ملغي', bg: '#fef2f2', color: '#ef4444' }
+    };
+    const st = statusMap[order.status] || statusMap.pending;
+
+    // Header info
+    const odmOrderId = document.getElementById('odmOrderId');
+    if (odmOrderId) {
+      odmOrderId.textContent = '#' + shortId;
+      odmOrderId.setAttribute('data-full-id', order.id);
+    }
+    const stBadge = document.getElementById('odmStatusBadge');
+    if (stBadge) {
+      stBadge.textContent = st.label;
+      stBadge.style.background = st.bg;
+      stBadge.style.color = st.color;
+    }
+    const platBadge = document.getElementById('odmPlatformBadge');
+    if (platBadge) {
+      platBadge.textContent = order.platform === 'pc' ? 'PC' : 'Console';
+      platBadge.style.background = order.platform === 'pc' ? '#6366f1' : '#2563eb';
+    }
+    const payBadge = document.getElementById('odmPaymentBadge');
+    if (payBadge) {
+      const isWA = order.paymentMethod === 'whatsapp' || (order.service && order.service.includes('واتساب'));
+      payBadge.textContent = isWA ? 'تحويل واتساب' : 'دفع إلكتروني (PayTabs)';
+      payBadge.style.background = isWA ? '#16a34a' : '#2563eb';
+    }
+    const dateEl = document.getElementById('odmDateStr');
+    if (dateEl) dateEl.textContent = dateStr;
+
+    // Customer Card
+    const nameEl = document.getElementById('odmCustomerName');
+    if (nameEl) nameEl.textContent = order.customerName || 'زائر';
+    const phoneEl = document.getElementById('odmCustomerPhone');
+    if (phoneEl) phoneEl.textContent = order.customerPhone || 'غير محدد';
+    const emailEl = document.getElementById('odmCustomerEmail');
+    if (emailEl) emailEl.textContent = order.customerEmail || order.eaEmail || '—';
+    
+    // WhatsApp direct link
+    const waLink = document.getElementById('odmWhatsAppLink');
+    if (waLink) {
+      const cleanPhone = (order.customerPhone || '').replace(/[^0-9]/g, '');
+      const waMsg = encodeURIComponent(`مرحباً ${order.customerName || ''} 👋، بخصوص طلبك رقم #${shortId} (${order.service || ''}) من متجر Trivela:`);
+      waLink.href = `https://wa.me/${cleanPhone || '962775585112'}?text=${waMsg}`;
+    }
+
+    // Points / Coupon info
+    const couponDisc = document.getElementById('odmCouponDiscount');
+    if (couponDisc) {
+      const parts = [];
+      if (order.couponCode) parts.push(`كوبون: ${order.couponCode}`);
+      if (order.pointsUsed) parts.push(`نقاط: ${order.pointsUsed}`);
+      couponDisc.textContent = parts.length > 0 ? parts.join(' | ') : 'لا يوجد خصم إضافي';
+    }
+
+    // Service & Financials
+    const srvDesc = document.getElementById('odmServiceDesc');
+    if (srvDesc) srvDesc.textContent = order.service || '—';
+    const priceEl = document.getElementById('odmPriceSAR');
+    if (priceEl) priceEl.textContent = `${(order.priceSAR || 0).toLocaleString()} ر.س`;
+    const payMethodText = document.getElementById('odmPaymentMethodText');
+    if (payMethodText) payMethodText.textContent = order.paymentMethod === 'whatsapp' ? '📱 تحويل مباشر عبر الواتساب' : '💳 دفع إلكتروني فوري (PayTabs)';
+    
+    const profitText = document.getElementById('odmProfitText');
+    if (profitText) {
+      const cost = order.supplierCost || 0;
+      const profit = (order.priceSAR || 0) - cost;
+      profitText.textContent = `تكلفة: ${cost} ر.س | ربح: ${profit.toLocaleString()} ر.س`;
+    }
+
+    // EA Credentials & Codes
+    const eaCard = document.getElementById('odmEaCredentialsCard');
+    const eaEmail = order.eaEmail || order.sonyEmail || '';
+    const eaPass = order.eaPassword || order.sonyPassword || '';
+    const codes = (order.backupCodes && order.backupCodes.length > 0)
+      ? order.backupCodes
+      : [order.backupCode1 || order.sonyBackupCode1, order.backupCode2 || order.sonyBackupCode2, order.backupCode3 || order.sonyBackupCode3].filter(Boolean);
+
+    if (eaEmail || eaPass || codes.length > 0) {
+      if (eaCard) eaCard.style.display = 'block';
+      const eaEmailEl = document.getElementById('odmEaEmail');
+      if (eaEmailEl) eaEmailEl.textContent = eaEmail || '—';
+      const passEl = document.getElementById('odmEaPassword');
+      if (passEl) {
+        passEl.setAttribute('data-raw', eaPass);
+        passEl.textContent = '••••••••';
+      }
+
+      const codesRow = document.getElementById('odmBackupCodesRow');
+      if (codesRow) {
+        if (codes.length === 0) {
+          codesRow.innerHTML = '<span style="color:#94a3b8; font-size:0.85rem;">لم يتم إدخال رموز احتياطية (قد يحتاج مساعدة الدعم)</span>';
+        } else {
+          codesRow.innerHTML = codes.map((c, i) => `
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 6px 12px; display: flex; align-items: center; gap: 8px;">
+              <span style="font-size:0.75rem; color:#1e40af; font-weight:700;">رمز ${i+1}:</span>
+              <strong style="font-family:'Montserrat',sans-serif; font-size:0.9rem; letter-spacing:1px; color:#0f172a;">${c}</strong>
+              <button type="button" onclick="copyText('${c}')" style="background:none; border:0; color:#2563eb; cursor:pointer; font-size:0.85rem;" title="نسخ"><i class="fas fa-copy"></i></button>
+            </div>
+          `).join('');
+        }
+      }
+    } else {
+      if (eaCard) eaCard.style.display = 'none';
+    }
+
+    // Notes
+    const cNotes = document.getElementById('odmCustomerNotes');
+    if (cNotes) cNotes.textContent = order.notes || order.orderNotes || 'لا توجد ملاحظات من العميل.';
+    const aNotesInp = document.getElementById('odmAdminNotesInput');
+    if (aNotesInp) aNotesInp.value = order.adminNotes || '';
+
+    // Action buttons display logic based on status
+    const btnConfirmPay = document.getElementById('odmBtnConfirmPay');
+    const btnSendSupplier = document.getElementById('odmBtnSendSupplier');
+    const btnDone = document.getElementById('odmBtnDone');
+    const btnCancel = document.getElementById('odmBtnCancel');
+
+    if (btnConfirmPay) btnConfirmPay.style.display = order.status === 'pending' ? 'inline-flex' : 'none';
+    if (btnSendSupplier) btnSendSupplier.style.display = order.status === 'paid' ? 'inline-flex' : 'none';
+    if (btnDone) btnDone.style.display = order.status === 'in_progress' ? 'inline-flex' : 'none';
+    if (btnCancel) btnCancel.style.display = order.status !== 'completed' && order.status !== 'cancelled' ? 'inline-flex' : 'none';
+
+    const modal = document.getElementById('adminOrderDetailsModal');
+    if (modal) modal.style.display = 'flex';
+  } catch (err) {
+    console.error("Error opening admin order details modal:", err);
+  }
+};
+
+window.closeAdminOrderDetailsModal = function() {
+  const modal = document.getElementById('adminOrderDetailsModal');
+  if (modal) modal.style.display = 'none';
+};
+
+window.toggleOdmPassVisibility = function() {
+  const passEl = document.getElementById('odmEaPassword');
+  const icon = document.getElementById('odmPassEyeIcon');
+  if (!passEl) return;
+  const raw = passEl.getAttribute('data-raw') || '';
+  if (passEl.textContent === '••••••••') {
+    passEl.textContent = raw;
+    if (icon) icon.className = 'fas fa-eye-slash';
+  } else {
+    passEl.textContent = '••••••••';
+    if (icon) icon.className = 'fas fa-eye';
+  }
+};
+
+window.copyAllEaDetailsModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  const order = (adminActiveOrders || []).find(o => String(o.id) === String(orderId));
+  if (!order) return;
+  const email = order.eaEmail || order.sonyEmail || '';
+  const pass = order.eaPassword || order.sonyPassword || '';
+  const codes = (order.backupCodes && order.backupCodes.length > 0)
+    ? order.backupCodes
+    : [order.backupCode1 || order.sonyBackupCode1, order.backupCode2 || order.sonyBackupCode2, order.backupCode3 || order.sonyBackupCode3].filter(Boolean);
+
+  const text = `بيانات حساب الطلب #${order.id.substring(6, 14)}:\nالبريد: ${email}\nكلمة المرور: ${pass}\nالرموز الاحتياطية:\n${codes.map((c, i) => `${i+1}) ${c}`).join('\n')}`;
+  copyText(text);
+};
+
+window.saveAdminOrderNotesModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  const notes = document.getElementById('odmAdminNotesInput').value.trim();
+  fetch(`/api/admin/orders/${orderId}/notes`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ adminNotes: notes })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data && data.success) {
+      alert("✅ تم حفظ الملاحظات بنجاح!");
+      const order = (adminActiveOrders || []).find(o => String(o.id) === String(orderId));
+      if (order) order.adminNotes = notes;
+      if (typeof renderOrdersList === 'function') renderOrdersList(adminActiveOrders);
+    } else {
+      alert("حدث خطأ أثناء حفظ الملاحظات.");
+    }
+  });
+};
+
+window.contactCustomerModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  if (typeof contactCustomerWhatsApp === 'function') contactCustomerWhatsApp(orderId);
+};
+
+window.confirmPaymentModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  const order = (adminActiveOrders || []).find(o => String(o.id) === String(orderId));
+  if (order) {
+    if (typeof confirmPayment === 'function') confirmPayment(orderId, order.priceSAR);
+    closeAdminOrderDetailsModal();
+  }
+};
+
+window.sendToSupplierModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  if (typeof sendToSupplier === 'function') sendToSupplier(orderId);
+  closeAdminOrderDetailsModal();
+};
+
+window.markDoneModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  if (typeof markSupplierDone === 'function') markSupplierDone(orderId);
+  closeAdminOrderDetailsModal();
+};
+
+window.cancelOrderModal = function() {
+  const orderId = document.getElementById('odmOrderId').getAttribute('data-full-id');
+  if (typeof cancelOrder === 'function') cancelOrder(orderId);
+  closeAdminOrderDetailsModal();
+};
+

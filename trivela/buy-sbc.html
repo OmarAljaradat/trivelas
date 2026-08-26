@@ -5,11 +5,18 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>حل تحديات الـ SBC | Trivela</title>
+  <meta name="description" content="حل تحديات بناء التشكيلات SBC في FIFA 27 بأقل تكلفة كوينز ممكنة وسرعة متناهية. خبراء محترفون بأمان تام."/>
+  <meta property="og:title" content="حل تحديات الـ SBC | Trivela"/>
+  <meta property="og:description" content="حل تحديات بناء التشكيلات SBC في FIFA 27 بأقل تكلفة كوينز ممكنة وسرعة متناهية."/>
+  <meta property="og:image" content="logo-official.png"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:locale" content="ar_SA"/>
+  <meta property="og:site_name" content="Trivela"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css?v=3.5"/>
   <style>
     /* ═══════════ SBC TABS — Same system as Objectives ═══════════ */
 
@@ -59,26 +66,22 @@
 
     /* Count badge per tab */
     .obj-tab-badge {
-      position: absolute;
-      top: -5px;
-      left: -5px;
-      background: #10b981;
-      color: #fff;
-      font-size: 0.62rem;
-      font-weight: 800;
-      width: 17px;
-      height: 17px;
-      border-radius: 50%;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      opacity: 0;
-      transform: scale(0.5);
-      transition: all 0.2s ease;
+      background: rgba(48, 83, 136, 0.12);
+      color: #305388;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-right: 6px;
+      transition: all 0.25s ease;
     }
-    .obj-tab-badge.visible {
-      opacity: 1;
-      transform: scale(1);
+    .obj-tab-btn.active .obj-tab-badge {
+      background: rgba(255, 255, 255, 0.28);
+      color: #ffffff;
     }
 
     /* ═══════════ SBC CARDS GRID ═══════════ */
@@ -317,46 +320,85 @@
   </header>
 
   <!-- ══════════ MAIN CONTENT ══════════ -->
-  <main class="buy-main-container" style="max-width: 1200px; padding-bottom: 60px;">
+  <main class="buy-main-container">
     <div class="buy-card">
 
-      <!-- Premium Gaming Hero Banner -->
       <!-- Premium Gaming Hero Banner -->
       <div class="catalog-hero-banner" style="margin-bottom: 25px;">
         <div class="catalog-hero-content" style="display: block; text-align: center;">
           <div class="catalog-hero-text" style="display: flex; flex-direction: column; gap: 12px; width: 100%; align-items: center; text-align: center;">
-            <h1 class="catalog-hero-title" id="cms_sbcTitle" style="text-align: center; border-bottom: 0; padding-bottom: 0;">حل تحديات الـ SBC (تحديات بناء التشكيلة)</h1>
-            <p class="catalog-hero-desc" id="cms_sbcDesc" style="text-align: center; margin: 0 auto; max-width: 800px;">نوفر لك حلولاً كاملة وآمنة بنسبة 100% لتحديات اللاعبين والترقيات والفاونديشن بأفضل أسعار السوق.</p>
+            <h1 class="catalog-hero-title" id="cms_sbcTitle" style="text-align: center; border-bottom: 0; padding-bottom: 0;">حل تحديات بناء التشكيلات (SBC)</h1>
+            <p class="catalog-hero-desc" id="cms_sbcDesc" style="text-align: center; margin: 0 auto; max-width: 800px;">نكمل لك أي تحدي للاعبين أو بكجات بأقل تكلفة كوينز ممكنة وبسرعة متناهية.</p>
             <div class="catalog-hero-hint" style="margin-top: 6px; justify-content: center; width: fit-content; display: inline-flex;">
               <i class="far fa-lightbulb"></i>
-              <span id="cms_sbcHint">اضغط على التحدي لتعبئة البيانات وإتمام الشراء</span>
+              <span id="cms_sbcHint">اختر التحدي المطلوب وأدخل تفاصيل الحساب للبدء</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ═══ CATEGORY TABS — Same style as Objectives ═══ -->
+      <!-- ═══ FEATURE 5: SBC TRUST RIBBON ═══ -->
+      <div class="sbc-trust-ribbon">
+        <div class="sbc-trust-item">
+          <i class="fas fa-shield-cat"></i>
+          <span>حل التحديات بأمان 100% وبدون لمس تشكيلتك الرئيسية</span>
+        </div>
+        <div class="sbc-trust-item">
+          <i class="fas fa-bolt"></i>
+          <span>تنفيذ فوري واحترافي بأقل تكلفة كوينز ممكنة</span>
+        </div>
+        <div class="sbc-trust-item">
+          <i class="fas fa-certificate"></i>
+          <span>ضمان شامل حتى تسلم الجائزة للحساب</span>
+        </div>
+      </div>
+
+      <!-- ═══ FEATURE 2: PLATFORM SWITCHER ═══ -->
+      <div class="sbc-platform-switcher">
+        <button type="button" class="sbc-platform-btn active" id="platformConsoleBtn" onclick="switchSbcPlatform('console', this)">
+          <i class="fas fa-gamepad"></i>
+          <span>سوني / إكس بوكس</span>
+          <span class="platform-mini-tag">Console</span>
+        </button>
+        <button type="button" class="sbc-platform-btn" id="platformPcBtn" onclick="switchSbcPlatform('pc', this)">
+          <i class="fas fa-desktop"></i>
+          <span>الكمبيوتر</span>
+          <span class="platform-mini-tag">PC</span>
+        </button>
+      </div>
+
+      <!-- ═══ CATEGORY TABS ═══ -->
       <div class="obj-tabs-bar">
         <button type="button" class="obj-tab-btn active" id="tab-all" onclick="filterCategory('all', this)">
-          <span class="obj-tab-badge" id="badge-all"></span>
           <i class="fas fa-border-all"></i>
-          الكل
+          <span>الكل</span>
+          <span class="obj-tab-badge" id="badge-all">0</span>
         </button>
         <button type="button" class="obj-tab-btn" id="tab-players" onclick="filterCategory('players', this)">
-          <span class="obj-tab-badge" id="badge-players"></span>
           <i class="fas fa-user-shield"></i>
-          تحديات اللاعبين
+          <span>تحديات اللاعبين</span>
+          <span class="obj-tab-badge" id="badge-players">0</span>
         </button>
         <button type="button" class="obj-tab-btn" id="tab-upgrades" onclick="filterCategory('upgrades', this)">
-          <span class="obj-tab-badge" id="badge-upgrades"></span>
           <i class="fas fa-arrow-trend-up"></i>
-          الترقيات
+          <span>الترقيات</span>
+          <span class="obj-tab-badge" id="badge-upgrades">0</span>
         </button>
         <button type="button" class="obj-tab-btn" id="tab-foundation" onclick="filterCategory('foundation', this)">
-          <span class="obj-tab-badge" id="badge-foundation"></span>
           <i class="fas fa-layer-group"></i>
-          الـ Foundation
+          <span>الـ Foundation</span>
+          <span class="obj-tab-badge" id="badge-foundation">0</span>
         </button>
+      </div>
+
+
+
+      <!-- SBC Search Bar -->
+      <div class="sbc-search-wrapper" style="margin-bottom: 24px; position: relative;">
+        <div style="position: relative; display: flex; width: 100%;">
+          <input type="text" id="sbcSearchInput" placeholder="ابحث عن التحدي SBC..." style="width: 100%; padding: 12px 48px 12px 16px; border: 1.5px solid #cbd5e1; border-radius: 14px; font-family: 'Cairo', sans-serif; font-size: 0.95rem; font-weight: 700; color: #1e293b; background: #f8fafc; transition: all 0.3s ease; text-align: right; box-shadow: 0 2px 8px rgba(0,0,0,0.02);" onfocus="this.style.borderColor='#ca8a04'; this.style.background='#ffffff'; this.style.boxShadow='0 4px 12px rgba(202, 138, 4, 0.08)';" onblur="this.style.borderColor='#cbd5e1'; this.style.background='#f8fafc'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.02)';" />
+          <i class="fas fa-search" style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem; pointer-events: none;"></i>
+        </div>
       </div>
 
       <!-- Dynamic Grid -->
@@ -368,9 +410,10 @@
         <div class="sbc-skeleton"></div>
         <div class="sbc-skeleton"></div>
         <div class="sbc-skeleton"></div>
-        <div class="sbc-skeleton"></div>
-        <div class="sbc-skeleton"></div>
       </div>
+
+      <!-- SBC Pagination Controls -->
+      <div class="sbc-pagination-wrapper" id="sbcPaginationContainer"></div>
 
     </div>
   </main>
@@ -387,9 +430,9 @@
         </div>
         <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
         <div class="footer-socials">
-          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+          <a href="https://wa.me/962775585112" aria-label="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://www.instagram.com/trivelacoins" aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://tiktok.com/@Trivela" aria-label="TikTok" target="_blank"><i class="fab fa-tiktok"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -435,6 +478,8 @@
 </div>
 
 <script src="src/core/global-currency.js"></script>
+  <script src="src/core/cart.js?v=1.0"></script>
   <script src="buy-sbc.js"></script>
 </body>
 </html>
+

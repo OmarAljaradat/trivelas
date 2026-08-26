@@ -1,0 +1,23 @@
+{
+  "name": "لوحة الموردين | Trivela",
+  "short_name": "تريفيلا موردين",
+  "description": "لوحة تحكم وتجهيز طلبات الكوينز لموردي متجر تريفيلا",
+  "start_url": "/supplier.html",
+  "display": "standalone",
+  "background_color": "#f5f7ff",
+  "theme_color": "#4b46c5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo-official.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-official.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -855,6 +855,7 @@
         <button class="sub-tab-btn" onclick="switchTabWithSub('challenges-panel', this)"><i class="fas fa-gamepad" style="color: #6366f1;"></i> التحديات والمهام</button>
         <button class="sub-tab-btn" onclick="switchTabWithSub('rivals-champions-settings-panel', this)"><i class="fas fa-trophy" style="color: #ec4899;"></i> رايفلز وشامبيونز</button>
         <button class="sub-tab-btn" onclick="switchTabWithSub('coaching-settings-panel', this)"><i class="fas fa-chalkboard-teacher" style="color: #10b981;"></i> التدريب والاستشارات</button>
+        <button class="sub-tab-btn" onclick="switchTabWithSub('bundle-builder-settings-panel', this)"><i class="fas fa-magic" style="color: #4338ca;"></i> منشئ الحزم والخصومات</button>
         <button class="sub-tab-btn" onclick="switchTabWithSub('coupons-panel', this)"><i class="fas fa-ticket-alt" style="color: #a855f7;"></i> الكوبونات</button>
       </div>
       <button class="sub-tab-btn" onclick="switchTabWithSub('settings-panel', this)" style="background: #1e293b; color: #ffffff; font-weight: 700; border-radius: 12px; padding: 8px 16px; border: 0; display: flex; align-items: center; gap: 8px; transition: all 0.2s;"><i class="fas fa-cog" style="color: #94a3b8;"></i> إعدادات المتجر</button>
@@ -2014,6 +2015,104 @@
           </table>
         </div>
       </div>
+
+      <!-- AI Objectives Auto-Importer & Management Card -->
+      <div class="admin-card" style="margin-top: 25px; border: 1.5px solid #6366f1; border-radius: 16px; background: rgba(99, 102, 241, 0.03);">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+          <div>
+            <h2 class="admin-title" style="margin: 0; color: #6366f1;">
+              <i class="fas fa-magic"></i> سحب وإدارة مهام الـ Objectives بالذكاء الاصطناعي (FUT.GG Auto-Importer)
+            </h2>
+            <p style="font-size: 0.85rem; color: var(--text-gray); margin: 4px 0 0 0;">
+              الصق رابط أي مهمة من موقع <strong>FUT.GG</strong> أو <strong>FUTBIN</strong>، وسيقوم النظام فوراً بسحب اسم المجموعة، المهام الفرعية الأربعة، والجوائز والـ XP بالكامل!
+            </p>
+          </div>
+          <span style="background: rgba(99, 102, 241, 0.15); color: #6366f1; font-weight: 800; font-size: 0.75rem; padding: 4px 12px; border-radius: 20px;">
+            <i class="fas fa-bolt"></i> سحب فوري بالـ AI
+          </span>
+        </div>
+
+        <!-- URL Input -->
+        <div style="display: flex; gap: 12px; margin: 16px 0;">
+          <input type="url" id="objFutggUrl" class="admin-input" placeholder="https://www.fut.gg/objectives/12345-kevin-de-bruyne/ أو أي رابط مهمة..." style="flex: 1;"/>
+          <button type="button" class="admin-btn" id="btnObjScrape" onclick="importObjectiveFromFutgg()" style="background: #6366f1; color: white; padding: 10px 24px; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <span class="spinner" id="objScrapeSpinner" style="display: none;"></span>
+            <i class="fas fa-cloud-arrow-down" id="objScrapeIcon"></i>
+            <span>سحب وتحليل المهمة</span>
+          </button>
+        </div>
+
+        <div id="objScrapeStatus" class="status-msg" style="display: none; margin-bottom: 15px;"></div>
+
+        <!-- Objective Live Preview Box -->
+        <div id="objPreviewContainer" style="display: none; background: #ffffff; border: 2px solid #6366f1; border-radius: 16px; padding: 20px; color: #0f172a; margin-top: 15px; box-shadow: 0 4px 16px rgba(99, 102, 241, 0.1);">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 12px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(99, 102, 241, 0.1); color: #6366f1; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                <i class="fas fa-bolt"></i>
+              </div>
+              <div>
+                <input type="text" id="objPreviewName" style="font-size: 1.1rem; font-weight: 800; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px 10px; width: 320px;" placeholder="اسم المجموعة"/>
+                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">معاينة المهمة المسحوبة بالـ AI</div>
+              </div>
+            </div>
+            
+            <!-- Prices -->
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div>
+                <label style="font-size: 0.75rem; font-weight: 700; color: #475569; display: block;">السعر بالريال (SAR):</label>
+                <input type="number" id="objPreviewPriceSAR" style="width: 100px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800;" value="65"/>
+              </div>
+              <div>
+                <label style="font-size: 0.75rem; font-weight: 700; color: #475569; display: block;">السعر بالدولار ($):</label>
+                <input type="number" id="objPreviewPriceUSD" style="width: 80px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800;" value="17"/>
+              </div>
+              <button type="button" class="admin-btn admin-btn-success" onclick="saveImportedObjective()" style="height: 40px; margin-top: 14px; padding: 0 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <i class="fas fa-check"></i> نشر بالمتجر فوراً
+              </button>
+            </div>
+          </div>
+
+          <!-- Reward Banner Preview -->
+          <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 12px 16px; margin: 14px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+            <div style="font-size: 0.88rem; font-weight: 800; color: #92400e;">
+              🎁 <span id="objPreviewRewardText">الجائزة الكبرى للمجموعة</span>
+            </div>
+            <div id="objPreviewPillsContainer" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+          </div>
+
+          <!-- Subtasks List Preview -->
+          <div style="font-weight: 800; font-size: 0.88rem; color: #334155; margin-bottom: 8px;">
+            <i class="fas fa-list-check" style="color: #6366f1;"></i> المهام الفرعية الأربعة المستخرجة:
+          </div>
+          <div id="objPreviewSubtasksList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- Live Objectives Table in Store -->
+        <h3 style="font-size: 1rem; font-weight: 800; color: var(--text-dark); margin: 24px 0 12px 0;">
+          <i class="fas fa-layer-group" style="color: #6366f1;"></i> مجموعات المهام الحالية المعروضة في المتجر:
+        </h3>
+
+        <div style="overflow-x: auto;">
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>المجموعة / المهمة</th>
+                <th>المكافأة النهائية</th>
+                <th>عدد المهام الفرعية</th>
+                <th>السعر (SAR / USD)</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="objectivesTableBody">
+              <tr>
+                <td colspan="6" style="text-align: center; color: var(--text-gray);">جاري تحميل المهام...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- ================= PANEL: Coins Settings ================= -->
@@ -2126,6 +2225,11 @@
               <input type="number" step="0.01" id="champsRankPrice" class="admin-input" required style="width: 100%;"/>
             </div>
 
+            <div class="admin-form-group" style="margin-bottom: 14px;">
+              <label for="champsRankDelivery" style="font-weight: 700; color: var(--text-dark); display: block; margin-bottom: 6px;">وقت التسليم المتوقع (مثال: 12 - 24 ساعة):</label>
+              <input type="text" id="champsRankDelivery" class="admin-input" style="width: 100%;" placeholder="اتركه فارغاً لعرض 'من الصعب التحديد'"/>
+            </div>
+
             <div class="admin-form-group" style="margin-bottom: 20px;">
               <label for="champsRankRewards" style="font-weight: 700; color: var(--text-dark); display: block; margin-bottom: 6px;">قائمة الجوائز (جائزة واحدة في كل سطر):</label>
               <textarea id="champsRankRewards" class="admin-input" style="height: 120px; font-family: inherit; line-height: 1.5; resize: vertical; width: 100%;" required placeholder="مثال:&#10;3× اختيار لاعبين 85+&#10;100,000 كوينز نقدي"></textarea>
@@ -2169,6 +2273,11 @@
             <div class="admin-form-group" style="margin-bottom: 14px;">
               <label for="rivalsRankPrice" style="font-weight: 700; color: var(--text-dark); display: block; margin-bottom: 6px;">سعر الترقية بالدولار ($):</label>
               <input type="number" step="0.01" id="rivalsRankPrice" class="admin-input" required style="width: 100%;"/>
+            </div>
+
+            <div class="admin-form-group" style="margin-bottom: 14px;">
+              <label for="rivalsRankDelivery" style="font-weight: 700; color: var(--text-dark); display: block; margin-bottom: 6px;">وقت التسليم المتوقع (مثال: 12 - 24 ساعة):</label>
+              <input type="text" id="rivalsRankDelivery" class="admin-input" style="width: 100%;" placeholder="اتركه فارغاً لعرض 'من الصعب التحديد'"/>
             </div>
 
             <div class="admin-form-group" style="margin-bottom: 20px;">
@@ -2225,6 +2334,25 @@
           </div>
         </div>
 
+        <!-- Coaching Schedule Settings Card -->
+        <div class="admin-card" style="border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(48,83,136,0.06); background: #ffffff; border: 1.5px solid var(--border-color, #e2e8f0);">
+          <h3 style="margin: 0 0 8px 0; font-family: Cairo, sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--blue-900, #1e3a8a); display: flex; align-items: center; gap: 8px;">
+            <i class="far fa-calendar-check" style="color: var(--gold-secondary, #ca8a04);"></i> تخصيص مواعيد وساعات العمل لكل يوم على حدة
+          </h3>
+          <p style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 20px;">يمكنك تفعيل/تعطيل كل يوم وتحديد وقت بداية ونهاية الجلسات الخاصة بكل يوم بشكل مستقل:</p>
+          
+          <form id="coachingScheduleForm" onsubmit="saveCoachingScheduleSettings(event)">
+            <!-- Rendered Per-day rows dynamically -->
+            <div id="adminScheduleDaysList" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+              <!-- Populated via admin.js -->
+            </div>
+
+            <button type="submit" class="admin-btn admin-btn-primary" style="font-family: Cairo; font-weight: 800; border-radius: 8px;">
+              <i class="fas fa-save"></i> حفظ جدول المواعيد المخصص
+            </button>
+          </form>
+        </div>
+
         <!-- Right Column: Add/Edit Form -->
         <div id="editCoachingPackageFormContainer" class="admin-card" style="border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(48,83,136,0.06); margin: 0; display: none;">
           <h3 id="coachingFormTitle" style="margin: 0 0 20px 0; font-family: Cairo, sans-serif; font-weight: 800; font-size: 1rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
@@ -2266,7 +2394,80 @@
             </div>
           </form>
         </div>
+      </div>
+    </div>
 
+    <!-- ================= PANEL: Smart Bundle Builder & Dynamic Pricing Settings ================= -->
+    <div id="bundle-builder-settings-panel" class="admin-panel">
+      <!-- Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); padding: 22px 28px; border-radius: 18px; color: white;">
+        <div>
+          <h2 style="margin: 0 0 6px 0; font-family: Cairo, sans-serif; font-weight: 900; font-size: 1.35rem; color: #ffffff; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-magic" style="color: #fbbf24;"></i> إدارة وتنسيق منشئ الحزم والخصومات الموحد
+          </h2>
+          <p style="margin: 0; font-size: 0.88rem; color: #c7d2fe; font-family: Cairo;">تحكم كامل بأسعار وخصومات سلة الحزم المخصصة (الدمج) وحماية أرباحك في الخدمات مرتفعة التكلفة.</p>
+        </div>
+        <a href="cart.html" target="_blank" class="admin-btn" style="background: #fbbf24; color: #1e1b4b; font-family: Cairo; font-weight: 800; border: 0; border-radius: 10px; padding: 10px 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+          <i class="fas fa-external-link-alt"></i> معاينة سلة الباقات المباشرة
+        </a>
+      </div>
+
+      <!-- Controls Form Grid -->
+      <div class="admin-card" style="border-radius: 16px; padding: 26px; box-shadow: 0 4px 20px rgba(48,83,136,0.06); background: #ffffff; margin-bottom: 24px;">
+        <h3 style="font-family: Cairo; font-weight: 800; font-size: 1.05rem; color: #1e1b4b; margin-bottom: 18px; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-sliders" style="color: #4338ca;"></i> إعدادات نسب الخصوم المخصصة لكل مكوّن
+        </h3>
+
+        <form id="bundleSettingsForm" onsubmit="window.saveBundlePanelSettings(event)">
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label style="font-weight: 800; color: #1e1b4b;">🪙 نسبة خصم الكوينز عند التجميع (%)</label>
+              <input type="number" step="0.5" id="panelBundleCoinsDiscount" class="admin-input" placeholder="5" required/>
+              <span style="font-size: 0.75rem; color: #64748b; margin-top: 4px; display: block;">تُطبق هذه النسبة على قيمة الكوينز في السلة إذا تم اختيار خدمتين أو أكثر.</span>
+            </div>
+            <div class="admin-form-group">
+              <label style="font-weight: 800; color: #1e1b4b;">🏆 نسبة خصم البوستنج والبطولات (%)</label>
+              <input type="number" step="0.5" id="panelBundleBoostingDiscount" class="admin-input" placeholder="15" required/>
+              <span style="font-size: 0.75rem; color: #64748b; margin-top: 4px; display: block;">تُطبق على ريفالز وتشامبيونز (هامش أرباحها عالي فيستحسن الخصم فيها لترغيب العميل).</span>
+            </div>
+          </div>
+
+          <div class="admin-form-row" style="margin-top: 16px;">
+            <div class="admin-form-group">
+              <label style="font-weight: 800; color: #b91c1c;">🧩 نسبة خصم تنفيذ SBC واللاعبين (%) — ينصح بوضعه 0%</label>
+              <input type="number" step="0.5" id="panelBundleSbcDiscount" class="admin-input" placeholder="0" required/>
+              <span style="font-size: 0.75rem; color: #dc2626; margin-top: 4px; display: block; font-weight: 700;">لحماية هامش ربحك من أي خسارة في اللاعبين المكلفين.</span>
+            </div>
+            <div class="admin-form-group">
+              <label style="font-weight: 800; color: #1e1b4b;">🔒 الحد الأقصى لمبلغ الخصم بالحزمة (SAR)</label>
+              <input type="number" id="panelMaxBundleDiscountCap" class="admin-input" placeholder="150" required/>
+              <span style="font-size: 0.75rem; color: #64748b; margin-top: 4px; display: block;">أقصى مبلغ خصم بالريال يُخصم من السلة مهما كبر حجم الطلب.</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <label class="toggle-switch-container" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+              <input type="checkbox" id="panelEnableServicePackages" checked/>
+              <span style="font-family: Cairo; font-weight: 800; color: #1e1b4b; font-size: 0.95rem;">تفعيل صفحة خدمة بناء الحزم والدمج بالمتجر</span>
+            </label>
+
+            <button type="submit" class="admin-btn admin-btn-success" style="font-family: Cairo; font-weight: 800; padding: 12px 28px; font-size: 0.95rem; border-radius: 10px; border: 0; cursor: pointer;">
+              <i class="fas fa-save"></i> حفظ التعديلات فوراً
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- How it Works Guide Card -->
+      <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 16px; padding: 20px; color: #1e3a8a;">
+        <h4 style="margin: 0 0 8px 0; font-family: Cairo; font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-lightbulb" style="color: #2563eb;"></i> كيف يضمن هذا النظام أرباحك كصاحب متجر؟
+        </h4>
+        <ul style="margin: 0; padding-right: 20px; font-size: 0.85rem; line-height: 1.7; font-family: Cairo;">
+          <li>الخصم يطبق <b>فقط</b> عند اختيار 2 خدمات أو أكثر في حزمة واحدة.</li>
+          <li>عندما يختار العميل (كوينز + تشامبيونز)، يحصل على خصم 15% على التشامبيونز و 5% على الكوينز فيسعد بالسعر الممتاز.</li>
+          <li>عندما يضيف العميل (لاعب أو SBC)، لا يطبق أي خصم على سعر SBC (خصم 0%) ليبقى بسعره الطبيعي ولا تخسر من أرباحك نهائياً!</li>
+        </ul>
       </div>
     </div>
 
@@ -3208,8 +3409,8 @@
 
         <!-- Category Tabs -->
         <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1.5px solid var(--blue-100); padding-bottom: 10px; flex-wrap: wrap;">
-          <button type="button" class="marketing-subtab-btn active" onclick="switchMarketingSubTab('direct-attention')" style="font-family: Cairo; font-weight: 700; font-size: 0.82rem; padding: 8px 16px; border: 1px solid var(--blue-500); border-radius: 20px; cursor: pointer; background: rgba(48,83,136,0.1); color: var(--blue-500); transition: all 0.3s ease;">🚀 جذب الانتباه المباشر</button>
-          <button type="button" class="marketing-subtab-btn" onclick="switchMarketingSubTab('interactive-trust')" style="font-family: Cairo; font-weight: 700; font-size: 0.82rem; padding: 8px 16px; border: 1px solid transparent; border-radius: 20px; cursor: pointer; background: transparent; color: var(--text-gray); transition: all 0.3s ease;">🎰 التفاعل وإثبات الثقة</button>
+          <button type="button" class="marketing-subtab-btn active" onclick="switchMarketingSubTab('direct-attention')" style="font-family: Cairo; font-weight: 700; font-size: 0.82rem; padding: 8px 16px; border: 1px solid var(--blue-500); border-radius: 20px; cursor: pointer; background: rgba(48,83,136,0.1); color: var(--blue-500); transition: all 0.3s ease;">🚀 جذب الانتباه المباشر (🌟 الشريط الذهبي)</button>
+          <button type="button" class="marketing-subtab-btn" onclick="switchMarketingSubTab('interactive-trust')" style="font-family: Cairo; font-weight: 700; font-size: 0.82rem; padding: 8px 16px; border: 1px solid transparent; border-radius: 20px; cursor: pointer; background: transparent; color: var(--text-gray); transition: all 0.3s ease;">🎰 التفاعل وإثبات الثقة (🔔 إشعارات الشراء الحية)</button>
           <button type="button" class="marketing-subtab-btn" onclick="switchMarketingSubTab('personalization-recovery')" style="font-family: Cairo; font-weight: 700; font-size: 0.82rem; padding: 8px 16px; border: 1px solid transparent; border-radius: 20px; cursor: pointer; background: transparent; color: var(--text-gray); transition: all 0.3s ease;">👤 التخصيص واسترجاع السلات</button>
         </div>
 
@@ -3336,6 +3537,29 @@
               </div>
             </div>
           </div>
+
+          <!-- Tool 11: Golden Ticker Bar -->
+          <div style="background: var(--blue-50); padding: 18px; border-radius: 16px; border: 1px solid var(--blue-100);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <strong style="font-size: 0.88rem; color: var(--blue-800);"><i class="fas fa-star" style="color:#ca8a04;"></i> 11. شريط الميزات الذهبي المتحرك (Golden Ticker)</strong>
+              <label class="switch-label" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight:700;">
+                <input type="checkbox" id="adGoldTickerActive" style="transform: scale(1.15);" /> تفعيل
+              </label>
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 0.76rem; font-weight:700; color: var(--text-gray); margin-bottom: 4px; display:block;">محتوى الشريط (افصل بين الميزات بـ |):</label>
+              <textarea id="adGoldTickerText" class="admin-input" style="font-size: 0.82rem; padding: 8px; margin:0; height: 50px; resize: none; font-family: Cairo;" placeholder="مثال: شحن آمن 100% ضد البند 🛡️ | تسليم سريع ⚡"></textarea>
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 8px;">
+              <label style="font-size: 0.76rem; font-weight:700; color: var(--text-gray); margin-bottom: 4px; display:block;">سرية حركة الشريط:</label>
+              <select id="adGoldTickerSpeed" class="admin-input" style="font-size: 0.82rem; padding: 6px; margin:0;">
+                <option value="slow">🐢 بطيئة وهادئة</option>
+                <option value="medium">🏃‍♂️ متوسطة (ينصح بها)</option>
+                <option value="fast">⚡ سريعة</option>
+              </select>
+            </div>
+            <span style="font-size: 0.72rem; color: var(--text-gray); display:block; border-top: 1px dashed var(--blue-100); padding-top: 8px; margin-top: 8px;">شريط ذهبي متحرك يظهر في أعلى الصفحة يعرض مميزات المتجر بشكل ملفت وفخم.</span>
+          </div>
         </div>
 
         <!-- ================= PANEL 2: Interactive Trust ================= -->
@@ -3437,6 +3661,54 @@
               </select>
             </div>
             <span style="font-size: 0.72rem; color: var(--text-gray); display:block; border-top: 1px dashed var(--blue-100); padding-top: 8px; margin-top: 8px;">شريط دائري متحرك يسحب عينات حقيقية من جدول التقييمات ويبثها للزوار.</span>
+          </div>
+
+          <!-- Tool 10: Fake Live Purchases -->
+          <div style="background: var(--blue-50); padding: 18px; border-radius: 16px; border: 1px solid var(--blue-100);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <strong style="font-size: 0.88rem; color: var(--blue-800);"><i class="fas fa-bell" style="color:#eab308;"></i> 10. إشعارات الشراء الحية (Fake Live Purchases)</strong>
+              <label class="switch-label" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight:700;">
+                <input type="checkbox" id="adFakeActive" style="transform: scale(1.15);" /> تفعيل
+              </label>
+            </div>
+            <div class="admin-form-row" style="gap: 10px; margin-bottom: 8px;">
+              <div class="admin-form-group" style="margin: 0;">
+                <label style="font-size: 0.76rem; font-weight:700; color: var(--text-gray); margin-bottom: 4px; display:block;">معدل الظهور (ثواني):</label>
+                <input type="number" id="adFakeInterval" class="admin-input" style="font-size: 0.82rem; padding: 8px; margin:0; font-family: Montserrat;" placeholder="مثال: 20" />
+              </div>
+              <div class="admin-form-group" style="margin: 0;">
+                <label style="font-size: 0.76rem; font-weight:700; color: var(--text-gray); margin-bottom: 4px; display:block;">موضع الإشعار:</label>
+                <select id="adFakePosition" class="admin-input" style="font-size: 0.82rem; padding: 6px; margin:0;">
+                  <option value="bottom-left">↙️ أسفل اليسار (افتراضي)</option>
+                  <option value="bottom-right">↘️ أسفل اليمين</option>
+                </select>
+              </div>
+            </div>
+            <!-- Master Suggestion Button -->
+            <button type="button" onclick="generateAllFakeDefaults()" style="width: 100%; margin-top: 4px; margin-bottom: 12px; font-size:0.78rem; padding: 8px 12px; border-radius: 8px; background: linear-gradient(135deg, #ca8a04, #ffd700); border: none; color: #0d1e39; cursor: pointer; font-family: Cairo; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; box-shadow: 0 2px 5px rgba(202,138,4,0.25);"><i class="fas fa-magic"></i> 🪄 توليد تلقائي لبيانات شراء مقترحة (لائحة كاملة)</button>
+
+            <div class="admin-form-group" style="margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="font-size: 0.76rem; font-weight:700; color: var(--text-gray); margin: 0;">أسماء العملاء (مفصولة بفاصلة):</label>
+                <button type="button" onclick="suggestRandomFakeName()" style="font-size:0.7rem; padding: 2px 8px; border-radius: 6px; background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #ca8a04; cursor: pointer; font-family: Cairo; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: all 0.2s;"><i class="fas fa-plus"></i> ✨ إضافة اسم مقترح</button>
+              </div>
+              <textarea id="adFakeNames" class="admin-input" style="font-size: 0.82rem; padding: 8px; margin:0; height: 50px; resize: none; font-family: Cairo;"></textarea>
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="font-size: 0.76rem; font-weight:700; color: var(--text-gray); margin: 0;">مدن / بلدان العملاء (مفصولة بفاصلة):</label>
+                <button type="button" onclick="suggestRandomFakeCity()" style="font-size:0.7rem; padding: 2px 8px; border-radius: 6px; background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #ca8a04; cursor: pointer; font-family: Cairo; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: all 0.2s;"><i class="fas fa-plus"></i> ✨ إضافة مدينة مقترحة</button>
+              </div>
+              <textarea id="adFakeCities" class="admin-input" style="font-size: 0.82rem; padding: 8px; margin:0; height: 50px; resize: none; font-family: Cairo;"></textarea>
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="font-size: 0.76rem; font-weight:700; color: var(--text-gray); margin: 0;">المنتجات والخدمات (كل منتج في سطر):</label>
+                <button type="button" onclick="suggestRandomFakeProduct()" style="font-size:0.7rem; padding: 2px 8px; border-radius: 6px; background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #ca8a04; cursor: pointer; font-family: Cairo; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: all 0.2s;"><i class="fas fa-plus"></i> ✨ إضافة منتج مقترح</button>
+              </div>
+              <textarea id="adFakeProducts" class="admin-input" style="font-size: 0.82rem; padding: 8px; margin:0; height: 70px; resize: vertical; font-family: Cairo;"></textarea>
+            </div>
+            <span style="font-size: 0.72rem; color: var(--text-gray); display:block; border-top: 1px dashed var(--blue-100); padding-top: 8px; margin-top: 8px;">يظهر إشعار منبثق فخم للزائر يوضح عملية شراء حية لزيادة الثقة بالمتجر.</span>
           </div>
         </div>
 
@@ -3661,7 +3933,7 @@
           <div class="admin-form-row">
             <div class="admin-form-group">
               <label for="settingWhatsapp" style="font-weight: 700; color: var(--gold-primary);">رقم اتصال واتساب (بمفتاح الدولة)</label>
-              <input type="text" id="settingWhatsapp" class="admin-input" placeholder="مثال: 966500000000" required/>
+              <input type="text" id="settingWhatsapp" class="admin-input" placeholder="مثال: 962775585112" required/>
             </div>
             <div class="admin-form-group">
               <label for="settingInstagram" style="font-weight: 700; color: var(--gold-primary);">رابط صفحة الإنستغرام</label>
@@ -3676,9 +3948,69 @@
               <label for="settingPointsDiscount" style="font-weight: 700; color: var(--gold-primary);">معدل خصم نقاط الولاء (عدد النقاط لخصم دولار واحد)</label>
               <input type="number" step="0.1" id="settingPointsDiscount" class="admin-input" required/>
             </div>
-            <div class="admin-form-group" style="opacity: 0; pointer-events: none;">
-              <label>Placeholder</label>
-              <input type="text" class="admin-input"/>
+            <div class="admin-form-group">
+              <label for="settingTiktok" style="font-weight: 700; color: var(--gold-primary);">رابط صفحة التيك توك (TikTok)</label>
+              <input type="url" id="settingTiktok" class="admin-input" placeholder="https://tiktok.com/@..." required/>
+            </div>
+          </div>
+
+          <!-- Section: Telegram Bot Alerts -->
+          <div style="border-top: 1px solid var(--blue-100); margin: 24px 0; padding-top: 20px; background: #f0f9ff; padding: 20px; border-radius: 12px; border: 1px solid #bae6fd;">
+            <h3 style="font-family: Cairo; font-weight: 800; font-size: 1rem; color: #0369a1; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="fab fa-telegram" style="font-size: 1.2rem; color: #0284c7;"></i> إشعارات بوت تليجرام الفورية (Telegram Order Alerts)
+            </h3>
+            <p style="font-size: 0.85rem; color: #0369a1; margin-bottom: 16px; line-height: 1.5;">ستصلك إشعارات فورية على هاتفك عبر تليجرام تحتوي على بيانات الطلبات الجيدة مباشرة فور قيام الزبون بالشراء.</p>
+
+            <div class="admin-form-row">
+              <div class="admin-form-group">
+                <label for="settingTelegramToken" style="font-weight: 700; color: #0369a1;">توكن البوت (Bot Token)</label>
+                <input type="text" id="settingTelegramToken" class="admin-input" placeholder="مثال: 123456789:ABCdefGHIjklMNOpqrs..." style="direction: ltr; font-family: monospace;"/>
+              </div>
+              <div class="admin-form-group">
+                <label for="settingTelegramChatId" style="font-weight: 700; color: #0369a1;">معرف الشات / أدمن (Chat ID)</label>
+                <input type="text" id="settingTelegramChatId" class="admin-input" placeholder="مثال: 987654321" style="direction: ltr; font-family: monospace;"/>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 12px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: 800; color: #0369a1; cursor: pointer;">
+                <input type="checkbox" id="toggleEnableTelegram" checked/>
+                <span>تفعيل تنبيهات تليجرام الفورية عند كل طلب جديد</span>
+              </label>
+
+              <button type="button" class="admin-btn" onclick="testTelegramAlert()" style="background: #0284c7; color: white; border: 0; font-family: Cairo; font-weight: 800; padding: 8px 16px; border-radius: 8px;">
+                <i class="fab fa-telegram-plane"></i> تجربة إرسال إشعار تليجرام
+              </button>
+            </div>
+          </div>
+
+          <!-- Section: Dynamic Bundle Controls per Service -->
+          <div style="border-top: 1px solid var(--blue-100); margin: 24px 0; padding-top: 20px; background: #fdf4ff; padding: 20px; border-radius: 12px; border: 1px solid #f5d0fe;">
+            <h3 style="font-family: Cairo; font-weight: 800; font-size: 1rem; color: #86198f; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-sliders" style="font-size: 1.1rem; color: #a21caf;"></i> تحكم خصومات نظام الحزم الذكي (Smart Bundle Discount Matrix)
+            </h3>
+            <p style="font-size: 0.85rem; color: #86198f; margin-bottom: 16px; line-height: 1.5;">حدد نسبة الخصم المتاحة لكل مكوّن في الحزمة على حدة للحفاظ على هامش أرباحك في الخدمات المكلفة وحظر الخصم العالي على SBC/اللاعبين.</p>
+
+            <div class="admin-form-row">
+              <div class="admin-form-group">
+                <label for="settingBundleCoinsDiscount" style="font-weight: 700; color: #86198f;">خصم الكوينز عند التجميع (%)</label>
+                <input type="number" step="0.5" id="settingBundleCoinsDiscount" class="admin-input" placeholder="مثال: 5" required/>
+              </div>
+              <div class="admin-form-group">
+                <label for="settingBundleBoostingDiscount" style="font-weight: 700; color: #86198f;">خصم البوستنج / ريفالز وتشامبيونز (%)</label>
+                <input type="number" step="0.5" id="settingBundleBoostingDiscount" class="admin-input" placeholder="مثال: 15" required/>
+              </div>
+            </div>
+
+            <div class="admin-form-row" style="margin-top: 12px;">
+              <div class="admin-form-group">
+                <label for="settingBundleSbcDiscount" style="font-weight: 700; color: #86198f;">خصم تنفيذ SBC واللاعبين (%) — ينصح بوضعه 0%</label>
+                <input type="number" step="0.5" id="settingBundleSbcDiscount" class="admin-input" placeholder="0" required/>
+              </div>
+              <div class="admin-form-group">
+                <label for="settingMaxBundleDiscountCap" style="font-weight: 700; color: #86198f;">الحد الأقصى لمبلغ الخصم بالحزمة (SAR)</label>
+                <input type="number" id="settingMaxBundleDiscountCap" class="admin-input" placeholder="150" required/>
+              </div>
             </div>
           </div>
 
@@ -3748,6 +4080,40 @@
                 <span style="font-family: Cairo; font-weight: 700; font-size: 0.8rem; color: var(--blue-700);">التدريب المباشر (Coaching)</span>
                 <label class="switch" style="scale: 0.85;">
                   <input type="checkbox" id="toggleServiceCoaching" checked/>
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: System Modules Control -->
+          <div style="border-top: 1px solid var(--blue-100); margin: 24px 0; padding-top: 20px;">
+            <h3 style="font-family: Cairo; font-weight: 800; font-size: 0.95rem; color: var(--blue-700); margin-bottom: 5px;"><i class="fas fa-toggle-on" style="color: var(--blue-500);"></i> تفعيل وإيقاف الأنظمة الإضافية (Modules Control)</h3>
+            <p style="color: var(--text-gray); font-size: 0.72rem; margin-bottom: 15px;">تتيح لك هذه الإعدادات إيقاف أو تشغيل الأنظمة بالكامل؛ بحيث تختفي من واجهة المستخدم وتتوقف تماماً في الخلفية.</p>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 10px;">
+              <div class="switch-container" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: rgba(99, 102, 241, 0.03); border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.1);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <i class="fas fa-search-location" style="color: #6366f1; font-size: 1.1rem;"></i>
+                  <div>
+                    <span style="font-family: Cairo; font-weight: 700; font-size: 0.85rem; color: var(--blue-700); display: block;">تفعيل نظام تتبع الطلبات للعملاء (Tracking)</span>
+                    <span style="font-size: 0.7rem; color: var(--text-gray);">إخفاء/إظهار روابط تتبع الطلبات وحظر صفحة التتبع بالكامل.</span>
+                  </div>
+                </div>
+                <label class="switch" style="scale: 0.85;">
+                  <input type="checkbox" id="settingEnableTracking" checked/>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="switch-container" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: rgba(99, 102, 241, 0.03); border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.1);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <i class="fas fa-truck-loading" style="color: #6366f1; font-size: 1.1rem;"></i>
+                  <div>
+                    <span style="font-family: Cairo; font-weight: 700; font-size: 0.85rem; color: var(--blue-700); display: block;">تفعيل بوابة الموردين (Supplier Portal)</span>
+                    <span style="font-size: 0.7rem; color: var(--text-gray);">إتاحة أو حظر وصول الموردين للبوابة وإرسال إشعارات الطلبات.</span>
+                  </div>
+                </div>
+                <label class="switch" style="scale: 0.85;">
+                  <input type="checkbox" id="settingEnableSupplier" checked/>
                   <span class="slider"></span>
                 </label>
               </div>
@@ -3970,6 +4336,176 @@
         </button>
       </form>
     </div>
+  <!-- ══════════ FULL CUSTOMER & ORDER DETAILS MODAL ══════════ -->
+  <div id="adminOrderDetailsModal" class="admin-modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; overflow-y: auto; background: rgba(9, 14, 23, 0.75); justify-content: center; align-items: center; backdrop-filter: blur(6px); padding: 20px; box-sizing: border-box;">
+    <div style="background: #ffffff; border-radius: 20px; width: 850px; max-width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.25); box-sizing: border-box; direction: rtl; text-align: right; overflow: hidden; display: flex; flex-direction: column; max-height: 90vh;">
+      
+      <!-- Modal Header -->
+      <div style="background: #0f172a; color: #ffffff; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <span style="font-family: 'Montserrat', sans-serif; font-size: 1.15rem; font-weight: 900; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.3);" id="odmOrderId">#ORDER-ID</span>
+          <button type="button" onclick="copyText(document.getElementById('odmOrderId').textContent.replace('#',''))" style="background: rgba(255,255,255,0.1); border: 0; color: #fff; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 0.8rem;" title="نسخ رقم الطلب"><i class="fas fa-copy"></i></button>
+          <span id="odmStatusBadge" style="padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 800;">معلق</span>
+          <span id="odmPlatformBadge" style="padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 800; background: #2563eb; color: #fff;">Console</span>
+          <span id="odmPaymentBadge" style="padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 800; background: rgba(255,255,255,0.15); color: #fff;">PayTabs</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span id="odmDateStr" style="font-size: 0.82rem; color: #94a3b8; font-family: 'Montserrat', 'Cairo', sans-serif;">—</span>
+          <button type="button" onclick="closeAdminOrderDetailsModal()" style="background: rgba(255,255,255,0.1); border: 0; color: #ffffff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;"><i class="fas fa-times"></i></button>
+        </div>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div style="padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 20px; font-family: 'Cairo', sans-serif;">
+        
+        <!-- Grid: Customer Info & Financial Summary -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          
+          <!-- 1. Customer Card -->
+          <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 16px;">
+            <div style="font-weight: 800; font-size: 0.95rem; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-user-circle" style="color: #2563eb; font-size: 1.1rem;"></i>
+              <span>بيانات العميل (Customer Profile)</span>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #64748b; font-size: 0.85rem;">اسم العميل:</span>
+                <strong id="odmCustomerName" style="color: #0f172a; font-size: 0.95rem;">—</strong>
+              </div>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #64748b; font-size: 0.85rem;">رقم الواتساب:</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <strong id="odmCustomerPhone" style="color: #0f172a; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; direction: ltr;">—</strong>
+                  <button type="button" onclick="copyText(document.getElementById('odmCustomerPhone').textContent)" style="background: none; border: 0; color: #2563eb; cursor: pointer;" title="نسخ الرقم"><i class="fas fa-copy"></i></button>
+                  <a id="odmWhatsAppLink" href="#" target="_blank" style="background: #25d366; color: #fff; padding: 3px 10px; border-radius: 8px; font-size: 0.76rem; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                    <i class="fab fa-whatsapp"></i> محادثة
+                  </a>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #64748b; font-size: 0.85rem;">البريد الإلكتروني:</span>
+                <span id="odmCustomerEmail" style="color: #0f172a; font-family: 'Montserrat', sans-serif; font-size: 0.85rem;">—</span>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center;" id="odmPointsRow">
+                <span style="color: #64748b; font-size: 0.85rem;">كوبون / نقاط مستخدمة:</span>
+                <span id="odmCouponDiscount" style="color: #7c3aed; font-weight: 800; font-size: 0.85rem;">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Order & Financial Summary Card -->
+          <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 16px;">
+            <div style="font-weight: 800; font-size: 0.95rem; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-receipt" style="color: #ca8a04; font-size: 1.1rem;"></i>
+              <span>الخدمة والبيانات المالية</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div>
+                <span style="color: #64748b; font-size: 0.82rem; display: block; margin-bottom: 2px;">الخدمة المطلوبة:</span>
+                <div id="odmServiceDesc" style="font-weight: 800; color: #0f172a; font-size: 0.95rem; line-height: 1.4;">—</div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #cbd5e1; padding-top: 8px; margin-top: 4px;">
+                <span style="color: #64748b; font-size: 0.85rem;">المبلغ الإجمالي:</span>
+                <strong id="odmPriceSAR" style="color: #10b981; font-family: 'Montserrat', 'Cairo', sans-serif; font-size: 1.2rem; font-weight: 900;">0.00 ر.س</strong>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #64748b; font-size: 0.85rem;">طريقة الدفع:</span>
+                <strong id="odmPaymentMethodText" style="color: #2563eb; font-size: 0.88rem;">دفع إلكتروني (PayTabs)</strong>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #64748b; font-size: 0.85rem;">تكلفة المورد / الربح:</span>
+                <span id="odmProfitText" style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 0.88rem; color: #ca8a04;">—</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 3. EA Account & Backup Codes Credentials Card -->
+        <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 14px; padding: 18px;" id="odmEaCredentialsCard">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <div style="font-weight: 900; font-size: 0.98rem; color: #1e40af; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-shield-halved" style="color: #2563eb;"></i>
+              <span>بيانات حساب EA للبدء بالشحن والتنفيذ</span>
+            </div>
+            <button type="button" onclick="copyAllEaDetailsModal()" style="background: #2563eb; color: #fff; border: 0; padding: 5px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+              <i class="fas fa-copy"></i> نسخ بيانات الحساب كاملة
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <!-- Email -->
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px;">
+              <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; margin-bottom: 4px;">بريد EA الإلكتروني (Email)</div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span id="odmEaEmail" style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 0.92rem; color: #0f172a; word-break: break-all;">—</span>
+                <button type="button" onclick="copyText(document.getElementById('odmEaEmail').textContent)" style="background: none; border: 0; color: #2563eb; cursor: pointer; padding: 4px;" title="نسخ"><i class="fas fa-copy"></i></button>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px;">
+              <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; margin-bottom: 4px;">كلمة مرور EA (Password)</div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span id="odmEaPassword" style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 0.92rem; color: #0f172a;">—</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <button type="button" onclick="toggleOdmPassVisibility()" style="background: none; border: 0; color: #64748b; cursor: pointer; padding: 4px;" title="إظهار / إخفاء"><i class="fas fa-eye" id="odmPassEyeIcon"></i></button>
+                  <button type="button" onclick="copyText(document.getElementById('odmEaPassword').getAttribute('data-raw') || document.getElementById('odmEaPassword').textContent)" style="background: none; border: 0; color: #2563eb; cursor: pointer; padding: 4px;" title="نسخ"><i class="fas fa-copy"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Backup Codes -->
+          <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px 14px;">
+            <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; margin-bottom: 8px;">الرموز الاحتياطية (Backup Codes):</div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;" id="odmBackupCodesRow">
+              <!-- Injected dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Notes Section -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <!-- Customer Notes -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
+            <div style="font-weight: 800; font-size: 0.85rem; color: #475569; margin-bottom: 6px;"><i class="fas fa-comment"></i> ملاحظات العميل عند الطلب:</div>
+            <div id="odmCustomerNotes" style="font-size: 0.88rem; color: #1e293b; font-style: italic; line-height: 1.4;">لا توجد ملاحظات إضافية.</div>
+          </div>
+
+          <!-- Admin Internal Notes -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
+            <div style="font-weight: 800; font-size: 0.85rem; color: #475569; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+              <span><i class="fas fa-pencil"></i> ملاحظات الإدارة الخاصة:</span>
+              <button type="button" onclick="saveAdminOrderNotesModal()" style="background: #2563eb; color: #fff; border: 0; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">حفظ</button>
+            </div>
+            <textarea id="odmAdminNotesInput" rows="2" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; font-family: inherit; resize: none; box-sizing: border-box;" placeholder="أضف ملاحظة داخلية للطلب..."></textarea>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer Action Bar -->
+      <div style="background: #f1f5f9; border-top: 1.5px solid #e2e8f0; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <button type="button" class="admin-btn" id="odmBtnWhatsApp" onclick="contactCustomerModal()" style="background: #25d366; color: #fff; margin: 0;"><i class="fab fa-whatsapp"></i> إرسال واتساب للعميل</button>
+          <button type="button" class="admin-btn" id="odmBtnConfirmPay" onclick="confirmPaymentModal()" style="background: #3b82f6; color: #fff; margin: 0;"><i class="fas fa-credit-card"></i> تأكيد الدفع</button>
+          <button type="button" class="admin-btn" id="odmBtnSendSupplier" onclick="sendToSupplierModal()" style="background: linear-gradient(135deg,#7c3aed,#a855f7); color: #fff; margin: 0;"><i class="fas fa-truck"></i> إرسال للمورد</button>
+          <button type="button" class="admin-btn" id="odmBtnDone" onclick="markDoneModal()" style="background: linear-gradient(135deg,#059669,#10b981); color: #fff; margin: 0;"><i class="fas fa-check-double"></i> اكتمال الطلب ✅</button>
+          <button type="button" class="admin-btn" id="odmBtnCancel" onclick="cancelOrderModal()" style="background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; margin: 0;"><i class="fas fa-times"></i> إلغاء</button>
+        </div>
+        <button type="button" onclick="closeAdminOrderDetailsModal()" class="admin-btn" style="background: #64748b; color: #fff; margin: 0;">إغلاق</button>
+      </div>
+
+    </div>
   </div>
 
   <script>
@@ -4108,6 +4644,23 @@
                 if (document.getElementById('adTickerActive')) document.getElementById('adTickerActive').checked = !!m.trustTicker.active;
                 if (document.getElementById('adTickerSpeed')) document.getElementById('adTickerSpeed').value = m.trustTicker.speed || "medium";
                 if (document.getElementById('adTickerPosition')) document.getElementById('adTickerPosition').value = m.trustTicker.position || "home-only";
+              }
+
+              // 10. Fake Purchases
+              if (m.fakePurchases) {
+                if (document.getElementById('adFakeActive')) document.getElementById('adFakeActive').checked = !!m.fakePurchases.active;
+                if (document.getElementById('adFakeInterval')) document.getElementById('adFakeInterval').value = m.fakePurchases.interval || 25;
+                if (document.getElementById('adFakePosition')) document.getElementById('adFakePosition').value = m.fakePurchases.position || "bottom-left";
+                if (document.getElementById('adFakeNames')) document.getElementById('adFakeNames').value = m.fakePurchases.names || "";
+                if (document.getElementById('adFakeCities')) document.getElementById('adFakeCities').value = m.fakePurchases.cities || "";
+                if (document.getElementById('adFakeProducts')) document.getElementById('adFakeProducts').value = m.fakePurchases.products || "";
+              }
+
+              // 11. Gold Ticker
+              if (m.goldTicker) {
+                if (document.getElementById('adGoldTickerActive')) document.getElementById('adGoldTickerActive').checked = !!m.goldTicker.active;
+                if (document.getElementById('adGoldTickerText')) document.getElementById('adGoldTickerText').value = m.goldTicker.text || "";
+                if (document.getElementById('adGoldTickerSpeed')) document.getElementById('adGoldTickerSpeed').value = m.goldTicker.speed || "medium";
               }
               
               // 7. Welcome Back
@@ -4256,9 +4809,10 @@
       }
     };
 
-    function switchMarketingSubTab(tabId) {
+    function switchMarketingSubTab(tabId, btnElement) {
       document.querySelectorAll('.marketing-subtab-panel').forEach(p => p.style.display = 'none');
-      document.getElementById(tabId).style.display = 'grid';
+      const targetPanel = document.getElementById(tabId);
+      if (targetPanel) targetPanel.style.display = 'grid';
       
       document.querySelectorAll('.marketing-subtab-btn').forEach(btn => {
         btn.style.background = 'transparent';
@@ -4266,10 +4820,12 @@
         btn.style.borderColor = 'transparent';
       });
       
-      const activeBtn = event.currentTarget;
-      activeBtn.style.background = 'rgba(48,83,136,0.1)';
-      activeBtn.style.color = 'var(--blue-500)';
-      activeBtn.style.borderColor = 'var(--blue-500)';
+      const activeBtn = btnElement || (window.event && window.event.currentTarget) || document.querySelector(`.marketing-subtab-btn[onclick*="${tabId}"]`);
+      if (activeBtn) {
+        activeBtn.style.background = 'rgba(48,83,136,0.1)';
+        activeBtn.style.color = 'var(--blue-500)';
+        activeBtn.style.borderColor = 'var(--blue-500)';
+      }
     }
 
     function saveMarketingSettingsDirectly() {
@@ -4336,6 +4892,19 @@
             active: document.getElementById('adTickerActive').checked,
             speed: document.getElementById('adTickerSpeed').value,
             position: document.getElementById('adTickerPosition').value
+          },
+          fakePurchases: {
+            active: document.getElementById('adFakeActive').checked,
+            interval: parseInt(document.getElementById('adFakeInterval').value) || 25,
+            position: document.getElementById('adFakePosition').value,
+            names: document.getElementById('adFakeNames').value.trim(),
+            cities: document.getElementById('adFakeCities').value.trim(),
+            products: document.getElementById('adFakeProducts').value.trim()
+          },
+          goldTicker: {
+            active: document.getElementById('adGoldTickerActive').checked,
+            text: document.getElementById('adGoldTickerText').value.trim(),
+            speed: document.getElementById('adGoldTickerSpeed').value
           },
           welcomeBack: {
             active: document.getElementById('adWelcomeActive').checked,
@@ -4499,8 +5068,74 @@
       reader.readAsText(file);
       event.target.value = '';
     }
+
+    // --- Fake Purchases Suggestions & Generator ---
+    const presetNames = ["أحمد", "محمد", "عبدالله", "سلطان", "أبو خالد", "فيصل", "خالد", "عبدالرحمن", "سعد", "أبو علي", "فهد", "عمر", "إبراهيم", "صالح", "حمد", "ناصر", "عادل", "يوسف", "ماجد", "راكان", "أبو فهد", "سلمان", "عبدالعزيز", "أبو تميم", "يزيد", "بندر", "تركي", "خليل", "مساعد", "نواف"];
+    const presetCities = ["الرياض", "جدة", "الدمام", "مكة", "المدينة المنورة", "الهفوف", "عمان", "إربد", "الزرقاء", "العقبة", "دبي", "أبوظبي", "الشارقة", "المنامة", "الكويت", "الدوحة", "مسقط", "تبوك", "الطائف", "أبها", "حائل", "الخبر", "الجبيل", "القصيم"];
+    const presetProducts = [
+      "1 مليون كوينز (بلايستيشن)",
+      "500 ألف كوينز (بلايستيشن)",
+      "2 مليون كوينز (بلايستيشن)",
+      "3 مليون كوينز (بلايستيشن)",
+      "تحدي SBC - بطل الأسبوع",
+      "تأهيل Rivals - القسم الأول",
+      "FUT Champions - رانك 2",
+      "باقة الكوينز الذهبية",
+      "جلسة تدريب محترفة (ساعة)",
+      "ترقية ريفالز - ديفجن 1",
+      "شحن 5 مليون كوينز (اكس بوكس)",
+      "تحدي SBC - تشكيلة السنة TOTY"
+    ];
+
+    window.suggestRandomFakeName = function() {
+      const el = document.getElementById('adFakeNames');
+      if (!el) return;
+      const currentList = el.value.split(',').map(n => n.trim()).filter(Boolean);
+      const unusedNames = presetNames.filter(n => !currentList.includes(n));
+      const nameToAdd = unusedNames.length > 0 ? unusedNames[Math.floor(Math.random() * unusedNames.length)] : presetNames[Math.floor(Math.random() * presetNames.length)];
+      
+      if (el.value.trim() === '') {
+        el.value = nameToAdd;
+      } else {
+        el.value = el.value.trim().replace(/,$/, '') + ', ' + nameToAdd;
+      }
+    };
+
+    window.suggestRandomFakeCity = function() {
+      const el = document.getElementById('adFakeCities');
+      if (!el) return;
+      const currentList = el.value.split(',').map(c => c.trim()).filter(Boolean);
+      const unusedCities = presetCities.filter(c => !currentList.includes(c));
+      const cityToAdd = unusedCities.length > 0 ? unusedCities[Math.floor(Math.random() * unusedCities.length)] : presetCities[Math.floor(Math.random() * presetCities.length)];
+      
+      if (el.value.trim() === '') {
+        el.value = cityToAdd;
+      } else {
+        el.value = el.value.trim().replace(/,$/, '') + ', ' + cityToAdd;
+      }
+    };
+
+    window.suggestRandomFakeProduct = function() {
+      const el = document.getElementById('adFakeProducts');
+      if (!el) return;
+      const currentList = el.value.split('\n').map(p => p.trim()).filter(Boolean);
+      const unusedProducts = presetProducts.filter(p => !currentList.includes(p));
+      const productToAdd = unusedProducts.length > 0 ? unusedProducts[Math.floor(Math.random() * unusedProducts.length)] : presetProducts[Math.floor(Math.random() * presetProducts.length)];
+      
+      if (el.value.trim() === '') {
+        el.value = productToAdd;
+      } else {
+        el.value = el.value.trim() + '\n' + productToAdd;
+      }
+    };
+
+    window.generateAllFakeDefaults = function() {
+      document.getElementById('adFakeNames').value = "أحمد, محمد, أبو خالد, سلطان, عبدالله, يوسف, فيصل, خالد, عبدالرحمن, سعد, أبو علي, فهد, عمر, إبراهيم, صالح, حمد, ناصر, عادل";
+      document.getElementById('adFakeCities').value = "الرياض, جدة, الدمام, مكة, المدينة, الهفوف, عمان, إربد, الزرقاء, العقبة, دبي, أبوظبي, الشارقة, المنامة, الكويت";
+      document.getElementById('adFakeProducts').value = presetProducts.slice(0, 8).join('\n');
+    };
   </script>
 
-  <script type="module" src="src/features/admin/adminUI.js?v=5.1"></script>
+  <script type="module" src="src/features/admin/adminUI.js?v=5.6"></script>
 </body>
 </html>

@@ -13,8 +13,8 @@ export const CURRENCIES = {
 export const API_BASE = '/api';
 
 export const DEFAULT_SETTINGS = {
-  whatsappPhone: "966555555555",
-  instagramUrl: "https://instagram.com/TrivelaOfficial",
+  whatsappPhone: "962775585112",
+  instagramUrl: "https://www.instagram.com/trivelacoins",
   maintenanceMode: false,
   baseRateConsole: 2.80,
   baseRatePC: 2.40,

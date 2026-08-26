@@ -1,10 +1,7 @@
 let dynamicSettings = {
-  whatsappPhone: "966500000000",
-  instagramUrl: "https://instagram.com/Trivela",
-  maintenanceMode: false,
-  baseRateConsole: 2.80,
-  baseRatePC: 2.40,
-  pointsDiscountRate: 37.5
+  whatsappPhone: "962775585112",
+  instagramUrl: "https://www.instagram.com/trivelacoins",
+  maintenanceMode: false
 };
 
 const CURRENCIES = {
@@ -19,34 +16,44 @@ const CURRENCIES = {
   EGP: { symbol: 'ج.م', rate: 49.5, dec: 1 }
 };
 
-let currentPlatform = 'console';
-let activeCoachingServices = [];
-let selectedCoachingId = null;
+const COACHING_PACKAGES = {
+  squad: {
+    id: "squad",
+    name: "بناء التشكيلة والتكتيكات (Squad & Tactics Pro)",
+    shortName: "بناء التشكيلة والتكتيكات",
+    priceUSD: 12,
+    priceSAR: 45,
+    icon: "fas fa-chess"
+  },
+  live: {
+    id: "live",
+    name: "تدريب فردي مباشر (1-on-1 Pro Coaching)",
+    shortName: "تدريب فردي مباشر (1-on-1)",
+    priceUSD: 23,
+    priceSAR: 85,
+    icon: "fas fa-headset"
+  },
+  vip: {
+    id: "vip",
+    name: "باقة النخبة الشاملة (VIP Ultimate Masterclass)",
+    shortName: "باقة النخبة الشاملة (VIP)",
+    priceUSD: 40,
+    priceSAR: 150,
+    icon: "fas fa-crown"
+  }
+};
 
-// Loyalty & Coupon State
-let dynamicCoupons = {};
-let activeCoupon = null;
-let usePointsActive = false;
-let userPoints = 0;
-let loggedInName = "";
-let loggedInPhone = "";
+let activePackageKey = "live";
+let selectedPlaystyle = "هجوم مرتد وسريع";
+let uploadedSquadFile = null;
+let uploadedSquadDataUrl = null;
 
-// Fetch configs
 function fetchSettings() {
-  const p1 = fetch('/api/public/content')
+  return fetch('/api/public/content')
     .then(res => res.json())
     .then(data => {
-      if (data.settings) {
-        dynamicSettings = data.settings;
-
-        // Redirect if service is disabled
-        if (dynamicSettings.enableServiceCoaching === false) {
-          alert("عذراً، خدمة التدريب المباشر متوقفة مؤقتاً. سيتم تحويلك للرئيسية.");
-          window.location.href = "/";
-          return;
-        }
-
-        // Apply Exchange Rate Overrides
+      if (data && data.settings) {
+        dynamicSettings = Object.assign(dynamicSettings, data.settings);
         if (dynamicSettings.customExchangeRates) {
           for (const code in dynamicSettings.customExchangeRates) {
             if (CURRENCIES[code]) {
@@ -55,577 +62,302 @@ function fetchSettings() {
           }
         }
       }
-    });
-
-  const p2 = fetch('/api/public/coupons')
-    .then(res => res.json())
-    .then(coupons => {
-      dynamicCoupons = {};
-      (coupons || []).forEach(c => {
-        const isExpired = new Date(c.expiryDate) < new Date();
-        const isLimitReached = (c.usedCount || 0) >= (c.maxUses || 999);
-        if (!isExpired && !isLimitReached) {
-          dynamicCoupons[c.code.toUpperCase()] = c.percent;
-        }
-      });
-    });
-
-  return Promise.all([p1, p2]).catch(err => console.warn("Could not fetch settings dynamically:", err));
-}
-
-// Initialize on page load
-function applyCMSPageContent() {
-  const content = dynamicSettings.content;
-  if (!content || !content.coachingPage) return;
-  const cp = content.coachingPage;
-  
-  const title = document.getElementById('cms_coachingTitle');
-  if (title && cp.title) title.textContent = cp.title;
-
-  const desc = document.getElementById('cms_coachingDesc');
-  if (desc && cp.desc) desc.textContent = cp.desc;
-
-  const hint = document.getElementById('cms_coachingHint');
-  if (hint && cp.hint) hint.textContent = cp.hint;
+    })
+    .catch(err => console.warn("Could not fetch settings dynamically:", err));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchSettings().then(() => {
-    applyCMSPageContent();
-    // Parse url parameter
-    const params = new URLSearchParams(window.location.search);
-    const platParam = params.get('platform');
-    if (platParam && platParam.toLowerCase() === 'pc') {
-      selectPlatform('PC');
-    } else {
-      selectPlatform('Console');
+    selectCoachingPackage('live');
+    updateAllPricesAndSummary();
+
+    const currencySelect = document.getElementById('currencySelect');
+    if (currencySelect) {
+      currencySelect.addEventListener('change', () => {
+        updateAllPricesAndSummary();
+      });
     }
 
-    loadDynamicCoaching();
-    loadUserLoyalty();
+    setupDragAndDrop();
   });
 });
 
-// Load user session loyalty details
-function loadUserLoyalty() {
-  const token = localStorage.getItem('trivela_token');
-  if (!token) return;
+// ══════════ PACKAGE SELECTION ══════════
+window.selectCoachingPackage = function(pkgKey) {
+  if (!COACHING_PACKAGES[pkgKey]) return;
+  activePackageKey = pkgKey;
 
-  fetch('/api/auth/me', {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${token}` }
-  })
-  .then(res => res.json())
-  .then(user => {
-    if (user) {
-      loggedInName = user.name || "";
-      loggedInPhone = user.phone || "";
-      
-      const contactNameInput = document.getElementById('contactName');
-      if (contactNameInput && loggedInName) {
-        contactNameInput.value = loggedInName;
-      }
-      const customerPhoneInput = document.getElementById('customerPhone');
-      if (customerPhoneInput && loggedInPhone) {
-        customerPhoneInput.value = loggedInPhone;
-      }
-
-      if (user.points > 0) {
-        userPoints = user.points;
-        const lblPointsBalance = document.getElementById('lblLoyaltyPointsBalance');
-        if (lblPointsBalance) lblPointsBalance.textContent = userPoints;
-        updatePointsDisplayVal();
-        
-        const loyaltyRow = document.getElementById('loyaltyOptionRow');
-        const loyaltyDivider = document.getElementById('loyaltyPointsDivider');
-        if (loyaltyRow) loyaltyRow.style.display = 'block';
-        if (loyaltyDivider) loyaltyDivider.style.display = 'block';
-        
-        document.getElementById('loyaltyPointsBlock').style.display = 'block';
-        const loyaltyDividerMain = document.getElementById('loyaltyDivider');
-        if (loyaltyDividerMain) loyaltyDividerMain.style.display = 'block';
+  // Toggle card active states
+  ['squad', 'live', 'vip'].forEach(k => {
+    const card = document.getElementById(`pkg_${k}`);
+    const btn = document.getElementById(`btnSelect_${k}`);
+    if (card) card.classList.toggle('active', k === pkgKey);
+    if (btn) {
+      if (k === pkgKey) {
+        btn.innerHTML = `<i class="fas fa-check"></i> <span>الباقة المختارة حالياً</span>`;
+      } else {
+        btn.innerHTML = `<span>اختيار هذه الباقة</span> <i class="fas fa-arrow-left"></i>`;
       }
     }
-  })
-  .catch(err => console.log("User not logged in or session expired."));
-}
+  });
 
-function updatePointsDisplayVal() {
-  const currencySelect = document.getElementById('currencySelect');
-  const selectedCurrency = currencySelect ? currencySelect.value : 'SAR';
-  const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
+  updateAllPricesAndSummary();
+};
 
-  const valUSD = userPoints / 37.5;
-  const valConverted = valUSD * cur.rate;
+// ══════════ PLAYSTYLE SELECTION ══════════
+window.selectPlaystyle = function(btn, styleName) {
+  selectedPlaystyle = styleName;
+  document.querySelectorAll('.playstyle-pill-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+};
 
-  const formattedVal = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: cur.dec,
-    maximumFractionDigits: cur.dec
-  }).format(valConverted) + ' ' + cur.symbol;
+// ══════════ SQUAD IMAGE UPLOAD ══════════
+window.handleCoachingImageSelect = function(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
 
-  const lblDiscount = document.getElementById('lblPointsDiscountSAR');
-  if (lblDiscount) lblDiscount.textContent = formattedVal;
-}
-
-function handleDiscountTypeChange() {
-  const radCoupon = document.getElementById('radCoupon');
-  const couponWrapper = document.getElementById('couponInputWrapper');
-  const pointsWrapper = document.getElementById('pointsInputWrapper');
-
-  if (radCoupon && radCoupon.checked) {
-    if (couponWrapper) couponWrapper.style.display = 'block';
-    if (pointsWrapper) pointsWrapper.style.display = 'none';
-    
-    usePointsActive = false;
-    const link = document.getElementById('btnApplyPoints');
-    if (link) {
-      link.textContent = "اضغط هنا للتفعيل";
-      link.style.color = "#ca8a04";
-    }
-  } else {
-    if (couponWrapper) couponWrapper.style.display = 'none';
-    if (pointsWrapper) pointsWrapper.style.display = 'block';
-    
-    activeCoupon = null;
-    const msg = document.getElementById('couponStatusMessage');
-    if (msg) {
-      msg.textContent = "";
-      msg.className = "coupon-status-msg";
-    }
-    const couponInput = document.getElementById('couponCodeInput');
-    if (couponInput) couponInput.value = "";
-  }
-  updatePriceAndSummary();
-}
-
-function applyCouponCode() {
-  const input = document.getElementById('couponCodeInput');
-  const msg = document.getElementById('couponStatusMessage');
-  if (!input || !msg) return;
-
-  const code = input.value.trim().toUpperCase();
-  if (!code) {
-    msg.textContent = "يرجى إدخال رمز الكوبون.";
-    msg.className = "coupon-status-msg error";
-    activeCoupon = null;
-    updatePriceAndSummary();
+  if (!file.type.startsWith('image/')) {
+    alert("يرجى اختيار ملف صورة صالح (PNG, JPG, JPEG, WebP).");
     return;
   }
 
-  if (dynamicCoupons[code] !== undefined) {
-    activeCoupon = {
-      code: code,
-      percent: dynamicCoupons[code]
-    };
-    msg.className = "coupon-status-msg success";
-    msg.textContent = `تم تطبيق الكوبون بنجاح! خصم ${dynamicCoupons[code]}%`;
-  } else {
-    activeCoupon = null;
-    msg.className = "coupon-status-msg error";
-    msg.textContent = "رمز الكوبون غير صحيح أو منتهي الصلاحية.";
-  }
-  updatePriceAndSummary();
-}
+  uploadedSquadFile = file;
 
-function togglePointsUsage(event) {
-  if (event) event.preventDefault();
-  const link = document.getElementById('btnApplyPoints');
-  if (!link) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    uploadedSquadDataUrl = e.target.result;
+    const previewImg = document.getElementById('squadImgPreview');
+    const promptBox = document.getElementById('uploadPrompt');
+    const previewBox = document.getElementById('imagePreviewContainer');
+    
+    if (previewImg) previewImg.src = uploadedSquadDataUrl;
+    if (promptBox) promptBox.style.display = 'none';
+    if (previewBox) previewBox.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+};
 
-  if (usePointsActive) {
-    usePointsActive = false;
-    link.textContent = "اضغط هنا للتفعيل";
-    link.style.color = "#ca8a04";
-  } else {
-    usePointsActive = true;
-    link.textContent = "تم التفعيل (اضغط للإلغاء)";
-    link.style.color = "#10b981";
-  }
-  updatePriceAndSummary();
-}
+window.removeCoachingImage = function() {
+  uploadedSquadFile = null;
+  uploadedSquadDataUrl = null;
 
-window.handleDiscountTypeChange = handleDiscountTypeChange;
-window.applyCouponCode = applyCouponCode;
-window.togglePointsUsage = togglePointsUsage;
+  const fileInput = document.getElementById('coachingSquadInput');
+  if (fileInput) fileInput.value = '';
 
-function selectPlatform(platform) {
-  const btnPC = document.getElementById('btnPC');
-  const btnConsole = document.getElementById('btnConsole');
+  const previewImg = document.getElementById('squadImgPreview');
+  const promptBox = document.getElementById('uploadPrompt');
+  const previewBox = document.getElementById('imagePreviewContainer');
 
-  if (platform === 'PC') {
-    currentPlatform = 'pc';
-    if (btnPC) btnPC.classList.add('active');
-    if (btnConsole) btnConsole.classList.remove('active');
-  } else {
-    currentPlatform = 'console';
-    if (btnConsole) btnConsole.classList.add('active');
-    if (btnPC) btnPC.classList.remove('active');
-  }
-  updatePriceAndSummary();
-}
+  if (previewImg) previewImg.src = '';
+  if (promptBox) promptBox.style.display = 'block';
+  if (previewBox) previewBox.style.display = 'none';
+};
 
-// Load dynamic coaching from API
-// Load dynamic coaching from settings content CMS
-function loadDynamicCoaching() {
-  const grid = document.getElementById('coachingGrid');
-  if (!grid) return;
+function setupDragAndDrop() {
+  const dropZone = document.getElementById('squadDropZone');
+  if (!dropZone) return;
 
-  activeCoachingServices = (dynamicSettings && dynamicSettings.content && dynamicSettings.content.coaching) || [];
-  
-  if (activeCoachingServices.length === 0) {
-    document.getElementById('noCoachingText').style.display = 'block';
-    grid.innerHTML = '';
-    return;
-  }
-  
-  document.getElementById('noCoachingText').style.display = 'none';
-  renderCoachingList();
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, false);
+  });
 
-  // Check for service URL parameter to auto-select
-  const params = new URLSearchParams(window.location.search);
-  const serviceParam = params.get('service');
-  if (serviceParam) {
-    const found = activeCoachingServices.find(s => s.id === serviceParam);
-    if (found) {
-      selectCoaching(serviceParam);
-      setTimeout(() => {
-        const el = document.getElementById('stepBlock3');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 400);
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, () => {
+      dropZone.style.borderColor = '#2563eb';
+      dropZone.style.background = '#f0fdf4';
+    }, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, () => {
+      dropZone.style.borderColor = '';
+      dropZone.style.background = '';
+    }, false);
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const fileInput = document.getElementById('coachingSquadInput');
+      if (fileInput) {
+        fileInput.files = files;
+        handleCoachingImageSelect({ target: { files: files } });
+      }
     }
-  }
+  }, false);
 }
 
-function renderCoachingList() {
-  const grid = document.getElementById('coachingGrid');
+// ══════════ PRICES & SUMMARY UPDATE ══════════
+function formatPrice(usd, sar) {
   const currencySelect = document.getElementById('currencySelect');
   const selectedCurrency = currencySelect ? currencySelect.value : 'SAR';
   const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
 
-  grid.innerHTML = activeCoachingServices.map(p => {
-    // Convert price (stored as USD in schema, convert based on rate)
-    const priceUSD = p.priceUSD;
-    const finalPriceVal = priceUSD * cur.rate;
-    const formattedPrice = new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: cur.dec,
-      maximumFractionDigits: cur.dec
-    }).format(finalPriceVal) + ' ' + cur.symbol;
-
-    const isActive = p.id === selectedCoachingId ? 'active' : '';
-
-    return `
-      <div class="player-card-btn ${isActive}" onclick="selectCoaching('${p.id}')">
-        <div class="pcb-card-avatar-wrap">
-          <img src="${p.image || 'logo-official.png'}" class="pcb-avatar" alt="${p.name}"/>
-          <span class="pcb-rating"><i class="fas fa-chalkboard-user"></i></span>
-        </div>
-        <div class="pcb-details">
-          <h4 class="pcb-name">${p.name}</h4>
-          <div class="pcb-meta" style="flex-direction:column; align-items:start; gap:4px; margin-bottom:8px;">
-            <p style="font-size:0.75rem; color:var(--text-gray); margin:0; line-height:1.4;">${p.description || ''}</p>
-            <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">
-              ${(p.features || []).map(f => `<span style="background:rgba(48,83,136,0.06); color:var(--blue-600); padding:2px 6px; border-radius:4px; font-size:0.65rem; font-weight:700;">${f}</span>`).join('')}
-            </div>
-          </div>
-          <div class="pcb-price">${formattedPrice}</div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function selectCoaching(id) {
-  selectedCoachingId = id;
-  const btns = document.querySelectorAll('.player-card-btn');
-  btns.forEach(btn => btn.classList.remove('active'));
-  
-  renderCoachingList();
-  updatePriceAndSummary();
-}
-
-function updatePriceAndSummary() {
-  const currencySelect = document.getElementById('currencySelect');
-  const selectedCurrency = currencySelect ? currencySelect.value : 'SAR';
-  const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
-
-  let finalPrice = 0;
-  let summaryText = 'لم يتم اختيار خدمة';
-
-  if (selectedCoachingId) {
-    const service = activeCoachingServices.find(p => p.id === selectedCoachingId);
-    if (service) {
-      finalPrice = service.priceUSD * cur.rate;
-      summaryText = service.name;
-    }
+  let priceVal = sar;
+  if (selectedCurrency !== 'SAR') {
+    priceVal = usd * cur.rate;
   }
 
-  // 1. Coupon Discount
-  let couponDiscountValue = 0;
-  if (activeCoupon) {
-    couponDiscountValue = finalPrice * (activeCoupon.percent / 100);
-    finalPrice -= couponDiscountValue;
-  }
-
-  // 2. Loyalty Points Discount
-  let pointsDiscountValue = 0;
-  let pointsDeducted = 0;
-
-  if (usePointsActive && userPoints > 0) {
-    const maxDiscountUSD = userPoints / 37.5;
-    const maxDiscountConverted = maxDiscountUSD * cur.rate;
-
-    pointsDiscountValue = Math.min(finalPrice, maxDiscountConverted);
-    finalPrice -= pointsDiscountValue;
-    pointsDeducted = Math.round((pointsDiscountValue / cur.rate) * 37.5);
-  }
-
-  const formattedPrice = new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: cur.dec,
     maximumFractionDigits: cur.dec
-  }).format(finalPrice) + ' ' + cur.symbol;
+  }).format(priceVal) + ' ' + cur.symbol;
+}
 
-  document.getElementById('summaryPrice').textContent = formattedPrice;
-  document.getElementById('summaryCoins').textContent = summaryText;
+function updateAllPricesAndSummary() {
+  // Update package cards prices
+  ['squad', 'live', 'vip'].forEach(k => {
+    const el = document.getElementById(`pricePkg_${k}`);
+    if (el) {
+      el.textContent = formatPrice(COACHING_PACKAGES[k].priceUSD, COACHING_PACKAGES[k].priceSAR);
+    }
+  });
 
-  if (userPoints > 0) {
-    updatePointsDisplayVal();
+  const selectedPkg = COACHING_PACKAGES[activePackageKey];
+  const summaryPrice = document.getElementById('summaryPrice');
+  const summaryServiceText = document.getElementById('summaryServiceText');
+
+  if (summaryPrice) {
+    summaryPrice.textContent = formatPrice(selectedPkg.priceUSD, selectedPkg.priceSAR);
+  }
+  if (summaryServiceText) {
+    summaryServiceText.textContent = selectedPkg.name;
   }
 }
 
-// Handle Form submit
-let orderSuccessMsg = '';
-
-// Expose success actions globally
-window.closeSuccessOverlay = function() {
-  const overlay = document.getElementById('orderSuccessOverlay');
-  if (overlay) {
-    overlay.classList.remove('open');
-    window.location.href = 'index.html';
-  }
-}
-
-function handlePurchaseSubmit(event) {
+// ══════════ SUBMIT COACHING ORDER ══════════
+window.handleCoachingSubmit = function(event) {
   event.preventDefault();
 
-  if (!selectedCoachingId) {
-    alert("يرجى اختيار الخدمة أو الاستشارة الفنية للمتابعة.");
-    return;
-  }
+  const selectedPkg = COACHING_PACKAGES[activePackageKey];
+  const name = document.getElementById('customerName').value.trim();
+  const phone = document.getElementById('customerPhone').value.trim();
+  const preferredTime = document.getElementById('preferredTime').value;
+  const discord = (document.getElementById('discordUser')?.value || '').trim();
+  const budgetCoins = (document.getElementById('budgetCoins')?.value || '').trim();
+  const untradeables = (document.getElementById('untradeablePlayers')?.value || '').trim();
+  const coachingNotes = (document.getElementById('coachingNotes')?.value || '').trim();
 
-  const service = activeCoachingServices.find(p => p.id === selectedCoachingId);
-  if (!service) return;
+  const combinedNotes = [
+    `الأسلوب: ${selectedPlaystyle}`,
+    budgetCoins ? `الميزانية: ${budgetCoins}` : '',
+    untradeables ? `اللاعبين الثابتين: ${untradeables}` : '',
+    `الموعد المفضل: ${preferredTime}`,
+    discord ? `ديسكورد: ${discord}` : '',
+    coachingNotes ? `ملاحظات: ${coachingNotes}` : ''
+  ].filter(Boolean).join(' | ');
 
-  const currencySelect = document.getElementById('currencySelect');
-  const selectedCurrency = currencySelect ? currencySelect.value : 'SAR';
-  const cur = CURRENCIES[selectedCurrency] || CURRENCIES.SAR;
-
-  let basePriceVal = (service.priceUSD || (service.priceSAR / 3.75)) * cur.rate;
-  let finalPrice = basePriceVal;
-
-  let couponDiscountValue = 0;
-  let couponDiscountText = '';
-  if (activeCoupon) {
-    couponDiscountValue = finalPrice * (activeCoupon.percent / 100);
-    finalPrice -= couponDiscountValue;
-    
-    const formattedDiscount = new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: cur.dec,
-      maximumFractionDigits: cur.dec
-    }).format(couponDiscountValue) + ' ' + cur.symbol;
-    
-    couponDiscountText = `🏷️ كوبون خصم (${activeCoupon.code}): -${formattedDiscount} (${activeCoupon.percent}%)`;
-  }
-
-  let pointsDeducted = 0;
-  let pointsDiscountValue = 0;
-  let pointsDiscountText = '';
-  
-  if (usePointsActive && userPoints > 0) {
-    const maxDiscountUSD = userPoints / 37.5;
-    const maxDiscountConverted = maxDiscountUSD * cur.rate;
-    
-    pointsDiscountValue = Math.min(finalPrice, maxDiscountConverted);
-    finalPrice -= pointsDiscountValue;
-    pointsDeducted = Math.round((pointsDiscountValue / cur.rate) * 37.5);
-    
-    const formattedDiscount = new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: cur.dec,
-      maximumFractionDigits: cur.dec
-    }).format(pointsDiscountValue) + ' ' + cur.symbol;
-    
-    pointsDiscountText = `🎁 خصم نقاط الولاء: -${formattedDiscount} (${pointsDeducted} نقطة مستخدمة)`;
-  }
-
-  const formattedPrice = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: cur.dec,
-    maximumFractionDigits: cur.dec
-  }).format(finalPrice) + ' ' + cur.symbol;
-
-  const contactName = document.getElementById('contactName').value.trim();
-  const discord = document.getElementById('contactDiscord').value.trim() || 'غير مزود';
-  const notes = document.getElementById('coachingNotes').value.trim() || 'بدون ملاحظات إضافية';
-  const platformName = currentPlatform === 'pc' ? 'بي سي (PC)' : 'بلايستيشن واكس بوكس (Console)';
-
-  let msg = `🎮 طلب حجز خدمة استشارات فنية جديد — Trivela\n\n` +
-            `🌟 الخدمة المطلوبة: ${service.name}\n` +
-            `🕹️ المنصة: ${platformName}\n` +
-            `💵 الاجمالي: ${formattedPrice}\n`;
-
-  if (couponDiscountText) {
-    msg += `${couponDiscountText}\n`;
-  }
-  if (pointsDiscountText) {
-    msg += `${pointsDiscountText}\n`;
-  }
-  
-  msg += `\n👤 معلومات العميل والتواصل:\n` +
-         `📝 الاسم: ${contactName}\n` +
-         `💬 ديسكورد/تواصل: ${discord}\n` +
-         `📋 تفاصيل وملاحظات الطلب:\n"${notes}"\n\n` +
-         `_أرسل من Trivela.com_`;
-
-  const phoneInput = document.getElementById('customerPhone');
-  const customerPhone = phoneInput ? phoneInput.value.trim() : (loggedInPhone || "غير محدد");
-
-  // Calculate final price in SAR for database with fallback
-  const baseSAR = service.priceSAR || (service.priceUSD * 3.75);
-  const couponDiscountSAR = activeCoupon ? (baseSAR * (activeCoupon.percent / 100)) : 0;
-  const remainingAfterCouponSAR = baseSAR - couponDiscountSAR;
-  const pointsDiscountSAR = (pointsDeducted / 37.5) * 3.75;
-  const finalPriceSAR = Math.max(0, remainingAfterCouponSAR - pointsDiscountSAR);
-
-  const orderPayload = {
-    customerName: contactName,
-    customerPhone: customerPhone,
-    service: `استشارة: ${service.name}`,
-    platform: currentPlatform,
-    priceSAR: finalPriceSAR,
-    pointsDiscount: pointsDiscountSAR + couponDiscountSAR,
-    pointsDeducted: pointsDeducted,
-    couponCode: activeCoupon ? activeCoupon.code : null,
-    discordHandle: discord,
-    orderNotes: notes
+  const cartItem = {
+    id: 'cart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    addedAt: new Date().toISOString(),
+    service: `استشارة وتدريب: ${selectedPkg.name}`,
+    type: 'coaching',
+    platform: 'All Platforms',
+    priceSAR: selectedPkg.priceSAR,
+    details: `${selectedPkg.name} - ${preferredTime}`,
+    notes: combinedNotes
   };
 
-  fetch('/api/orders', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(orderPayload)
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success && data.order) {
-        showOrderSuccessPopup(data.order.id, dynamicSettings.whatsappPhone || '966500000000', msg);
-      } else {
-        alert("حدث خطأ أثناء تسجيل طلبك.");
-      }
-    })
-    .catch(err => {
-      console.warn("Could not log order details:", err);
-      alert("حدث خطأ في الاتصال بالخادم.");
-    });
-}
+  try {
+    const existing = localStorage.getItem('trivela_cart');
+    const items = existing ? JSON.parse(existing) : [];
+    items.push(cartItem);
+    localStorage.setItem('trivela_cart', JSON.stringify(items));
+    if (window.trivelaCart) {
+      window.trivelaCart.items = items;
+      window.trivelaCart.updateBadge();
+    }
+  } catch(e) {
+    console.error("Cart save error:", e);
+  }
 
-// Success Popup Helpers
-function showOrderSuccessPopup(orderId, whatsappPhone, messageText) {
-  // Reset page scroll position to top
-  window.scrollTo(0, 0);
+  window.location.href = 'cart.html';
+};
 
-  let overlay = document.getElementById('orderSuccessOverlay');
+// ══════════ PAYMENT METHOD SWITCHER ══════════
+window.currentSelectedPaymentMethod = 'paytabs';
+window.selectPaymentMethod = function(method) {
+  window.currentSelectedPaymentMethod = method;
+  const cardPayTabs = document.getElementById('payOptionPayTabs');
+  const cardWhatsApp = document.getElementById('payOptionWhatsApp');
+  const radioPayTabs = cardPayTabs ? cardPayTabs.querySelector('input') : null;
+  const radioWhatsApp = cardWhatsApp ? cardWhatsApp.querySelector('input') : null;
+  const submitBtn = document.getElementById('btnSubmitOrder');
+
+  if (method === 'paytabs') {
+    if (cardPayTabs) cardPayTabs.classList.add('active');
+    if (cardWhatsApp) cardWhatsApp.classList.remove('active');
+    if (radioPayTabs) radioPayTabs.checked = true;
+    if (radioWhatsApp) radioWhatsApp.checked = false;
+    if (submitBtn) {
+      submitBtn.innerHTML = '<span>الدفع الإلكتروني الفوري (PayTabs)</span> <i class="fas fa-credit-card"></i>';
+    }
+  } else {
+    if (cardPayTabs) cardPayTabs.classList.remove('active');
+    if (cardWhatsApp) cardWhatsApp.classList.add('active');
+    if (radioPayTabs) radioPayTabs.checked = false;
+    if (radioWhatsApp) radioWhatsApp.checked = true;
+    if (submitBtn) {
+      submitBtn.innerHTML = '<span>تأكيد الطلب والدفع بالواتساب</span> <i class="fab fa-whatsapp"></i>';
+    }
+  }
+};
+
+
+function showCoachingReceipt(orderData) {
+  let overlay = document.getElementById('purchaseReceiptOverlay');
   if (!overlay) {
     overlay = document.createElement('div');
-    overlay.id = 'orderSuccessOverlay';
-    overlay.className = 'order-success-overlay';
+    overlay.id = 'purchaseReceiptOverlay';
+    overlay.className = 'receipt-modal-overlay';
     document.body.appendChild(overlay);
   }
 
-  // Force inline fixed styles to guarantee full viewport centering
-  overlay.style.position = 'fixed';
-  overlay.style.top = '0';
-  overlay.style.left = '0';
-  overlay.style.width = '100%';
-  overlay.style.height = '100%';
-  overlay.style.zIndex = '999999';
-
-  // Parse details from messageText
-  let customerName = 'غير محدد';
-  let serviceName = 'جلسة تدريب / استشارة';
-  let platform = 'CONSOLE';
-  let priceStr = '0.00 ر.س';
-
-  try {
-    const lines = messageText.split('\n');
-    lines.forEach(line => {
-      const trimmed = line.trim();
-      if (trimmed.includes('الاسم:')) {
-        customerName = trimmed.split(':')[1].trim();
-      } else if (trimmed.includes('المنصة:') || trimmed.includes('المنصة :') || trimmed.includes('🕹️ المنصة:')) {
-        platform = trimmed.split(':')[1].trim().toUpperCase();
-      } else if (trimmed.includes('الخدمة المطلوبة:') || trimmed.includes('الخدمة :')) {
-        serviceName = trimmed.split(':')[1].trim();
-      } else if (trimmed.includes('الاجمالي:') || trimmed.includes('السعر الإجمالي:') || trimmed.includes('الأسعار:') || trimmed.includes('السعر:')) {
-        priceStr = trimmed.split(':')[1].trim();
-      }
-    });
-  } catch (err) {
-    console.warn("Error parsing messageText:", err);
-  }
-
   overlay.innerHTML = `
-    <div class="order-success-card receipt-style">
-      <div class="receipt-header">
-        <img src="logo-official.png" class="receipt-logo" alt="Trivela" />
-        <h3 class="receipt-title">سند استلام إلكتروني</h3>
-        <p class="receipt-subtitle">متجر تريفيلا — متجر خدمات FIFA 27 المعتمد</p>
+    <div class="receipt-card">
+      <div class="receipt-header success">
+        <div class="receipt-icon"><i class="fas fa-check-circle"></i></div>
+        <h2>تم تأكيد حجز الاستشارة بنجاح!</h2>
+        <p>شكراً لثقتك بمتجر Trivela — سيتواصل معك المدرب المختص عبر الواتساب فوراً</p>
       </div>
       
       <div class="receipt-body">
         <div class="receipt-row">
-          <span class="label">رقم الطلب:</span>
-          <span class="value" style="font-family: 'Montserrat', sans-serif; font-weight: 800;">#${orderId}</span>
+          <span class="label">رقم الحجز:</span>
+          <span class="value font-mono">#${orderData.orderId}</span>
         </div>
         <div class="receipt-row">
-          <span class="label">العميل:</span>
-          <span class="value">${customerName}</span>
+          <span class="label">الباقة المختارة:</span>
+          <span class="value">${orderData.serviceName}</span>
         </div>
         <div class="receipt-row">
-          <span class="label">الخدمة:</span>
-          <span class="value" style="max-width: 250px; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${serviceName}</span>
+          <span class="label">الموعد المفضل:</span>
+          <span class="value">${orderData.preferredTime}</span>
         </div>
         <div class="receipt-row">
-          <span class="label">المنصة:</span>
-          <span class="value" style="font-family: 'Montserrat', sans-serif; font-weight: 700;">${platform}</span>
-        </div>
-        <div class="receipt-row">
-          <span class="label">تاريخ الطلب:</span>
-          <span class="value">${new Date().toLocaleDateString('ar-SA')}</span>
+          <span class="label">رقم التواصل:</span>
+          <span class="value font-mono">${orderData.customerPhone}</span>
         </div>
         <div class="receipt-row total">
           <span class="label">المبلغ الإجمالي:</span>
-          <span class="value">${priceStr}</span>
+          <span class="value">${orderData.priceFormatted}</span>
         </div>
       </div>
       
       <div class="receipt-footer-msg">
-        <i class="fas fa-info-circle"></i>
-        تم تسجيل طلبك بنجاح في النظام. يرجى الانتظار، وسيقوم أحد ممثلي الدعم الفني بالتواصل معك قريباً على رقم الجوال/الواتساب لتأكيد الدفع وإتمام الطلب.
+        <i class="fab fa-whatsapp" style="color: #10b981;"></i>
+        تم إرسال تفاصيل حجزك لفريق التدريب. يمكنك التواصل المباشر برقم حجزك في أي وقت.
       </div>
       
-      <button type="button" class="order-success-btn" id="btnRedirectWhatsapp" style="width: 100%; justify-content: center; display: flex; align-items: center; gap: 8px;">
-        <span>حسناً، بانتظاركم</span>
+      <button type="button" class="order-success-btn" onclick="window.location.href='track.html?id=${orderData.orderId}'">
+        <span>متابعة حالة الطلب والحجز</span>
+        <i class="fas fa-arrow-left"></i>
       </button>
-      
-      <div class="receipt-bottom-decoration"></div>
     </div>
   `;
 
   overlay.classList.add('open');
-
-  const btn = document.getElementById('btnRedirectWhatsapp');
-  if (btn) {
-    btn.onclick = () => {
-      overlay.classList.remove('open');
-      window.location.href = 'index.html';
-    };
-  }
 }

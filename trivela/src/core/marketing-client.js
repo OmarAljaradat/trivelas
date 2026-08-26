@@ -2,6 +2,12 @@
 // Designed for absolute conversion rate optimization (CRO) and premium aesthetics
 
 function loadMarketingOnPage() {
+  // Never execute customer marketing popups/tickers on Admin or Supplier management portals
+  const pagePath = window.location.pathname.toLowerCase();
+  if (pagePath.includes('admin.html') || pagePath.includes('supplier.html') || document.body.classList.contains('admin-body')) {
+    return;
+  }
+
   fetch('/api/public/content')
     .then(res => res.json())
     .then(data => {
@@ -67,6 +73,143 @@ function initMarketingFeatures(settings, reviews) {
   // 9. Post-Purchase Reward Popup
   if (m.postPurchase && m.postPurchase.active) {
     initPostPurchase(m.postPurchase);
+  }
+
+  // 10. Fake Live Purchases
+  if (m.fakePurchases && m.fakePurchases.active) {
+    initFakePurchases(m.fakePurchases);
+  }
+
+  // 11. Golden Ticker Bar
+  if (m.goldTicker && m.goldTicker.active) {
+    initGoldTicker(m.goldTicker);
+  }
+
+  // Apply dynamic links and auto coupon code
+  applyDynamicSocialLinks(settings);
+  autoApplyCouponFromUrl();
+  applyDynamicCoinsPrices(settings);
+}
+
+// Dynamically calculate and render coin starting prices on index page cards
+function applyDynamicCoinsPrices(settings) {
+  if (!settings) return;
+  const consolePriceEl = document.getElementById('console-start-price');
+  const pcPriceEl = document.getElementById('pc-start-price');
+  
+  if (consolePriceEl || pcPriceEl) {
+    const sarRate = (settings.customExchangeRates && settings.customExchangeRates.SAR) ? parseFloat(settings.customExchangeRates.SAR) : 3.75;
+    
+    if (consolePriceEl && settings.baseRateConsole) {
+      const consoleRateUSD = parseFloat(settings.baseRateConsole) * 10; // rate for 1M
+      const consoleRateSAR = Math.round(consoleRateUSD * sarRate);
+      consolePriceEl.textContent = `يبدأ من ${consoleRateSAR} ر.س / المليون`;
+    }
+    
+    if (pcPriceEl && settings.baseRatePC) {
+      const pcRateUSD = parseFloat(settings.baseRatePC) * 10; // rate for 1M
+      const pcRateSAR = Math.round(pcRateUSD * sarRate);
+      pcPriceEl.textContent = `يبدأ من ${pcRateSAR} ر.س / المليون`;
+    }
+  }
+}
+
+// Dynamically correct WhatsApp, Instagram, and TikTok links on all client-facing pages
+function applyDynamicSocialLinks(settings) {
+  if (!settings) return;
+
+  const rawPhone = settings.whatsappPhone || "962775585112";
+  const whatsappPhone = rawPhone.trim().replace(/[\s\+\-]/g, '');
+  const instagramUrl = settings.instagramUrl || "https://www.instagram.com/trivelacoins";
+  const tiktokUrl = settings.tiktokUrl || "https://tiktok.com/@Trivela";
+
+  // 1. Update all WhatsApp links
+  const waLinks = document.querySelectorAll('a[href*="wa.me/"], a[aria-label*="WhatsApp" i], a[aria-label*="whatsapp" i], a .fa-whatsapp');
+  waLinks.forEach(el => {
+    const link = el.tagName === 'A' ? el : el.closest('a');
+    if (!link) return;
+    
+    try {
+      let currentUrl = link.href;
+      let textParam = "";
+      if (currentUrl.includes('?')) {
+        const urlObj = new URL(currentUrl);
+        textParam = urlObj.searchParams.get('text') || "";
+      } else if (currentUrl.includes('text=')) {
+        // Fallback search param parser if URL constructor fails for relative/invalid URLs
+        const match = currentUrl.match(/[?&]text=([^&#]*)/);
+        if (match) {
+          textParam = decodeURIComponent(match[1]);
+        }
+      }
+      
+      let newHref = `https://wa.me/${whatsappPhone}`;
+      if (textParam) {
+        newHref += `?text=${encodeURIComponent(textParam)}`;
+      }
+      link.href = newHref;
+    } catch (e) {
+      // In case URL parser fails for some reason
+      link.href = `https://wa.me/${whatsappPhone}`;
+    }
+  });
+
+  // 2. Update Instagram links
+  const instaLinks = document.querySelectorAll('a[href*="instagram.com"], a[aria-label*="Instagram" i], a[aria-label*="instagram" i], a .fa-instagram');
+  instaLinks.forEach(el => {
+    const link = el.tagName === 'A' ? el : el.closest('a');
+    if (link) {
+      link.href = instagramUrl;
+    }
+  });
+
+  // 3. Update TikTok links
+  const tiktokLinks = document.querySelectorAll('a[href*="tiktok.com"], a[aria-label*="TikTok" i], a[aria-label*="tiktok" i], a .fa-tiktok');
+  tiktokLinks.forEach(el => {
+    const link = el.tagName === 'A' ? el : el.closest('a');
+    if (link) {
+      link.href = tiktokUrl;
+    }
+  });
+}
+
+// Automatically read ?coupon=CODE from URL and apply it on all buy pages
+function autoApplyCouponFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const coupon = urlParams.get('coupon');
+  if (coupon) {
+    const cleanCoupon = coupon.trim().toUpperCase();
+    const couponInput = document.getElementById('couponCodeInput');
+    if (couponInput) {
+      couponInput.value = cleanCoupon;
+      
+      // If there are discount radio buttons, make sure Coupon option is checked
+      const radCoupon = document.getElementById('radCoupon');
+      if (radCoupon) {
+        radCoupon.checked = true;
+        radCoupon.dispatchEvent(new Event('change', { bubbles: true }));
+        if (typeof window.handleDiscountTypeChange === 'function') {
+          window.handleDiscountTypeChange();
+        }
+      }
+      
+      // Poll and try to apply the coupon once window.applyCouponCode is loaded and coupons are fetched
+      let attempts = 0;
+      const tryApply = () => {
+        if (typeof window.applyCouponCode === 'function') {
+          if (window.couponsLoaded || attempts > 15) {
+            window.applyCouponCode();
+          } else {
+            attempts++;
+            setTimeout(tryApply, 100);
+          }
+        } else if (attempts < 30) {
+          attempts++;
+          setTimeout(tryApply, 100);
+        }
+      };
+      setTimeout(tryApply, 200);
+    }
   }
 }
 
@@ -178,11 +321,122 @@ function injectMarketingStyles() {
       transform: translateX(350px); transition: transform 0.5s ease;
     }
     .trivela-flash-card.active { transform: translateX(0); }
-    .trivela-flash-progress {
-      height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin: 10px 0;
-    }
     .trivela-flash-progress-bar {
       height: 100%; background: #ef4444; border-radius: 4px; transition: width 0.5s ease;
+    }
+
+    /* Golden Ticker Bar */
+    .trivela-gold-ticker {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 34px;
+      background: linear-gradient(90deg, #ca8a04 0%, #ffd700 50%, #ca8a04 100%);
+      color: #0d1e39;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      z-index: 100000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      direction: rtl;
+    }
+    .trivela-gold-ticker-track {
+      display: flex;
+      white-space: nowrap;
+      animation: goldTickerLoop var(--duration, 22s) linear infinite;
+    }
+    .trivela-gold-ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 20px;
+    }
+    @keyframes goldTickerLoop {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-33.33%, 0, 0); }
+    }
+
+    /* Fake Purchase Notification Toast */
+    .trivela-fake-purchase-toast {
+      position: fixed;
+      bottom: 24px;
+      width: 320px;
+      background: rgba(18, 27, 45, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(234, 179, 8, 0.35);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px rgba(234,179,8,0.1);
+      font-family: 'Cairo', sans-serif;
+      color: white;
+      direction: rtl;
+      z-index: 100001;
+      opacity: 0;
+      transform: translateY(40px) scale(0.95);
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+    }
+    .trivela-fake-purchase-toast.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .trivela-fake-purchase-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(234, 179, 8, 0.15);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #eab308;
+      flex-shrink: 0;
+      animation: fakePurchasePulse 2s infinite;
+    }
+    @keyframes fakePurchasePulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(234, 179, 8, 0); }
+      100% { transform: scale(1); }
+    }
+    .trivela-fake-purchase-info {
+      flex-grow: 1;
+    }
+    .trivela-fake-purchase-user {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #eab308;
+      margin-bottom: 2px;
+    }
+    .trivela-fake-purchase-product {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 2px;
+    }
+    .trivela-fake-purchase-time {
+      font-size: 0.68rem;
+      color: #94a3b8;
+    }
+    @media (max-width: 768px) {
+      .trivela-fake-purchase-toast {
+        bottom: 85px;
+        left: 50% !important;
+        transform: translate(-50%, 40px) scale(0.95);
+        width: calc(100% - 32px);
+        max-width: 340px;
+      }
+      .trivela-fake-purchase-toast.active {
+        transform: translate(-50%, 0) scale(1);
+      }
     }
   `;
   document.head.appendChild(style);
@@ -466,11 +720,9 @@ function initScratchCard(config) {
     
     overlay.querySelector('#scratchClaimBtn').addEventListener('click', () => {
       close();
-      if (config.prizeType === 'points') {
-        alert("🪙 تم إضافة نقاط الولاء المجانية لرصيدك بنجاح!");
-      } else {
+      if (config.prizeValue) {
         navigator.clipboard.writeText(config.prizeValue).then(() => {
-          alert(`📋 تم نسخ الكود: ${config.prizeValue} بنجاح لاستخدامه في إتمام الطلب!`);
+          alert(`📋 تم نسخ كود الخصم: ${config.prizeValue} بنجاح لاستخدامه في إتمام الطلب!`);
         });
       }
     });
@@ -687,4 +939,84 @@ function initPostPurchase(config) {
     overlay.querySelector('.trivela-modal-close').addEventListener('click', close);
     overlay.querySelector('#postPurchaseConfirmBtn').addEventListener('click', close);
   }
+}
+
+// 10. Fake Purchases
+function initFakePurchases(config) {
+  const names = (config.names || "").split(',').map(n => n.trim()).filter(Boolean);
+  const cities = (config.cities || "").split(',').map(c => c.trim()).filter(Boolean);
+  const products = (config.products || "").split('\n').map(p => p.trim()).filter(Boolean);
+  
+  if (names.length === 0 || products.length === 0) return;
+
+  // Cleanup existing toast if re-initialized
+  const existingToast = document.querySelector('.trivela-fake-purchase-toast');
+  if (existingToast) existingToast.remove();
+
+  const toast = document.createElement('div');
+  toast.className = 'trivela-fake-purchase-toast';
+  
+  // Position style
+  if (config.position === 'bottom-right') {
+    toast.style.right = '24px';
+    toast.style.left = 'auto';
+  } else {
+    toast.style.left = '24px';
+    toast.style.right = 'auto';
+  }
+
+  toast.innerHTML = `
+    <div class="trivela-fake-purchase-icon">
+      <i class="fas fa-shopping-bag"></i>
+    </div>
+    <div class="trivela-fake-purchase-info">
+      <div class="trivela-fake-purchase-user" id="fakePurchaseUser">...</div>
+      <div class="trivela-fake-purchase-product" id="fakePurchaseProduct">...</div>
+      <div class="trivela-fake-purchase-time" id="fakePurchaseTime">الآن</div>
+    </div>
+  `;
+  document.body.appendChild(toast);
+
+  let hideTimeout = null;
+
+  const displayNextNotification = () => {
+    if (hideTimeout) {
+      clearTimeout(hideTimeout);
+      hideTimeout = null;
+    }
+
+    const randomName = names[Math.floor(Math.random() * names.length)];
+    const randomCity = cities.length > 0 ? cities[Math.floor(Math.random() * cities.length)] : '';
+    const randomProduct = products[Math.floor(Math.random() * products.length)];
+    
+    const userText = randomCity ? `${randomName} من ${randomCity}` : randomName;
+    const timeText = Math.random() > 0.5 ? 'الآن' : `قبل ${Math.floor(Math.random() * 4) + 1} دقائق`;
+    
+    toast.querySelector('#fakePurchaseUser').textContent = userText;
+    toast.querySelector('#fakePurchaseProduct').textContent = `اشترى للتو: ${randomProduct}`;
+    toast.querySelector('#fakePurchaseTime').textContent = timeText;
+
+    // Slide in
+    toast.classList.add('active');
+
+    // Slide out after 6 seconds (remains visible for comfortable reading)
+    hideTimeout = setTimeout(() => {
+      toast.classList.remove('active');
+    }, 6000);
+  };
+
+  // Run first notification 3 seconds after page load
+  setTimeout(() => {
+    displayNextNotification();
+
+    // Repeat every X seconds (minimum 8s to prevent overlapping with 6s display duration)
+    const rawInterval = parseInt(config.interval) || 25;
+    const repeatIntervalMs = Math.max(8, rawInterval) * 1000;
+    setInterval(displayNextNotification, repeatIntervalMs);
+  }, 3000);
+}
+
+// 11. Golden Ticker Bar
+function initGoldTicker(config) {
+  document.querySelectorAll('.trivela-gold-ticker, .ticker').forEach(el => el.remove());
 }

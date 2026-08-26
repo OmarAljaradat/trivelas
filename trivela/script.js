@@ -349,28 +349,8 @@ const DISCOUNTS = [
   [       0,    0],
 ];
 
-const REVIEWS = [
-  { name:'محمد الشمري',    platform:'PS5', stars:5, text:'والله أسرع توصيل شفته بحياتي! الكوينز وصلت في 3 دقائق بالضبط بعد الدفع. سعر ممتاز وخدمة احترافية جداً.', initial:'م', badge:'عميل VIP' },
-  { name:'عبدالله القحطاني', platform:'Xbox', stars:5, text:'جربت كثير من المتاجر وهذا الأفضل بكل المقاييس. المتجر موثوق، توصيل فوري، ودعم جاهز يرد فوراً على واتساب.', initial:'ع', badge:'' },
-  { name:'سارة المطيري',    platform:'PC',   stars:5, text:'مذهل! طلبت مليون كوين بالدينار الكويتي وكانت العملية سلسة 100%. الكوينز وصلت ولعبت مباشرة.', initial:'س', badge:'عميلة جديدة' },
-  { name:'فيصل العمري',     platform:'PS4',  stars:5, text:'أكثر من سنة وأنا أتعامل مع Trivela ولم يخذلني ولو مرة. برنامج النقاط رائع واحصل دائماً على خصومات.', initial:'ف', badge:'عميل VIP' },
-  { name:'أحمد الدوسري',    platform:'PS5',  stars:5, text:'أنصح كل الناس يشتروا من هنا. سعر أقل من المنافسين بكثير وضمان الاسترجاع أعطاني ثقة كاملة من اليوم الأول.', initial:'أ', badge:'' },
-  { name:'خالد المحمود',    platform:'Xbox', stars:4, text:'خدمة ممتازة والتوصيل كان أسرع من المتوقع. اشتريت بالريال السعودي وكان السعر عادل جداً مقارنة بالسوق.', initial:'خ', badge:'' },
-  { name:'نورة الحربي',     platform:'PC',   stars:5, text:'أول مرة أشتري كوينز ووجدت الموقع سهل جداً. الدعم ساعدني خطوة بخطوة وأنا خايفة. شكراً Trivela!', initial:'ن', badge:'عميلة جديدة' },
-  { name:'ياسر السلمي',     platform:'PS5',  stars:5, text:'صراحة لقيتهم عن طريق صديق ووالله ما توقعت تجربة بهالمستوى. اشتريت 5 مليون وكانت بأسرع توصيل شفته.', initial:'ي', badge:'' },
-  { name:'لمياء الزهراني',  platform:'PS4',  stars:5, text:'للبنات اللي خايفات — المتجر نظيف وموثوق. تعاملت معهم أكثر من 10 مرات ودائماً تجربة ممتازة وبدون أي مشاكل.', initial:'ل', badge:'عميلة VIP' },
-];
-
-const FAQS = [
-  { q: "كيف يتم شحن الكوينز لحسابي؟ وما هي طريقة التسليم؟", a: "نوفر شحن آمن وسريع عبر طريقة (Comfort Trade) المعتمدة. كل ما تحتاجه هو تزويدنا ببيانات حسابك ونقوم بشحن الكوينز لك مباشرة وبكل أمان دون أي مجهود منك." },
-  { q: "هل طريقتكم في الشحن آمنة من الباند أو التصفير؟", a: "نعم، آمنة بنسبة 100%. نعتمد على خوارزميات شحن ذكية ومحاكاة دقيقة لحركة اللاعبين الحقيقيين لتجنب كشف الحساب، وقمنا بشحن أكثر من 1,500 حساب بنجاح تام وبدون أي مشاكل." },
-  { q: "كم من الوقت يستغرق تسليم طلب الكوينز أو الخدمات الأخرى؟", a: "يستغرق تسليم الكوينز عادةً من 15 إلى 45 دقيقة حسب الكمية المطلوبة. بالنسبة للخدمات الأخرى مثل Rivals أو FUT Champions، يتم التنسيق وتحديد الميعاد وتسليمها خلال ساعات وجيزة." },
-  { q: "أين أجد الرموز الاحتياطية (Backup Codes) لحسابي؟", a: "يمكنك الحصول عليها بتسجيل الدخول لحساب EA الخاص بك ⬅️ خيار الأمان (Security) ⬅️ ثم الرموز الاحتياطية (Backup Codes). تحتاج لتزويدنا بـ 3 رموز منها لبدء الشحن بأمان تام." },
-  { q: "هل يجب أن أغير كلمة مرور حسابي بعد انتهاء الشحن؟", a: "نعم، كإجراء أمان روتيني نوصي بشدة بتغيير كلمة المرور الخاصة بحساب EA مباشرة بعد استلام رسالة تأكيد اكتمال طلبك على الواتساب لضمان الخصوصية المطلقة لحسابك." },
-  { q: "ما هي الشروط الأساسية لبدء عملية الشحن؟", a: "يجب توفر 15K كوينز كحد أدنى في حسابك، وأن يكون سوق الانتقالات مفتوحاً في تطبيق الويب (Web App)، بالإضافة إلى إغلاق اللعبة تماماً على جهازك أثناء فترة الشحن لتجنب أي مقاطعة." },
-  { q: "هل تضمنون عدم لمس تشكيلتي أو لاعبي نادِيّ؟", a: "بكل تأكيد! نحن نضمن لك أماناً تاماً 100%. نظامنا مبرمج ومتابع بشرياً لعدم المساس بأي لاعبين (سواء القابلين للبيع أو غير القابلين للبيع) أو التعديل على التشكيلة؛ نقوم فقط بنقل الكوينز لحسابك." },
-  { q: "كيف يمكنني متابعة حالة طلبي بعد إتمامه؟", a: "بعد تقديم طلبك وتأكيده، سيقوم فريق الدعم الفني بالتواصل معك مباشرة على الواتساب لتزويدك بالتحديثات لحظة بلحظة ومتابعة الشحن معك حتى الاكتمال." }
-];
+const REVIEWS = [];
+const FAQS = [];
 
 // ──────────────────────────────────────────────
 // STATE
@@ -558,8 +538,8 @@ function toggleFAQ(i) {
 }
 
 let dynamicSettings = {
-  whatsappPhone: "966500000000",
-  instagramUrl: "https://instagram.com/Trivela",
+  whatsappPhone: "962775585112",
+  instagramUrl: "https://www.instagram.com/trivelacoins",
   maintenanceMode: false
 };
 
@@ -716,7 +696,7 @@ function initOrderForm() {
       '📝 ملاحظات: ' + (notes || 'لا يوجد') + '\n\n' +
       '_أرسل من Trivela.com_'
     );
-    window.open('https://wa.me/966500000000?text=' + msg, '_blank');
+    window.open('https://wa.me/962775585112?text=' + msg, '_blank');
     if (modal) modal.classList.add('open');
     form.reset();
   });
@@ -881,16 +861,260 @@ function initCoinFloats() {
   });
 }
 
-// Expose Coaching Booking Redirect globally
-window.openStaticCoachingBooking = function(packageType, price) {
-  let serviceId = 'coaching_basic';
-  if (packageType === 'برو') {
-    serviceId = 'coaching_pro';
-  } else if (packageType === 'برو بلس' || packageType === 'برو بلس (Pro Plus)') {
-    serviceId = 'coaching_pro_plus';
+// Expose Coaching Booking Modal globally
+let modalSelectedBookingDate = null;
+let modalSelectedBookingTime = null;
+let modalCoachingScheduleData = { workingDays: [4,5,6,0], startHour: 16, endHour: 23, slotDurationMinutes: 60, bookedSlots: [] };
+let currentModalCoachingItem = { name: "استشارة فنية: أساسي", priceSAR: 15, platform: "Console" };
+
+window.selectModalPlatform = function(platform) {
+  currentModalCoachingItem.platform = platform;
+  const btnConsole = document.getElementById('modalPlatformConsole');
+  const btnPC = document.getElementById('modalPlatformPC');
+  if (platform === 'PC') {
+    if (btnPC) btnPC.classList.add('active');
+    if (btnConsole) btnConsole.classList.remove('active');
+  } else {
+    if (btnConsole) btnConsole.classList.add('active');
+    if (btnPC) btnPC.classList.remove('active');
   }
-  
-  window.location.href = `buy-coaching.html?service=${serviceId}`;
+};
+
+window.openStaticCoachingBooking = function(packageType, priceSAR) {
+  let titleName = "استشارة فنية: أساسي (3 تشكيلات)";
+  if (packageType === 'برو') {
+    titleName = "استشارة فنية: برو (5 تشكيلات)";
+  } else if (packageType === 'برو بلس' || packageType === 'برو بلس (Pro Plus)') {
+    titleName = "استشارة فنية: برو بلس (تطوير احترافي)";
+  }
+
+  currentModalCoachingItem = {
+    name: titleName,
+    priceSAR: priceSAR || 15,
+    platform: "Console"
+  };
+
+  const titleEl = document.getElementById('modalCoachingTitle');
+  const priceEl = document.getElementById('modalCoachingPrice');
+  if (titleEl) titleEl.textContent = titleName;
+  if (priceEl) priceEl.textContent = `${priceSAR} ر.س`;
+
+  // Pre-fill user data if logged in
+  const token = localStorage.getItem('trivela_token');
+  if (token) {
+    fetch('/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` } })
+      .then(res => res.json())
+      .then(user => {
+        if (user) {
+          const nameInput = document.getElementById('modalContactName');
+          const phoneInput = document.getElementById('modalContactPhone');
+          if (nameInput && user.name) nameInput.value = user.name;
+          if (phoneInput && user.phone) phoneInput.value = user.phone;
+        }
+      }).catch(() => {});
+  }
+
+  // Load schedule & calendar
+  loadModalCoachingCalendar();
+
+  // Show modal & lock background scroll
+  const modal = document.getElementById('coachingModalOverlay');
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.classList.add('open');
+    document.body.classList.add('modal-open');
+    document.body.style.overflow = 'hidden';
+  }
+};
+
+window.closeModal = function(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = 'none';
+    modal.classList.remove('open');
+  }
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = '';
+};
+
+// Close modal when clicking on the dark backdrop
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.classList.contains('modal-overlay')) {
+    window.closeModal(e.target.id);
+  }
+});
+
+// Close modal on Escape key press
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay').forEach(function(m) {
+      window.closeModal(m.id);
+    });
+  }
+});
+
+function loadModalCoachingCalendar() {
+  fetch('/api/public/coaching-schedule')
+    .then(res => res.json())
+    .then(data => {
+      if (data) modalCoachingScheduleData = data;
+      renderModalCalendarDays();
+    })
+    .catch(err => {
+      renderModalCalendarDays();
+    });
+}
+
+function renderModalCalendarDays() {
+  const container = document.getElementById('modalCalendarDaysContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const dayNamesArabic = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+  const monthNamesArabic = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+
+  const today = new Date();
+  const workingDays = modalCoachingScheduleData.workingDays || [4,5,6,0];
+
+  for (let i = 0; i < 12; i++) {
+    const d = new Date();
+    d.setDate(today.getDate() + i);
+
+    const dayOfWeek = d.getDay();
+    const dateIsoStr = d.toISOString().split('T')[0];
+    const isWorking = workingDays.includes(dayOfWeek);
+
+    const dayName = dayNamesArabic[dayOfWeek];
+    const dayNum = d.getDate();
+    const monthName = monthNamesArabic[d.getMonth()];
+
+    const chip = document.createElement('div');
+    chip.className = `day-chip ${isWorking ? '' : 'disabled'}`;
+    chip.dataset.date = dateIsoStr;
+    chip.innerHTML = `
+      <span class="day-name">${dayName}</span>
+      <span class="day-num">${dayNum}</span>
+      <span class="day-month">${monthName}</span>
+    `;
+
+    if (isWorking) {
+      chip.onclick = () => selectModalBookingDate(dateIsoStr, chip, dayName, dayNum, monthName);
+    }
+
+    container.appendChild(chip);
+  }
+}
+
+function selectModalBookingDate(dateIsoStr, chipElement, dayName, dayNum, monthName) {
+  modalSelectedBookingDate = dateIsoStr;
+  modalSelectedBookingTime = null;
+
+  document.querySelectorAll('#modalCalendarDaysContainer .day-chip').forEach(c => c.classList.remove('active'));
+  chipElement.classList.add('active');
+
+  const banner = document.getElementById('modalSelectedSlotBanner');
+  if (banner) banner.style.display = 'none';
+
+  renderModalTimeSlots(dateIsoStr, `${dayName} ${dayNum} ${monthName}`);
+}
+
+function renderModalTimeSlots(dateIsoStr, formattedDayText) {
+  const container = document.getElementById('modalTimeSlotsContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const startHour = modalCoachingScheduleData.startHour || 16;
+  const endHour = modalCoachingScheduleData.endHour || 23;
+  const booked = modalCoachingScheduleData.bookedSlots || [];
+
+  for (let hour = startHour; hour < endHour; hour++) {
+    const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+    const periodStr = hour >= 12 ? 'مساءً' : 'صباحاً';
+    const timeLabel = `${displayHour.toString().padStart(2, '0')}:00 ${periodStr}`;
+
+    const isBooked = booked.some(b => b.date === dateIsoStr && (b.time === timeLabel || b.time === `${hour}:00`));
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `time-slot-btn ${isBooked ? 'booked' : ''}`;
+    btn.innerHTML = `<i class="far fa-clock"></i> <span>${timeLabel}</span>`;
+
+    if (isBooked) {
+      btn.title = 'هذا الموعد محجوز مسبقاً';
+    } else {
+      btn.onclick = () => selectModalBookingTime(timeLabel, btn, formattedDayText);
+    }
+
+    container.appendChild(btn);
+  }
+}
+
+function selectModalBookingTime(timeLabel, btnElement, formattedDayText) {
+  modalSelectedBookingTime = timeLabel;
+
+  document.querySelectorAll('#modalTimeSlotsContainer .time-slot-btn').forEach(b => b.classList.remove('active'));
+  btnElement.classList.add('active');
+
+  const banner = document.getElementById('modalSelectedSlotBanner');
+  const txt = document.getElementById('modalLblSelectedSlotText');
+  if (banner && txt) {
+    txt.textContent = `${formattedDayText} — الساعة ${timeLabel}`;
+    banner.style.display = 'flex';
+  }
+}
+
+window.handleCoachingModalSubmit = function(event) {
+  event.preventDefault();
+
+  if (!modalSelectedBookingDate || !modalSelectedBookingTime) {
+    alert("يرجى اختيار يوم ووقت الجلسة المباشرة من التقويم أولاً.");
+    return;
+  }
+
+  const name = document.getElementById('modalContactName').value.trim();
+  const phone = document.getElementById('modalContactPhone').value.trim();
+  const instagram = document.getElementById('modalContactInstagram') ? document.getElementById('modalContactInstagram').value.trim() : '';
+  const notes = document.getElementById('modalCoachingNotes').value.trim() || '';
+
+  if (!name || !phone) {
+    alert("يرجى ملء الاسم ورقم الواتساب.");
+    return;
+  }
+
+  const bookingFormatted = `${modalSelectedBookingDate} الساعة ${modalSelectedBookingTime}`;
+
+  const cartItem = {
+    id: 'cart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    addedAt: new Date().toISOString(),
+    service: `استشارة وتدريب: ${currentModalCoachingItem.name}`,
+    type: 'coaching',
+    platform: currentModalCoachingItem.platform || 'All Platforms',
+    priceSAR: currentModalCoachingItem.priceSAR,
+    details: `${currentModalCoachingItem.name} — ${bookingFormatted}`,
+    notes: [
+      `👤 الاسم: ${name}`,
+      `📱 الواتساب: ${phone}`,
+      instagram ? `📸 انستقرام: ${instagram}` : '',
+      `📅 الموعد: ${bookingFormatted}`,
+      notes ? `📋 ملاحظات: ${notes}` : ''
+    ].filter(Boolean).join(' | ')
+  };
+
+  try {
+    const existing = localStorage.getItem('trivela_cart');
+    const items = existing ? JSON.parse(existing) : [];
+    items.push(cartItem);
+    localStorage.setItem('trivela_cart', JSON.stringify(items));
+    if (window.trivelaCart) {
+      window.trivelaCart.items = items;
+      window.trivelaCart.updateBadge();
+    }
+  } catch(e) {
+    console.error("Cart save error:", e);
+  }
+
+  closeModal('coachingModalOverlay');
+  window.location.href = 'cart.html';
 };
 
 function applyCMSContent() {
@@ -912,7 +1136,7 @@ function applyCMSContent() {
 
     const statCount = document.getElementById('cms_statOrdersCount');
     if (statCount && l.statOrdersCount) {
-      statCount.setAttribute('data-to', l.statOrdersCount.replace(/[^0-9]/g, ''));
+      statCount.setAttribute('data-to', l.statOrdersCount.replace(/[^0-9]/g, '') || '1500');
     }
 
     const statLabel = document.getElementById('cms_statOrdersLabel');
@@ -920,12 +1144,12 @@ function applyCMSContent() {
 
     const statTime = document.getElementById('cms_statDeliveryTime');
     if (statTime && l.statDeliveryTime) {
-      statTime.setAttribute('data-to', l.statDeliveryTime.replace(/[^0-9]/g, ''));
-      const suffix = l.statDeliveryTime.replace(/[0-9]/g, '').trim();
-      if (suffix) {
-        statTime.setAttribute('data-suffix', ' ' + suffix);
-      } else {
-        statTime.removeAttribute('data-suffix');
+      statTime.setAttribute('data-to', l.statDeliveryTime.replace(/[^0-9]/g, '') || '60');
+      statTime.removeAttribute('data-suffix');
+      const suffix = l.statDeliveryTime.replace(/[0-9]/g, '').trim() || 'دقيقة';
+      const unitEl = document.getElementById('cms_statDeliveryUnit') || (statTime.nextElementSibling && statTime.nextElementSibling.tagName === 'SUP' ? statTime.nextElementSibling : null);
+      if (unitEl) {
+        unitEl.textContent = suffix;
       }
     }
 
@@ -979,3 +1203,4 @@ function applyCMSContent() {
     }
   }
 }
+

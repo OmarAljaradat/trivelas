@@ -6,11 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Trivela | كوينز FIFA 27 — SBC — رايفلز — مهام — أسرع وأأمن</title>
   <meta name="description" content="Trivela - أفضل متجر لخدمات FIFA 27 Ultimate Team: كوينز لجميع المنصات، SBC، رايفلز، مهام، وأكثر. توصيل سريع وأمان تام."/>
+  <meta property="og:title" content="Trivela | كوينز FIFA 27 — SBC — رايفلز — مهام — أسرع وأأمن"/>
+  <meta property="og:description" content="أفضل متجر لخدمات FIFA 27 Ultimate Team: كوينز لجميع المنصات، SBC، رايفلز، مهام، وأكثر. توصيل سريع وأمان تام."/>
+  <meta property="og:image" content="logo-official.png"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:locale" content="ar_SA"/>
+  <meta property="og:site_name" content="Trivela"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css?v=3.4"/>
   <!-- JSON-LD Schema Markup (Google SEO Product & Store Snippet) -->
   <script type="application/ld+json">
   {
@@ -19,7 +25,7 @@
     "name": "Trivela",
     "image": "logo-official.png",
     "description": "أفضل متجر عربي لشراء كوينز FIFA 27 وتفويض تحديات SBC ومباريات Rivals و FUT Champions بأمان تام وضمان ضد الحظر.",
-    "telephone": "+966500000000",
+    "telephone": "",
     "priceRange": "$$",
     "address": {
       "@type": "PostalAddress",
@@ -61,27 +67,39 @@
       box-shadow: 0 12px 24px rgba(234, 179, 8, 0.08);
     }
 
-    /* Modal Overlay */
+    /* Modal Overlay & Scroll Lock */
+    body.modal-open {
+      overflow: hidden !important;
+    }
     .modal-overlay {
-      position: fixed;
+      position: fixed !important;
       top: 0; left: 0; right: 0; bottom: 0;
+      width: 100vw;
+      height: 100vh;
       background: rgba(9, 14, 23, 0.85);
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 2000;
+      z-index: 999999 !important;
       padding: 20px;
+      overflow-y: auto;
+      cursor: pointer;
     }
     .modal-overlay.open {
-      display: flex;
+      display: flex !important;
     }
     
     .modal-content-wrap {
+      cursor: default;
       background: #ffffff;
       border-radius: 24px;
       width: 100%;
       max-width: 550px;
+      max-height: 90vh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
       padding: 30px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.3);
       position: relative;
@@ -236,33 +254,134 @@
 <!-- ══════════ NAVBAR ══════════ -->
 <nav class="navbar" id="navbar">
   <div class="nav-inner">
+    <!-- Brand / Logo -->
     <a href="#" class="logo">
-      <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
-      <span class="logo-main">Trivela</span>
+      <div class="nav-logo-box">
+        <img src="logo-official.png" alt="Trivela" class="nav-logo-img"/>
+      </div>
+      <div class="logo-info">
+        <span class="logo-main">Trivela</span>
+        <span class="logo-tag">STORE</span>
+      </div>
     </a>
+
+    <!-- Main Navigation Menu (Clean, Uncluttered & Modern) -->
     <ul class="nav-menu" id="navMenu">
-      <li><a href="#coins-device">🪙 شحن الكوينز</a></li>
       <li class="dropdown">
-        <a href="javascript:void(0)" class="dropdown-toggle">الخدمات <i class="fas fa-chevron-down" style="font-size:0.7rem; margin-right:4px;"></i></a>
+        <a href="javascript:void(0)" class="dropdown-toggle nav-link" onclick="event.stopPropagation()">
+          <i class="fas fa-cubes"></i>
+          <span>جميع الخدمات</span>
+          <i class="fas fa-chevron-down nav-chevron"></i>
+        </a>
         <ul class="dropdown-content">
-          <li><a href="buy-sbc.html">🧩 تحديات الـ SBC</a></li>
-          <li><a href="buy-objectives.html">📋 المهام (Objectives)</a></li>
-          <li><a href="buy-rivals.html">🏆 Rivals</a></li>
-          <li><a href="buy-champions.html">🥇 Champions</a></li>
+          <li>
+            <a href="#coins-device">
+              <span class="drop-icon drop-gold"><i class="fas fa-bolt"></i></span>
+              <div class="drop-text">
+                <strong>شحن الكوينز</strong>
+                <small>شحن فوري وبأعلى أمان</small>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="buy-sbc.html">
+              <span class="drop-icon drop-purple"><i class="fas fa-puzzle-piece"></i></span>
+              <div class="drop-text">
+                <strong>تحديات الـ SBC</strong>
+                <small>حل فوري لجميع التحديات</small>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="buy-objectives.html">
+              <span class="drop-icon drop-green"><i class="fas fa-list-check"></i></span>
+              <div class="drop-text">
+                <strong>المهام (Objectives)</strong>
+                <small>إنهاء الحزم ومواسم الجوائز</small>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="buy-rivals.html">
+              <span class="drop-icon drop-blue"><i class="fas fa-shield-halved"></i></span>
+              <div class="drop-text">
+                <strong>ترقية Rivals</strong>
+                <small>رفع التصنيف الأسبوعي</small>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="buy-champions.html">
+              <span class="drop-icon drop-gold"><i class="fas fa-trophy"></i></span>
+              <div class="drop-text">
+                <strong>بطولة Champions</strong>
+                <small>حسم التصفيات والنهائيات</small>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="#coaching-section">
+              <span class="drop-icon drop-purple"><i class="fas fa-headset"></i></span>
+              <div class="drop-text">
+                <strong>التدريب والاستشارات</strong>
+                <small>تطوير مستواك مع محترفين</small>
+              </div>
+            </a>
+          </li>
         </ul>
       </li>
-      <li><a href="#coaching-section">🎓 الاستشارات</a></li>
-      <li><a href="#packages-section">📦 الباقات</a></li>
-      <li><a href="#features">مميزاتنا</a></li>
-      <li><a href="#faq">الأسئلة الشائعة</a></li>
-      <li><a href="login.html"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</a></li>
+      <li>
+        <a href="track.html" class="nav-link">
+          <i class="fas fa-magnifying-glass"></i>
+          <span>تتبع الطلب</span>
+        </a>
+      </li>
+      <li>
+        <a href="reviews.html" class="nav-link">
+          <i class="fas fa-star" style="color: #eab308;"></i>
+          <span>التقييمات</span>
+        </a>
+      </li>
+      <li>
+        <a href="#faq" class="nav-link">
+          <i class="fas fa-circle-question"></i>
+          <span>الأسئلة الشائعة</span>
+        </a>
+      </li>
     </ul>
-    <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="تغيير المظهر">
-      <i class="fas fa-moon"></i>
-    </button>
-    <button class="nav-hamburger" id="hamburger" aria-label="القائمة">
-      <span></span><span></span><span></span>
-    </button>
+
+    <!-- Action & Utilities Group (Compact & Elegant) -->
+    <div class="nav-actions">
+      <div class="global-currency-picker">
+        <i class="fas fa-globe"></i>
+        <select id="currencySelect">
+          <option value="SAR">SAR — ريال سعودي</option>
+          <option value="USD">USD — دولار أمريكي</option>
+          <option value="AED">AED — درهم إماراتي</option>
+          <option value="KWD">KWD — دينار كويتي</option>
+          <option value="BHD">BHD — دينار بحريني</option>
+          <option value="QAR">QAR — ريال قطري</option>
+          <option value="OMR">OMR — ريال عماني</option>
+          <option value="JOD">JOD — دينار أردني</option>
+          <option value="EGP">EGP — جنيه مصري</option>
+        </select>
+      </div>
+
+      <div id="navUserSlot" class="nav-user-slot">
+        <a href="login.html" class="nav-login-btn">
+          <i class="fas fa-arrow-right-to-bracket"></i>
+          <span>دخول</span>
+        </a>
+      </div>
+
+      <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="تغيير المظهر">
+        <i class="fas fa-moon"></i>
+      </button>
+
+      <button class="nav-hamburger" id="hamburger" aria-label="القائمة">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -280,28 +399,42 @@
         <span>متاح الآن ✦</span>
       </div>
       <h1 class="hero-h1" id="cms_heroTitle">
-        طريقك الأسرع
-        <span class="gradient-word">لبناء تشكيلة أحلامك</span><br/>
-        وبأمان كامل
+        <span class="hero-main-title">وجهتك الأولى <span class="gradient-word">لخدمات فيفا 27</span></span>
+        <span class="hero-subtitle-line">سرعة، أمان، وأفضل الأسعار</span>
       </h1>
       <p class="hero-desc" id="cms_heroSubTitle">
-        متجر <strong>Trivela</strong> المعتمد والأول لشحن كوينز وتفويض تحديات SBC ومباريات Rivals و FUT Champions. خدمات احترافية وسريعة بأعلى معايير الأمان وضمان ضد الحظر.
+        خدمات فيفا 27 الاحترافية بين يديك: شحن كوينز آمن، حل تحديات SBC، ورفع تصنيفك في الرايفلز والفوت تشامبيونز مع تسليم فوري ودعم فني متواصل 24/7.
       </p>
       <div class="hero-trust-row">
-        <div class="trust-chip"><i class="fas fa-shield-halved"></i><span id="cms_statSecurityLabel">أمان 100%</span></div>
-        <div class="trust-chip"><i class="fas fa-bolt"></i><span>توصيل خلال دقائق</span></div>
-        <div class="trust-chip"><i class="fas fa-headset"></i><span>دعم 24/7</span></div>
+        <div class="trust-chip"><i class="fas fa-shield-halved"></i><span id="cms_statSecurityLabel">أمان 100% مضمون</span></div>
+        <div class="trust-chip"><i class="fas fa-bolt"></i><span>توصيل فوري خلال دقائق</span></div>
+        <div class="trust-chip"><i class="fas fa-headset"></i><span>دعم فني مباشر 24/7</span></div>
       </div>
       <div class="hero-actions">
         <a href="#coins-device" class="cta-primary"><i class="fas fa-bolt"></i> ابدأ الشحن الآن</a>
-        <a href="#other-products" class="cta-ghost"><i class="fas fa-grid-2"></i> كل الخدمات</a>
+        <a href="#other-products" class="cta-ghost"><i class="fas fa-cubes"></i> كل الخدمات</a>
       </div>
       <div class="hero-numbers">
-        <div class="hn-item"><strong class="counter" id="cms_statOrdersCount" data-to="15000">0</strong><sup>+</sup><span id="cms_statOrdersLabel">عملية ناجحة</span></div>
+        <div class="hn-item">
+          <div class="hn-item-val">
+            <strong class="counter" id="cms_statOrdersCount" data-to="1500">1,500</strong><sup>+</sup>
+          </div>
+          <span id="cms_statOrdersLabel">عميل موثق</span>
+        </div>
         <div class="hn-sep"></div>
-        <div class="hn-item"><strong class="counter" id="cms_statDeliveryTime" data-to="10">0</strong><sup id="cms_statDeliveryLabel">دقائق توصيل</sup></div>
+        <div class="hn-item">
+          <div class="hn-item-val">
+            <strong class="counter" id="cms_statDeliveryTime" data-to="60">60</strong><sup id="cms_statDeliveryUnit" style="font-size:0.85rem; color:#2563eb;">دقيقة</sup>
+          </div>
+          <span id="cms_statDeliveryLabel">متوسط سرعة التوصيل</span>
+        </div>
         <div class="hn-sep"></div>
-        <div class="hn-item"><strong>4.9</strong><sup>⭐</sup><span>تقييم العملاء</span></div>
+        <div class="hn-item">
+          <div class="hn-item-val">
+            <strong style="color: #f59e0b;">4.9</strong><sup style="color: #f59e0b;">★</sup>
+          </div>
+          <span id="cms_statRatingLabel">تقييم ممتاز (1500+ عميل)</span>
+        </div>
       </div>
     </div>
     <div class="hero-right">
@@ -336,12 +469,15 @@
   </div>
 </div>
 
+
+
+
 <!-- ══════════ COINS DEVICE SELECTION ══════════ -->
 <section class="device-section" id="coins-device">
   <div class="container">
     <div class="device-header">
-      <h2 class="section-h2 text-center" id="cms_platformTitle">ابدأ شحن الكوينز لحسابك الآن — اختر منصتك للبدء</h2>
-      <p class="section-sub text-center" id="cms_platformSubTitle">توصيل فوري وآمن بنسبة 100% لكافة المنصات والأجهزة</p>
+      <h2 class="section-h2 text-center" id="cms_platformTitle">شحن كوينز فوري وآمن — حدد جهازك وابدأ فوراً</h2>
+      <p class="section-sub text-center" id="cms_platformSubTitle">توصيل فوري خلال دقائق بأعلى معايير الحماية والأمان لكافة الأجهزة</p>
     </div>
     
     <div class="device-grid-container">
@@ -411,37 +547,7 @@
   </div>
 </section>
 
-<!-- Mobile Categories Quick Navigation Bar -->
-<div class="mobile-categories-bar">
-  <a href="buy-coins.html" class="m-cat-card">
-    <div class="m-cat-icon coins-bg"><i class="fas fa-coins"></i></div>
-    <span>الكوينز</span>
-  </a>
-  <a href="buy-sbc.html" class="m-cat-card">
-    <div class="m-cat-icon sbc-bg"><i class="fas fa-puzzle-piece"></i></div>
-    <span>SBC</span>
-  </a>
-  <a href="buy-objectives.html" class="m-cat-card">
-    <div class="m-cat-icon obj-bg"><i class="fas fa-tasks"></i></div>
-    <span>المهام</span>
-  </a>
-  <a href="buy-rivals.html" class="m-cat-card">
-    <div class="m-cat-icon rivals-bg"><i class="fas fa-trophy"></i></div>
-    <span>Rivals</span>
-  </a>
-  <a href="buy-champions.html" class="m-cat-card">
-    <div class="m-cat-icon champs-bg"><i class="fas fa-award"></i></div>
-    <span>Champions</span>
-  </a>
-  <a href="#coaching-section" class="m-cat-card">
-    <div class="m-cat-icon coaching-bg"><i class="fas fa-graduation-cap"></i></div>
-    <span>الاستشارات</span>
-  </a>
-  <a href="#packages-section" class="m-cat-card">
-    <div class="m-cat-icon pkgs-bg"><i class="fas fa-box-open"></i></div>
-    <span>الباقات</span>
-  </a>
-</div>
+
 
 <!-- ══════════ OTHER PRODUCTS ══════════ -->
 <section class="products-section" id="other-products">
@@ -508,7 +614,7 @@
 </section>
 
 <!-- ══════════ SQUAD BUILDING & COACHING SECTION ══════════ -->
-<section class="coaching-section-home" id="coaching-section" style="background: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 80px 0;">
+<section class="coaching-section-home" id="coaching-section" style="background: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 80px 0; scroll-margin-top: 90px;">
   <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
     <div class="section-tag text-center" id="cms_guaranteeBadge" style="margin: 0 auto 12px auto; display: block; width: fit-content;">استشارات فنية</div>
     <h2 class="section-h2 text-center" id="cms_guaranteeTitle" style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; text-align: center; color: #1b355a;">كوّن فريقك باحتراف</h2>
@@ -599,31 +705,7 @@
   </div>
 </section>
 
-<!-- ══════════ PACKAGES & BUNDLES SECTION ══════════ -->
-<section class="packages-section-home" id="packages-section" style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 80px 0;">
-  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
-    <div class="section-tag text-center" style="margin: 0 auto 12px auto; display: block; width: fit-content;">الباقات المميزة</div>
-    <h2 class="section-h2 text-center" style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; text-align: center; color: #1b355a;">كوينز + لاعب مميز — بسعر واحد</h2>
-    <p class="section-sub text-center" style="font-size: 1.15rem; color: #64748b; margin: 0 auto 48px auto; max-width: 750px; text-align: center; line-height: 1.6;">احصل على كوينز FUT وبطاقة لاعب بحزمة واحدة مخفضة — وفّر أكثر، العب أفضل.</p>
 
-    <!-- Packages Grid -->
-    <div id="homepagePackagesGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
-      <!-- Loaded dynamically -->
-    </div>
-    <div id="noHomePackagesText" style="display: none; text-align: center; padding: 30px; color: #94a3b8; font-weight: bold;">
-      ⚠️ لا توجد باقات متوفرة حالياً في المتجر.
-    </div>
-
-    <!-- View All Link -->
-    <div style="text-align: center; margin-top: 40px;">
-      <a href="buy-packages.html" style="display: inline-flex; align-items: center; gap: 8px; background: #f0f5ff; color: #305388; border: 2px solid #cde2fe; border-radius: 50px; padding: 12px 32px; font-family: Cairo, sans-serif; font-weight: 700; font-size: 1rem; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.background='#305388';this.style.color='#fff';" onmouseout="this.style.background='#f0f5ff';this.style.color='#305388';">
-        <i class="fas fa-box-open"></i>
-        عرض كل الباقات المتاحة
-        <i class="fas fa-arrow-left"></i>
-      </a>
-    </div>
-  </div>
-</section>
 
 <!-- ══════════ FEATURES ══════════ -->
 <section class="features-section" id="features">
@@ -693,7 +775,7 @@
   <div class="container">
     <div class="section-tag">الطريقة</div>
     <h2 class="section-h2" id="cms_howSectionTitle">3 خطوات <span class="blue-word">بس</span></h2>
-    <p class="section-sub" id="cms_howSectionSubTitle">أبسط عملية شراء ستجربها في حياتك</p>
+    <p class="section-sub" id="cms_howSectionSubTitle">أبسط وأسرع عملية شراء ستجربها</p>
     <div class="how-steps">
       <div class="how-step">
         <div class="hs-num">01</div>
@@ -704,21 +786,21 @@
       <div class="how-connector"><div class="hc-line"></div><i class="fas fa-arrow-left"></i></div>
       <div class="how-step">
         <div class="hs-num">02</div>
-        <div class="hs-icon"><i class="fab fa-whatsapp"></i></div>
-        <h3 id="cms_landingStep2Title">تأكيد الطلب والدفع</h3>
-        <p id="cms_landingStep2Desc">املأ بياناتك بأمان تام واضغط إتمام العملية، ثم انتظر قليلاً وسيقوم فريق الدعم بمراسلتك على الواتساب لتأكيد الدفع.</p>
+        <div class="hs-icon"><i class="fas fa-credit-card"></i></div>
+        <h3 id="cms_landingStep2Title">الدفع الإلكتروني الفوري</h3>
+        <p id="cms_landingStep2Desc">ادفع بأمان وسهولة عبر وسائل الدفع المعتمدة (مدى، فيزا، ماستركارد، Apple Pay) مع تشفير بنكي كامل 100%.</p>
       </div>
       <div class="how-connector"><div class="hc-line"></div><i class="fas fa-arrow-left"></i></div>
       <div class="how-step">
         <div class="hs-num">03</div>
-        <div class="hs-icon"><i class="fas fa-trophy"></i></div>
-        <h3 id="cms_landingStep3Title">استلم الخدمة وانبسط!</h3>
-        <p id="cms_landingStep3Desc">يتم إنجاز تحدياتك أو شحن الكوينز لحسابك خلال دقائق معدودة بأمان وضمان 100%.</p>
+        <div class="hs-icon"><i class="fas fa-bolt"></i></div>
+        <h3 id="cms_landingStep3Title">التنفيذ الفوري والتسليم</h3>
+        <p id="cms_landingStep3Desc">يبدأ تنفيذ طلبك وشحن حسابك أو إنهاء الخدمة فوراً بعد الدفع بأمان وضمان 100%.</p>
       </div>
     </div>
     <div class="how-note">
-      <i class="fas fa-circle-info"></i>
-      <span id="cms_landingStepsBottomNote">بعد الدفع مباشرة يتواصل معك المختص لإتمام الخدمة — لا انتظار، لا تأخير!</span>
+      <i class="fas fa-shield-check"></i>
+      <span id="cms_landingStepsBottomNote">دفعك محمي ومضمون 100% عبر بوابات دفع بنكية معتمدة ومشفرة.</span>
     </div>
   </div>
 </section>
@@ -740,7 +822,12 @@
       </div>
       <div class="rsc-text">بناءً على +1,500 تقييم حقيقي من عملائنا</div>
     </div>
-    <div class="reviews-masonry" id="reviewsMasonry"></div>
+    <div class="reviews-masonry" id="reviewsMasonry">
+      <div style="text-align:center;grid-column:1/-1;color:#64748b;padding:30px;background:rgba(48,83,136,0.03);border-radius:12px;border:1px dashed #cbd5e1;">
+        <i class="fas fa-comment-dots" style="font-size:1.8rem;color:#94a3b8;margin-bottom:8px;display:block;"></i>
+        <span>سيتم إضافة تقييمات العملاء قريباً.</span>
+      </div>
+    </div>
     <div style="text-align: center; margin-top: 35px;">
       <a href="reviews.html" class="nav-order-btn" style="padding: 12px 36px; border-radius: 100px; text-decoration: none; font-size: 0.95rem; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s ease, box-shadow 0.25s ease; box-shadow: 0 4px 15px rgba(48,83,136,0.15);">
         <span>مشاهدة المزيد من التقييمات</span>
@@ -758,14 +845,21 @@
         <div class="section-tag">أسئلة</div>
         <h2 class="section-h2">أسئلة<br/><span class="blue-word">شائعة</span></h2>
         <p>إذا ما لقيت جوابك تواصل معنا وسنرد خلال دقائق.</p>
-        <a href="https://wa.me/966500000000" class="cta-primary" target="_blank">
+        <a href="https://wa.me/962775585112" class="cta-primary wa-link" target="_blank">
           <i class="fab fa-whatsapp"></i> تواصل معنا
         </a>
       </div>
-      <div class="faq-right" id="faqList"></div>
+      <div class="faq-right" id="faqList">
+        <div style="text-align:center;color:#64748b;padding:30px;background:rgba(48,83,136,0.03);border-radius:12px;border:1px dashed #cbd5e1;">
+          <i class="fas fa-question-circle" style="font-size:1.8rem;color:#94a3b8;margin-bottom:8px;display:block;"></i>
+          <span>سيتم إضافة الأسئلة الشائعة قريباً.</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
+
+
 
 <!-- ══════════ ORDER / CONTACT ══════════ -->
 <section class="order-section" id="order">
@@ -776,7 +870,7 @@
     
     <div class="support-grid">
       <!-- WhatsApp Card -->
-      <a href="https://wa.me/966500000000" class="support-card support-card-wa" target="_blank">
+      <a href="https://wa.me/962775585112" class="support-card support-card-wa wa-link" target="_blank">
         <div class="support-card-content">
           <div class="support-icon-wrapper wa-icon">
             <i class="fab fa-whatsapp"></i>
@@ -792,7 +886,7 @@
       </a>
       
       <!-- Instagram Card -->
-      <a href="https://instagram.com/Trivela" class="support-card support-card-ig" target="_blank">
+      <a href="https://www.instagram.com/trivelacoins" class="support-card support-card-ig" target="_blank">
         <div class="support-card-content">
           <div class="support-icon-wrapper ig-icon">
             <i class="fab fa-instagram"></i>
@@ -821,9 +915,9 @@
         </div>
         <p>أكمل متجر عربي لخدمات FIFA 27 Ultimate Team — كوينز، SBC، مهام، رايفلز، وأكثر.</p>
         <div class="footer-socials">
-          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+          <a href="https://wa.me/962775585112" class="wa-link" aria-label="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://www.instagram.com/trivelacoins" aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://tiktok.com/@Trivela" aria-label="TikTok" target="_blank"><i class="fab fa-tiktok"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -836,11 +930,13 @@
       </div>
       <div class="footer-col">
         <h4>سياسات متجر Trivela</h4>
+        <a href="track.html" style="color: var(--gold-primary); font-weight: bold;"><i class="fas fa-magnifying-glass"></i> تتبع طلبك هنا</a>
         <a href="policies.html#privacy">سياسة الخصوصية</a>
         <a href="policies.html#terms">شروط الاستخدام</a>
         <a href="policies.html#refund">سياسة الاسترجاع</a>
         <a href="policies.html#warranty">سياسة الضمان</a>
         <a href="index.html#faq">الأسئلة الشائعة</a>
+        <a href="reviews.html">⭐ تقييمات العملاء</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -851,18 +947,18 @@
 </footer>
 
 <!-- ══════════ FLOATING WHATSAPP ══════════ -->
-<a href="https://wa.me/966500000000" class="floating-wa" target="_blank" aria-label="تواصل عبر واتساب">
+<a href="https://wa.me/962775585112" class="floating-wa wa-link" target="_blank" aria-label="تواصل عبر واتساب">
   <i class="fab fa-whatsapp"></i>
   <span class="floating-wa-label">اطلب الآن</span>
 </a>
 
 <!-- ══════════ MODALS FOR CHECKOUT ══════════ -->
 <!-- Coaching Booking Modal -->
-<div class="modal-overlay" id="coachingModalOverlay" style="position: fixed !important; z-index: 99999 !important;">
-  <div class="modal-content-wrap">
+<div class="modal-overlay" id="coachingModalOverlay" onclick="if(event.target === this) closeModal('coachingModalOverlay')">
+  <div class="modal-content-wrap" style="max-width: 550px; max-height: 90vh; overflow-y: auto;">
     <button class="modal-close-btn" type="button" onclick="closeModal('coachingModalOverlay')"><i class="fas fa-times"></i></button>
     <h3 class="modal-title" id="modalCoachingTitle">حجز خدمة استشارية</h3>
-    <p class="modal-desc">يرجى ملء البيانات لتأكيد حجز الخدمة والتواصل معك فوراً</p>
+    <p class="modal-desc">يرجى اختيار الموعد وملء البيانات لتأكيد حجز الخدمة مباشرة</p>
     <div class="modal-price-tag" id="modalCoachingPrice">0.00 ر.س</div>
     
     <form id="coachingModalForm" onsubmit="handleCoachingModalSubmit(event)">
@@ -878,6 +974,28 @@
           </button>
         </div>
       </div>
+
+      <!-- Calendar & Time Slots Picker -->
+      <div class="modal-form-group" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 16px;">
+        <label style="font-weight: 800; font-size: 0.88rem; color: var(--blue-900, #1e3a8a); display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+          <i class="far fa-calendar-alt" style="color: var(--gold-secondary, #ca8a04);"></i> 1. اختر يوم الجلسة المباشرة:
+        </label>
+        <div class="calendar-days-scroll" id="modalCalendarDaysContainer" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;">
+          <!-- Loaded dynamically -->
+        </div>
+
+        <label style="font-weight: 800; font-size: 0.88rem; color: var(--blue-900, #1e3a8a); display: flex; align-items: center; gap: 6px; margin-top: 14px; margin-bottom: 10px;">
+          <i class="far fa-clock" style="color: var(--gold-secondary, #ca8a04);"></i> 2. اختر وقت الجلسة المتاح:
+        </label>
+        <div class="time-slots-grid" id="modalTimeSlotsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 8px;">
+          <div class="slot-placeholder-msg" style="grid-column: 1 / -1; text-align: center; font-size: 0.8rem; color: #94a3b8;">👈 اختر اليوم أولاً لعرض الأوقات المتاحة.</div>
+        </div>
+
+        <div id="modalSelectedSlotBanner" class="selected-slot-banner" style="display: none; margin-top: 12px; font-size: 0.82rem; padding: 8px 12px; background: rgba(16, 185, 129, 0.08); border: 1px solid #10b981; border-radius: 8px; color: #065f46; font-weight: 800;">
+          <i class="fas fa-circle-check"></i>
+          <span>الموعد المختار: <strong id="modalLblSelectedSlotText">...</strong></span>
+        </div>
+      </div>
       
       <!-- Full Name -->
       <div class="modal-form-group">
@@ -890,84 +1008,73 @@
         <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">رقم الواتساب للتواصل (مع رمز الدولة):</label>
         <input type="tel" id="modalContactPhone" class="modal-input" placeholder="مثال: +9665xxxxxxxx" required/>
       </div>
+
+      <!-- Instagram Handle (Optional) -->
+      <div class="modal-form-group">
+        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;"><i class="fab fa-instagram" style="color: #e1306c;"></i> حساب الانستقرام للتواصل (اختياري):</label>
+        <input type="text" id="modalContactInstagram" class="modal-input" placeholder="مثال: @username"/>
+      </div>
       
       <!-- Notes -->
       <div class="modal-form-group">
         <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">ملاحظات وتفاصيل التشكيلة / الميزانية:</label>
-        <textarea id="modalCoachingNotes" class="modal-input" rows="3" placeholder="ميزانيتي الحالية وتفاصيل اللاعبين الذين أود بقاءهم في التشكيلة..."></textarea>
+        <textarea id="modalCoachingNotes" class="modal-input" rows="2" placeholder="ميزانيتي الحالية وتفاصيل اللاعبين الذين أود بقاءهم في التشكيلة..."></textarea>
       </div>
       
       <button type="submit" class="modal-submit-btn">
-        <span>تأكيد وإرسال الطلب</span>
+        <i class="fas fa-cart-plus" style="margin-left: 8px;"></i>
+        <span>إضافة إلى السلة</span>
       </button>
     </form>
   </div>
 </div>
 
-<!-- Package Purchase Modal -->
-<div class="modal-overlay" id="packageModalOverlay" style="position: fixed !important; z-index: 99999 !important;">
-  <div class="modal-content-wrap">
-    <button class="modal-close-btn" type="button" onclick="closeModal('packageModalOverlay')"><i class="fas fa-times"></i></button>
-    <h3 class="modal-title" id="modalPackageTitle">شراء باقة مميزة</h3>
-    <p class="modal-desc">يرجى إدخال معلومات EA المطلوبة لشحن وتفعيل الباقة مباشرة في حسابك</p>
-    <div class="modal-price-tag" id="modalPackagePrice">0.00 ر.س</div>
-    
-    <form id="packageModalForm" onsubmit="handlePackageModalSubmit(event)">
-      <!-- Platform selector -->
-      <div class="modal-form-group">
-        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">منصة اللعب:</label>
-        <div class="modal-platform-picker">
-          <button type="button" class="modal-platform-btn active" id="modalPlatformConsolePkg" onclick="selectModalPlatform('Console')">
-            <i class="fab fa-playstation"></i> / <i class="fab fa-xbox"></i> بلايستيشن واكس بوكس
-          </button>
-          <button type="button" class="modal-platform-btn" id="modalPlatformPCPkg" onclick="selectModalPlatform('PC')">
-            <i class="fas fa-desktop"></i> بي سي (PC)
-          </button>
-        </div>
-      </div>
-      
-      <!-- Name -->
-      <div class="modal-form-group">
-        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">الاسم بالكامل:</label>
-        <input type="text" id="modalEaName" class="modal-input" placeholder="أدخل اسمك الكريم" required/>
-      </div>
-      
-      <!-- WhatsApp Phone -->
-      <div class="modal-form-group">
-        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">رقم الواتساب للتواصل (مثال: +9665xxxxxxxx):</label>
-        <input type="tel" id="modalEaPhone" class="modal-input" placeholder="+9665xxxxxxxx" required/>
-      </div>
-
-      <!-- EA Email -->
-      <div class="modal-form-group">
-        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">البريد الإلكتروني لحساب EA:</label>
-        <input type="email" id="modalEaEmail" class="modal-input" placeholder="الايميل الخاص بـ EA" required/>
-      </div>
-      
-      <!-- EA Password -->
-      <div class="modal-form-group">
-        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">كلمة مرور حساب EA:</label>
-        <input type="password" id="modalEaPassword" class="modal-input" placeholder="كلمة المرور الخاصة بـ EA" required/>
-      </div>
-      
-      <!-- Backup Codes -->
-      <div class="modal-form-group">
-        <label style="font-weight: 700; font-size: 0.85rem; color: #1b355a;">الرموز الاحتياطية (ثلاثة رموز):</label>
-        <div class="backup-codes-row">
-          <input type="text" id="modalBackup1" class="modal-input" placeholder="رمز 1" maxlength="8" required/>
-          <input type="text" id="modalBackup2" class="modal-input" placeholder="رمز 2" maxlength="8" required/>
-          <input type="text" id="modalBackup3" class="modal-input" placeholder="رمز 3" maxlength="8" required/>
-        </div>
-      </div>
-      
-      <button type="submit" class="modal-submit-btn" style="background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color: #000; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2);">
-        <span>إتمام العملية</span>
-      </button>
-    </form>
-  </div>
-</div>
 
 <!-- Sticky Bottom Navigation Bar for Mobile -->
+<!-- Services Mini-Menu Popup (Mobile) -->
+<div id="servicesMiniMenu" class="services-mini-menu" onclick="if(event.target===this)closeMiniMenu()">
+  <div class="services-mini-card">
+    <div class="services-mini-header">
+      <span>🎮 اختر الخدمة</span>
+      <button onclick="closeMiniMenu()" class="services-mini-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="services-mini-grid">
+      <a href="buy-coins.html" class="services-mini-item">
+        <div class="services-mini-icon" style="background:linear-gradient(135deg,#eab308,#ca8a04)"><i class="fas fa-coins"></i></div>
+        <span>شحن كوينز</span>
+      </a>
+      <a href="buy-sbc.html" class="services-mini-item">
+        <div class="services-mini-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5)"><i class="fas fa-puzzle-piece"></i></div>
+        <span>تحديات SBC</span>
+      </a>
+      <a href="buy-objectives.html" class="services-mini-item">
+        <div class="services-mini-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-bullseye"></i></div>
+        <span>المهام</span>
+      </a>
+      <a href="buy-rivals.html" class="services-mini-item">
+        <div class="services-mini-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><i class="fas fa-swords"></i></div>
+        <span>Rivals</span>
+      </a>
+      <a href="buy-champions.html" class="services-mini-item">
+        <div class="services-mini-icon" style="background:linear-gradient(135deg,#ec4899,#db2777)"><i class="fas fa-trophy"></i></div>
+        <span>Champions</span>
+      </a>
+      <a href="cart.html" class="services-mini-item">
+        <div class="services-mini-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><i class="fas fa-box-open"></i></div>
+        <span>الحزم والباقات</span>
+      </a>
+      <a href="#coaching-section" class="services-mini-item">
+        <div class="services-mini-icon" style="background:linear-gradient(135deg,#14b8a6,#0d9488)"><i class="fas fa-chess"></i></div>
+        <span>بناء التشكيلات</span>
+      </a>
+    </div>
+    <div style="margin-top: 16px; padding: 10px 14px; background: linear-gradient(135deg, rgba(234,179,8,0.08), rgba(202,138,4,0.05)); border-radius: 12px; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(234,179,8,0.15);">
+      <i class="fas fa-shield-alt" style="color: #10b981; font-size: 0.85rem;"></i>
+      <span style="font-size: 0.7rem; color: var(--text-gray); font-family: Cairo, sans-serif;">جميع الخدمات آمنة 100% · Anti-Ban مضمون</span>
+    </div>
+  </div>
+</div>
+
 <div class="bottom-nav">
   <a href="#home" class="bottom-nav-item active" onclick="document.getElementById('home').scrollIntoView({behavior: 'smooth'})">
     <i class="fas fa-home"></i>
@@ -977,13 +1084,13 @@
     <i class="fas fa-coins"></i>
     <span>الكوينز</span>
   </a>
-  <a href="#other-products" class="bottom-nav-item" onclick="document.getElementById('other-products').scrollIntoView({behavior: 'smooth'})">
+  <a href="#" class="bottom-nav-item" id="btnServicesMiniMenu" onclick="event.preventDefault(); toggleMiniMenu()">
     <i class="fas fa-cubes"></i>
     <span>الخدمات</span>
   </a>
-  <a href="#packages-section" class="bottom-nav-item" onclick="document.getElementById('packages-section').scrollIntoView({behavior: 'smooth'})">
-    <i class="fas fa-box-open"></i>
-    <span>الباقات</span>
+  <a href="track.html" class="bottom-nav-item">
+    <i class="fas fa-magnifying-glass"></i>
+    <span>تتبع الطلب</span>
   </a>
   <a href="profile.html" class="bottom-nav-item">
     <i class="fas fa-user-circle"></i>
@@ -991,7 +1098,72 @@
   </a>
 </div>
 
+<script>
+function toggleMiniMenu() {
+  const menu = document.getElementById('servicesMiniMenu');
+  if (!menu) return;
+  const isOpen = menu.classList.contains('open');
+  if (isOpen) { closeMiniMenu(); } else { menu.classList.add('open'); }
+}
+function closeMiniMenu() {
+  const menu = document.getElementById('servicesMiniMenu');
+  if (menu) menu.classList.remove('open');
+}
+
+// Global modal scroll lock & close
+window.closeModal = function(modalId) {
+  const modal = document.getElementById(modalId || 'coachingModalOverlay');
+  if (modal) {
+    modal.style.display = 'none';
+    modal.classList.remove('open');
+  }
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = '';
+};
+
+// Global fallback for coaching booking
+window.openStaticCoachingBooking = function(packageType, priceSAR) {
+  if (typeof window.openStaticCoachingBookingModal === 'function') {
+    window.openStaticCoachingBookingModal(packageType, priceSAR);
+    return;
+  }
+  const modal = document.getElementById('coachingModalOverlay');
+  const titleEl = document.getElementById('modalCoachingTitle');
+  const priceEl = document.getElementById('modalCoachingPrice');
+  if (titleEl) titleEl.textContent = `حجز باقة: ${packageType}`;
+  if (priceEl) priceEl.textContent = `${priceSAR} ر.س`;
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.classList.add('open');
+    document.body.classList.add('modal-open');
+    document.body.style.overflow = 'hidden';
+  }
+};
+
+// Global Escape listener
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    window.closeModal('coachingModalOverlay');
+    window.closeModal('packageModalOverlay');
+  }
+});
+
+// Auto-scroll to hash if coming from another page
+window.addEventListener('load', function() {
+  if (window.location.hash) {
+    const el = document.querySelector(window.location.hash);
+    if (el) {
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }
+});
+</script>
+
 <script src="src/core/global-currency.js"></script>
-<script type="module" src="src/features/landing/landingUI.js?v=2.5"></script>
+<script src="src/core/cart.js?v=1.0"></script>
+<script type="module" src="src/features/landing/landingUI.js?v=3.1"></script>
 </body>
 </html>
+
