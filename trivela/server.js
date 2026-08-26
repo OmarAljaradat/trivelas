@@ -362,9 +362,9 @@ app.use(async (req, res, next) => {
   const lowered = req.url.toLowerCase();
   if (lowered.includes('admin') || lowered.includes('maintenance')) return next();
 
-  let filePath = req.url === '/' ? '/index.html' : req.url.split('?')[0];
-  if (!filePath.endsWith('.html')) filePath += '.html';
-  const abs = path.join(__dirname, filePath);
+  let cleanPath = req.url === '/' ? 'index.html' : req.url.split('?')[0].replace(/^\/+/, '');
+  if (!cleanPath.includes('.') && !cleanPath.endsWith('.html')) cleanPath += '.html';
+  const abs = path.join(__dirname, cleanPath);
   if (!fs.existsSync(abs)) return next();
 
   try {
@@ -390,6 +390,14 @@ app.use(async (req, res, next) => {
 });
 
 app.use(express.static(__dirname));
+
+// Direct fallback route for root and common HTML pages
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/:page.html', (req, res, next) => {
+  const p = path.join(__dirname, req.params.page + '.html');
+  if (fs.existsSync(p)) return res.sendFile(p);
+  next();
+});
 
 // ==========================================
 // PASSWORD HELPERS
