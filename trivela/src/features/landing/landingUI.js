@@ -178,7 +178,7 @@ function updateNavbarMenu() {
   const userSlotEl = document.getElementById('navUserSlot');
   if (!menuEl) return;
   
-  const token = localStorage.getItem('trivela_token');
+  const token = localStorage.getItem('shopcoin_token');
   
   if (userSlotEl) {
     if (token) {
@@ -328,8 +328,8 @@ function updateNavbarMenu() {
 }
 
 window.handleNavbarLogout = function() {
-  localStorage.removeItem('trivela_token');
-  localStorage.removeItem('trivela_user');
+  localStorage.removeItem('shopcoin_token');
+  localStorage.removeItem('shopcoin_user');
   window.location.reload();
 };
 
@@ -372,7 +372,7 @@ function updateSupportLinks() {
     link.href = dynamicSettings.instagramUrl;
     const span = link.querySelector('span');
     if (span && span.textContent.startsWith('@')) {
-      const username = dynamicSettings.instagramUrl.split('/').filter(Boolean).pop() || 'Trivela';
+      const username = dynamicSettings.instagramUrl.split('/').filter(Boolean).pop() || 'ShopCoin';
       span.textContent = `@${username}`;
     }
   });
@@ -1008,7 +1008,7 @@ function initOrderForm() {
       const service  = srvEl ? srvEl.value : 'غير محدد';
 
       const msg = encodeURIComponent(
-        '🎮 طلب جديد — Trivela\n\n' +
+        '🎮 طلب جديد — ShopCoin\n\n' +
         '👤 الاسم: ' + name + '\n' +
         '🛠️ الخدمة: ' + service + '\n' +
         '🕹️ المنصة: ' + platform + '\n' +
@@ -1016,7 +1016,7 @@ function initOrderForm() {
         '💵 العملة: ' + currency + '\n' +
         '📱 التواصل: ' + contact + '\n' +
         '📝 ملاحظات: ' + (notes || 'لا يوجد') + '\n\n' +
-        '_أرسل من Trivela.com_'
+        '_أرسل من ShopCoin15.com_'
       );
       window.open(`https://wa.me/${dynamicSettings.whatsappPhone}?text=${msg}`, '_blank');
       if (modal) modal.classList.add('open');
@@ -1203,8 +1203,8 @@ function applyCMSContent() {
 
     const fTitle = document.getElementById('cms_featuresTitle');
     if (fTitle && l.featuresTitle) {
-      if (l.featuresTitle.includes('Trivela')) {
-        fTitle.innerHTML = l.featuresTitle.replace('Trivela', '<span class="blue-word">Trivela</span>');
+      if (l.featuresTitle.includes('ShopCoin')) {
+        fTitle.innerHTML = l.featuresTitle.replace('ShopCoin', '<span class="blue-word">ShopCoin</span>');
       } else {
         fTitle.textContent = l.featuresTitle;
       }

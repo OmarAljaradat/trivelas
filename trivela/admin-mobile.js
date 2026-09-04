@@ -26,7 +26,7 @@ const CURRENCY_SYMBOLS = {
 // Check admin auth immediately
 async function checkAuth() {
   if (window.__adminGuardBlocked) return;
-  const token = localStorage.getItem('trivela_token');
+  const token = localStorage.getItem('shopcoin_token');
   if (!token) {
     window.location.href = '/login.html?redirect=/admin-mobile.html';
     return;
@@ -644,7 +644,7 @@ window.switchTab = function(tabName, el) {
 
 window.logoutAdmin = function() {
   if (confirm("هل أنت متأكد من رغبتك في تسجيل الخروج من لوحة التحكم؟")) {
-    localStorage.removeItem('trivela_token');
+    localStorage.removeItem('shopcoin_token');
     window.location.href = '/login.html';
   }
 };

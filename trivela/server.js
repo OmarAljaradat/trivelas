@@ -106,7 +106,7 @@ async function readDatabase() {
       try { settings[row.key] = JSON.parse(row.value); } catch { settings[row.key] = row.value; }
     }
     if (!settings.whatsappPhone) settings.whatsappPhone = '962775585112';
-    if (!settings.instagramUrl) settings.instagramUrl = 'https://instagram.com/Trivela';
+    if (!settings.instagramUrl) settings.instagramUrl = 'https://instagram.com/ShopCoin';
     if (settings.maintenanceMode === undefined) settings.maintenanceMode = false;
     if (!settings.baseRateConsole) settings.baseRateConsole = 2.80;
     if (!settings.baseRatePC) settings.baseRatePC = 2.40;
@@ -122,7 +122,7 @@ async function readDatabase() {
       settings.content = {
         landing: {
           heroTitle: "الأسرع لبناء تشكيلة الأحلام",
-          heroSubTitle: "متجر تريفيلا لشحن كوينز فيفا 27 وإنجاز المهام بأمان وسرعة فائقة",
+          heroSubTitle: "متجر شوب كوينز لشحن كوينز فيفا 27 وإنجاز المهام بأمان وسرعة فائقة",
           statOrdersCount: "1,500+",
           statOrdersLabel: "عميل موثق",
           statDeliveryTime: "60 دقيقة",
@@ -311,7 +311,7 @@ app.use(async (req, res, next) => {
 
   const isAdminRequest = req.url.startsWith('/admin') || req.url.startsWith('/api/admin') || req.url.includes('admin.js') || req.url.includes('logo-official.png');
   const isApiAuthRequest = req.url.startsWith('/api/auth');
-  const isAssetsRequest = req.url.includes('style.css') || req.url.includes('theme_concept') || req.url.includes('trivela_logo') || req.url.includes('logo-official');
+  const isAssetsRequest = req.url.includes('style.css') || req.url.includes('theme_concept') || req.url.includes('shopcoin_logo') || req.url.includes('logo-official');
   const isPublicContent = req.url.startsWith('/api/public/content');
 
   if (maintenanceMode && !isBypassed && !isAdminRequest && !isApiAuthRequest && !isAssetsRequest && !isPublicContent && req.url !== '/maintenance.html') {
@@ -353,9 +353,9 @@ app.use(async (req, res, next) => {
 // Static directories resolution across all environments (Vercel, local, Docker)
 const staticDirs = [
   __dirname,
-  path.join(__dirname, 'trivela'),
-  path.join(__dirname, '..', 'trivela'),
-  path.join(process.cwd(), 'trivela'),
+  path.join(__dirname, 'shopcoin'),
+  path.join(__dirname, '..', 'shopcoin'),
+  path.join(process.cwd(), 'shopcoin'),
   process.cwd()
 ].filter((d, i, arr) => arr.indexOf(d) === i);
 
@@ -494,18 +494,18 @@ async function authenticateToken(req, res, next) {
 // ==========================================
 // ADMIN AUTH
 // ==========================================
-const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@trivela.local').toLowerCase();
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@shopcoin15.local').toLowerCase();
 
 async function ensureAdminBootstrapped() {
   // Ensure admin exists
   const existing = await sqliteDb.prepare('SELECT id FROM users WHERE LOWER(email) = ?').get(ADMIN_EMAIL);
   if (!existing) {
-    const defaultPass = process.env.ADMIN_PASSWORD || 'Trivela@Admin2026';
+    const defaultPass = process.env.ADMIN_PASSWORD || 'ShopCoin@Admin2026';
     const adminId = 'admin_' + Date.now();
     await sqliteDb.prepare(`
       INSERT INTO users (id, name, email, phone, password, is_verified, is_admin, points, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, 1, 1, 0, datetime('now'), datetime('now'))
-    `).run(adminId, 'Trivela Admin', ADMIN_EMAIL, process.env.ADMIN_PHONE || '966500000001', hashPassword(defaultPass));
+    `).run(adminId, 'ShopCoin Admin', ADMIN_EMAIL, process.env.ADMIN_PHONE || '966500000001', hashPassword(defaultPass));
     
     await sqliteDb.prepare('INSERT INTO points_history (user_id, amount, reason) VALUES (?, 0, ?)').run(adminId, 'حساب المشرف تم إنشاؤه تلقائياً');
     console.log(`[SECURITY] Bootstrapped admin user: ${ADMIN_EMAIL}`);
@@ -1036,7 +1036,7 @@ app.post('/api/admin/reset', async (req, res) => {
     await sqliteDb.prepare('DELETE FROM logs').run();
     await addAdminLog("RESET_ALL", "إعادة تعيين شاملة للمتجر");
   } else if (type === 'system_factory_reset') {
-    if (password !== 'Trivela@Reset2026') {
+    if (password !== 'ShopCoin@Reset2026') {
       return res.status(401).json({ success: false, error: "كلمة مرور إعادة ضبط المصنع غير صحيحة!" });
     }
     await sqliteDb.prepare('DELETE FROM analytics').run();
@@ -1049,7 +1049,7 @@ app.post('/api/admin/reset', async (req, res) => {
     
     // Re-add default coupon
     await sqliteDb.prepare("INSERT INTO coupons (id, code, discount_percent, max_uses, used_count, active) VALUES (?, ?, ?, ?, ?, 1)").run(
-      'cpn_' + Date.now(), 'TRIVELA', 10, 100, 0
+      'cpn_' + Date.now(), 'SHOPCOIN', 10, 100, 0
     );
     
     await addAdminLog("SYSTEM_FACTORY_RESET", "إعادة ضبط المصنع بالكامل");
@@ -1505,7 +1505,7 @@ app.post('/api/admin/settings', async (req, res) => {
     whatsappPhone: newSettings.whatsappPhone,
     instagramUrl: newSettings.instagramUrl,
     maintenanceMode: !!newSettings.maintenanceMode,
-    maintenanceBypassToken: newSettings.maintenanceBypassToken || oldSettings.maintenanceBypassToken || "trivela-bypass-vip",
+    maintenanceBypassToken: newSettings.maintenanceBypassToken || oldSettings.maintenanceBypassToken || "shopcoin-bypass-vip",
     maintenanceMessage: newSettings.maintenanceMessage || oldSettings.maintenanceMessage || "نحن نقوم بأعمال صيانة مؤقتة للتحديث، سنعود للعمل قريباً جداً. شكراً لتفهمك!",
     maintenanceTitleText: newSettings.maintenanceTitleText || oldSettings.maintenanceTitleText || "أعمال صيانة مؤقتة",
     maintenanceCountdownActive: !!newSettings.maintenanceCountdownActive,
@@ -1513,7 +1513,7 @@ app.post('/api/admin/settings', async (req, res) => {
     maintenanceGlowColor: newSettings.maintenanceGlowColor || oldSettings.maintenanceGlowColor || "#eab308",
     maintenanceIconStyle: newSettings.maintenanceIconStyle || oldSettings.maintenanceIconStyle || "wrench",
     maintenanceTelegramActive: !!newSettings.maintenanceTelegramActive,
-    settingTelegram: newSettings.settingTelegram || oldSettings.settingTelegram || "https://t.me/Trivela",
+    settingTelegram: newSettings.settingTelegram || oldSettings.settingTelegram || "https://t.me/shopcoin15",
     enableServiceCoins: newSettings.enableServiceCoins !== false,
     enableServiceSBC: newSettings.enableServiceSBC !== false,
     enableServiceRivals: newSettings.enableServiceRivals !== false,
@@ -1581,9 +1581,9 @@ app.post('/api/admin/email-campaigns', async (req, res) => {
 app.get('/api/admin/backup-db', async (req, res) => {
   const db = await readDatabase();
   const backupData = JSON.stringify(db, null, 2);
-  const tmpPath = path.join(__dirname, 'trivela_backup_temp.json');
+  const tmpPath = path.join(__dirname, 'shopcoin_backup_temp.json');
   fs.writeFileSync(tmpPath, backupData, 'utf8');
-  res.download(tmpPath, 'trivela_database_backup.json', () => {
+  res.download(tmpPath, 'shopcoin_database_backup.json', () => {
     try { fs.unlinkSync(tmpPath); } catch {}
   });
 });
@@ -2208,7 +2208,7 @@ if (!process.env.VERCEL) {
 if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`\n==================================================`);
-    console.log(`🚀 Trivela Server running at: http://localhost:${PORT}`);
+    console.log(`🚀 ShopCoin Server running at: http://localhost:${PORT}`);
     console.log(`==================================================\n`);
   });
 }

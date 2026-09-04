@@ -1,7 +1,7 @@
 // Configuration & Exchange Rates
 let dynamicSettings = {
   whatsappPhone: "962775585112",
-  instagramUrl: "https://www.instagram.com/trivelacoins",
+  instagramUrl: "https://www.instagram.com/shopcoin15",
   maintenanceMode: false,
   baseRateConsole: 2.80,
   baseRatePC: 2.40,
@@ -550,7 +550,7 @@ window.sendRivalsWhatsApp = function() {
   const phone = dynamicSettings.whatsappPhone || '962775585112';
 
   const messageText = 
-`⚔️ *طلب خدمة رايفلز — Trivela*
+`⚔️ *طلب خدمة رايفلز — ShopCoin*
 
 🕹️ *المنصة:* ${platformName}
 🎯 *الترقية المطلوبة:* ${rankName}
@@ -592,9 +592,9 @@ function showOrderSuccessPopup(orderId, whatsappPhone, priceStr, serviceName, pl
   overlay.innerHTML = `
     <div class="order-success-card receipt-style">
       <div class="receipt-header">
-        <img src="logo-official.png" class="receipt-logo" alt="Trivela" />
+        <img src="logo-official.png" class="receipt-logo" alt="ShopCoin" />
         <h3 class="receipt-title">سند استلام إلكتروني</h3>
-        <p class="receipt-subtitle">متجر تريفيلا — متجر خدمات FIFA 27 المعتمد</p>
+        <p class="receipt-subtitle">متجر شوب كوينز — متجر خدمات FIFA 27 المعتمد</p>
       </div>
       
       <div class="receipt-body">

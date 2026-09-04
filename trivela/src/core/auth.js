@@ -2,7 +2,7 @@ import { api } from './api.js';
 
 class AuthService {
   constructor() {
-    this.tokenKey = 'trivela_token';
+    this.tokenKey = 'shopcoin_token';
   }
 
   setToken(token) {

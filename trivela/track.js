@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // Logged-in orders dropdown loader
-  const token = localStorage.getItem('trivela_token');
+  const token = localStorage.getItem('shopcoin_token');
   if (token) {
     const guestPrompt = document.getElementById('guestLoginPrompt');
     const myOrdersBox = document.getElementById('loggedInUserOrders');

@@ -2,7 +2,7 @@ import { api } from '../../core/api.js';
 
 
 export const MOCK_COUPONS = {
-  'TRIVELA': 10,
+  'SHOPCOIN': 10,
   'EA27': 15,
   'VIP5': 5
 };

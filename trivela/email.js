@@ -24,7 +24,7 @@ const HTML_HEAD = `
 `;
 
 async function sendOTP(email, code, type = 'verify') {
-  const subject = type === 'reset' ? 'رمز إعادة تعيين كلمة المرور — Trivela' : 'رمز التحقق من حسابك — Trivela';
+  const subject = type === 'reset' ? 'رمز إعادة تعيين كلمة المرور — ShopCoin' : 'رمز التحقق من حسابك — ShopCoin';
   
   if (!resend) {
     console.log(`📧 [DEV] OTP for ${email}: ${code}`);
@@ -38,7 +38,7 @@ async function sendOTP(email, code, type = 'verify') {
     <body>
       <div class="container">
         <div class="header">
-          <h1 class="title">Trivela</h1>
+          <h1 class="title">ShopCoin</h1>
         </div>
         <h2 style="text-align: center; margin-bottom: 20px;">${type === 'reset' ? 'إعادة تعيين كلمة المرور' : 'تأكيد حسابك'}</h2>
         <p style="font-size: 16px; line-height: 1.5; color: #e2e8f0;">مرحباً بك،</p>
@@ -52,7 +52,7 @@ async function sendOTP(email, code, type = 'verify') {
         <p style="font-size: 14px; color: #94a3b8; text-align: center;">إذا لم تقم بهذا الطلب، يمكنك تجاهل هذه الرسالة بأمان.</p>
         
         <div class="footer">
-          <p>&copy; ${new Date().getFullYear()} Trivela. جميع الحقوق محفوظة.</p>
+          <p>&copy; ${new Date().getFullYear()} ShopCoin. جميع الحقوق محفوظة.</p>
         </div>
       </div>
     </body>
@@ -74,7 +74,7 @@ async function sendOTP(email, code, type = 'verify') {
 }
 
 async function sendWelcomeEmail(email, name) {
-  const subject = 'مرحباً بك في Trivela! 🎮';
+  const subject = 'مرحباً بك في ShopCoin! 🎮';
   
   if (!resend) {
     console.log(`📧 [DEV] Welcome email to ${email}`);
@@ -88,18 +88,18 @@ async function sendWelcomeEmail(email, name) {
     <body>
       <div class="container">
         <div class="header">
-          <h1 class="title">Trivela</h1>
+          <h1 class="title">ShopCoin</h1>
         </div>
-        <h2 style="text-align: center; margin-bottom: 20px;">مرحباً بك في عائلة Trivela! 🎮</h2>
+        <h2 style="text-align: center; margin-bottom: 20px;">مرحباً بك في عائلة ShopCoin! 🎮</h2>
         <p style="font-size: 16px; line-height: 1.5; color: #e2e8f0;">أهلاً بك ${name}،</p>
         <p style="font-size: 16px; line-height: 1.5; color: #e2e8f0;">نحن سعداء جداً بانضمامك إلينا. اكتشف أفضل العروض والخدمات لحسابك الآن.</p>
         
         <div style="text-align: center; margin: 30px 0;">
-          <a href="https://trivela.com" style="background-color: #f59e0b; color: #050b14; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">تصفح المتجر الآن</a>
+          <a href="https://shopcoin15.com" style="background-color: #f59e0b; color: #050b14; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">تصفح المتجر الآن</a>
         </div>
         
         <div class="footer">
-          <p>&copy; ${new Date().getFullYear()} Trivela. جميع الحقوق محفوظة.</p>
+          <p>&copy; ${new Date().getFullYear()} ShopCoin. جميع الحقوق محفوظة.</p>
         </div>
       </div>
     </body>

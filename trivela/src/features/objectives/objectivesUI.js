@@ -271,7 +271,7 @@ export function applyCouponCode() {
 
 // Redeem Loyalty Points for Coupons
 export async function redeemPointsForCoupon(rewardType) {
-  const token = localStorage.getItem('trivela_token');
+  const token = localStorage.getItem('shopcoin_token');
   const msg = document.getElementById('redeemStatusMessage');
   if (!token) {
     if (msg) {
@@ -547,7 +547,7 @@ export async function handleOrderSubmit(event) {
   // Customer Info
   const nameInput = document.getElementById('customerName');
   const phoneInput = document.getElementById('customerPhone');
-  const customerName = nameInput ? nameInput.value.trim() : (loggedInName || "عميل تريفيلا");
+  const customerName = nameInput ? nameInput.value.trim() : (loggedInName || "عميل شوب كوينز");
   const customerPhone = phoneInput ? phoneInput.value.trim() : (loggedInPhone || "—");
   
   // Sony Account
@@ -628,7 +628,7 @@ export async function handleOrderSubmit(event) {
       const finalDisplayPriceVal = totalDisplayPrice;
 
       // Prefilled whatsapp message text
-      let messageText = `مرحباً متجر تريفيلا،
+      let messageText = `مرحباً متجر شوب كوينز،
 لقد قمت بطلب إنجاز مهام (أهداف) ألتيمت تيم بنجاح! 🎯
 تفاصيل الطلب:
 - رقم الطلب: #${data.order.id}

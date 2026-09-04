@@ -1,11 +1,11 @@
 /**
- * Trivela Unified Shopping Cart Engine & UI Drawer
+ * ShopCoin Unified Shopping Cart Engine & UI Drawer
  * Exclusively handles item accumulation, coupon application, customer details,
  * and Payment Method selection (PayTabs API vs WhatsApp Manual).
  */
 
 (function () {
-  const CART_STORAGE_KEY = 'trivela_cart';
+  const CART_STORAGE_KEY = 'shopcoin_cart';
   const WHATSAPP_PHONE = '962775585112';
 
   // Currency helper
@@ -22,7 +22,7 @@
   };
 
   function getActiveCurrency() {
-    const curCode = localStorage.getItem('trivela_currency') || 'SAR';
+    const curCode = localStorage.getItem('shopcoin_currency') || 'SAR';
     return { code: curCode, ...(CURRENCIES[curCode] || CURRENCIES.SAR) };
   }
 
@@ -36,7 +36,7 @@
   }
 
   // Cart State Manager
-  class TrivelaCart {
+  class ShopCoinCart {
     constructor() {
       this.items = this.loadCart();
       this.activeCoupon = null;
@@ -70,7 +70,7 @@
       const newItem = {
         id: 'cart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
         addedAt: new Date().toISOString(),
-        service: item.service || 'خدمة Trivela',
+        service: item.service || 'خدمة ShopCoin',
         type: item.type || 'service',
         platform: item.platform || 'Console',
         priceSAR: parseFloat(item.priceSAR) || 0,
@@ -126,11 +126,11 @@
     }
 
     showToast(message) {
-      let toast = document.getElementById('trivelaCartToast');
+      let toast = document.getElementById('shopCoinCartToast');
       if (!toast) {
         toast = document.createElement('div');
-        toast.id = 'trivelaCartToast';
-        toast.className = 'trivela-cart-toast';
+        toast.id = 'shopCoinCartToast';
+        toast.className = 'sc-cart-toast';
         document.body.appendChild(toast);
       }
       toast.innerHTML = `<i class="fas fa-check-circle"></i> <span>${message}</span>`;
@@ -173,7 +173,7 @@
 
 
     render() {
-      const drawer = document.getElementById('trivelaCartDrawer');
+      const drawer = document.getElementById('shopCoinCartDrawer');
       if (!drawer) return;
 
       const count = this.getItemsCount();
@@ -189,7 +189,7 @@
       const totalSAR = this.getTotalSAR();
 
       // Pre-fill user data if logged in
-      const loggedUserStr = localStorage.getItem('trivela_user');
+      const loggedUserStr = localStorage.getItem('shopcoin_user');
       let defaultName = '';
       let defaultPhone = '';
       if (loggedUserStr) {
@@ -207,7 +207,7 @@
             <div class="cart-empty-icon"><i class="fas fa-cart-shopping"></i></div>
             <h4>سلة المشتريات فارغة</h4>
             <p>اختر خدماتك المفضلة من المتجر وأضفها إلى السلة لتنفيذها فوراً.</p>
-            <button type="button" class="cart-empty-browse-btn" onclick="window.trivelaCart.close()">تصفح الخدمات الآن</button>
+            <button type="button" class="cart-empty-browse-btn" onclick="window.shopCoinCart.close()">تصفح الخدمات الآن</button>
           </div>
         `;
       } else {
@@ -218,7 +218,7 @@
                 <div class="cart-item-info">
                   <div class="cart-item-header">
                     <strong class="cart-item-title">${item.service}</strong>
-                    <button type="button" class="cart-item-remove" onclick="window.trivelaCart.removeItem('${item.id}')" title="حذف">
+                    <button type="button" class="cart-item-remove" onclick="window.shopCoinCart.removeItem('${item.id}')" title="حذف">
                       <i class="fas fa-trash-can"></i>
                     </button>
                   </div>
@@ -242,7 +242,7 @@
             <h3>سلة المشتريات</h3>
             <span class="cart-header-badge">${count} منتجات</span>
           </div>
-          <button type="button" class="cart-close-btn" onclick="window.trivelaCart.close()">&times;</button>
+          <button type="button" class="cart-close-btn" onclick="window.shopCoinCart.close()">&times;</button>
         </div>
 
         <div class="cart-drawer-body">
@@ -253,7 +253,7 @@
             <div class="cart-section-box">
               <div class="cart-coupon-input-wrap">
                 <input type="text" id="cartCouponInput" placeholder="هل لديك كوبون خصم؟" value="${this.activeCoupon ? this.activeCoupon.code : ''}"/>
-                <button type="button" onclick="window.trivelaCart.applyCouponCode()">تطبيق</button>
+                <button type="button" onclick="window.shopCoinCart.applyCouponCode()">تطبيق</button>
               </div>
               <div id="cartCouponMsg" class="cart-coupon-msg ${this.activeCoupon ? 'success' : ''}">
                 ${this.activeCoupon ? `✅ تم تطبيق خصم ${this.activeCoupon.percent}% بنجاح!` : ''}
@@ -288,7 +288,7 @@
 
               <div class="cart-payment-options">
                 ${!isWAOnly ? `
-                  <div class="cart-pay-card ${this.selectedPaymentMethod === 'paytabs' ? 'active' : ''}" onclick="window.trivelaCart.selectPayment('paytabs')">
+                  <div class="cart-pay-card ${this.selectedPaymentMethod === 'paytabs' ? 'active' : ''}" onclick="window.shopCoinCart.selectPayment('paytabs')">
                     <div class="cart-pay-radio">
                       <input type="radio" name="cartPayRadio" value="paytabs" ${this.selectedPaymentMethod === 'paytabs' ? 'checked' : ''} />
                     </div>
@@ -300,7 +300,7 @@
                   </div>
                 ` : ''}
 
-                <div class="cart-pay-card ${this.selectedPaymentMethod === 'whatsapp' ? 'active' : ''}" onclick="window.trivelaCart.selectPayment('whatsapp')">
+                <div class="cart-pay-card ${this.selectedPaymentMethod === 'whatsapp' ? 'active' : ''}" onclick="window.shopCoinCart.selectPayment('whatsapp')">
                   <div class="cart-pay-radio">
                     <input type="radio" name="cartPayRadio" value="whatsapp" ${this.selectedPaymentMethod === 'whatsapp' ? 'checked' : ''} />
                   </div>
@@ -335,7 +335,7 @@
 
         ${count > 0 ? `
           <div class="cart-drawer-footer">
-            <button type="button" class="cart-checkout-btn ${this.selectedPaymentMethod === 'whatsapp' ? 'wa-checkout' : 'paytabs-checkout'}" id="btnCartCheckout" onclick="window.trivelaCart.processCheckout()">
+            <button type="button" class="cart-checkout-btn ${this.selectedPaymentMethod === 'whatsapp' ? 'wa-checkout' : 'paytabs-checkout'}" id="btnCartCheckout" onclick="window.shopCoinCart.processCheckout()">
               <span>${this.selectedPaymentMethod === 'whatsapp' ? 'تأكيد الطلب والدفع بالواتساب' : 'إتمام الدفع الإلكتروني الآن (PayTabs)'}</span>
               <i class="${this.selectedPaymentMethod === 'whatsapp' ? 'fab fa-whatsapp' : 'fas fa-lock'}"></i>
             </button>
@@ -367,7 +367,7 @@
             this.activeCoupon = { code: data.coupon.code, percent: data.coupon.discount_percent || 10 };
             this.render();
           } else {
-            if (code === 'TRIVELA10' || code === 'TRIVELA' || code === 'FUT27') {
+            if (code === 'SHOPCOIN10' || code === 'SHOPCOIN' || code === 'FUT27') {
               this.activeCoupon = { code: code, percent: 10 };
               this.render();
             } else {
@@ -376,7 +376,7 @@
           }
         })
         .catch(() => {
-          if (code === 'TRIVELA10' || code === 'TRIVELA' || code === 'FUT27') {
+          if (code === 'SHOPCOIN10' || code === 'SHOPCOIN' || code === 'FUT27') {
             this.activeCoupon = { code: code, percent: 10 };
             this.render();
           } else {
@@ -453,13 +453,13 @@
 
           // WhatsApp Flow
           const formattedPrice = formatPrice(finalPriceSAR);
-          const msg = `🛒 طلب سلة جديد من متجر Trivela\n\n` +
+          const msg = `🛒 طلب سلة جديد من متجر ShopCoin\n\n` +
                       `🆔 رقم الطلب: #${orderId}\n` +
                       `📝 الاسم: ${name}\n` +
                       `📞 الواتساب: ${phone}\n` +
                       `📦 المنتجات:\n${this.items.map((it, idx) => `  ${idx + 1}. ${it.service} (${formatPrice(it.priceSAR)})`).join('\n')}\n\n` +
                       `💵 الإجمالي النهائي: ${formattedPrice}\n\n` +
-                      `_أرسل من Trivela.com_`;
+                      `_أرسل من ShopCoin15.com_`;
 
           this.clearCart();
           this.close();
@@ -489,5 +489,5 @@
   }
 
   // Expose global instance
-  window.trivelaCart = new TrivelaCart();
+  window.shopCoinCart = new ShopCoinCart();
 })();

@@ -1,6 +1,6 @@
 let dynamicSettings = {
   whatsappPhone: "962775585112",
-  instagramUrl: "https://www.instagram.com/trivelacoins",
+  instagramUrl: "https://www.instagram.com/shopcoin15",
   maintenanceMode: false,
   baseRateConsole: 2.80,
   baseRatePC: 2.40,
@@ -67,7 +67,7 @@ let loggedInName = "";
 let loggedInPhone = "";
 
 function loadUserData() {
-  const token = localStorage.getItem('trivela_token');
+  const token = localStorage.getItem('shopcoin_token');
   if (!token) return;
 
   fetch('/api/auth/me', {
@@ -426,13 +426,13 @@ window.handlePurchaseSubmit = function(event) {
   };
 
   try {
-    const existing = localStorage.getItem('trivela_cart');
+    const existing = localStorage.getItem('shopcoin_cart');
     const items = existing ? JSON.parse(existing) : [];
     items.push(cartItem);
-    localStorage.setItem('trivela_cart', JSON.stringify(items));
-    if (window.trivelaCart) {
-      window.trivelaCart.items = items;
-      window.trivelaCart.updateBadge();
+    localStorage.setItem('shopcoin_cart', JSON.stringify(items));
+    if (window.shopCoinCart) {
+      window.shopCoinCart.items = items;
+      window.shopCoinCart.updateBadge();
     }
   } catch(e) {
     console.error("Cart save error:", e);
@@ -492,9 +492,9 @@ function showOrderSuccessPopup(orderId, priceStr, serviceName, platform) {
   overlay.innerHTML = `
     <div class="order-success-card receipt-style">
       <div class="receipt-header">
-        <img src="logo-official.png" class="receipt-logo" alt="Trivela" />
+        <img src="logo-official.png" class="receipt-logo" alt="ShopCoin" />
         <h3 class="receipt-title">سند استلام إلكتروني</h3>
-        <p class="receipt-subtitle">متجر تريفيلا — متجر خدمات FIFA 27 المعتمد</p>
+        <p class="receipt-subtitle">متجر شوب كوينز — متجر خدمات FIFA 27 المعتمد</p>
       </div>
       
       <div class="receipt-body">

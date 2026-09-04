@@ -4,8 +4,8 @@
   <link rel="icon" type="image/png" href="logo-official.png"/>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>سلة المشتريات وإنهاء الطلب | Trivela</title>
-  <meta name="description" content="سلة مشتريات متجر Trivela — راجع طلباتك وأتمم الدفع الآمن بأعلى سرعة وضمان."/>
+  <title>سلة المشتريات وإنهاء الطلب | ShopCoin</title>
+  <meta name="description" content="سلة مشتريات متجر ShopCoin — راجع طلباتك وأتمم الدفع الآمن بأعلى سرعة وضمان."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet"/>
@@ -1259,8 +1259,8 @@
       
       <!-- Right: Pure Logo -->
       <a href="index.html" class="buy-logo">
-        <img src="logo-official.png" alt="Trivela" />
-        <span>Trivela</span>
+        <img src="logo-official.png" alt="ShopCoin" />
+        <span>ShopCoin</span>
       </a>
 
       <!-- Left: Currency Selector + Simple Back Link -->
@@ -1590,7 +1590,7 @@
     <div id="cartEmptyState" class="cart-empty-state-card" style="display: none;">
       <div class="empty-cart-glow-circle"><i class="fas fa-cart-shopping"></i></div>
       <h3>سلة المشتريات فارغة حالياً!</h3>
-      <p>لم تقم بإضافة أي خدمات بعد. تصفح أقسام متجر Trivela واختر ما يناسبك لتنفيذ طلبك بأعلى سرعة وضمان أمان 100%.</p>
+      <p>لم تقم بإضافة أي خدمات بعد. تصفح أقسام متجر ShopCoin واختر ما يناسبك لتنفيذ طلبك بأعلى سرعة وضمان أمان 100%.</p>
       <div class="empty-shortcuts-grid">
         <a href="buy-coins.html" class="empty-shortcut-link"><i class="fas fa-coins" style="color: #ca8a04;"></i> شحن كوينز Ultimate Team</a>
         <a href="buy-sbc.html" class="empty-shortcut-link"><i class="fas fa-puzzle-piece" style="color: #ca8a04;"></i> حل تحديات الـ SBC</a>
@@ -1684,7 +1684,7 @@
   <footer class="footer" style="margin-top: auto; border-top: 1px solid var(--border-light); background: #ffffff;">
     <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 24px 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-        <span>© 2026 Trivela — جميع الحقوق محفوظة</span>
+        <span>© 2026 ShopCoin — جميع الحقوق محفوظة</span>
         <span>هذا الموقع غير مرتبط بـ EA Sports</span>
       </div>
     </div>
@@ -1747,13 +1747,13 @@
 
     function getCartItems() {
       try {
-        const data = localStorage.getItem('trivela_cart');
+        const data = localStorage.getItem('shopcoin_cart');
         return data ? JSON.parse(data) : [];
       } catch(e) { return []; }
     }
 
     function saveCartItems(items) {
-      localStorage.setItem('trivela_cart', JSON.stringify(items));
+      localStorage.setItem('shopcoin_cart', JSON.stringify(items));
       renderCartPage();
     }
 
@@ -2283,7 +2283,7 @@
 
       // Use logged in user info if available, or fallback
       const u = window.loggedInUserData || {};
-      const customerName = u.name || 'عميل Trivela';
+      const customerName = u.name || 'عميل ShopCoin';
       const customerPhone = u.phone || '962775585112';
 
       const orderPayload = {
@@ -2316,7 +2316,7 @@
 
         if (data.success && data.order) {
           // Clear cart upon successful order registration
-          localStorage.removeItem('trivela_cart');
+          localStorage.removeItem('shopcoin_cart');
 
           if (data.paymentMethod === 'paytabs' && data.paymentUrl) {
             window.location.href = data.paymentUrl;
@@ -2326,7 +2326,7 @@
           // WhatsApp Flow
           const cleanPhone = '962775585112';
           const waMsg = encodeURIComponent(
-            `🎮 *طلب جديد من سلة متجر Trivela* 🛒\n\n` +
+            `🎮 *طلب جديد من سلة متجر ShopCoin* 🛒\n\n` +
             `📋 *رقم الطلب:* #${data.order.id}\n` +
             `👤 *العميل:* ${customerName}\n` +
             `📱 *رقم الهاتف:* ${customerPhone}\n` +

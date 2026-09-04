@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Trivela Admin Mobile — تريفيلا أدمن</title>
+  <title>ShopCoin Admin Mobile — شوب كوينز أدمن</title>
   <script>
     // === ADMIN GUARD & AUTH INJECTION ===
     (function(){
-      var TOKEN = localStorage.getItem('trivela_token');
+      var TOKEN = localStorage.getItem('shopcoin_token');
       var _origFetch = window.fetch;
       window.fetch = function(input, init){
         try{
@@ -15,7 +15,7 @@
           if (url.indexOf('/api/admin') >= 0) {
             init = init || {};
             init.headers = init.headers || {};
-            var t = localStorage.getItem('trivela_token');
+            var t = localStorage.getItem('shopcoin_token');
             if (t && !(init.headers['Authorization'] || init.headers['authorization'])) {
               init.headers['Authorization'] = 'Bearer ' + t;
             }
@@ -785,8 +785,8 @@
   <!-- ══════════ APP HEADER ══════════ -->
   <header class="app-header">
     <div class="brand-section">
-      <img src="logo-official.png" alt="Trivela" class="brand-logo" />
-      <span class="brand-title">أدمن تريفيلا <span class="live-dot-indicator"></span></span>
+      <img src="logo-official.png" alt="ShopCoin" class="brand-logo" />
+      <span class="brand-title">أدمن شوب كوينز <span class="live-dot-indicator"></span></span>
     </div>
     
     <button class="btn-logout" onclick="logoutAdmin()" title="تسجيل الخروج">

@@ -193,7 +193,7 @@ const realisticOrders = [
     priceSAR: 45.00,
     pointsDiscount: 0,
     pointsDeducted: 0,
-    couponCode: "TRIVELA",
+    couponCode: "SHOPCOIN",
     status: "pending",
     amountPaid: 0,
     supplierCost: 0,

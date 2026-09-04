@@ -14,7 +14,7 @@ export const API_BASE = '/api';
 
 export const DEFAULT_SETTINGS = {
   whatsappPhone: "962775585112",
-  instagramUrl: "https://www.instagram.com/trivelacoins",
+  instagramUrl: "https://www.instagram.com/shopcoin15",
   maintenanceMode: false,
   baseRateConsole: 2.80,
   baseRatePC: 2.40,

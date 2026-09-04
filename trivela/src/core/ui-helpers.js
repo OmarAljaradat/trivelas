@@ -94,9 +94,9 @@ export function showOrderSuccessPopup(orderId, whatsappPhone, messageText) {
   overlay.innerHTML = `
     <div class="order-success-card receipt-style">
       <div class="receipt-header">
-        <img src="logo-official.png" class="receipt-logo" alt="Trivela" />
+        <img src="logo-official.png" class="receipt-logo" alt="ShopCoin" />
         <h3 class="receipt-title">سند استلام إلكتروني</h3>
-        <p class="receipt-subtitle">متجر تريفيلا — متجر خدمات FIFA 27 المعتمد</p>
+        <p class="receipt-subtitle">متجر شوب كوينز — متجر خدمات FIFA 27 المعتمد</p>
       </div>
       
       <div class="receipt-body">
@@ -162,7 +162,7 @@ function showPostOrderReviewForm(overlay, customerName, platform) {
           <i class="fas fa-heart"></i>
         </div>
         <h3 class="receipt-title">رأيك يسعدنا ويهمنا!</h3>
-        <p class="receipt-subtitle">كيف كانت تجربتك في الطلب من متجر تريفيلا؟</p>
+        <p class="receipt-subtitle">كيف كانت تجربتك في الطلب من متجر شوب كوينز؟</p>
       </div>
 
       <form id="postOrderReviewForm" style="margin-top: 20px; text-align: right;">

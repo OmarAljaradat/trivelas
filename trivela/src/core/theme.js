@@ -28,7 +28,7 @@ export function initTheme() {
   };
 
   // Check saved preference
-  const savedTheme = localStorage.getItem('trivela_theme');
+  const savedTheme = localStorage.getItem('shopcoin_theme');
   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const isDarkDefault = savedTheme === 'dark' || (!savedTheme && prefersDark);
   
@@ -42,7 +42,7 @@ export function initTheme() {
     newBtn.addEventListener('click', () => {
       body.classList.toggle('dark-mode');
       const isDarkNow = body.classList.contains('dark-mode');
-      localStorage.setItem('trivela_theme', isDarkNow ? 'dark' : 'light');
+      localStorage.setItem('shopcoin_theme', isDarkNow ? 'dark' : 'light');
       applyTheme(isDarkNow);
     });
   }

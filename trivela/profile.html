@@ -4,8 +4,8 @@
   <link rel="icon" type="image/png" href="logo-official.png"/>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>نادي Trivela | بروفايل العميل ولوحة التحكم</title>
-  <meta name="description" content="لوحة تحكم نادي Trivela الحصرية لمشتري كوينز وخدمات فيفا 27: بطاقة VIP، الشحن السريع، وتتبع الطلبات المباشر."/>
+  <title>نادي ShopCoin | بروفايل العميل ولوحة التحكم</title>
+  <meta name="description" content="لوحة تحكم نادي ShopCoin الحصرية لمشتري كوينز وخدمات فيفا 27: بطاقة VIP، الشحن السريع، وتتبع الطلبات المباشر."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&family=Rajdhani:wght@600;700;800&family=Teko:wght@600;700&display=swap" rel="stylesheet"/>
@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="style.css?v=3.5"/>
   <style>
     /* ══════════════════════════════════════════════════════════
-       TRIVELA FC 27 VIP GAMING DASHBOARD - CLEAN & REFINED
+       SHOPCOIN FC 27 VIP GAMING DASHBOARD - CLEAN & REFINED
        ══════════════════════════════════════════════════════════ */
 
     :root {
@@ -1236,8 +1236,8 @@
       <span>العودة للمتجر</span>
     </a>
 
-    <a href="index.html" class="fut-brand-logo" aria-label="Trivela Home">
-      <img src="logo-official.png" alt="Trivela"/>
+    <a href="index.html" class="fut-brand-logo" aria-label="ShopCoin Home">
+      <img src="logo-official.png" alt="ShopCoin"/>
     </a>
 
     <div class="fut-topbar-actions">
@@ -1253,7 +1253,7 @@
       <div class="guest-crest-box">
         <i class="fas fa-user-shield"></i>
       </div>
-      <h2>تسجيل الدخول إلى نادي Trivela</h2>
+      <h2>تسجيل الدخول إلى نادي ShopCoin</h2>
       <p>سجّل دخولك الآن لعرض بطاقة اللاعب VIP، الشحن السريع لحساب EA بنقرة واحدة، وتتبع حالة طلباتك لحظة بلحظة.</p>
       <a href="login.html?redirect=profile.html" class="fut-btn-gold-save" style="text-decoration: none; width: auto; display: inline-flex; padding: 12px 28px;">
         <i class="fas fa-right-to-bracket"></i>
@@ -1287,7 +1287,7 @@
 
           <div class="fut-card-info">
             <h3 class="fut-card-name" id="cardUserName">عمر الجرادات</h3>
-            <span class="fut-card-club" id="cardClubName">TRIVELA ELITE MEMBER</span>
+            <span class="fut-card-club" id="cardClubName">SHOPCOIN ELITE MEMBER</span>
           </div>
 
           <div class="fut-card-stats-grid">
@@ -1602,7 +1602,7 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
             <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 12px; text-align: center;">
               <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">البريد الإلكتروني</div>
-              <div id="settingsEmailDisplay" style="font-size: 0.82rem; font-weight: 700; color: #fff; direction: ltr;">omar@trivela.com</div>
+              <div id="settingsEmailDisplay" style="font-size: 0.82rem; font-weight: 700; color: #fff; direction: ltr;">omar@shopcoin15.com</div>
             </div>
             <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 12px; text-align: center;">
               <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">رقم الواتساب</div>
@@ -1779,7 +1779,7 @@
 
   <!-- Footer -->
   <footer class="fut-footer">
-    حقوق الطبع والنشر © 2026 Trivela. جميع الحقوق محفوظة.
+    حقوق الطبع والنشر © 2026 ShopCoin. جميع الحقوق محفوظة.
   </footer>
 
   <script>
@@ -1893,7 +1893,7 @@
     }
 
     function loadUserProfile() {
-      const token = localStorage.getItem('trivela_token');
+      const token = localStorage.getItem('shopcoin_token');
       if (!token) {
         showGuestState();
         return;
@@ -1912,8 +1912,8 @@
         loadUserOrders(token);
       })
       .catch(() => {
-        localStorage.removeItem('trivela_token');
-        localStorage.removeItem('trivela_user');
+        localStorage.removeItem('shopcoin_token');
+        localStorage.removeItem('shopcoin_user');
         showGuestState();
       });
     }
@@ -1927,7 +1927,7 @@
       document.getElementById('guestSection').style.display = 'none';
       document.getElementById('dashboardSection').style.display = 'flex';
 
-      const userName = user.name || 'عميل Trivela';
+      const userName = user.name || 'عميل ShopCoin';
       document.getElementById('cardUserName').textContent = userName;
       document.getElementById('overviewUserName').textContent = userName;
       document.getElementById('overviewUserPhone').textContent = user.phone || '—';
@@ -1962,7 +1962,7 @@
     // Save EA Vault
     function handleSaveEAVault(e) {
       e.preventDefault();
-      const token = localStorage.getItem('trivela_token');
+      const token = localStorage.getItem('shopcoin_token');
       const platform = document.getElementById('eaVaultPlatform').value;
       const email = document.getElementById('eaVaultEmail').value.trim();
       const code1 = document.getElementById('eaCode1').value.trim();
@@ -2007,7 +2007,7 @@
     // Update Profile Info / Password
     function handleProfileUpdate(e) {
       e.preventDefault();
-      const token = localStorage.getItem('trivela_token');
+      const token = localStorage.getItem('shopcoin_token');
       const name = document.getElementById('editName').value.trim();
       const phone = document.getElementById('editPhone').value.trim();
       const currentPassword = document.getElementById('editOldPass').value;
@@ -2113,7 +2113,7 @@
           let reorderLink = "buy-coins.html";
           if (isSBC) reorderLink = "buy-sbc.html";
 
-          const whatsappRefMsg = encodeURIComponent(`مرحباً Trivela، بخصوص طلبي #${order.id} (${order.service}): لدي استفسار`);
+          const whatsappRefMsg = encodeURIComponent(`مرحباً ShopCoin، بخصوص طلبي #${order.id} (${order.service}): لدي استفسار`);
           const whatsappUrl = `https://wa.me/962775585112?text=${whatsappRefMsg}`;
 
           const reviewBtnHtml = order.status === 'completed' ? `
@@ -2202,8 +2202,8 @@
       const container = document.getElementById('invoiceCardDetails');
       container.innerHTML = `
         <div style="text-align: center; margin-bottom: 8px;">
-          <img src="logo-official.png" alt="Trivela" style="height: 36px;"/>
-          <strong style="display: block; font-size: 1.1rem; color: #f59e0b; margin-top: 4px;">إيصال وضمان عملية Trivela</strong>
+          <img src="logo-official.png" alt="ShopCoin" style="height: 36px;"/>
+          <strong style="display: block; font-size: 1.1rem; color: #f59e0b; margin-top: 4px;">إيصال وضمان عملية ShopCoin</strong>
         </div>
         <div class="invoice-row">
           <span style="color: #94a3b8;">رقم الفاتورة:</span>
@@ -2265,7 +2265,7 @@
       const stars = document.getElementById('revStars').value;
       const text = document.getElementById('revText').value.trim();
       const platform = document.getElementById('revPlatform').value;
-      const name = currentUser ? currentUser.name : 'عميل Trivela';
+      const name = currentUser ? currentUser.name : 'عميل ShopCoin';
       const alertBox = document.getElementById('revAlert');
       const btn = document.getElementById('btnRevSubmit');
 
@@ -2312,17 +2312,17 @@
     }
 
     function handleLogout() {
-      localStorage.removeItem('trivela_token');
-      localStorage.removeItem('trivela_user');
+      localStorage.removeItem('shopcoin_token');
+      localStorage.removeItem('shopcoin_user');
       window.location.href = 'index.html';
     }
 
     function handleLogoutAll() {
-      const token = localStorage.getItem('trivela_token');
+      const token = localStorage.getItem('shopcoin_token');
       fetch('/api/auth/logout-all', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } })
         .finally(() => {
-          localStorage.removeItem('trivela_token');
-          localStorage.removeItem('trivela_user');
+          localStorage.removeItem('shopcoin_token');
+          localStorage.removeItem('shopcoin_user');
           window.location.href = 'index.html';
         });
     }
@@ -2424,7 +2424,7 @@
     // Separate Password Change handler
     function handlePasswordChange(e) {
       e.preventDefault();
-      const token = localStorage.getItem('trivela_token');
+      const token = localStorage.getItem('shopcoin_token');
       const currentPassword = document.getElementById('editOldPass').value;
       const newPassword = document.getElementById('editNewPass').value;
       const alertBox = document.getElementById('settingsAlert');

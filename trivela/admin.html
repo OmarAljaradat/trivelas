@@ -4,11 +4,11 @@
   <link rel="icon" type="image/png" href="logo-official.png"/>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>لوحة التحكم | Trivela Admin</title>
+  <title>لوحة التحكم | ShopCoin Admin</title>
   <script>
     // === ADMIN GUARD & AUTH INJECTION (runs BEFORE any other admin scripts) ===
     (function(){
-      var TOKEN = localStorage.getItem('trivela_token');
+      var TOKEN = localStorage.getItem('shopcoin_token');
       // Wrap fetch so every /api/admin/* call auto-attaches the token
       var _origFetch = window.fetch;
       window.fetch = function(input, init){
@@ -17,7 +17,7 @@
           if (url.indexOf('/api/admin') === 0 || url.indexOf('/api/admin') === (location.origin+'').length) {
             init = init || {};
             init.headers = init.headers || {};
-            var t = localStorage.getItem('trivela_token');
+            var t = localStorage.getItem('shopcoin_token');
             if (t && !(init.headers['Authorization'] || init.headers['authorization'])) {
               init.headers['Authorization'] = 'Bearer ' + t;
             }
@@ -811,10 +811,10 @@
   <!-- Top Unified Brand Header -->
   <header class="admin-header">
     <div class="header-logo-profile">
-      <img src="logo-official.png" alt="Trivela" class="admin-avatar" />
+      <img src="logo-official.png" alt="ShopCoin" class="admin-avatar" />
       <div class="logo-text">
         <strong>لوحة الإدارة</strong>
-        <span>admin@trivela.com</span>
+        <span>admin@shopcoin15.com</span>
       </div>
     </div>
 
@@ -3401,7 +3401,7 @@
       <!-- Interactive In-Site Ad & Marketing Hub (9 Advanced Tools) -->
       <div class="admin-card" style="border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(48,83,136,0.06); margin-bottom: 24px; font-family: Cairo, sans-serif;">
         <h3 style="margin: 0 0 16px 0; font-family: Cairo, sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--text-dark); display: flex; align-items: center; gap: 10px;">
-          <i class="fas fa-bullhorn" style="color: var(--blue-500); font-size: 1.3rem;"></i> مركز الترويج والتسويق الرقمي المتقدم (Trivela Conversion Hub)
+          <i class="fas fa-bullhorn" style="color: var(--blue-500); font-size: 1.3rem;"></i> مركز الترويج والتسويق الرقمي المتقدم (ShopCoin Conversion Hub)
         </h3>
         <p style="margin: 0 0 20px 0; font-size: 0.82rem; color: var(--text-gray); line-height: 1.6;">
           قم بإدارة وتفعيل 9 أدوات تسويقية وتفاعلية متكاملة مصممة لزيادة معدل تحويل الزوار (CRO)، وخلق حالة الاستعجال، وبناء الثقة في متجرك.
@@ -3471,7 +3471,7 @@
                 <label style="font-size: 0.76rem; font-weight:700; color: var(--text-gray); margin-bottom: 4px; display:block;">نمط اللون الخلفي:</label>
                 <select id="adStickyStyle" class="admin-input" style="font-size: 0.82rem; padding: 6px; margin:0;">
                   <option value="gold-black">🖤 ذهبي مع أسود (الفخامة)</option>
-                  <option value="blue-white">💙 أزرق تريفيلا (رسمي)</option>
+                  <option value="blue-white">💙 أزرق شوب كوينز (رسمي)</option>
                   <option value="red-glowing">❤️ أحمر متوهج (عرض عاجل)</option>
                 </select>
               </div>
@@ -3814,7 +3814,7 @@
 
         <div class="admin-form-group" style="margin-bottom: 16px;">
           <label for="marketingMessageTemplate" style="font-weight: 700; color: var(--text-gray);">قالب رسالة العرض التسويقي:</label>
-          <textarea id="marketingMessageTemplate" class="admin-input" rows="3" style="resize: vertical; font-family: inherit; font-size: 0.9rem;" placeholder="مرحباً {الاسم}، يتوفر لدينا عروض كوينز حصرية لك! رصيدك الحالي هو {النقاط} نقطة. استخدم كود الخصم TRIVELA للحصول على 15% خصم إضافي: http://localhost:3000"></textarea>
+          <textarea id="marketingMessageTemplate" class="admin-input" rows="3" style="resize: vertical; font-family: inherit; font-size: 0.9rem;" placeholder="مرحباً {الاسم}، يتوفر لدينا عروض كوينز حصرية لك! رصيدك الحالي هو {النقاط} نقطة. استخدم كود الخصم SHOPCOIN للحصول على 15% خصم إضافي: http://localhost:3000"></textarea>
         </div>
 
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
@@ -3928,7 +3928,7 @@
     <div id="settings-panel" class="admin-panel">
       <!-- Configurations form -->
       <div class="admin-card">
-        <h2 class="admin-title"><i class="fas fa-cogs"></i> إعدادات متجر Trivela</h2>
+        <h2 class="admin-title"><i class="fas fa-cogs"></i> إعدادات متجر ShopCoin</h2>
         <form id="settingsForm">
           <div class="admin-form-row">
             <div class="admin-form-group">
@@ -4223,7 +4223,7 @@
             <label for="settingMaintenanceGlowColor" style="font-family: Cairo, sans-serif; font-weight: 700; font-size: 0.82rem; color: var(--blue-600); display: block; margin-bottom: 8px;">اللون الرئيسي للتوجه والمظهر (Theme Glow)</label>
             <select id="settingMaintenanceGlowColor" class="admin-input" style="font-size: 0.85rem; height: 42px;">
               <option value="#eab308">🟡 الذهبي الملكي (افتراضي)</option>
-              <option value="#305388">🔵 الأزرق الكحلي (Trivela Theme)</option>
+              <option value="#305388">🔵 الأزرق الكحلي (ShopCoin Theme)</option>
               <option value="#ef4444">🔴 الأحمر القرمزي (حالة طوارئ/تحديث عاجل)</option>
               <option value="#10b981">🟢 الأخضر العشبي (نجاح/تحسين خوادم)</option>
             </select>
@@ -4519,7 +4519,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       // Delay slightly to ensure elements are fully painted
       setTimeout(() => {
-        const token = localStorage.getItem('trivela_token');
+        const token = localStorage.getItem('shopcoin_token');
         if (!token) return;
 
         // Fetch all SBCs/Objectives/Coaching/Packages
@@ -4558,7 +4558,7 @@
             if (document.getElementById('settingMaintenanceIconStyle')) document.getElementById('settingMaintenanceIconStyle').value = settings.maintenanceIconStyle || "wrench";
             if (document.getElementById('settingMaintenanceGlowColor')) document.getElementById('settingMaintenanceGlowColor').value = settings.maintenanceGlowColor || "#eab308";
             if (document.getElementById('settingMaintenanceTelegramActive')) document.getElementById('settingMaintenanceTelegramActive').checked = !!settings.maintenanceTelegramActive;
-            if (document.getElementById('settingTelegramUrl')) document.getElementById('settingTelegramUrl').value = settings.settingTelegram || "https://t.me/Trivela";
+            if (document.getElementById('settingTelegramUrl')) document.getElementById('settingTelegramUrl').value = settings.settingTelegram || "https://t.me/shopcoin15";
 
             // Populate purchase limits
             if (document.getElementById('settingMinCoins')) document.getElementById('settingMinCoins').value = settings.minCoinsPurchase || 100000;
@@ -4829,7 +4829,7 @@
     }
 
     function saveMarketingSettingsDirectly() {
-      const token = localStorage.getItem('trivela_token');
+      const token = localStorage.getItem('shopcoin_token');
       if (!token) {
         alert("يرجى تسجيل الدخول أولاً كأدمن.");
         return;
@@ -4955,7 +4955,7 @@
     }
 
     function saveMaintenanceSettingsDirectly() {
-      const token = localStorage.getItem('trivela_token');
+      const token = localStorage.getItem('shopcoin_token');
       if (!token) {
         alert("يرجى تسجيل الدخول أولاً كأدمن.");
         return;
@@ -5011,7 +5011,7 @@
     }
 
     function downloadDatabaseBackup() {
-      const token = localStorage.getItem('trivela_token');
+      const token = localStorage.getItem('shopcoin_token');
       if (!token) {
         alert("يرجى تسجيل الدخول أولاً كأدمن.");
         return;
@@ -5019,7 +5019,7 @@
 
       const a = document.createElement('a');
       a.href = `/api/admin/backup-db?token=${token}`;
-      a.download = 'trivela_database_backup.json';
+      a.download = 'shopcoin_database_backup.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -5038,7 +5038,7 @@
       reader.onload = function(e) {
         try {
           const backupData = JSON.parse(e.target.result);
-          const token = localStorage.getItem('trivela_token');
+          const token = localStorage.getItem('shopcoin_token');
 
           fetch('/api/admin/restore-db', {
             method: 'POST',

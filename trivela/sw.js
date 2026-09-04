@@ -1,4 +1,4 @@
-const CACHE_NAME = 'trivela-supplier-v1';
+const CACHE_NAME = 'shopcoin-supplier-v1';
 const ASSETS = [
   '/supplier.html',
   '/supplier.js',
@@ -59,7 +59,7 @@ self.addEventListener('fetch', event => {
 // Push Event: Receive push notification from the server
 self.addEventListener('push', event => {
   let data = { 
-    title: 'تريفيلا الموردين', 
+    title: 'شوب كوينز الموردين', 
     body: 'لديك إشعار جديد بانتظار المراجعة!', 
     url: '/supplier.html' 
   };
@@ -69,7 +69,7 @@ self.addEventListener('push', event => {
       data = event.data.json();
     } catch (e) {
       data = { 
-        title: 'تريفيلا الموردين', 
+        title: 'شوب كوينز الموردين', 
         body: event.data.text(), 
         url: '/supplier.html' 
       };

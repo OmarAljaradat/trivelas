@@ -4,14 +4,14 @@
   <link rel="icon" type="image/png" href="logo-official.png"/>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>بطاقة حساب Trivela | تسجيل الدخول</title>
-  <meta name="description" content="سجل دخولك أو أنشئ حساباً جديداً في متجر Trivela مع نظام حماية OTP المتطور."/>
-  <meta property="og:title" content="بطاقة حساب Trivela | تسجيل الدخول"/>
+  <title>بطاقة حساب ShopCoin | تسجيل الدخول</title>
+  <meta name="description" content="سجل دخولك أو أنشئ حساباً جديداً في متجر ShopCoin مع نظام حماية OTP المتطور."/>
+  <meta property="og:title" content="بطاقة حساب ShopCoin | تسجيل الدخول"/>
   <meta property="og:description" content="سجل دخولك عبر بطاقة FUT 27 التفاعلية."/>
   <meta property="og:image" content="logo-official.png"/>
   <meta property="og:type" content="website"/>
   <meta property="og:locale" content="ar_SA"/>
-  <meta property="og:site_name" content="Trivela"/>
+  <meta property="og:site_name" content="ShopCoin"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@800;900&family=Teko:wght@700&display=swap" rel="stylesheet"/>
@@ -709,7 +709,7 @@
     </a>
 
     <div class="fut-top-logo">
-      <img src="logo-official.png" alt="Trivela"/>
+      <img src="logo-official.png" alt="ShopCoin"/>
     </div>
 
     <button id="themeToggleBtn" class="fut-theme-btn" aria-label="تغيير المظهر">
@@ -737,7 +737,7 @@
               <!-- Header -->
               <div class="fut-card-top-emblem">
                 <div class="fut-emblem-badge">
-                  <img src="logo-official.png" alt="Trivela" class="fut-emblem-img"/>
+                  <img src="logo-official.png" alt="ShopCoin" class="fut-emblem-img"/>
                 </div>
                 <div class="fut-emblem-tag">
                   <span class="fut-tier-pill">★ 99 VIP MEMBER ★</span>
@@ -807,7 +807,7 @@
               <!-- Header -->
               <div class="fut-card-top-emblem">
                 <div class="fut-emblem-badge cyan">
-                  <img src="logo-official.png" alt="Trivela" class="fut-emblem-img"/>
+                  <img src="logo-official.png" alt="ShopCoin" class="fut-emblem-img"/>
                 </div>
                 <div class="fut-emblem-tag">
                   <span class="fut-tier-pill cyan">★ NEW PLAYER PASS ★</span>
@@ -1022,7 +1022,7 @@
 
   <!-- Footer -->
   <footer class="fut-footer">
-    حقوق الطبع والنشر © 2026 Trivela. جميع الحقوق محفوظة.
+    حقوق الطبع والنشر © 2026 ShopCoin. جميع الحقوق محفوظة.
   </footer>
 
   <script>
@@ -1087,7 +1087,7 @@
       const params = new URLSearchParams(window.location.search);
       const ref = params.get('ref');
       if (ref) {
-        sessionStorage.setItem('trivela_ref', ref);
+        sessionStorage.setItem('shopcoin_ref', ref);
         const refBanner = document.getElementById('referralBanner');
         if (refBanner) refBanner.style.display = 'flex';
         flipToRegister();
@@ -1206,8 +1206,8 @@
           openOTPModal(data.userId, data.email, loginField.includes('@') ? loginField : null);
         } else {
           // Login successful
-          localStorage.setItem('trivela_token', data.token);
-          localStorage.setItem('trivela_user', JSON.stringify(data.user || {}));
+          localStorage.setItem('shopcoin_token', data.token);
+          localStorage.setItem('shopcoin_user', JSON.stringify(data.user || {}));
           document.getElementById('loginSuccessText').textContent = 'تم تسجيل الدخول بنجاح! جاري التوجيه...';
           successBox.style.display = 'flex';
           setTimeout(() => {
@@ -1232,7 +1232,7 @@
       const phone = document.getElementById('regPhone').value.trim();
       const email = document.getElementById('regEmail').value.trim();
       const password = document.getElementById('regPassword').value;
-      const referralCode = sessionStorage.getItem('trivela_ref') || null;
+      const referralCode = sessionStorage.getItem('shopcoin_ref') || null;
       const btn = document.getElementById('btnRegSubmit');
       const errorBox = document.getElementById('regErrorBox');
       const successBox = document.getElementById('regSuccessBox');
@@ -1256,7 +1256,7 @@
           document.getElementById('regErrorText').textContent = data.error;
           errorBox.style.display = 'flex';
         } else if (data.needsVerification) {
-          sessionStorage.removeItem('trivela_ref');
+          sessionStorage.removeItem('shopcoin_ref');
           openOTPModal(data.userId, data.email, email);
         }
       })
@@ -1305,8 +1305,8 @@
           document.getElementById('otpErrorText').textContent = data.error;
           errorBox.style.display = 'flex';
         } else {
-          localStorage.setItem('trivela_token', data.token);
-          localStorage.setItem('trivela_user', JSON.stringify(data.user || {}));
+          localStorage.setItem('shopcoin_token', data.token);
+          localStorage.setItem('shopcoin_user', JSON.stringify(data.user || {}));
           document.getElementById('otpSuccessText').textContent = 'تم تأكيد الحساب بنجاح! جاري التوجيه...';
           successBox.style.display = 'flex';
           setTimeout(() => {
@@ -1446,8 +1446,8 @@
           document.getElementById('forgotErrorText').textContent = data.error;
           errorBox.style.display = 'flex';
         } else {
-          localStorage.setItem('trivela_token', data.token);
-          localStorage.setItem('trivela_user', JSON.stringify(data.user || {}));
+          localStorage.setItem('shopcoin_token', data.token);
+          localStorage.setItem('shopcoin_user', JSON.stringify(data.user || {}));
           document.getElementById('forgotSuccessText').textContent = 'تم تعيين كلمة المرور بنجاح! جاري التوجيه...';
           successBox.style.display = 'flex';
           setTimeout(() => {

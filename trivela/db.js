@@ -9,7 +9,7 @@ const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN;
 // In Local Dev: Connects to Turso Cloud (if credentials provided) or local SQLite file
 const client = (TURSO_URL && TURSO_TOKEN)
   ? createClient({ url: TURSO_URL, authToken: TURSO_TOKEN })
-  : createClient({ url: `file:${path.join(__dirname, 'trivela.db')}` });
+  : createClient({ url: `file:${path.join(__dirname, 'shopcoin.db')}` });
 
 function flattenArgs(args) {
   if (args.length === 1 && typeof args[0] === 'object' && !Array.isArray(args[0]) && args[0] !== null) {

@@ -4147,7 +4147,7 @@ body.dark-mode .trust-seal-desc {
   }
 }
 
-/* Custom 3-column Grid and New Cards for Trivela Store */
+/* Custom 3-column Grid and New Cards for ShopCoin Store */
 .products-grid.grid-3-cols {
   grid-template-columns: repeat(3, 1fr);
 }
@@ -6566,7 +6566,7 @@ body.dark-mode .global-currency-picker select option {
   }
   
   .buy-logo span {
-    display: none !important; /* Hide the word 'Trivela' next to logo */
+    display: none !important; /* Hide the word 'ShopCoin' next to logo */
   }
   
   .buy-logo img {
@@ -7877,7 +7877,7 @@ body.dark-mode .scroll-to-top-btn:hover {
 }
 
 /* ══════════════════════════════════════
-  WHY TRIVELA BANNER SECTION
+  WHY SHOPCOIN BANNER SECTION
 ══════════════════════════════════════ */
 .why-us-banner-section {
   padding: 60px 0;
@@ -8602,7 +8602,7 @@ body.dark-mode .rev-text-body {
 }
 
 /* Hide yellow top ticker bar completely */
-.trivela-gold-ticker, .ticker, .trivela-ticker-wrap {
+.sc-gold-ticker, .ticker, .sc-ticker-wrap {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
@@ -9050,7 +9050,7 @@ body.dark-mode .nav-cart-btn {
 }
 
 /* Toast */
-.trivela-cart-toast {
+.sc-cart-toast {
   position: fixed;
   bottom: 30px;
   left: 50%;
@@ -9072,18 +9072,18 @@ body.dark-mode .nav-cart-btn {
   pointer-events: none;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.trivela-cart-toast.show {
+.sc-cart-toast.show {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
   pointer-events: auto;
 }
-.trivela-cart-toast i {
+.sc-cart-toast i {
   color: #10b981;
   font-size: 1.2rem;
 }
 
 /* Backdrop */
-.trivela-cart-backdrop {
+.sc-cart-backdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -9096,13 +9096,13 @@ body.dark-mode .nav-cart-btn {
   visibility: hidden;
   transition: all 0.3s ease;
 }
-.trivela-cart-backdrop.open {
+.sc-cart-backdrop.open {
   opacity: 1;
   visibility: visible;
 }
 
 /* Drawer */
-.trivela-cart-drawer {
+.sc-cart-drawer {
   position: fixed;
   top: 0;
   left: 0;
@@ -9119,7 +9119,7 @@ body.dark-mode .nav-cart-btn {
   font-family: 'Cairo', sans-serif;
   direction: rtl;
 }
-.trivela-cart-drawer.open {
+.sc-cart-drawer.open {
   transform: translateX(0);
 }
 

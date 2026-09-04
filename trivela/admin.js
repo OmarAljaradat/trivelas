@@ -259,8 +259,8 @@ function toggleMaintenanceModeDirectly() {
       const payload = {
         maintenanceMode: checked,
         whatsappPhone: settings.whatsappPhone || "962775585112",
-        instagramUrl: settings.instagramUrl || "https://www.instagram.com/trivelacoins",
-        tiktokUrl: settings.tiktokUrl || "https://tiktok.com/@Trivela",
+        instagramUrl: settings.instagramUrl || "https://www.instagram.com/shopcoin15",
+        tiktokUrl: settings.tiktokUrl || "https://tiktok.com/@shopcoin15",
         baseRateConsole: settings.baseRateConsole || 2.80,
         baseRatePC: settings.baseRatePC || 2.40
       };
@@ -1392,7 +1392,7 @@ function contactCustomerWhatsApp(orderId) {
   }
   
   const shortId = order.id.substring(6, 14);
-  const msg = `👋 مرحباً بك ${order.customerName}، معك الدعم الفني لمتجر Trivela 🎮\n\n` +
+  const msg = `👋 مرحباً بك ${order.customerName}، معك الدعم الفني لمتجر ShopCoin 🎮\n\n` +
               `📦 لقد استلمنا طلبك بنجاح وبانتظار تأكيد الدفع للبدء بالعمل:\n` +
               `🆔 رقم الطلب: #${shortId}\n` +
               `🌟 الخدمة المطلوبة: ${order.service}\n` +
@@ -1598,7 +1598,7 @@ function exportOrdersToCSV() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.setAttribute("href", url);
-  link.setAttribute("download", `trivela_orders_export_${Date.now()}.csv`);
+  link.setAttribute("download", `shopcoin_orders_export_${Date.now()}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -2028,7 +2028,7 @@ window.openAdminOrderDetailsModal = function(orderId) {
     const waLink = document.getElementById('odmWhatsAppLink');
     if (waLink) {
       const cleanPhone = (order.customerPhone || '').replace(/[^0-9]/g, '');
-      const waMsg = encodeURIComponent(`مرحباً ${order.customerName || ''} 👋، بخصوص طلبك رقم #${shortId} (${order.service || ''}) من متجر Trivela:`);
+      const waMsg = encodeURIComponent(`مرحباً ${order.customerName || ''} 👋، بخصوص طلبك رقم #${shortId} (${order.service || ''}) من متجر ShopCoin:`);
       waLink.href = `https://wa.me/${cleanPhone || '962775585112'}?text=${waMsg}`;
     }
 

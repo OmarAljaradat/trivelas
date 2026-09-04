@@ -1,11 +1,11 @@
-// self-executing client-side analytics tracker for Trivela Store
+// self-executing client-side analytics tracker for ShopCoin Store
 (function() {
   // 1. Detect visitor type (new vs returning)
   let visitorType = 'new';
-  if (localStorage.getItem('trivela_returning_visitor')) {
+  if (localStorage.getItem('shopcoin_returning_visitor')) {
     visitorType = 'returning';
   } else {
-    localStorage.setItem('trivela_returning_visitor', 'true');
+    localStorage.setItem('shopcoin_returning_visitor', 'true');
   }
 
   // 2. Detect page name

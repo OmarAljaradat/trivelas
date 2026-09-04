@@ -1,6 +1,6 @@
 let dynamicSettings = {
   whatsappPhone: "962775585112",
-  instagramUrl: "https://www.instagram.com/trivelacoins",
+  instagramUrl: "https://www.instagram.com/shopcoin15",
   maintenanceMode: false,
   baseRateConsole: 2.80,
   baseRatePC: 2.40,
@@ -458,13 +458,13 @@ window.handlePurchaseSubmit = function(event) {
   };
 
   try {
-    const existing = localStorage.getItem('trivela_cart');
+    const existing = localStorage.getItem('shopcoin_cart');
     const items = existing ? JSON.parse(existing) : [];
     items.push(cartItem);
-    localStorage.setItem('trivela_cart', JSON.stringify(items));
-    if (window.trivelaCart) {
-      window.trivelaCart.items = items;
-      window.trivelaCart.updateBadge();
+    localStorage.setItem('shopcoin_cart', JSON.stringify(items));
+    if (window.shopCoinCart) {
+      window.shopCoinCart.items = items;
+      window.shopCoinCart.updateBadge();
     }
   } catch(e) {
     console.error("Cart save error:", e);
@@ -517,7 +517,7 @@ function showPurchaseReceipt(orderData) {
       <div class="receipt-header success">
         <div class="receipt-icon"><i class="fas fa-check-circle"></i></div>
         <h2>تم استلام طلبك بنجاح!</h2>
-        <p>شكراً لثقتك بمتجر Trivela — جاري بدء إنجاز المهام في حسابك</p>
+        <p>شكراً لثقتك بمتجر ShopCoin — جاري بدء إنجاز المهام في حسابك</p>
       </div>
       
       <div class="receipt-body">

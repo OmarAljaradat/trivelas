@@ -1,4 +1,4 @@
-// Dynamic In-Site Ad & Marketing Client Loader for Trivela Store
+// Dynamic In-Site Ad & Marketing Client Loader for ShopCoin Store
 // Designed for absolute conversion rate optimization (CRO) and premium aesthetics
 
 function loadMarketingOnPage() {
@@ -120,8 +120,8 @@ function applyDynamicSocialLinks(settings) {
 
   const rawPhone = settings.whatsappPhone || "962775585112";
   const whatsappPhone = rawPhone.trim().replace(/[\s\+\-]/g, '');
-  const instagramUrl = settings.instagramUrl || "https://www.instagram.com/trivelacoins";
-  const tiktokUrl = settings.tiktokUrl || "https://tiktok.com/@Trivela";
+  const instagramUrl = settings.instagramUrl || "https://www.instagram.com/shopcoin15";
+  const tiktokUrl = settings.tiktokUrl || "https://tiktok.com/@shopcoin15";
 
   // 1. Update all WhatsApp links
   const waLinks = document.querySelectorAll('a[href*="wa.me/"], a[aria-label*="WhatsApp" i], a[aria-label*="whatsapp" i], a .fa-whatsapp');
@@ -215,76 +215,76 @@ function autoApplyCouponFromUrl() {
 
 // Helper to inject beautiful CSS animations and variables dynamically
 function injectMarketingStyles() {
-  if (document.getElementById('trivela-marketing-styles')) return;
+  if (document.getElementById('shopcoin-marketing-styles')) return;
 
   const style = document.createElement('style');
-  style.id = 'trivela-marketing-styles';
+  style.id = 'shopcoin-marketing-styles';
   style.innerHTML = `
     /* Exit Intent & General Modals */
-    .trivela-modal-overlay {
+    .sc-modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(13, 30, 57, 0.65); backdrop-filter: blur(8px);
       z-index: 100000; display: flex; align-items: center; justify-content: center;
       opacity: 0; transition: opacity 0.4s ease; direction: rtl;
     }
-    .trivela-modal-card {
+    .sc-modal-card {
       background: #121b2d; border: 2px solid rgba(234, 179, 8, 0.25);
       box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(234,179,8,0.15);
       border-radius: 24px; padding: 30px; max-width: 450px; width: 90%;
       text-align: center; color: white; transform: scale(0.85); transition: transform 0.4s ease;
       position: relative;
     }
-    .trivela-modal-overlay.active { opacity: 1; }
-    .trivela-modal-overlay.active .trivela-modal-card { transform: scale(1); }
-    .trivela-modal-close {
+    .sc-modal-overlay.active { opacity: 1; }
+    .sc-modal-overlay.active .sc-modal-card { transform: scale(1); }
+    .sc-modal-close {
       position: absolute; top: 15px; left: 15px; font-size: 1.5rem;
       color: #94a3b8; cursor: pointer; transition: color 0.3s;
     }
-    .trivela-modal-close:hover { color: #ffffff; }
+    .sc-modal-close:hover { color: #ffffff; }
 
     /* Buttons */
-    .trivela-mkt-btn {
+    .sc-mkt-btn {
       background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
       color: #0d1e39; border: 0; padding: 12px 24px; font-family: 'Cairo', sans-serif;
       font-weight: 800; border-radius: 12px; cursor: pointer; transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3); display: inline-flex; align-items: center; gap: 8px;
     }
-    .trivela-mkt-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(234, 179, 8, 0.4); }
+    .sc-mkt-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(234, 179, 8, 0.4); }
 
     /* Sticky CTA bottom bar */
-    .trivela-sticky-bar {
+    .sc-sticky-bar {
       position: fixed; bottom: 0; left: 0; width: 100%; padding: 14px 24px;
       z-index: 99999; display: flex; align-items: center; justify-content: space-between;
       box-sizing: border-box; direction: rtl; font-family: 'Cairo', sans-serif;
       transition: transform 0.4s ease; transform: translateY(100%);
     }
-    .trivela-sticky-bar.active { transform: translateY(0); }
-    .trivela-sticky-bar.gold-pulse {
+    .sc-sticky-bar.active { transform: translateY(0); }
+    .sc-sticky-bar.gold-pulse {
       background: linear-gradient(90deg, #182a47 0%, #0d1e39 100%);
       border-top: 3px solid #eab308;
       box-shadow: 0 -4px 25px rgba(234, 179, 8, 0.15);
     }
-    .trivela-sticky-bar.neon-glow {
+    .sc-sticky-bar.neon-glow {
       background: linear-gradient(90deg, #0d1e39 0%, #121b2d 100%);
       border-top: 3px solid #10b981;
       box-shadow: 0 -4px 25px rgba(16, 185, 129, 0.15);
     }
-    .trivela-sticky-bar.dark-vip {
+    .sc-sticky-bar.dark-vip {
       background: linear-gradient(90deg, #050b14 0%, #0d1e39 100%);
       border-top: 3px solid #94a3b8;
       box-shadow: 0 -4px 25px rgba(0,0,0,0.5);
     }
 
     /* Live Activity Pulse */
-    .trivela-pulse-bubble {
+    .sc-pulse-bubble {
       position: fixed; bottom: 20px; z-index: 99998;
       background: #121b2d; border: 1.5px solid rgba(48, 83, 136, 0.3);
       padding: 10px 16px; border-radius: 50px; display: flex; align-items: center; gap: 10px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-family: 'Cairo', sans-serif; font-size: 0.82rem;
       color: white; transform: translateY(150px); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .trivela-pulse-bubble.active { transform: translateY(0); }
-    .trivela-pulse-indicator {
+    .sc-pulse-bubble.active { transform: translateY(0); }
+    .sc-pulse-indicator {
       width: 10px; height: 10px; background: #10b981; border-radius: 50%;
       animation: pulse-ring 1.8s infinite ease-in-out;
     }
@@ -295,15 +295,15 @@ function injectMarketingStyles() {
     }
 
     /* Trust Ticker (Marquee) */
-    .trivela-ticker-wrap {
+    .sc-ticker-wrap {
       width: 100%; overflow: hidden; background: #121b2d; border-top: 1.5px solid var(--blue-100);
       border-bottom: 1.5px solid var(--blue-100); padding: 12px 0; direction: ltr;
     }
-    .trivela-ticker-track {
+    .sc-ticker-track {
       display: flex; gap: 30px; width: max-content;
       animation: ticker-slide var(--duration, 25s) linear infinite;
     }
-    .trivela-ticker-item {
+    .sc-ticker-item {
       display: flex; align-items: center; gap: 8px; color: #94a3b8; font-family: 'Cairo', sans-serif;
       font-size: 0.82rem; white-space: nowrap; direction: rtl;
     }
@@ -313,20 +313,20 @@ function injectMarketingStyles() {
     }
 
     /* Flash deals urgency */
-    .trivela-flash-card {
+    .sc-flash-card {
       position: fixed; bottom: 85px; right: 20px; z-index: 99997;
       background: #121b2d; border: 2px solid #ef4444; border-radius: 20px;
       padding: 16px; width: 280px; color: white; direction: rtl; font-family: 'Cairo', sans-serif;
       box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
       transform: translateX(350px); transition: transform 0.5s ease;
     }
-    .trivela-flash-card.active { transform: translateX(0); }
-    .trivela-flash-progress-bar {
+    .sc-flash-card.active { transform: translateX(0); }
+    .sc-flash-progress-bar {
       height: 100%; background: #ef4444; border-radius: 4px; transition: width 0.5s ease;
     }
 
     /* Golden Ticker Bar */
-    .trivela-gold-ticker {
+    .sc-gold-ticker {
       position: fixed;
       top: 0;
       left: 0;
@@ -344,12 +344,12 @@ function injectMarketingStyles() {
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
       direction: rtl;
     }
-    .trivela-gold-ticker-track {
+    .sc-gold-ticker-track {
       display: flex;
       white-space: nowrap;
       animation: goldTickerLoop var(--duration, 22s) linear infinite;
     }
-    .trivela-gold-ticker-item {
+    .sc-gold-ticker-item {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -361,7 +361,7 @@ function injectMarketingStyles() {
     }
 
     /* Fake Purchase Notification Toast */
-    .trivela-fake-purchase-toast {
+    .sc-fake-purchase-toast {
       position: fixed;
       bottom: 24px;
       width: 320px;
@@ -384,11 +384,11 @@ function injectMarketingStyles() {
       transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       pointer-events: none;
     }
-    .trivela-fake-purchase-toast.active {
+    .sc-fake-purchase-toast.active {
       opacity: 1;
       transform: translateY(0) scale(1);
     }
-    .trivela-fake-purchase-icon {
+    .sc-fake-purchase-icon {
       width: 44px;
       height: 44px;
       background: rgba(234, 179, 8, 0.15);
@@ -407,34 +407,34 @@ function injectMarketingStyles() {
       70% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(234, 179, 8, 0); }
       100% { transform: scale(1); }
     }
-    .trivela-fake-purchase-info {
+    .sc-fake-purchase-info {
       flex-grow: 1;
     }
-    .trivela-fake-purchase-user {
+    .sc-fake-purchase-user {
       font-size: 0.8rem;
       font-weight: 700;
       color: #eab308;
       margin-bottom: 2px;
     }
-    .trivela-fake-purchase-product {
+    .sc-fake-purchase-product {
       font-size: 0.82rem;
       font-weight: 800;
       color: white;
       margin-bottom: 2px;
     }
-    .trivela-fake-purchase-time {
+    .sc-fake-purchase-time {
       font-size: 0.68rem;
       color: #94a3b8;
     }
     @media (max-width: 768px) {
-      .trivela-fake-purchase-toast {
+      .sc-fake-purchase-toast {
         bottom: 85px;
         left: 50% !important;
         transform: translate(-50%, 40px) scale(0.95);
         width: calc(100% - 32px);
         max-width: 340px;
       }
-      .trivela-fake-purchase-toast.active {
+      .sc-fake-purchase-toast.active {
         transform: translate(-50%, 0) scale(1);
       }
     }
@@ -444,25 +444,25 @@ function injectMarketingStyles() {
 
 // 1. Exit Intent Popup
 function initExitIntent(config) {
-  if (sessionStorage.getItem('trivela_exit_shown')) return;
+  if (sessionStorage.getItem('shopcoin_exit_shown')) return;
 
   document.addEventListener('mouseleave', (e) => {
     if (e.clientY < 20) {
-      if (sessionStorage.getItem('trivela_exit_shown')) return;
-      sessionStorage.setItem('trivela_exit_shown', 'true');
+      if (sessionStorage.getItem('shopcoin_exit_shown')) return;
+      sessionStorage.setItem('shopcoin_exit_shown', 'true');
 
       const overlay = document.createElement('div');
-      overlay.className = 'trivela-modal-overlay';
+      overlay.className = 'sc-modal-overlay';
       overlay.innerHTML = `
-        <div class="trivela-modal-card">
-          <span class="trivela-modal-close">&times;</span>
+        <div class="sc-modal-card">
+          <span class="sc-modal-close">&times;</span>
           <div style="font-size: 3rem; margin-bottom: 15px;">🎁</div>
           <h3 style="margin: 0 0 10px 0; font-family: Cairo; font-weight: 900; font-size: 1.4rem; color: #eab308;">${config.title}</h3>
           <p style="margin: 0 0 20px 0; color: #94a3b8; font-size: 0.9rem; line-height: 1.5;">${config.desc}</p>
           <div style="background: rgba(234, 179, 8, 0.1); border: 2.5px dashed #eab308; border-radius: 12px; padding: 12px; font-family: Montserrat; font-weight: 900; font-size: 1.6rem; color: #eab308; letter-spacing: 2px; margin-bottom: 20px; cursor: pointer;" id="exitIntentCouponBtn">
             ${config.coupon}
           </div>
-          <button class="trivela-mkt-btn" id="exitIntentClaimBtn" style="width: 100%; justify-content: center;">
+          <button class="sc-mkt-btn" id="exitIntentClaimBtn" style="width: 100%; justify-content: center;">
             <i class="fas fa-shopping-basket"></i> تفعيل العرض والشراء
           </button>
         </div>
@@ -477,7 +477,7 @@ function initExitIntent(config) {
         overlay.classList.remove('active');
         setTimeout(() => overlay.remove(), 400);
       };
-      overlay.querySelector('.trivela-modal-close').addEventListener('click', close);
+      overlay.querySelector('.sc-modal-close').addEventListener('click', close);
       overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
 
       // Copy coupon code
@@ -498,14 +498,14 @@ function initExitIntent(config) {
 // 2. Sticky CTA Bottom Bar
 function initStickyCta(config) {
   const bar = document.createElement('div');
-  bar.className = `trivela-sticky-bar ${config.style}`;
+  bar.className = `sc-sticky-bar ${config.style}`;
   bar.innerHTML = `
     <div style="display: flex; align-items: center; gap: 15px; color: white;">
       <span style="font-weight: 800; font-size: 0.9rem;">${config.text}</span>
       ${config.endTime ? `<div style="background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 6px; font-family: Montserrat; font-weight: 700; font-size: 0.85rem;" id="stickyCtaTimer">00:00:00</div>` : ''}
     </div>
     <div style="display: flex; align-items: center; gap: 15px;">
-      <a href="${config.btnLink}" class="trivela-mkt-btn" style="padding: 8px 18px; font-size: 0.82rem;">
+      <a href="${config.btnLink}" class="sc-mkt-btn" style="padding: 8px 18px; font-size: 0.82rem;">
         ${config.btnText} <i class="fas fa-chevron-left"></i>
       </a>
       <span id="stickyCtaClose" style="color: #94a3b8; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-right: 5px;">&times;</span>
@@ -552,7 +552,7 @@ function initStickyCta(config) {
 // 3. Flash Deals (Urgency Card)
 function initFlashDeals(config) {
   const card = document.createElement('div');
-  card.className = 'trivela-flash-card';
+  card.className = 'sc-flash-card';
   const percentSold = Math.round((config.quantitySold / config.quantityTotal) * 100);
   const remaining = config.quantityTotal - config.quantitySold;
 
@@ -568,14 +568,14 @@ function initFlashDeals(config) {
       <span style="font-size: 0.78rem; text-decoration: line-through; color: #64748b;">${config.priceOriginal} ر.س</span>
       <span style="font-size: 1.1rem; font-weight: 900; color: #ef4444;">${config.pricePromo} ر.س</span>
     </div>
-    <div class="trivela-flash-progress">
-      <div class="trivela-flash-progress-bar" style="width: ${percentSold}%"></div>
+    <div class="sc-flash-progress">
+      <div class="sc-flash-progress-bar" style="width: ${percentSold}%"></div>
     </div>
     <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; margin-bottom: 12px; color: #94a3b8;">
       <span>تم حجز: ${percentSold}%</span>
       <strong style="color: #ef4444;">المتبقي: ${remaining} فقط!</strong>
     </div>
-    <a href="${config.btnLink ? config.btnLink + (config.btnLink.includes('?') ? '&' : '?') + 'flashDeal=true' : '#'}" class="trivela-mkt-btn" style="width:100%; justify-content:center; background: #ef4444; box-shadow: 0 4px 15px rgba(239,68,68,0.3); padding: 8px 16px; font-size: 0.82rem;">
+    <a href="${config.btnLink ? config.btnLink + (config.btnLink.includes('?') ? '&' : '?') + 'flashDeal=true' : '#'}" class="sc-mkt-btn" style="width:100%; justify-content:center; background: #ef4444; box-shadow: 0 4px 15px rgba(239,68,68,0.3); padding: 8px 16px; font-size: 0.82rem;">
       احجز العرض فوراً
     </a>
   `;
@@ -604,17 +604,17 @@ function initFlashDeals(config) {
 
 // 4. Scratch & Win Interactive Card
 function initScratchCard(config) {
-  if (sessionStorage.getItem('trivela_scratch_played')) return;
+  if (sessionStorage.getItem('shopcoin_scratch_played')) return;
 
   setTimeout(() => {
-    if (sessionStorage.getItem('trivela_scratch_played')) return;
-    sessionStorage.setItem('trivela_scratch_played', 'true');
+    if (sessionStorage.getItem('shopcoin_scratch_played')) return;
+    sessionStorage.setItem('shopcoin_scratch_played', 'true');
 
     const overlay = document.createElement('div');
-    overlay.className = 'trivela-modal-overlay';
+    overlay.className = 'sc-modal-overlay';
     overlay.innerHTML = `
-      <div class="trivela-modal-card" style="max-width: 380px;">
-        <span class="trivela-modal-close">&times;</span>
+      <div class="sc-modal-card" style="max-width: 380px;">
+        <span class="sc-modal-close">&times;</span>
         <div style="font-size: 2.2rem; margin-bottom: 10px;">🎰</div>
         <h3 style="margin: 0 0 12px 0; font-family: Cairo; font-weight: 900; font-size: 1.15rem; color: #eab308; line-height: 1.4;">${config.title}</h3>
         <p style="margin: 0 0 15px 0; color: #94a3b8; font-size: 0.8rem;">امسح الطبقة الرمادية بالماوس أو إصبعك لكشف هديتك!</p>
@@ -633,7 +633,7 @@ function initScratchCard(config) {
           <canvas id="scratchCanvas" width="280" height="130" style="position: absolute; top: 0; left: 0; cursor: pointer; border-radius: 12px; z-index: 10; touch-action: none;"></canvas>
         </div>
         
-        <button class="trivela-mkt-btn" id="scratchClaimBtn" style="width: 100%; justify-content: center; display: none;">
+        <button class="sc-mkt-btn" id="scratchClaimBtn" style="width: 100%; justify-content: center; display: none;">
           استلام الجائزة واستخدامها
         </button>
       </div>
@@ -716,7 +716,7 @@ function initScratchCard(config) {
       overlay.classList.remove('active');
       setTimeout(() => overlay.remove(), 400);
     };
-    overlay.querySelector('.trivela-modal-close').addEventListener('click', close);
+    overlay.querySelector('.sc-modal-close').addEventListener('click', close);
     
     overlay.querySelector('#scratchClaimBtn').addEventListener('click', () => {
       close();
@@ -733,12 +733,12 @@ function initScratchCard(config) {
 // 5. Live Activity Pulse (Visitor counter)
 function initLivePulse(config) {
   const bubble = document.createElement('div');
-  bubble.className = 'trivela-pulse-bubble';
+  bubble.className = 'sc-pulse-bubble';
   bubble.style[config.position === 'bottom-left' ? 'left' : 'right'] = '20px';
 
   bubble.innerHTML = `
-    <span class="trivela-pulse-indicator"></span>
-    <span id="trivelaPulseText">جاري فحص حالة النشاط...</span>
+    <span class="sc-pulse-indicator"></span>
+    <span id="scPulseText">جاري فحص حالة النشاط...</span>
   `;
   document.body.appendChild(bubble);
 
@@ -757,7 +757,7 @@ function initLivePulse(config) {
     }
 
     const selected = items[Math.floor(Math.random() * items.length)];
-    bubble.querySelector('#trivelaPulseText').textContent = selected;
+    bubble.querySelector('#scPulseText').textContent = selected;
   };
 
   randomizeText();
@@ -769,13 +769,13 @@ function initTrustTicker(config, reviews) {
   if (!reviews || reviews.length === 0) return;
 
   const wrap = document.createElement('div');
-  wrap.className = 'trivela-ticker-wrap';
+  wrap.className = 'sc-ticker-wrap';
   
   // Clone reviews to guarantee infinite loop display
   const trackItems = [...reviews, ...reviews, ...reviews];
   
   const tickerHtml = trackItems.map(r => `
-    <div class="trivela-ticker-item">
+    <div class="sc-ticker-item">
       <span style="color: #eab308; font-weight:bold;">★ ${r.rating || 5}</span>
       <span style="color: white; font-weight:700;">${r.customerName || "عميل موثق"}:</span>
       <span style="color: #94a3b8;">"${r.comment || "شحن سريع وممتاز"}"</span>
@@ -784,7 +784,7 @@ function initTrustTicker(config, reviews) {
   `).join('<div style="color: rgba(234,179,8,0.2); font-weight:900;">•</div>');
 
   wrap.innerHTML = `
-    <div class="trivela-ticker-track" style="--duration: ${config.speed === 'fast' ? '15s' : config.speed === 'slow' ? '45s' : '28s'}">
+    <div class="sc-ticker-track" style="--duration: ${config.speed === 'fast' ? '15s' : config.speed === 'slow' ? '45s' : '28s'}">
       ${tickerHtml}
     </div>
   `;
@@ -811,11 +811,11 @@ function initTrustTicker(config, reviews) {
 
 // 7. Smart Welcome Back
 function initWelcomeBack(config) {
-  const token = localStorage.getItem('trivela_token');
+  const token = localStorage.getItem('shopcoin_token');
   if (!token) return;
 
   // Attempt to read user email/phone from token storage or profiles
-  let userName = localStorage.getItem('trivela_username') || "بطل تريفيلا";
+  let userName = localStorage.getItem('shopcoin_username') || "بطل شوب كوينز";
   
   // Create welcome top alert bar
   const bar = document.createElement('div');
@@ -838,7 +838,7 @@ function initWelcomeBack(config) {
 // 8. Abandoned Order Recovery
 function initAbandonedOrder(config) {
   // Check if form is partially filled but left in localStorage
-  const savedData = localStorage.getItem('trivela_abandoned_order');
+  const savedData = localStorage.getItem('shopcoin_abandoned_order');
   if (!savedData) return;
 
   // Parse details
@@ -846,20 +846,20 @@ function initAbandonedOrder(config) {
     const data = JSON.parse(savedData);
     // Don't show if older than 48 hours
     if (new Date().getTime() - data.timestamp > 48 * 60 * 60 * 1000) {
-      localStorage.removeItem('trivela_abandoned_order');
+      localStorage.removeItem('shopcoin_abandoned_order');
       return;
     }
 
-    if (sessionStorage.getItem('trivela_abandoned_prompted')) return;
-    sessionStorage.setItem('trivela_abandoned_prompted', 'true');
+    if (sessionStorage.getItem('shopcoin_abandoned_prompted')) return;
+    sessionStorage.setItem('shopcoin_abandoned_prompted', 'true');
 
     // Prompt user
     setTimeout(() => {
       const overlay = document.createElement('div');
-      overlay.className = 'trivela-modal-overlay';
+      overlay.className = 'sc-modal-overlay';
       overlay.innerHTML = `
-        <div class="trivela-modal-card">
-          <span class="trivela-modal-close">&times;</span>
+        <div class="sc-modal-card">
+          <span class="sc-modal-close">&times;</span>
           <div style="font-size: 3rem; margin-bottom: 15px;">🛒</div>
           <h3 style="margin: 0 0 10px 0; font-family: Cairo; font-weight: 900; font-size: 1.2rem; color: #eab308;">طلبك بانتظارك!</h3>
           <p style="margin: 0 0 15px 0; color: #e5e7eb; font-size: 0.88rem; line-height: 1.5;">${config.promoText}</p>
@@ -867,7 +867,7 @@ function initAbandonedOrder(config) {
             <div style="font-size:0.82rem; color:#94a3b8;"><strong style="color:white;">الخدمة:</strong> ${data.service}</div>
             <div style="font-size:0.82rem; color:#94a3b8; margin-top: 5px;"><strong style="color:white;">المنصة:</strong> ${data.platform}</div>
           </div>
-          <button class="trivela-mkt-btn" id="abandonedResumeBtn" style="width: 100%; justify-content: center;">
+          <button class="sc-mkt-btn" id="abandonedResumeBtn" style="width: 100%; justify-content: center;">
             إكمال طلبي الآن
           </button>
         </div>
@@ -879,7 +879,7 @@ function initAbandonedOrder(config) {
         overlay.classList.remove('active');
         setTimeout(() => overlay.remove(), 400);
       };
-      overlay.querySelector('.trivela-modal-close').addEventListener('click', close);
+      overlay.querySelector('.sc-modal-close').addEventListener('click', close);
       overlay.querySelector('#abandonedResumeBtn').addEventListener('click', () => {
         close();
         window.location.href = data.url;
@@ -887,7 +887,7 @@ function initAbandonedOrder(config) {
     }, 4000);
 
   } catch(e) {
-    localStorage.removeItem('trivela_abandoned_order');
+    localStorage.removeItem('shopcoin_abandoned_order');
   }
 }
 
@@ -897,14 +897,14 @@ function initPostPurchase(config) {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('checkout_success') === 'true') {
     // Prevent double popup triggers
-    if (sessionStorage.getItem('trivela_purchase_popup_shown')) return;
-    sessionStorage.setItem('trivela_purchase_popup_shown', 'true');
+    if (sessionStorage.getItem('shopcoin_purchase_popup_shown')) return;
+    sessionStorage.setItem('shopcoin_purchase_popup_shown', 'true');
 
     const overlay = document.createElement('div');
-    overlay.className = 'trivela-modal-overlay';
+    overlay.className = 'sc-modal-overlay';
     overlay.innerHTML = `
-      <div class="trivela-modal-card">
-        <span class="trivela-modal-close">&times;</span>
+      <div class="sc-modal-card">
+        <span class="sc-modal-close">&times;</span>
         <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
         <h3 style="margin: 0 0 10px 0; font-family: Cairo; font-weight: 900; font-size: 1.4rem; color: #10b981;">طلبك تم تسجيله بنجاح!</h3>
         <p style="margin: 0 0 20px 0; color: #e5e7eb; font-size: 0.88rem; line-height: 1.6;">كهدية وتقديراً لثقتك بنا، تم إضافة المكافأة التالية لحسابك تلقائياً:</p>
@@ -924,7 +924,7 @@ function initPostPurchase(config) {
           </div>
         </div>
 
-        <button class="trivela-mkt-btn" id="postPurchaseConfirmBtn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+        <button class="sc-mkt-btn" id="postPurchaseConfirmBtn" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
           رائع، شكراً لكم!
         </button>
       </div>
@@ -936,7 +936,7 @@ function initPostPurchase(config) {
       overlay.classList.remove('active');
       setTimeout(() => overlay.remove(), 400);
     };
-    overlay.querySelector('.trivela-modal-close').addEventListener('click', close);
+    overlay.querySelector('.sc-modal-close').addEventListener('click', close);
     overlay.querySelector('#postPurchaseConfirmBtn').addEventListener('click', close);
   }
 }
@@ -950,11 +950,11 @@ function initFakePurchases(config) {
   if (names.length === 0 || products.length === 0) return;
 
   // Cleanup existing toast if re-initialized
-  const existingToast = document.querySelector('.trivela-fake-purchase-toast');
+  const existingToast = document.querySelector('.sc-fake-purchase-toast');
   if (existingToast) existingToast.remove();
 
   const toast = document.createElement('div');
-  toast.className = 'trivela-fake-purchase-toast';
+  toast.className = 'sc-fake-purchase-toast';
   
   // Position style
   if (config.position === 'bottom-right') {
@@ -966,13 +966,13 @@ function initFakePurchases(config) {
   }
 
   toast.innerHTML = `
-    <div class="trivela-fake-purchase-icon">
+    <div class="sc-fake-purchase-icon">
       <i class="fas fa-shopping-bag"></i>
     </div>
-    <div class="trivela-fake-purchase-info">
-      <div class="trivela-fake-purchase-user" id="fakePurchaseUser">...</div>
-      <div class="trivela-fake-purchase-product" id="fakePurchaseProduct">...</div>
-      <div class="trivela-fake-purchase-time" id="fakePurchaseTime">الآن</div>
+    <div class="sc-fake-purchase-info">
+      <div class="sc-fake-purchase-user" id="fakePurchaseUser">...</div>
+      <div class="sc-fake-purchase-product" id="fakePurchaseProduct">...</div>
+      <div class="sc-fake-purchase-time" id="fakePurchaseTime">الآن</div>
     </div>
   `;
   document.body.appendChild(toast);
@@ -1018,5 +1018,5 @@ function initFakePurchases(config) {
 
 // 11. Golden Ticker Bar
 function initGoldTicker(config) {
-  document.querySelectorAll('.trivela-gold-ticker, .ticker').forEach(el => el.remove());
+  document.querySelectorAll('.sc-gold-ticker, .ticker').forEach(el => el.remove());
 }

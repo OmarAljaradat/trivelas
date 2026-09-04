@@ -1,7 +1,7 @@
 {
-  "name": "لوحة الموردين | Trivela",
-  "short_name": "تريفيلا موردين",
-  "description": "لوحة تحكم وتجهيز طلبات الكوينز لموردي متجر تريفيلا",
+  "name": "لوحة الموردين | ShopCoin",
+  "short_name": "شوب كوينز موردين",
+  "description": "لوحة تحكم وتجهيز طلبات الكوينز لموردي متجر شوب كوينز",
   "start_url": "/supplier.html",
   "display": "standalone",
   "background_color": "#f5f7ff",

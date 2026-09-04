@@ -2,7 +2,7 @@ import { API_BASE } from './config.js';
 
 class ApiClient {
   constructor() {
-    this.tokenKey = 'trivela_token';
+    this.tokenKey = 'shopcoin_token';
   }
 
   getHeaders() {

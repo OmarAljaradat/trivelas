@@ -28,7 +28,7 @@ let allSuppliers = [];
 let adminEventSource = null;
 
 function setupAdminSSE() {
-  const token = localStorage.getItem('trivela_token');
+  const token = localStorage.getItem('shopcoin_token');
   if (!token) return;
   
   if (adminEventSource) {
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Guard already displayed 🔒 block? do nothing further
   if (window.__adminGuardBlocked) return;
   // Check auth credentials
-  const token = localStorage.getItem('trivela_token');
+  const token = localStorage.getItem('shopcoin_token');
   if (!token) {
     console.log('DOMContentLoaded: No token found, redirecting...');
     window.location.href = '/login.html?redirect=/admin.html';
@@ -419,7 +419,7 @@ async function loadStoreSettings() {
     if (mTgActive) mTgActive.checked = !!settings.maintenanceTelegramActive;
 
     const mTgUrl = document.getElementById('settingTelegramUrl');
-    if (mTgUrl) mTgUrl.value = settings.settingTelegram || "https://t.me/Trivela";
+    if (mTgUrl) mTgUrl.value = settings.settingTelegram || "https://t.me/shopcoin15";
 
     const mBypass = document.getElementById('settingBypassToken');
     if (mBypass) mBypass.value = settings.maintenanceBypassToken || "";
@@ -1181,7 +1181,7 @@ window.contactCustomerWhatsApp = function(orderId) {
     }
     
     const shortId = order.id.substring(6, 14);
-    const msg = `👋 مرحباً بك ${order.customerName}، معك الدعم الفني لمتجر Trivela 🎮\n\n` +
+    const msg = `👋 مرحباً بك ${order.customerName}، معك الدعم الفني لمتجر ShopCoin 🎮\n\n` +
                 `📦 لقد استلمنا طلبك بنجاح وبانتظار تأكيد الدفع للبدء بالعمل:\n` +
                 `🆔 رقم الطلب: #${shortId}\n` +
                 `🌟 الخدمة المطلوبة: ${order.service}\n` +
@@ -2183,7 +2183,7 @@ async function saveBundleToStore() {
     rating: 0,
     position: "باقة",
     version: `${discount}% خصم باقة ثنائية`,
-    image: "https://trivelastore.com/images/default-sbc-bundle.png",
+    image: "https://shopcoinstore.com/images/default-sbc-bundle.png",
     category: "sbc", // Handled as SBC challenge
     priceSAR: finalSAR,
     priceUSD: finalUSD,
@@ -2980,7 +2980,7 @@ function exportOrdersToCSV() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.setAttribute("href", url);
-  link.setAttribute("download", `trivela_orders_export_${Date.now()}.csv`);
+  link.setAttribute("download", `shopcoin_orders_export_${Date.now()}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -3022,7 +3022,7 @@ function toggleSidebar() {
 
 function handleLogout() {
   if (confirm("هل أنت متأكد من رغبتك في تسجيل الخروج من لوحة التحكم؟")) {
-    localStorage.removeItem('trivela_token');
+    localStorage.removeItem('shopcoin_token');
     window.location.href = '/login.html?redirect=/admin.html';
   }
 }
@@ -5080,7 +5080,7 @@ window.exportOrdersToCSV = function() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.setAttribute("href", url);
-  link.setAttribute("download", `تقرير_مبيعات_تريفيلا_${new Date().toISOString().split('T')[0]}.csv`);
+  link.setAttribute("download", `تقرير_مبيعات_شوب كوينز_${new Date().toISOString().split('T')[0]}.csv`);
   link.style.visibility = 'hidden';
   document.body.appendChild(link);
   link.click();
@@ -5104,7 +5104,7 @@ window.contactCustomerWhatsAppInProgress = function(orderId) {
     if (!phone.startsWith('966') && phone.startsWith('05')) phone = '966' + phone.slice(1);
     
     const shortId = order.id.substring(6, 14);
-    const msg = `👋 مرحباً بك ${order.customerName}، معك الدعم الفني لمتجر Trivela 🎮\n\n` +
+    const msg = `👋 مرحباً بك ${order.customerName}، معك الدعم الفني لمتجر ShopCoin 🎮\n\n` +
                 `⏳ طلبك رقم #${shortId} (${order.service}) أصبح الآن *قيد التنفيذ* من خلال المورد الخاص بنا.\n\n` +
                 `⚠️ *تنبيه هام جداً*:\n` +
                 `نرجو منك *عدم تسجيل الدخول* إلى حساب EA / Web App / اللعبة نهائياً حتى نبلغك بانتهاء العمل، لضمان سلامة الشحن وتجنب أي تعارض. شكراً لك! 🌟`;
@@ -5123,11 +5123,11 @@ window.contactCustomerWhatsAppCompleted = function(orderId) {
     if (!phone.startsWith('966') && phone.startsWith('05')) phone = '966' + phone.slice(1);
     
     const shortId = order.id.substring(6, 14);
-    const msg = `👋 مرحباً بك ${order.customerName}، معك الدعم الفني لمتجر Trivela 🎮\n\n` +
+    const msg = `👋 مرحباً بك ${order.customerName}، معك الدعم الفني لمتجر ShopCoin 🎮\n\n` +
                 `🎉 أبشرك! تم إكمال وشحن طلبك رقم #${shortId} بنجاح وتوصيل الكوينز/المهام لحسابك.\n\n` +
                 `🔐 *تنبيه أمني هام للغاية*:\n` +
                 `الرجاء الدخول الآن و*تغيير كلمة المرور* لحساب EA / PlayStation الخاص بك فوراً لضمان الأمان التام لبياناتك.\n\n` +
-                `❤️ شكراً لثقتك بمتجر تريفيلا، ويسعدنا دائماً خدمتك!`;
+                `❤️ شكراً لثقتك بمتجر شوب كوينز، ويسعدنا دائماً خدمتك!`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
   } catch (err) {
     console.error(err);
@@ -5273,7 +5273,7 @@ window.openAdminOrderDetailsModal = function(orderId) {
     const waLink = document.getElementById('odmWhatsAppLink');
     if (waLink) {
       const cleanPhone = (order.customerPhone || '').replace(/[^0-9]/g, '');
-      const waMsg = encodeURIComponent(`مرحباً ${order.customerName || ''} 👋، بخصوص طلبك رقم #${shortId} (${order.service || ''}) من متجر Trivela:`);
+      const waMsg = encodeURIComponent(`مرحباً ${order.customerName || ''} 👋، بخصوص طلبك رقم #${shortId} (${order.service || ''}) من متجر ShopCoin:`);
       waLink.href = `https://wa.me/${cleanPhone || '962775585112'}?text=${waMsg}`;
     }
 
@@ -6673,11 +6673,11 @@ window.loadMarketingPreset = function(type) {
   if (!templateEl) return;
 
   if (type === 'reengage') {
-    templateEl.value = "مرحباً {الاسم}، لاحظنا غيابك عن متجر تريفيلا مؤخراً! 🎮\nيسرنا تقديم هدية خاصة لك: كود خصم (WE_MISS_YOU) يمنحك 10% خصم إضافي على شحن الكوينز والخدمات.\nنقاطك الحالية في حسابك: {النقاط} نقطة. لا تفوت العروض:\nhttp://localhost:3000";
+    templateEl.value = "مرحباً {الاسم}، لاحظنا غيابك عن متجر شوب كوينز مؤخراً! 🎮\nيسرنا تقديم هدية خاصة لك: كود خصم (WE_MISS_YOU) يمنحك 10% خصم إضافي على شحن الكوينز والخدمات.\nنقاطك الحالية في حسابك: {النقاط} نقطة. لا تفوت العروض:\nhttp://localhost:3000";
   } else if (type === 'vip') {
-    templateEl.value = "شكر وتقدير من متجر تريفيلا! 🏆\nعزيزنا العميل المتميز {الاسم}، لأنك مسجل لدينا بصفة ({الترقية})، تم شحن بونص إضافي 50 نقطة لحسابك! رصيدك الجديد أصبح: {النقاط} نقطة.\nاستخدم كود VIP_LOYALTY في طلبك القادم للحصول على هدايا حصرية:\nhttp://localhost:3000";
+    templateEl.value = "شكر وتقدير من متجر شوب كوينز! 🏆\nعزيزنا العميل المتميز {الاسم}، لأنك مسجل لدينا بصفة ({الترقية})، تم شحن بونص إضافي 50 نقطة لحسابك! رصيدك الجديد أصبح: {النقاط} نقطة.\nاستخدم كود VIP_LOYALTY في طلبك القادم للحصول على هدايا حصرية:\nhttp://localhost:3000";
   } else if (type === 'new') {
-    templateEl.value = "أهلاً بك {الاسم} في عائلة متجر تريفيلا! 🌟\nيسعدنا تسجيلك معنا. نوفر لك أفضل أسعار شحن الكوينز وتحديات SBC والـ Rivals بأعلى أمان وضمان.\nاستخدم كود الترحيب (WELCOME27) للحصول على خصم فوري على طلبك الأول:\nhttp://localhost:3000";
+    templateEl.value = "أهلاً بك {الاسم} في عائلة متجر شوب كوينز! 🌟\nيسعدنا تسجيلك معنا. نوفر لك أفضل أسعار شحن الكوينز وتحديات SBC والـ Rivals بأعلى أمان وضمان.\nاستخدم كود الترحيب (WELCOME27) للحصول على خصم فوري على طلبك الأول:\nhttp://localhost:3000";
   }
   
   showStatus("📋 تم تحميل قالب الحملة التسويقية المحدد بنجاح! يمكنك تعديله أو تفعيله الآن.", "success");
@@ -7024,17 +7024,17 @@ window.loadEmailPreset = function(type) {
   if (!subjectInput || !previewInput || !bodyInput) return;
 
   if (type === 'promo') {
-    subjectInput.value = "🔥 عروض تريفيلا الحصرية لـ FIFA 27: خصم 10% فوري لفترة محدودة!";
+    subjectInput.value = "🔥 عروض شوب كوينز الحصرية لـ FIFA 27: خصم 10% فوري لفترة محدودة!";
     previewInput.value = "شحن كوينز آمن، تحديات SBC، و Rivals بخصومات فائقة";
-    bodyInput.value = `أهلاً بك يا {الاسم}، 🎮\n\nنود أن نهنئك بمناسبة انطلاق المواسم الجديدة في فيفا 27، ونقدم لك كود خصم ترويجي وحصري:\n\nكود الخصم: (TRIVELA10) يمنحك خصم 10% فوري على كافة خدمات شحن الكوينز وتحديات SBC وتفويض Rivals و FUT Champions!\n\nرصيد نقاط الولاء الحالي الخاص بك: {النقاط} نقطة.\nفئتك الحالية: {الترقية}\n\nشحن آمن 100% وضمان متكامل ضد البند.\n\nتسوّق الآن:\nhttp://localhost:3000`;
+    bodyInput.value = `أهلاً بك يا {الاسم}، 🎮\n\nنود أن نهنئك بمناسبة انطلاق المواسم الجديدة في فيفا 27، ونقدم لك كود خصم ترويجي وحصري:\n\nكود الخصم: (SHOPCOIN10) يمنحك خصم 10% فوري على كافة خدمات شحن الكوينز وتحديات SBC وتفويض Rivals و FUT Champions!\n\nرصيد نقاط الولاء الحالي الخاص بك: {النقاط} نقطة.\nفئتك الحالية: {الترقية}\n\nشحن آمن 100% وضمان متكامل ضد البند.\n\nتسوّق الآن:\nhttp://localhost:3000`;
   } else if (type === 'welcome') {
-    subjectInput.value = "🌟 مرحباً بك في متجر Trivela لشحن كوينز وتحديات فيفا 27!";
+    subjectInput.value = "🌟 مرحباً بك في متجر ShopCoin لشحن كوينز وتحديات فيفا 27!";
     previewInput.value = "تعرف على الطريقة الأكثر أماناً لبناء تشكيلة أحلامك";
-    bodyInput.value = `مرحباً بك يا {الاسم} في عائلة تريفيلا! 👋\n\nمتجر تريفيلا هو الخيار الأول في الوطن العربي لشحن الكوينز وإنجاز التحديات باحترافية وسرعة وأمان تام.\n\nخدماتنا المتميزة تشمل:\n- شحن كوينز بطريقة Comfort Trade مع ضمان ضد البند.\n- تفويض إنجاز SBC وحل كافة التحديات فور صدورها.\n- لعب بطولات Champions و Rivals وتحقيق الرتب العليا.\n\nاستخدم كود الترحيب الخاص بك (WELCOME27) للحصول على خصم إضافي فوري في طلبك الأول.\n\nرابط المتجر:\nhttp://localhost:3000`;
+    bodyInput.value = `مرحباً بك يا {الاسم} في عائلة شوب كوينز! 👋\n\nمتجر شوب كوينز هو الخيار الأول في الوطن العربي لشحن الكوينز وإنجاز التحديات باحترافية وسرعة وأمان تام.\n\nخدماتنا المتميزة تشمل:\n- شحن كوينز بطريقة Comfort Trade مع ضمان ضد البند.\n- تفويض إنجاز SBC وحل كافة التحديات فور صدورها.\n- لعب بطولات Champions و Rivals وتحقيق الرتب العليا.\n\nاستخدم كود الترحيب الخاص بك (WELCOME27) للحصول على خصم إضافي فوري في طلبك الأول.\n\nرابط المتجر:\nhttp://localhost:3000`;
   } else if (type === 'reengage') {
-    subjectInput.value = "😢 {الاسم}، نفتقدك في متجر تريفيلا! هدية مجانية مخصصة لك بالداخل...";
+    subjectInput.value = "😢 {الاسم}، نفتقدك في متجر شوب كوينز! هدية مجانية مخصصة لك بالداخل...";
     previewInput.value = "كود خصم 12% إضافي ورصيد بونص نقاط تم تفعيله لحسابك";
-    bodyInput.value = `أهلاً بك يا {الاسم}، 👋\n\nمرت فترة طويلة منذ آخر زيارة لك لمتجر تريفيلا، ويسعدنا أن نقدم لك بونص خاص كشكر على وفائك:\n\nلقد قمنا بإضافة 50 نقطة ولاء مجانية لحسابك ليصبح رصيدك الحالي: {النقاط} نقطة!\n\nكما قمنا بتفعيل كود خصم خاص بك (WE_MISS_YOU) يمنحك 12% خصم إضافي على طلبك القادم لشحن الكوينز أو خدمات Rivals و SBC.\n\nلا تفوت الفرصة وسارع ببناء تشكيلة أحلامك وتجربة خدماتنا الاحترافية المحدثة:\nhttp://localhost:3000`;
+    bodyInput.value = `أهلاً بك يا {الاسم}، 👋\n\nمرت فترة طويلة منذ آخر زيارة لك لمتجر شوب كوينز، ويسعدنا أن نقدم لك بونص خاص كشكر على وفائك:\n\nلقد قمنا بإضافة 50 نقطة ولاء مجانية لحسابك ليصبح رصيدك الحالي: {النقاط} نقطة!\n\nكما قمنا بتفعيل كود خصم خاص بك (WE_MISS_YOU) يمنحك 12% خصم إضافي على طلبك القادم لشحن الكوينز أو خدمات Rivals و SBC.\n\nلا تفوت الفرصة وسارع ببناء تشكيلة أحلامك وتجربة خدماتنا الاحترافية المحدثة:\nhttp://localhost:3000`;
   }
 };
 

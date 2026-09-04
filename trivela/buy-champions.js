@@ -1,7 +1,7 @@
 // Configuration & State for FUT Champions
 let dynamicSettings = {
   whatsappPhone: "962775585112",
-  instagramUrl: "https://www.instagram.com/trivelacoins",
+  instagramUrl: "https://www.instagram.com/shopcoin15",
   maintenanceMode: false
 };
 
@@ -308,7 +308,7 @@ window.sendChampionsWhatsApp = function() {
   const phone = dynamicSettings.whatsappPhone || '962775585112';
 
   const messageText = 
-`🏆 *طلب تقييم فوت تشامبيونز — Trivela*
+`🏆 *طلب تقييم فوت تشامبيونز — ShopCoin*
 
 🕹️ *المنصة:* ${platformName}
 🎯 *الرانك المطلوب:* ${rankName}

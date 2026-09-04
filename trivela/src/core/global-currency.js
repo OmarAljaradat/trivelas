@@ -1,5 +1,5 @@
 (function() {
-  const savedCurrency = localStorage.getItem('trivela_currency') || 'SAR';
+  const savedCurrency = localStorage.getItem('shopcoin_currency') || 'SAR';
   
   const CURRENCIES = {
     SAR: { symbol: 'ر.س', rate: 3.75, dec: 2 },
@@ -18,7 +18,7 @@
     if (select) {
       select.value = savedCurrency;
       select.addEventListener('change', (e) => {
-        localStorage.setItem('trivela_currency', e.target.value);
+        localStorage.setItem('shopcoin_currency', e.target.value);
         if (typeof updatePriceAndSummary === 'function') {
           updatePriceAndSummary();
         }
@@ -32,11 +32,11 @@
     const urlParams = new URLSearchParams(window.location.search);
     const urlCoupon = urlParams.get('coupon');
     if (urlCoupon) {
-      sessionStorage.setItem('trivela_coupon_auto', urlCoupon.trim().toUpperCase());
+      sessionStorage.setItem('shopcoin_coupon_auto', urlCoupon.trim().toUpperCase());
     }
 
     // Automatically apply coupon code if stored in sessionStorage
-    const storedCoupon = sessionStorage.getItem('trivela_coupon_auto');
+    const storedCoupon = sessionStorage.getItem('shopcoin_coupon_auto');
     if (storedCoupon) {
       const couponInput = document.getElementById('couponCodeInput');
       if (couponInput) {
@@ -90,10 +90,10 @@
   function renderFlashDealBanner(flash) {
     const target = document.getElementById('purchaseForm') || document.querySelector('.buy-card') || document.querySelector('.buy-main-container');
     if (!target) return;
-    if (document.getElementById('trivelaFlashBanner')) return;
+    if (document.getElementById('shopcoinFlashBanner')) return;
     
     const banner = document.createElement('div');
-    banner.id = 'trivelaFlashBanner';
+    banner.id = 'shopcoinFlashBanner';
     banner.style.cssText = `
       background: linear-gradient(135deg, #ef4444, #b91c1c);
       color: white;
@@ -274,9 +274,9 @@
           }
 
           const modalForm = document.getElementById('coachingModalForm');
-          if (modalForm && !document.getElementById('trivelaModalFlashBanner')) {
+          if (modalForm && !document.getElementById('shopcoinModalFlashBanner')) {
             const banner = document.createElement('div');
-            banner.id = 'trivelaModalFlashBanner';
+            banner.id = 'shopcoinModalFlashBanner';
             banner.style.cssText = `
               background: linear-gradient(135deg, #ef4444, #b91c1c);
               color: white;
@@ -366,7 +366,7 @@
   // Fetch interceptor to automatically attach authorization header & override flash deal payload
   const originalFetch = window.fetch;
   window.fetch = function(input, init) {
-    const token = localStorage.getItem('trivela_token');
+    const token = localStorage.getItem('shopcoin_token');
     init = init || {};
     init.headers = init.headers || {};
     

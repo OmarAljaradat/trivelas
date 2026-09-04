@@ -329,7 +329,7 @@ export function applyCouponCode() {
 
 // Redeem Loyalty Points for Coupons
 export async function redeemPointsForCoupon(rewardType) {
-  const token = localStorage.getItem('trivela_token');
+  const token = localStorage.getItem('shopcoin_token');
   const msg = document.getElementById('redeemStatusMessage');
   if (!token) {
     if (msg) {
@@ -642,8 +642,8 @@ export async function handlePurchaseSubmit(event) {
   }
 
   // Add to Global Shopping Cart
-  if (window.trivelaCart) {
-    window.trivelaCart.addItem({
+  if (window.shopCoinCart) {
+    window.shopCoinCart.addItem({
       service: serviceDesc,
       type: 'coins',
       platform: currentPlatform.toUpperCase(),
@@ -810,7 +810,7 @@ function applyCoinsCMSContent() {
 let savedEaAccountData = null;
 
 async function checkSavedEaAccount() {
-  const token = localStorage.getItem('trivela_token');
+  const token = localStorage.getItem('shopcoin_token');
   if (!token) return;
 
   try {

@@ -5,7 +5,7 @@ function closeMenu() {
   if (menu) menu.classList.remove('open');
   if (hb)   hb.classList.remove('active');
 }
-/* Trivela — script.js */
+/* ShopCoin — script.js */
 
 // ──────────────────────────────────────────────
 // SERVICES DATA — Ultimate Team Full Catalog
@@ -312,7 +312,7 @@ const SERVICES = [
 // ──────────────────────────────────────────────
 
 // Base price per 100K coins in USD (platform multiplier applied below)
-const savedPrice = localStorage.getItem('trivelaBasePrice');
+const savedPrice = localStorage.getItem('shopcoinBasePrice');
 const basePS = savedPrice ? parseFloat(savedPrice) : 2.80;
 const BASE_RATE_PER_100K = {
   console: basePS,   // PS4, PS5, Xbox combined
@@ -539,7 +539,7 @@ function toggleFAQ(i) {
 
 let dynamicSettings = {
   whatsappPhone: "962775585112",
-  instagramUrl: "https://www.instagram.com/trivelacoins",
+  instagramUrl: "https://www.instagram.com/shopcoin15",
   maintenanceMode: false
 };
 
@@ -593,7 +593,7 @@ function updateSupportLinks() {
     link.href = dynamicSettings.instagramUrl;
     const span = link.querySelector('span');
     if (span && span.textContent.startsWith('@')) {
-      const username = dynamicSettings.instagramUrl.split('/').filter(Boolean).pop() || 'Trivela';
+      const username = dynamicSettings.instagramUrl.split('/').filter(Boolean).pop() || 'ShopCoin';
       span.textContent = `@${username}`;
     }
   });
@@ -686,7 +686,7 @@ function initOrderForm() {
     const service  = srvEl ? srvEl.value : 'غير محدد';
 
     const msg = encodeURIComponent(
-      '🎮 طلب جديد — Trivela\n\n' +
+      '🎮 طلب جديد — ShopCoin\n\n' +
       '👤 الاسم: ' + name + '\n' +
       '🛠️ الخدمة: ' + service + '\n' +
       '🕹️ المنصة: ' + platform + '\n' +
@@ -694,7 +694,7 @@ function initOrderForm() {
       '💵 العملة: ' + currency + '\n' +
       '📱 التواصل: ' + contact + '\n' +
       '📝 ملاحظات: ' + (notes || 'لا يوجد') + '\n\n' +
-      '_أرسل من Trivela.com_'
+      '_أرسل من ShopCoin15.com_'
     );
     window.open('https://wa.me/962775585112?text=' + msg, '_blank');
     if (modal) modal.classList.add('open');
@@ -900,7 +900,7 @@ window.openStaticCoachingBooking = function(packageType, priceSAR) {
   if (priceEl) priceEl.textContent = `${priceSAR} ر.س`;
 
   // Pre-fill user data if logged in
-  const token = localStorage.getItem('trivela_token');
+  const token = localStorage.getItem('shopcoin_token');
   if (token) {
     fetch('/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` } })
       .then(res => res.json())
@@ -1101,13 +1101,13 @@ window.handleCoachingModalSubmit = function(event) {
   };
 
   try {
-    const existing = localStorage.getItem('trivela_cart');
+    const existing = localStorage.getItem('shopcoin_cart');
     const items = existing ? JSON.parse(existing) : [];
     items.push(cartItem);
-    localStorage.setItem('trivela_cart', JSON.stringify(items));
-    if (window.trivelaCart) {
-      window.trivelaCart.items = items;
-      window.trivelaCart.updateBadge();
+    localStorage.setItem('shopcoin_cart', JSON.stringify(items));
+    if (window.shopCoinCart) {
+      window.shopCoinCart.items = items;
+      window.shopCoinCart.updateBadge();
     }
   } catch(e) {
     console.error("Cart save error:", e);
