@@ -352,18 +352,18 @@ app.use(async (req, res, next) => {
 
 // Static directories resolution across all environments (Vercel, local, Docker)
 const staticDirs = [
-  __dirname,
-  path.join(__dirname, 'shopcoin'),
-  path.join(__dirname, '..', 'shopcoin'),
-  path.join(process.cwd(), 'shopcoin'),
-  process.cwd()
+  path.resolve(__dirname),
+  path.resolve(__dirname, 'trivela'),
+  path.resolve(__dirname, '..', 'trivela'),
+  path.resolve(process.cwd(), 'trivela'),
+  path.resolve(process.cwd())
 ].filter((d, i, arr) => arr.indexOf(d) === i);
 
 function findStaticFile(relPath) {
   const clean = relPath.replace(/^\/+/, '').split('?')[0];
   for (const d of staticDirs) {
     try {
-      const candidate = path.join(d, clean);
+      const candidate = path.resolve(d, clean);
       if (fs.existsSync(candidate) && !fs.statSync(candidate).isDirectory()) {
         return candidate;
       }
@@ -387,7 +387,7 @@ app.use(async (req, res, next) => {
   if (!found) return next();
 
   if (lowered.includes('admin') || lowered.includes('maintenance')) {
-    return res.sendFile(found);
+    return res.sendFile(path.resolve(found), err => { if (err) next(); });
   }
 
   try {
@@ -408,7 +408,7 @@ app.use(async (req, res, next) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
     return res.send(html);
   } catch (e) {
-    return res.sendFile(found);
+    return res.sendFile(path.resolve(found), err => { if (err) next(); });
   }
 });
 
@@ -420,7 +420,7 @@ app.use((req, res, next) => {
 
   const found = findStaticFile(rawPath);
   if (found) {
-    return res.sendFile(found);
+    return res.sendFile(path.resolve(found), err => { if (err) next(); });
   }
   next();
 });
