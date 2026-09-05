@@ -274,16 +274,16 @@ window.handleCoachingSubmit = function(event) {
     }
   }
 
-  // Instant visual feedback on button
+  // Instant visual feedback on button & redirect to cart
   const submitBtn = document.getElementById('btnSubmitOrder');
   if (submitBtn) {
-    submitBtn.innerHTML = '<span>تمت الإضافة إلى السلة ✔</span> <i class="fas fa-check"></i>';
+    submitBtn.innerHTML = '<span>تمت الإضافة! جاري نقلك للسلة... 🛒</span> <i class="fas fa-check"></i>';
     submitBtn.style.background = '#16a34a';
-    setTimeout(() => {
-      submitBtn.innerHTML = '<span>إضافة إلى السلة</span> <i class="fas fa-cart-plus"></i>';
-      submitBtn.style.background = '';
-    }, 2500);
   }
+
+  setTimeout(() => {
+    window.location.href = 'cart.html';
+  }, 400);
 };
 
 // ══════════ PAYMENT METHOD (DEFAULT WHATSAPP) ══════════

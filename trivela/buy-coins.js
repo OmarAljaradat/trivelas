@@ -683,20 +683,7 @@ window.handlePurchaseSubmit = function(event) {
   }
 
   const marketCheck = document.getElementById('marketOpenCheck');
-  if (marketCheck && !marketCheck.checked) {
-    // Web App closed → redirect to WhatsApp with order details
-    const platformName = currentPlatform === 'pc' ? 'الكمبيوتر (PC)' : 'بلايستيشن / إكس بوكس (Console)';
-    const phone = dynamicSettings.whatsappPhone || '962775585112';
-    const resSAR = calculatePrice(currentCoins, currentPlatform, 'SAR');
-    const approxPrice = resSAR.price.toFixed(2);
-    const msg = `💰 *طلب شحن كوينز (الويب آب مقفل) — ShopCoin*\n\n` +
-      `🕹️ *المنصة:* ${platformName}\n` +
-      `🪙 *الكمية:* ${formatCoins(currentCoins)} كوينز\n` +
-      `💵 *السعر التقريبي:* ${approxPrice} ر.س\n\n` +
-      `السلام عليكم، أرغب بشحن كوينز لكن سوق الانتقالات مقفل عندي حالياً. كيف ممكن نكمل الطلب؟`;
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-    return;
-  }
+  const isMarketOpen = marketCheck ? marketCheck.checked : true;
 
   const submitBtn = document.getElementById('btnSubmitOrder');
   if (submitBtn) {
@@ -759,16 +746,16 @@ window.handlePurchaseSubmit = function(event) {
     }
   }
 
-  // Instant visual feedback on button
+  // Instant visual feedback on button & redirect to cart
   if (submitBtn) {
     submitBtn.classList.remove('btn-loading');
-    submitBtn.innerHTML = '<span>تمت الإضافة إلى السلة ✔</span> <i class="fas fa-check"></i>';
+    submitBtn.innerHTML = '<span>تمت الإضافة! جاري نقلك للسلة... 🛒</span> <i class="fas fa-check"></i>';
     submitBtn.style.background = '#16a34a';
-    setTimeout(() => {
-      submitBtn.innerHTML = '<span>إضافة إلى السلة</span> <i class="fas fa-cart-plus"></i>';
-      submitBtn.style.background = '';
-    }, 2500);
   }
+
+  setTimeout(() => {
+    window.location.href = 'cart.html';
+  }, 400);
 };
 
 // ══════════ PAYMENT METHOD (DEFAULT WHATSAPP) ══════════
