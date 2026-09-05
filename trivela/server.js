@@ -121,8 +121,8 @@ async function readDatabase() {
     if (!settings.content) {
       settings.content = {
         landing: {
-          heroTitle: "الأسرع لبناء تشكيلة الأحلام",
-          heroSubTitle: "متجر شوب كوينز لشحن كوينز فيفا 27 وإنجاز المهام بأمان وسرعة فائقة",
+          heroTitle: "وجهتك الأولى لخدمات فيفا 27 سرعة، أمان، وأفضل الأسعار",
+          heroSubTitle: "خدمات فيفا 27 الاحترافية بين يديك: شحن كوينز آمن، حل تحديات SBC، ورفع تصنيفك في الرايفلز والفوت تشامبيونز مع تسليم فوري ودعم فني متواصل 24/7.",
           statOrdersCount: "1,500+",
           statOrdersLabel: "عميل موثق",
           statDeliveryTime: "60 دقيقة",
