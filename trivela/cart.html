@@ -1537,48 +1537,31 @@
             </div>
           </div>
 
-          <!-- ══════════ PAYMENT METHOD SELECTOR (EXCLUSIVE IN CART) ══════════ -->
+          <!-- ══════════ PAYMENT METHOD (WHATSAPP DIRECT) ══════════ -->
           <div class="payment-method-selector-section">
             <div class="payment-method-title">
-              <i class="fas fa-wallet" style="color: #2563eb;"></i>
-              <span>اختر طريقة الدفع المفضلة:</span>
+              <i class="fab fa-whatsapp" style="color: #25d366;"></i>
+              <span>طريقة الدفع والتأكيد:</span>
             </div>
 
-            <!-- WhatsApp Only Notice -->
-            <div id="cartWaOnlyNotice" class="cart-wa-alert" style="display: none;">
-              <i class="fas fa-triangle-exclamation"></i>
-              <span>يحتوي طلبك على خدمات (رايفلز / فوت / ويب آب مقفل) تتطلب التنسيق اليدوي، لذلك الدفع متاح عبر الواتساب فقط.</span>
-            </div>
-
-            <div class="payment-methods-grid">
-              <div class="payment-option-card active" id="cardPayTabs" onclick="selectCartPayment('paytabs')">
-                <div class="pay-icon-box">
-                  <i class="fas fa-credit-card"></i>
-                </div>
-                <div class="pay-text-group">
-                  <span class="pay-main-label">دفع إلكتروني فوري (PayTabs)</span>
-                  <span class="pay-sub-label">مدى / فيزا / ماستركارد / Apple Pay (سفاري)</span>
-                </div>
-                <input type="radio" name="pagePaymentRadio" value="paytabs" checked class="pay-check-radio">
-              </div>
-
-              <div class="payment-option-card whatsapp-option" id="cardWhatsApp" onclick="selectCartPayment('whatsapp')">
-                <div class="pay-icon-box">
+            <div class="payment-methods-grid" style="grid-template-columns: 1fr;">
+              <div class="payment-option-card active whatsapp-option" id="cardWhatsApp" style="border-color: #25d366; background: rgba(37, 211, 102, 0.06);">
+                <div class="pay-icon-box" style="color: #25d366;">
                   <i class="fab fa-whatsapp"></i>
                 </div>
                 <div class="pay-text-group">
-                  <span class="pay-main-label">دفع وتحويل بالواتساب</span>
-                  <span class="pay-sub-label">كليك / زين كاش / STC Pay / USDT</span>
+                  <span class="pay-main-label">الدفع والتحويل المباشر عبر الواتساب</span>
+                  <span class="pay-sub-label">كليك CliQ / زين كاش / STC Pay / تحويل بنكي / USDT</span>
                 </div>
-                <input type="radio" name="pagePaymentRadio" value="whatsapp" class="pay-check-radio">
+                <input type="radio" name="pagePaymentRadio" value="whatsapp" checked class="pay-check-radio" style="accent-color: #25d366;">
               </div>
             </div>
           </div>
 
           <!-- Final Checkout Execution Button -->
-          <button type="button" class="btn-proceed-checkout paytabs-btn" id="btnPageCheckout" onclick="handleCheckoutClick()">
-            <span>إتمام الدفع الإلكتروني الفوري (PayTabs)</span>
-            <i class="fas fa-lock"></i>
+          <button type="button" class="btn-proceed-checkout wa-btn" id="btnPageCheckout" onclick="handleCheckoutClick()" style="background: #25d366; color: #fff;">
+            <span>تأكيد الطلب والدفع عبر الواتساب</span>
+            <i class="fab fa-whatsapp"></i>
           </button>
 
         </div>
@@ -1602,83 +1585,6 @@
 
   </main>
 
-  <!-- ══════════ BALANCED & REASSURING CURRENCY CONFIRMATION MODAL ══════════ -->
-  <div class="jod-modal-overlay" id="jodConfirmModal" style="display: none;">
-    <div class="jod-modal-card">
-      
-      <!-- Header -->
-      <div class="jod-header-row">
-        <div class="jod-header-text">
-          <h4><i class="fas fa-credit-card"></i> تفاصيل الدفع وتحويل العملة</h4>
-          <p>نفس قيمة طلبك بالعملة الرسمية للبوابة دون أي زيادة</p>
-        </div>
-        <button type="button" class="btn-close-mini" onclick="closeJodModal()" title="إغلاق"><i class="fas fa-xmark"></i></button>
-      </div>
-
-      <!-- Currency Comparison Box -->
-      <div class="jod-compare-box">
-        <!-- Selected Currency -->
-        <div class="jod-col">
-          <span class="jod-col-lbl">المبلغ بعملتك المحددة:</span>
-          <div class="jod-col-val" id="modalUserCurAmount">0.00 ر.س</div>
-          <span class="jod-col-cur" id="modalUserCurCode">SAR</span>
-        </div>
-
-        <!-- Exchange Arrow -->
-        <div class="jod-arrow-badge">
-          <span class="rate-pill" id="modalRateBadge">1 د.أ = 5.29 ر.س</span>
-          <i class="fas fa-arrow-left-long" style="color: #94a3b8; font-size: 0.9rem;"></i>
-        </div>
-
-        <!-- JOD Amount -->
-        <div class="jod-col jod-highlight">
-          <span class="jod-col-lbl">ما يعادله بالدينار الأردني:</span>
-          <div class="jod-col-val blue" id="modalJodAmount">0.00 د.أ</div>
-          <span class="jod-col-cur">دينار أردني (JOD)</span>
-        </div>
-      </div>
-
-      <!-- Balanced 3-Point Reassurance List -->
-      <div class="jod-points-list">
-        <div class="jod-point-item">
-          <i class="fas fa-circle-check"></i>
-          <span><b>نفس المبلغ تماماً:</b> لا توجد أي رسوم إضافية أو عمولات خفية مضافة من المتجر.</span>
-        </div>
-        <div class="jod-point-item highlight-bank">
-          <i class="fas fa-building-columns"></i>
-          <span><b>الخصم البنكي:</b> سيقوم بنكك بخصم ما يعادلها بالضبط بعملتك المحلية تلقائياً بسعر الصرف الرسمي.</span>
-        </div>
-        <div class="jod-point-item">
-          <i class="fas fa-shield-halved"></i>
-          <span><b>بوابة دفع معتمدة:</b> الفوترة بالدينار الأردني لأن البوابة الإلكترونية مسجلة ومرخصة رسمياً في الأردن.</span>
-        </div>
-      </div>
-
-      <!-- Apple Pay Safari Hint Box -->
-      <div class="apple-pay-safari-note">
-        <i class="fab fa-apple"></i>
-        <span><b>ملاحظة Apple Pay:</b> للدفع عبر Apple Pay يُرجى استخدام متصفح <b>Safari</b> على أجهزة Apple.</span>
-      </div>
-
-      <!-- Supported Cards -->
-      <div class="cards-row-mini">
-        <span class="card-tag"><i class="fas fa-credit-card"></i> Mada مدى</span>
-        <span class="card-tag apple-tag"><i class="fab fa-apple"></i> Apple Pay (سفاري)</span>
-        <span class="card-tag"><i class="fab fa-cc-visa"></i> Visa</span>
-        <span class="card-tag"><i class="fab fa-cc-mastercard"></i> MasterCard</span>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="jod-modal-buttons">
-        <button type="button" class="btn-simple-pay" id="btnFinalProceedPayTabs" onclick="submitFinalPayTabsOrder()">
-          <span>متابعة الدفع بالدينار الأردني (<span id="modalBtnJodAmount">0.00 د.أ</span>)</span>
-          <i class="fas fa-arrow-left"></i>
-        </button>
-        <button type="button" class="btn-simple-cancel" onclick="closeJodModal()">رجوع للسلة والتعديل</button>
-      </div>
-
-    </div>
-  </div>
 
   <!-- ══════════ FOOTER ══════════ -->
   <footer class="footer" style="margin-top: auto; border-top: 1px solid var(--border-light); background: #ffffff;">
@@ -1693,7 +1599,7 @@
   <script src="src/core/global-currency.js"></script>
   <script>
     // ══════════ CART PAGE CONTROLLER ══════════
-    let selectedCartPaymentMethod = 'paytabs';
+    let selectedCartPaymentMethod = 'whatsapp';
     let appliedPageCoupon = null;
     let isPasswordRevealed = false;
 
@@ -1813,25 +1719,8 @@
       // Update Upsell Cards State & Formatted Prices
       renderUpsellButtons(items);
 
-      // Check WhatsApp-Only locking rule
-      const hasWaOnly = items.some(i => i.whatsappOnly === true || (i.service && (i.service.includes('رايفلز') || i.service.includes('فوت') || i.service.includes('مقفل'))));
-      const waAlert = document.getElementById('cartWaOnlyNotice');
-      const cardPayTabs = document.getElementById('cardPayTabs');
-
-      if (hasWaOnly) {
-        if (waAlert) waAlert.style.display = 'flex';
-        if (cardPayTabs) {
-          cardPayTabs.style.opacity = '0.4';
-          cardPayTabs.style.pointerEvents = 'none';
-        }
-        selectCartPayment('whatsapp');
-      } else {
-        if (waAlert) waAlert.style.display = 'none';
-        if (cardPayTabs) {
-          cardPayTabs.style.opacity = '1';
-          cardPayTabs.style.pointerEvents = 'auto';
-        }
-      }
+      // WhatsApp is the exclusive direct payment method
+      selectedCartPaymentMethod = 'whatsapp';
 
       // Populate & Display Credentials (Read-only Summary vs Edit Form)
       syncCredentialsView(items);
@@ -2024,31 +1913,18 @@
       saveCartItems([]);
     }
 
-    // ── Payment method selector ──
+    // ── Payment method selector (WhatsApp Only) ──
     function selectCartPayment(method) {
-      selectedCartPaymentMethod = method;
-      const cardPayTabs = document.getElementById('cardPayTabs');
+      selectedCartPaymentMethod = 'whatsapp';
       const cardWhatsApp = document.getElementById('cardWhatsApp');
       const btn = document.getElementById('btnPageCheckout');
 
-      if (method === 'paytabs') {
-        if (cardPayTabs) cardPayTabs.classList.add('active');
-        if (cardWhatsApp) cardWhatsApp.classList.remove('active');
-        const r1 = cardPayTabs ? cardPayTabs.querySelector('input') : null;
-        if (r1) r1.checked = true;
-        if (btn) {
-          btn.className = 'btn-proceed-checkout paytabs-btn';
-          btn.innerHTML = '<span>إتمام الدفع الإلكتروني الفوري (PayTabs)</span> <i class="fas fa-lock"></i>';
-        }
-      } else {
-        if (cardWhatsApp) cardWhatsApp.classList.add('active');
-        if (cardPayTabs) cardPayTabs.classList.remove('active');
-        const r2 = cardWhatsApp ? cardWhatsApp.querySelector('input') : null;
-        if (r2) r2.checked = true;
-        if (btn) {
-          btn.className = 'btn-proceed-checkout wa-btn';
-          btn.innerHTML = '<span>تأكيد الطلب والدفع عبر الواتساب</span> <i class="fab fa-whatsapp"></i>';
-        }
+      if (cardWhatsApp) cardWhatsApp.classList.add('active');
+      const r = cardWhatsApp ? cardWhatsApp.querySelector('input') : null;
+      if (r) r.checked = true;
+      if (btn) {
+        btn.className = 'btn-proceed-checkout wa-btn';
+        btn.innerHTML = '<span>تأكيد الطلب والدفع عبر الواتساب</span> <i class="fab fa-whatsapp"></i>';
       }
     }
 
@@ -2208,63 +2084,8 @@
         }
       }
 
-      if (selectedCartPaymentMethod === 'paytabs') {
-        // Open Balanced JOD Confirmation Modal
-        openJodConfirmModal();
-      } else {
-        // Direct WhatsApp Checkout
-        executeFinalOrderCreation('whatsapp');
-      }
-    }
-
-    // ── Balanced JOD Confirmation Modal ──
-    function openJodConfirmModal() {
-      const { grandTotalSAR, grandTotalJOD } = calculateGrandTotals();
-      const sel = document.getElementById('currencySelect');
-      const curKey = sel ? sel.value : 'SAR';
-      const curData = (typeof CURRENCIES !== 'undefined' && CURRENCIES[curKey]) ? CURRENCIES[curKey] : { rate: 3.75, symbol: 'ر.س', dec: 2 };
-
-      const valUSD = grandTotalSAR / 3.75;
-      const userAmount = (valUSD * curData.rate).toFixed(curData.dec);
-      const jodAmount = grandTotalJOD.toFixed(2);
-
-      const modalUserAmt = document.getElementById('modalUserCurAmount');
-      const modalUserCode = document.getElementById('modalUserCurCode');
-      const modalJodAmt = document.getElementById('modalJodAmount');
-      const modalRateBadge = document.getElementById('modalRateBadge');
-      const modalBtnJod = document.getElementById('modalBtnJodAmount');
-
-      if (modalUserAmt) modalUserAmt.textContent = `${userAmount} ${curData.symbol}`;
-      if (modalUserCode) modalUserCode.textContent = `${curKey}`;
-      if (modalJodAmt) modalJodAmt.textContent = `${jodAmount} د.أ`;
-      if (modalBtnJod) modalBtnJod.textContent = `${jodAmount} د.أ`;
-
-      // Rate label
-      const oneJodInUserCur = (curData.rate / 0.709).toFixed(2);
-      if (modalRateBadge) {
-        if (curKey === 'JOD') {
-          modalRateBadge.textContent = `1 د.أ = 1.00 د.أ`;
-        } else {
-          modalRateBadge.textContent = `1 د.أ = ${oneJodInUserCur} ${curData.symbol}`;
-        }
-      }
-
-      const modal = document.getElementById('jodConfirmModal');
-      if (modal) modal.style.display = 'flex';
-    }
-
-    function closeJodModal() {
-      const modal = document.getElementById('jodConfirmModal');
-      if (modal) modal.style.display = 'none';
-    }
-
-    function submitFinalPayTabsOrder() {
-      const btn = document.getElementById('btnFinalProceedPayTabs');
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري فتح بوابة الدفع...';
-      }
-      executeFinalOrderCreation('paytabs');
+      // Direct WhatsApp Checkout
+      executeFinalOrderCreation('whatsapp');
     }
 
     // ── Final Order Creation ──
@@ -2276,6 +2097,12 @@
       const code2 = document.getElementById('pageBackup2').value.trim();
       const code3 = document.getElementById('pageBackup3').value.trim();
       const notes = document.getElementById('pageOrderNotes').value.trim();
+
+      const btn = document.getElementById('btnPageCheckout');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>جاري تسجيل الطلب...</span> <i class="fas fa-spinner fa-spin"></i>';
+      }
 
       const { grandTotalSAR, discountSAR, grandTotalJOD } = calculateGrandTotals();
 
@@ -2301,13 +2128,13 @@
         priceJOD: parseFloat(grandTotalJOD.toFixed(2)),
         couponCode: appliedPageCoupon ? appliedPageCoupon.code : null,
         couponDiscount: discountSAR,
-        paymentMethod: paymentMethod,
+        paymentMethod: 'whatsapp',
         orderNotes: notes,
         cartItems: items
       };
 
       try {
-        const res = await fetch('/api/orders/create', {
+        const res = await fetch('/api/orders', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(orderPayload)
@@ -2318,13 +2145,8 @@
           // Clear cart upon successful order registration
           localStorage.removeItem('shopcoin_cart');
 
-          if (data.paymentMethod === 'paytabs' && data.paymentUrl) {
-            window.location.href = data.paymentUrl;
-            return;
-          }
-
           // WhatsApp Flow
-          const cleanPhone = '962775585112';
+          const cleanPhone = window.dynamicSettings?.whatsappPhone || '962775585112';
           const waMsg = encodeURIComponent(
             `🎮 *طلب جديد من سلة متجر ShopCoin* 🛒\n\n` +
             `📋 *رقم الطلب:* #${data.order.id}\n` +
@@ -2335,13 +2157,23 @@
             `يرجى تأكيد استلام الطلب وتزويدي ببيانات التحويل. شكراً!`
           );
 
-          window.location.href = `https://wa.me/${cleanPhone}?text=${waMsg}`;
+          const waUrl = `https://wa.me/${cleanPhone}?text=${waMsg}`;
+          window.open(waUrl, '_blank');
+
+          // Redirect to tracking page
+          window.location.href = `track.html?orderId=${data.order.id}`;
         } else {
-          closeJodModal();
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span>تأكيد الطلب والدفع عبر الواتساب</span> <i class="fab fa-whatsapp"></i>';
+          }
           alert(data.error || "حدث خطأ أثناء تسجيل طلبك. يرجى المحاولة مرة أخرى.");
         }
       } catch (err) {
-        closeJodModal();
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>تأكيد الطلب والدفع عبر الواتساب</span> <i class="fab fa-whatsapp"></i>';
+        }
         alert("حدث خطأ في الاتصال بالخادم. يرجى المحاولة لاحقاً.");
       }
     }

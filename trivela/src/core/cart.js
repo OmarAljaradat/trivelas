@@ -40,7 +40,7 @@
     constructor() {
       this.items = this.loadCart();
       this.activeCoupon = null;
-      this.selectedPaymentMethod = 'paytabs'; // 'paytabs' or 'whatsapp'
+      this.selectedPaymentMethod = 'whatsapp'; // WhatsApp-only direct payment
       this.isOpen = false;
       this.init();
     }
@@ -275,39 +275,15 @@
               </div>
             </div>
 
-            <!-- PAYMENT METHOD SELECTOR (STRICTLY IN CART) -->
+            <!-- PAYMENT METHOD (WHATSAPP DIRECT) -->
             <div class="cart-section-box payment-cart-box">
-              <h4 class="cart-section-title"><i class="fas fa-wallet"></i> اختيار طريقة الدفع</h4>
-              
-              ${isWAOnly ? `
-                <div class="cart-wa-alert">
-                  <i class="fas fa-triangle-exclamation"></i>
-                  <span>يحتوي طلبك على خدمات (رايفلز / فوت / شحن ويب مقفل) تتطلب التنسيق اليدوي، لذلك الدفع متاح عبر الواتساب فقط.</span>
-                </div>
-              ` : ''}
-
+              <h4 class="cart-section-title"><i class="fab fa-whatsapp" style="color: #25d366;"></i> طريقة الدفع والتأكيد</h4>
               <div class="cart-payment-options">
-                ${!isWAOnly ? `
-                  <div class="cart-pay-card ${this.selectedPaymentMethod === 'paytabs' ? 'active' : ''}" onclick="window.shopCoinCart.selectPayment('paytabs')">
-                    <div class="cart-pay-radio">
-                      <input type="radio" name="cartPayRadio" value="paytabs" ${this.selectedPaymentMethod === 'paytabs' ? 'checked' : ''} />
-                    </div>
-                    <div class="cart-pay-icon"><i class="fas fa-credit-card"></i></div>
-                    <div class="cart-pay-text">
-                      <strong>دفع إلكتروني فوري (PayTabs)</strong>
-                      <span>مدى / فيزا / ماستركارد / Apple Pay</span>
-                    </div>
-                  </div>
-                ` : ''}
-
-                <div class="cart-pay-card ${this.selectedPaymentMethod === 'whatsapp' ? 'active' : ''}" onclick="window.shopCoinCart.selectPayment('whatsapp')">
-                  <div class="cart-pay-radio">
-                    <input type="radio" name="cartPayRadio" value="whatsapp" ${this.selectedPaymentMethod === 'whatsapp' ? 'checked' : ''} />
-                  </div>
-                  <div class="cart-pay-icon wa-icon"><i class="fab fa-whatsapp"></i></div>
+                <div class="cart-pay-card active" style="border-color: #25d366; background: rgba(37, 211, 102, 0.08);">
+                  <div class="cart-pay-icon wa-icon" style="color: #25d366;"><i class="fab fa-whatsapp"></i></div>
                   <div class="cart-pay-text">
-                    <strong>دفع وتحويل بالواتساب</strong>
-                    <span>كليك / زين كاش / تحويل بنكي / USDT</span>
+                    <strong>الدفع والتحويل المباشر عبر الواتساب</strong>
+                    <span>كليك CliQ / زين كاش / STC Pay / تحويل بنكي / USDT</span>
                   </div>
                 </div>
               </div>
@@ -335,9 +311,9 @@
 
         ${count > 0 ? `
           <div class="cart-drawer-footer">
-            <button type="button" class="cart-checkout-btn ${this.selectedPaymentMethod === 'whatsapp' ? 'wa-checkout' : 'paytabs-checkout'}" id="btnCartCheckout" onclick="window.shopCoinCart.processCheckout()">
-              <span>${this.selectedPaymentMethod === 'whatsapp' ? 'تأكيد الطلب والدفع بالواتساب' : 'إتمام الدفع الإلكتروني الآن (PayTabs)'}</span>
-              <i class="${this.selectedPaymentMethod === 'whatsapp' ? 'fab fa-whatsapp' : 'fas fa-lock'}"></i>
+            <button type="button" class="cart-checkout-btn wa-checkout" id="btnCartCheckout" onclick="window.shopCoinCart.processCheckout()" style="background: #25d366; color: #fff;">
+              <span>تأكيد الطلب والدفع بالواتساب</span>
+              <i class="fab fa-whatsapp"></i>
             </button>
           </div>
         ` : ''}
@@ -445,14 +421,9 @@
         if (data.success && data.order) {
           const orderId = data.order.id;
 
-          if (this.selectedPaymentMethod === 'paytabs' && data.paymentUrl) {
-            this.clearCart();
-            window.location.href = data.paymentUrl;
-            return;
-          }
-
           // WhatsApp Flow
           const formattedPrice = formatPrice(finalPriceSAR);
+          const targetPhone = window.dynamicSettings?.whatsappPhone || WHATSAPP_PHONE;
           const msg = `🛒 طلب سلة جديد من متجر ShopCoin\n\n` +
                       `🆔 رقم الطلب: #${orderId}\n` +
                       `📝 الاسم: ${name}\n` +
@@ -464,7 +435,7 @@
           this.clearCart();
           this.close();
 
-          const waUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(msg)}`;
+          const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`;
           window.open(waUrl, '_blank');
 
           // Redirect to tracking page

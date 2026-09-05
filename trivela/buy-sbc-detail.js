@@ -442,31 +442,17 @@ window.handlePurchaseSubmit = function(event) {
 };
 
 // ══════════ PAYMENT METHOD SWITCHER ══════════
-window.currentSelectedPaymentMethod = 'paytabs';
+window.currentSelectedPaymentMethod = 'whatsapp';
 window.selectPaymentMethod = function(method) {
-  window.currentSelectedPaymentMethod = method;
-  const cardPayTabs = document.getElementById('payOptionPayTabs');
+  window.currentSelectedPaymentMethod = 'whatsapp';
   const cardWhatsApp = document.getElementById('payOptionWhatsApp');
-  const radioPayTabs = cardPayTabs ? cardPayTabs.querySelector('input') : null;
   const radioWhatsApp = cardWhatsApp ? cardWhatsApp.querySelector('input') : null;
   const submitBtn = document.getElementById('btnSubmitOrder') || document.querySelector('.summary-complete-btn');
 
-  if (method === 'paytabs') {
-    if (cardPayTabs) cardPayTabs.classList.add('active');
-    if (cardWhatsApp) cardWhatsApp.classList.remove('active');
-    if (radioPayTabs) radioPayTabs.checked = true;
-    if (radioWhatsApp) radioWhatsApp.checked = false;
-    if (submitBtn) {
-      submitBtn.innerHTML = '<span>الدفع الإلكتروني الفوري (PayTabs)</span> <i class="fas fa-credit-card"></i>';
-    }
-  } else {
-    if (cardPayTabs) cardPayTabs.classList.remove('active');
-    if (cardWhatsApp) cardWhatsApp.classList.add('active');
-    if (radioPayTabs) radioPayTabs.checked = false;
-    if (radioWhatsApp) radioWhatsApp.checked = true;
-    if (submitBtn) {
-      submitBtn.innerHTML = '<span>تأكيد الطلب والدفع بالواتساب</span> <i class="fab fa-whatsapp"></i>';
-    }
+  if (cardWhatsApp) cardWhatsApp.classList.add('active');
+  if (radioWhatsApp) radioWhatsApp.checked = true;
+  if (submitBtn) {
+    submitBtn.innerHTML = '<span>تأكيد الطلب والدفع بالواتساب</span> <i class="fab fa-whatsapp"></i>';
   }
 };
 

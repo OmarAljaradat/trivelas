@@ -1741,7 +1741,7 @@ app.post('/api/orders', async (req, res) => {
   }
 
   const orderId = 'order_' + Date.now() + '_' + Math.floor(100 + Math.random() * 900);
-  const paymentMethod = orderData.paymentMethod === 'paytabs' ? 'paytabs' : 'whatsapp';
+  const paymentMethod = 'whatsapp';
   
   // Add extra order columns for the full order data
   try {
@@ -1797,58 +1797,19 @@ app.post('/api/orders', async (req, res) => {
     await sqliteDb.prepare('UPDATE coupons SET used_count = used_count + 1 WHERE code = ?').run(code);
   }
 
-  await addAdminLog('NEW_ORDER', `طلب جديد #${orderId.substring(6,14)} من ${orderData.customerName || 'زائر'} [طريقة الدفع: ${paymentMethod === 'paytabs' ? 'PayTabs إلكتروني' : 'واتساب'}] — ${orderData.service}`, { orderId, paymentMethod });
+  await addAdminLog('NEW_ORDER', `طلب جديد #${orderId.substring(6,14)} من ${orderData.customerName || 'زائر'} [طريقة الدفع: واتساب] — ${orderData.service}`, { orderId, paymentMethod });
 
   const newOrder = await sqliteDb.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
 
-  // Handle PayTabs Direct Payment
-  if (paymentMethod === 'paytabs') {
-    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
-    const host = req.headers['x-forwarded-host'] || req.headers.host || `localhost:${PORT}`;
-    const baseUrl = `${protocol}://${host}`;
-    const returnUrl = `${baseUrl}/api/payment/paytabs/return`;
-    const callbackUrl = `${baseUrl}/api/payment/paytabs/callback`;
-
-    try {
-      const paytabsRes = await createPaymentPage(
-        { ...newOrder, customerName: orderData.customerName, customerEmail: orderData.customerEmail, customerPhone: orderData.customerPhone, ip: req.ip },
-        returnUrl,
-        callbackUrl
-      );
-
-      if (paytabsRes.success && paytabsRes.redirect_url) {
-        if (paytabsRes.tran_ref) {
-          await sqliteDb.prepare('UPDATE orders SET paytabs_tran_ref = ? WHERE id = ?').run(paytabsRes.tran_ref, orderId);
-        }
-        return res.json({
-          success: true,
-          paymentMethod: 'paytabs',
-          paymentUrl: paytabsRes.redirect_url,
-          tranRef: paytabsRes.tran_ref,
-          order: mapOrderFromDb(newOrder)
-        });
-      } else {
-        return res.json({
-          success: true,
-          paymentMethod: 'whatsapp',
-          paymentFallback: true,
-          order: mapOrderFromDb(newOrder),
-          message: 'تم تسجيل الطلب! تعذر فتح بوابة الدفع، يرجى المتابعة عبر الواتساب.'
-        });
-      }
-    } catch (payErr) {
-      console.error('PayTabs error on order create:', payErr);
-      return res.json({
-        success: true,
-        paymentMethod: 'whatsapp',
-        paymentFallback: true,
-        order: mapOrderFromDb(newOrder)
-      });
-    }
-  }
-
-  // Default: WhatsApp manual payment
+  // WhatsApp manual payment (instant success)
   res.json({ success: true, paymentMethod: 'whatsapp', order: mapOrderFromDb(newOrder) });
+});
+
+// Alias for /api/orders/create route
+app.post('/api/orders/create', (req, res) => {
+  // Re-route to /api/orders
+  req.url = '/api/orders';
+  app.handle(req, res);
 });
 
 // ==========================================

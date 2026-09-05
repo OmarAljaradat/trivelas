@@ -2009,9 +2009,8 @@ window.openAdminOrderDetailsModal = function(orderId) {
     }
     const payBadge = document.getElementById('odmPaymentBadge');
     if (payBadge) {
-      const isWA = order.paymentMethod === 'whatsapp' || (order.service && order.service.includes('واتساب'));
-      payBadge.textContent = isWA ? 'تحويل واتساب' : 'دفع إلكتروني (PayTabs)';
-      payBadge.style.background = isWA ? '#16a34a' : '#2563eb';
+      payBadge.textContent = '📱 تحويل واتساب';
+      payBadge.style.background = '#16a34a';
     }
     const dateEl = document.getElementById('odmDateStr');
     if (dateEl) dateEl.textContent = dateStr;
@@ -2047,7 +2046,7 @@ window.openAdminOrderDetailsModal = function(orderId) {
     const priceEl = document.getElementById('odmPriceSAR');
     if (priceEl) priceEl.textContent = `${(order.priceSAR || 0).toLocaleString()} ر.س`;
     const payMethodText = document.getElementById('odmPaymentMethodText');
-    if (payMethodText) payMethodText.textContent = order.paymentMethod === 'whatsapp' ? '📱 تحويل مباشر عبر الواتساب' : '💳 دفع إلكتروني فوري (PayTabs)';
+    if (payMethodText) payMethodText.textContent = '📱 تحويل مباشر عبر الواتساب';
     
     const profitText = document.getElementById('odmProfitText');
     if (profitText) {
