@@ -1539,9 +1539,12 @@
 
           <!-- ══════════ PAYMENT METHOD (WHATSAPP DIRECT) ══════════ -->
           <div class="payment-method-selector-section">
-            <div class="payment-method-title">
-              <i class="fab fa-whatsapp" style="color: #25d366;"></i>
-              <span>طريقة الدفع والتأكيد:</span>
+            <div class="payment-method-title" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <i class="fab fa-whatsapp" style="color: #25d366; font-size: 1.2rem;"></i>
+                <span style="font-weight: 800;">طريقة الدفع المعتمدة:</span>
+              </div>
+              <span style="background: rgba(37, 211, 102, 0.15); color: #15803d; font-size: 0.76rem; font-weight: 800; padding: 3px 10px; border-radius: 12px;">تحويل مباشر</span>
             </div>
 
             <div class="payment-methods-grid" style="grid-template-columns: 1fr;">
@@ -1551,18 +1554,24 @@
                 </div>
                 <div class="pay-text-group">
                   <span class="pay-main-label">الدفع والتحويل المباشر عبر الواتساب</span>
-                  <span class="pay-sub-label">كليك CliQ / زين كاش / STC Pay / تحويل بنكي / USDT</span>
+                  <span class="pay-sub-label">كليك CliQ / زين كاش / STC Pay / تحويل بنكي / USDT — بعد تأكيد الطلب يتم تزويدك ببيانات التحويل فوراً</span>
                 </div>
-                <input type="radio" name="pagePaymentRadio" value="whatsapp" checked class="pay-check-radio" style="accent-color: #25d366;">
+                <i class="fas fa-circle-check" style="color: #25d366; font-size: 1.2rem;"></i>
               </div>
             </div>
           </div>
 
           <!-- Final Checkout Execution Button -->
-          <button type="button" class="btn-proceed-checkout wa-btn" id="btnPageCheckout" onclick="handleCheckoutClick()" style="background: #25d366; color: #fff;">
+          <button type="button" class="btn-proceed-checkout wa-btn" id="btnPageCheckout" onclick="handleCheckoutClick()" style="background: #25d366; color: #fff; font-size: 1.05rem; font-weight: 800;">
             <span>تأكيد الطلب والدفع عبر الواتساب</span>
             <i class="fab fa-whatsapp"></i>
           </button>
+
+          <div style="text-align: center; margin-top: 14px;">
+            <a href="index.html#services" style="color: #2563eb; font-size: 0.88rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+              <i class="fas fa-cart-plus"></i> متابعة التسوق وإضافة خدمات أخرى للسلة
+            </a>
+          </div>
 
         </div>
       </div>

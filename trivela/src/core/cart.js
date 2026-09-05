@@ -65,7 +65,7 @@
       }
     }
 
-    addItem(item) {
+    addItem(item, redirectToCart = false) {
       // item: { service, type, platform, priceSAR, whatsappOnly, eaEmail, eaPassword, backupCodes, details, notes }
       const newItem = {
         id: 'cart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
@@ -85,11 +85,13 @@
 
       this.items.push(newItem);
       this.saveCart();
-      this.showToast(`تمت إضافة "${newItem.service}" إلى السلة 🛒 — جاري تحويلك...`);
+      this.showToast(`تمت إضافة "${newItem.service}" إلى السلة 🛒 (${this.items.length} في السلة)`);
 
-      setTimeout(() => {
-        window.location.href = 'cart.html';
-      }, 150);
+      if (redirectToCart) {
+        setTimeout(() => {
+          window.location.href = 'cart.html';
+        }, 150);
+      }
     }
 
     removeItem(id) {
@@ -133,9 +135,23 @@
         toast.className = 'sc-cart-toast';
         document.body.appendChild(toast);
       }
-      toast.innerHTML = `<i class="fas fa-check-circle"></i> <span>${message}</span>`;
+      toast.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <i class="fas fa-check-circle" style="color:#22c55e;font-size:1.1rem;"></i>
+            <span style="font-weight:700;font-size:0.88rem;">${message}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+            <a href="cart.html" style="background:#2563eb;color:#fff;text-decoration:none;padding:5px 12px;border-radius:6px;font-family:inherit;font-weight:800;font-size:0.78rem;display:inline-flex;align-items:center;gap:4px;">
+              عرض السلة <i class="fas fa-arrow-left"></i>
+            </a>
+            <button type="button" onclick="document.getElementById('shopCoinCartToast').classList.remove('show')" style="background:none;border:none;color:#94a3b8;font-size:1.1rem;cursor:pointer;padding:0 4px;">&times;</button>
+          </div>
+        </div>
+      `;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3500);
+      if (this.toastTimer) clearTimeout(this.toastTimer);
+      this.toastTimer = setTimeout(() => toast.classList.remove('show'), 4500);
     }
 
     updateBadge() {

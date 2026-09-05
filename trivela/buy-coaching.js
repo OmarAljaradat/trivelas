@@ -261,23 +261,32 @@ window.handleCoachingSubmit = function(event) {
     notes: combinedNotes
   };
 
-  try {
-    const existing = localStorage.getItem('shopcoin_cart');
-    const items = existing ? JSON.parse(existing) : [];
-    items.push(cartItem);
-    localStorage.setItem('shopcoin_cart', JSON.stringify(items));
-    if (window.shopCoinCart) {
-      window.shopCoinCart.items = items;
-      window.shopCoinCart.updateBadge();
+  if (window.shopCoinCart) {
+    window.shopCoinCart.addItem(cartItem);
+  } else {
+    try {
+      const existing = localStorage.getItem('shopcoin_cart');
+      const items = existing ? JSON.parse(existing) : [];
+      items.push(cartItem);
+      localStorage.setItem('shopcoin_cart', JSON.stringify(items));
+    } catch(e) {
+      console.error("Cart save error:", e);
     }
-  } catch(e) {
-    console.error("Cart save error:", e);
   }
 
-  window.location.href = 'cart.html';
+  // Instant visual feedback on button
+  const submitBtn = document.getElementById('btnSubmitOrder');
+  if (submitBtn) {
+    submitBtn.innerHTML = '<span>تمت الإضافة إلى السلة ✔</span> <i class="fas fa-check"></i>';
+    submitBtn.style.background = '#16a34a';
+    setTimeout(() => {
+      submitBtn.innerHTML = '<span>إضافة إلى السلة</span> <i class="fas fa-cart-plus"></i>';
+      submitBtn.style.background = '';
+    }, 2500);
+  }
 };
 
-// ══════════ PAYMENT METHOD SWITCHER ══════════
+// ══════════ PAYMENT METHOD (DEFAULT WHATSAPP) ══════════
 window.currentSelectedPaymentMethod = 'whatsapp';
 window.selectPaymentMethod = function(method) {
   window.currentSelectedPaymentMethod = 'whatsapp';
@@ -288,7 +297,7 @@ window.selectPaymentMethod = function(method) {
   if (cardWhatsApp) cardWhatsApp.classList.add('active');
   if (radioWhatsApp) radioWhatsApp.checked = true;
   if (submitBtn) {
-    submitBtn.innerHTML = '<span>تأكيد الطلب والدفع بالواتساب</span> <i class="fab fa-whatsapp"></i>';
+    submitBtn.innerHTML = '<span>إضافة إلى السلة</span> <i class="fas fa-cart-plus"></i>';
   }
 };
 
