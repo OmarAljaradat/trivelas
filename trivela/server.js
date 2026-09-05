@@ -1325,6 +1325,9 @@ app.post(['/api/scrape', '/api/admin/scrape'], async (req, res) => {
 
 // GET public content
 app.get('/api/public/content', async (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   const db = await readDatabase();
   const approvedReviews = (db.reviews || []).filter(r => r.status === 'approved');
   res.json({

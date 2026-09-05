@@ -1152,17 +1152,14 @@ function applyCMSContent() {
   if (content.landing) {
     const l = content.landing;
     
+    // Hero title & subtitle: Keep the official static markup intact (no flicker)
     const h1 = document.getElementById('cms_heroTitle');
-    if (h1 && l.heroTitle) {
-      if (l.heroTitle.includes('وجهتك الأولى') || l.heroTitle.includes('الأسرع لبناء')) {
-        h1.innerHTML = `<span class="hero-main-title">وجهتك الأولى <span class="gradient-word">لخدمات فيفا 27</span></span><span class="hero-subtitle-line">سرعة، أمان، وأفضل الأسعار</span>`;
-      } else {
-        h1.textContent = l.heroTitle;
-      }
+    if (h1 && l.heroTitle && !l.heroTitle.includes('وجهتك الأولى') && !l.heroTitle.includes('الأسرع لبناء')) {
+      h1.textContent = l.heroTitle;
     }
 
     const desc = document.getElementById('cms_heroSubTitle');
-    if (desc && l.heroSubTitle) {
+    if (desc && l.heroSubTitle && !l.heroSubTitle.includes('خدمات فيفا 27') && !l.heroSubTitle.includes('تريفيلا')) {
       desc.textContent = l.heroSubTitle.replace(/تريفيلا/g, 'شوب كوينز').replace(/Trivela/gi, 'ShopCoin');
     }
 
