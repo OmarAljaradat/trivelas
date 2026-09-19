@@ -462,115 +462,55 @@
       transform: translateY(-3px);
     }
 
-    /* Concentric Double-Ring Circle matching the uploaded image */
+    /* ==========================================
+       HIGHLIGHTS: CLEAN WHITE BACKGROUND × BEAUTIFUL EMERALD GREEN ICONS
+       ========================================== */
     .highlight-circle {
-      width: 78px;
-      height: 78px;
+      width: 76px;
+      height: 76px;
       border-radius: 50%;
-      background: #ffffff;
-      border: 2.5px solid #cbd5e1;
-      padding: 3.5px;
+      background: #ffffff; /* Clean White */
+      border: 2px solid #e2e8f0;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
       transition: var(--trans);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
     }
     .highlight-item:hover .highlight-circle {
-      border-color: #0e756c;
-      box-shadow: 0 6px 20px rgba(14, 117, 108, 0.25);
+      border-color: var(--brand-green);
+      box-shadow: 0 8px 24px var(--brand-green-glow);
+      transform: translateY(-2px);
     }
-
-    /* Solid Teal Circle for icons (مهم جداً، الويب اب، آراء الزبائن) */
-    .hl-badge-solid {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: #0e756c;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      transition: var(--trans);
-    }
-    .hl-badge-solid i {
-      font-size: 1.75rem;
-      color: #ffffff;
-      transition: var(--trans);
-    }
-    .highlight-item:hover .hl-badge-solid i {
-      transform: scale(1.1);
-    }
-
-    /* Outline Teal Icon for "طرق الدفع" */
-    .hl-badge-outline {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #0e756c;
-      transition: var(--trans);
-    }
-    .hl-badge-outline i {
+    .highlight-icon {
       font-size: 1.85rem;
-      color: #0e756c;
+      color: var(--brand-green-dark); /* #059669 Beautiful Emerald Green */
       transition: var(--trans);
     }
-    .highlight-item:hover .hl-badge-outline i {
-      transform: scale(1.1);
+    .highlight-item:hover .highlight-icon {
+      color: var(--brand-green); /* #10b981 */
+      transform: scale(1.12);
     }
 
-    /* Mini Card representation for "تم الشحن" (Before / After Coin balance) */
-    .hl-shipped-card {
-      width: 100%;
-      height: 100%;
+    /* Number badge for review series (6, 5, 4) */
+    .hl-badge-tag {
+      position: absolute;
+      bottom: 4px;
+      left: 6px;
+      background: linear-gradient(135deg, var(--brand-green), var(--brand-green-dark));
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 900;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      background: #f8fafc;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 3px;
-      overflow: hidden;
-      border: 1px solid #e2e8f0;
-    }
-    .hl-shipped-row {
-      width: 88%;
-      text-align: center;
-    }
-    .hl-shipped-tag {
-      font-size: 0.52rem;
-      font-weight: 800;
-      color: #0e756c;
-      display: block;
-      line-height: 1.1;
-      margin-bottom: 1px;
-    }
-    .hl-shipped-box {
-      background: #0f172a;
-      border-radius: 4px;
-      padding: 1px 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: #e2e8f0;
-      font-size: 0.44rem;
-      font-family: var(--font-mono);
-      font-weight: 700;
-      direction: ltr;
-    }
-    .hl-shipped-box .coin-num {
-      color: #eab308;
-    }
-    .hl-shipped-divider {
-      width: 65%;
-      height: 1px;
-      background: #cbd5e1;
-      margin: 2px 0;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.35);
+      font-family: var(--font-en);
     }
 
     .highlight-name {
@@ -1109,9 +1049,9 @@
         </div>
       </div>
 
-      <!-- Highlights Tray: Matching User's Exact Instagram Highlights -->
+      <!-- Highlights Tray: Clean White Background with Beautiful Emerald Green Icons -->
       <div class="highlights-section-title">
-        <span><i class="fas fa-sparkles" style="color: #0e756c;"></i> هايلايتس حسابك الرسمية (نمط الحساب المعتمد):</span>
+        <span><i class="fas fa-sparkles" style="color: var(--brand-green);"></i> أغلفة الهايلايتس لحسابك (خلفية بيضاء مع أيقونات خضراء زمردية جذابة):</span>
         <button class="btn-action btn-action-outline" style="padding: 4px 12px; font-size: 0.75rem;" onclick="copyAllHighlightsNames()">
           <i class="fas fa-copy"></i> نسخ أسماء الهايلايت
         </button>
@@ -1123,23 +1063,7 @@
           <!-- 1: تم الشحن -->
           <div class="highlight-item" onclick="openHighlightModal('shipped')">
             <div class="highlight-circle">
-              <div class="hl-shipped-card">
-                <div class="hl-shipped-row">
-                  <span class="hl-shipped-tag">قبل الشحن</span>
-                  <div class="hl-shipped-box">
-                    <span>Lyon SC</span>
-                    <span class="coin-num">320 🪙</span>
-                  </div>
-                </div>
-                <div class="hl-shipped-divider"></div>
-                <div class="hl-shipped-row">
-                  <span class="hl-shipped-tag">بعد الشحن</span>
-                  <div class="hl-shipped-box">
-                    <span>Lyon SC</span>
-                    <span class="coin-num">1.5M 🪙</span>
-                  </div>
-                </div>
-              </div>
+              <i class="fas fa-truck-fast highlight-icon"></i>
             </div>
             <span class="highlight-name">تم الشحن</span>
           </div>
@@ -1147,9 +1071,7 @@
           <!-- 2: مهم جداً -->
           <div class="highlight-item" onclick="openHighlightModal('important')">
             <div class="highlight-circle">
-              <div class="hl-badge-solid">
-                <i class="fas fa-triangle-exclamation"></i>
-              </div>
+              <i class="fas fa-triangle-exclamation highlight-icon"></i>
             </div>
             <span class="highlight-name">مهم جداً</span>
           </div>
@@ -1157,9 +1079,7 @@
           <!-- 3: الويب اب -->
           <div class="highlight-item" onclick="openHighlightModal('webapp')">
             <div class="highlight-circle">
-              <div class="hl-badge-solid">
-                <i class="fas fa-star"></i>
-              </div>
+              <i class="fas fa-globe highlight-icon"></i>
             </div>
             <span class="highlight-name">الويب اب</span>
           </div>
@@ -1167,9 +1087,7 @@
           <!-- 4: طرق الدفع -->
           <div class="highlight-item" onclick="openHighlightModal('payment')">
             <div class="highlight-circle">
-              <div class="hl-badge-outline">
-                <i class="fas fa-wallet"></i>
-              </div>
+              <i class="fas fa-credit-card highlight-icon"></i>
             </div>
             <span class="highlight-name">طرق الدفع</span>
           </div>
@@ -1177,9 +1095,8 @@
           <!-- 5: آراء الزبائن 6 -->
           <div class="highlight-item" onclick="openHighlightModal('reviews6')">
             <div class="highlight-circle">
-              <div class="hl-badge-solid">
-                <i class="fas fa-user-large"></i>
-              </div>
+              <i class="fas fa-star highlight-icon"></i>
+              <span class="hl-badge-tag">6</span>
             </div>
             <span class="highlight-name">آراء الزبائن 6</span>
           </div>
@@ -1187,9 +1104,8 @@
           <!-- 6: آراء الزبائن 5 -->
           <div class="highlight-item" onclick="openHighlightModal('reviews5')">
             <div class="highlight-circle">
-              <div class="hl-badge-solid">
-                <i class="fas fa-user-large"></i>
-              </div>
+              <i class="fas fa-star highlight-icon"></i>
+              <span class="hl-badge-tag">5</span>
             </div>
             <span class="highlight-name">آراء الزبائن 5</span>
           </div>
@@ -1197,9 +1113,8 @@
           <!-- 7: آراء الزبائن 4 -->
           <div class="highlight-item" onclick="openHighlightModal('reviews4')">
             <div class="highlight-circle">
-              <div class="hl-badge-solid">
-                <i class="fas fa-user-large"></i>
-              </div>
+              <i class="fas fa-star highlight-icon"></i>
+              <span class="hl-badge-tag">4</span>
             </div>
             <span class="highlight-name">آراء الزبائن 4</span>
           </div>
@@ -1207,9 +1122,8 @@
           <!-- 8: آراء الزبائن 3 (Archive) -->
           <div class="highlight-item" onclick="openHighlightModal('reviews3')">
             <div class="highlight-circle">
-              <div class="hl-badge-solid" style="opacity: 0.85;">
-                <i class="fas fa-user-large"></i>
-              </div>
+              <i class="fas fa-star highlight-icon" style="opacity: 0.85;"></i>
+              <span class="hl-badge-tag">3</span>
             </div>
             <span class="highlight-name">آراء الزبائن 3</span>
           </div>
@@ -1436,67 +1350,96 @@
     <div class="highlight-export-panel">
       <div class="panel-header">
         <div class="panel-title">
-          <i class="fas fa-circle-notch" style="color: #0e756c;"></i>
-          <span>معاينة أغلفة الهايلايتس الرسمية (مطابقة لصورة حسابك):</span>
+          <i class="fas fa-arrow-down-to-bracket" style="color: var(--brand-green);"></i>
+          <span>استوديو تحميل أغلفة الهايلايتس (خلفية بيضاء × أيقونات خضراء زمردية):</span>
         </div>
-        <span style="font-size: 0.8rem; color: var(--ig-text-secondary); font-weight: 700;">
-          إطار دائري مزدوج + أخضر زمردي فاخر (#0e756c) + خلفية فاتحة وأنيقة
+        <span style="font-size: 0.82rem; color: var(--ig-text-secondary); font-weight: 700;">
+          دقة عالية جاهزة لإنستغرام (1080×1080) — اضغط "تحميل الغلاف" للحفظ فوراً
         </span>
       </div>
 
       <div class="covers-preview-grid">
-        <div class="cover-item" onclick="openHighlightModal('shipped')">
-          <div class="cover-art-circle" style="background: #ffffff; border-color: #cbd5e1;">
-            <div style="font-size: 0.58rem; font-weight: 800; color: #0e756c; line-height: 1.15; text-align: center;">
-              <div>قبل الشحن</div>
-              <div style="color: #cbd5e1; font-size: 0.45rem;">━━━━</div>
-              <div>بعد الشحن</div>
-            </div>
+        
+        <!-- 1: تم الشحن -->
+        <div class="cover-item">
+          <div class="cover-art-circle" onclick="openHighlightModal('shipped')">
+            <i class="fas fa-truck-fast"></i>
           </div>
           <span class="cover-title">تم الشحن</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('تم-الشحن', 'truck')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
         </div>
 
-        <div class="cover-item" onclick="openHighlightModal('important')">
-          <div class="cover-art-circle" style="background: #0e756c; border-color: #cbd5e1;">
-            <i class="fas fa-triangle-exclamation" style="color: #fff; font-size: 1.35rem;"></i>
+        <!-- 2: مهم جداً -->
+        <div class="cover-item">
+          <div class="cover-art-circle" onclick="openHighlightModal('important')">
+            <i class="fas fa-triangle-exclamation"></i>
           </div>
           <span class="cover-title">مهم جداً</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('مهم-جدا', 'alert')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
         </div>
 
-        <div class="cover-item" onclick="openHighlightModal('webapp')">
-          <div class="cover-art-circle" style="background: #0e756c; border-color: #cbd5e1;">
-            <i class="fas fa-star" style="color: #fff; font-size: 1.35rem;"></i>
+        <!-- 3: الويب اب -->
+        <div class="cover-item">
+          <div class="cover-art-circle" onclick="openHighlightModal('webapp')">
+            <i class="fas fa-globe"></i>
           </div>
           <span class="cover-title">الويب اب</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('الويب-اب', 'globe')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
         </div>
 
-        <div class="cover-item" onclick="openHighlightModal('payment')">
-          <div class="cover-art-circle" style="background: #ffffff; border-color: #cbd5e1;">
-            <i class="fas fa-wallet" style="color: #0e756c; font-size: 1.4rem;"></i>
+        <!-- 4: طرق الدفع -->
+        <div class="cover-item">
+          <div class="cover-art-circle" onclick="openHighlightModal('payment')">
+            <i class="fas fa-credit-card"></i>
           </div>
           <span class="cover-title">طرق الدفع</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('طرق-الدفع', 'card')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
         </div>
 
-        <div class="cover-item" onclick="openHighlightModal('reviews6')">
-          <div class="cover-art-circle" style="background: #0e756c; border-color: #cbd5e1;">
-            <i class="fas fa-user-large" style="color: #fff; font-size: 1.35rem;"></i>
+        <!-- 5: آراء الزبائن 6 -->
+        <div class="cover-item">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews6')">
+            <i class="fas fa-star"></i>
+            <span class="hl-badge-tag" style="bottom: 2px; left: 4px; width: 19px; height: 19px; font-size: 0.62rem;">6</span>
           </div>
           <span class="cover-title">آراء الزبائن 6</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-6', 'star', '6')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
         </div>
 
-        <div class="cover-item" onclick="openHighlightModal('reviews5')">
-          <div class="cover-art-circle" style="background: #0e756c; border-color: #cbd5e1;">
-            <i class="fas fa-user-large" style="color: #fff; font-size: 1.35rem;"></i>
+        <!-- 6: آراء الزبائن 5 -->
+        <div class="cover-item">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews5')">
+            <i class="fas fa-star"></i>
+            <span class="hl-badge-tag" style="bottom: 2px; left: 4px; width: 19px; height: 19px; font-size: 0.62rem;">5</span>
           </div>
           <span class="cover-title">آراء الزبائن 5</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-5', 'star', '5')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
         </div>
 
-        <div class="cover-item" onclick="openHighlightModal('reviews4')">
-          <div class="cover-art-circle" style="background: #0e756c; border-color: #cbd5e1;">
-            <i class="fas fa-user-large" style="color: #fff; font-size: 1.35rem;"></i>
+        <!-- 7: آراء الزبائن 4 -->
+        <div class="cover-item">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews4')">
+            <i class="fas fa-star"></i>
+            <span class="hl-badge-tag" style="bottom: 2px; left: 4px; width: 19px; height: 19px; font-size: 0.62rem;">4</span>
           </div>
           <span class="cover-title">آراء الزبائن 4</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-4', 'star', '4')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
         </div>
+
       </div>
     </div>
 
@@ -1736,6 +1679,81 @@
       if (modal) modal.classList.remove('open');
     }
 
+    function downloadHighlightCover(name, iconType, badgeNum) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1080;
+      canvas.height = 1080;
+      const ctx = canvas.getContext('2d');
+
+      // 1. Background: Pure clean white
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 1080, 1080);
+
+      // 2. Subtle luxury concentric rings
+      ctx.beginPath();
+      ctx.arc(540, 540, 480, 0, Math.PI * 2);
+      ctx.strokeStyle = '#f1f5f9';
+      ctx.lineWidth = 8;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(540, 540, 430, 0, Math.PI * 2);
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 14;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(540, 540, 405, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(16, 185, 129, 0.25)';
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      // SVG path map for FontAwesome icons
+      const iconPaths = {
+        truck: "M280 64H160c-17.7 0-32 14.3-32 32v224H64c-17.7 0-32 14.3-32 32v96c0 17.7 14.3 32 32 32h16c0 35.3 28.7 64 64 64s64-28.7 64-64h128c0 35.3 28.7 64 64 64s64-28.7 64-64h48c17.7 0 32-14.3 32-32V320l-64-128H384V96c0-17.7-14.3-32-32-32h-72zM432 448c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm-288 0c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z",
+        alert: "M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z",
+        globe: "M352 256c0 22.2-1.2 43.6-3.3 64H163.3c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64H348.7c2.2 20.4 3.3 41.8 3.3 64zm28.8-64H503.9c17 40.8 26.6 86 27.9 133.5-.8 3.5-1.9 6.9-3.2 10.2L424.3 320c-5.8-43.2-22.1-83.3-43.5-128zM256 0C114.6 0 0 114.6 0 256s114.6 256 256 256 256-114.6 256-256S397.4 0 256 0z",
+        card: "M0 96C0 60.7 28.7 32 64 32H512c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM48 160H528V96c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16v64zm0 80V416c0 8.8 7.2 16 16 16H512c8.8 0 16-7.2 16-16V240H48z",
+        star: "M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.1 23 46 46.4 33.7L288 439.6l130.7 68.7c23.4 12.3 50.9-7.6 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
+      };
+
+      const pathData = iconPaths[iconType] || iconPaths.star;
+      const path2D = new Path2D(pathData);
+
+      // Draw Icon in Center
+      ctx.save();
+      const scale = 0.70;
+      const offset = (1080 - 512 * scale) / 2;
+      ctx.translate(offset, offset);
+      ctx.scale(scale, scale);
+      ctx.fillStyle = '#059669';
+      ctx.fill(path2D);
+      ctx.restore();
+
+      // Optional Badge Number for Reviews
+      if (badgeNum) {
+        ctx.beginPath();
+        ctx.arc(740, 740, 110, 0, Math.PI * 2);
+        ctx.fillStyle = '#059669';
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 18;
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 120px Cairo, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(badgeNum, 740, 745);
+      }
+
+      const link = document.createElement('a');
+      link.download = `ShopCoin-Highlight-${name}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast(`تم تحميل غلاف "${name}" بدقة 1080x1080 بنجاح!`);
+    }
+
     function openHighlightModal(type) {
       const modal = document.getElementById('postModal');
       const content = document.getElementById('modalContent');
@@ -1743,9 +1761,10 @@
       const titles = {
         shipped: {
           title: "هايلايت: تم الشحن 📦",
-          icon: "fa-circle-check",
-          isCustom: "shipped",
-          desc: "إثباتات وتوثيق تسليم الكوينز لحسابات المشترين (سكرينات رصيد الكوينز قبل الشحن وبعد الشحن).",
+          icon: "fa-truck-fast",
+          iconKey: "truck",
+          name: "تم-الشحن",
+          desc: "إثباتات وتوثيق تسليم وشحن الكوينز لحسابات العملاء (سكرينات رصيد الكوينز قبل وبعد الشحن).",
           tips: [
             "سكرين شوت من الويب اب أو الجهاز قبل البدء بالشحن (يوضح اسم النادي ورصيد الكوينز المبدئي).",
             "سكرين شوت بعد الانتهاء من الشحن يوضح وصول كامل كمية الكوينز بدقة.",
@@ -1755,7 +1774,8 @@
         important: {
           title: "هايلايت: مهم جداً ⚠️",
           icon: "fa-triangle-exclamation",
-          isSolid: true,
+          iconKey: "alert",
+          name: "مهم-جدا",
           desc: "تعليمات الأمان وإرشادات الحفاظ على سلامة الحساب قبل وأثناء وبعد الشحن.",
           tips: [
             "تنبيه صارم: عدم تسجيل الدخول إطلاقاً للحساب أو تطبيق Companion حتى استلام إشعار الانتهاء.",
@@ -1766,8 +1786,9 @@
         },
         webapp: {
           title: "هايلايت: الويب اب ⭐",
-          icon: "fa-star",
-          isSolid: true,
+          icon: "fa-globe",
+          iconKey: "globe",
+          name: "الويب-اب",
           desc: "دليل فتح وتجهيز سوق الانتقالات في تطبيق الويب اب (EA Web App / Companion).",
           tips: [
             "كيف تفتح سوق الانتقالات؟ لعب ما بين 15 إلى 25 مباراة نشطة بأيام متتالية دون الخروج من المباريات.",
@@ -1777,8 +1798,9 @@
         },
         payment: {
           title: "هايلايت: طرق الدفع 💳",
-          icon: "fa-wallet",
-          isOutline: true,
+          icon: "fa-credit-card",
+          iconKey: "card",
+          name: "طرق-الدفع",
           desc: "بيانات وقنوات الدفع المعتمدة لدى متجر ShopCoin في الأردن ودول الخليج والعالم.",
           tips: [
             "الأردن: خدمة كليك CliQ الفورية بدون أي عمولة (الاسم المستعار ورقم الهاتف).",
@@ -1789,8 +1811,10 @@
         },
         reviews6: {
           title: "هايلايت: آراء الزبائن 6 💬",
-          icon: "fa-user-large",
-          isSolid: true,
+          icon: "fa-star",
+          iconKey: "star",
+          badge: "6",
+          name: "آراء-الزبائن-6",
           desc: "المجلد السادس: أحدث محادثات وتقييمات العملاء ورسائل الشكر بعد استلام الكوينز بنجاح.",
           tips: [
             "سكرينات محادثات الواتساب مع العملاء بعد تأكيد وصول الكوينز.",
@@ -1800,8 +1824,10 @@
         },
         reviews5: {
           title: "هايلايت: آراء الزبائن 5 💬",
-          icon: "fa-user-large",
-          isSolid: true,
+          icon: "fa-star",
+          iconKey: "star",
+          badge: "5",
+          name: "آراء-الزبائن-5",
           desc: "المجلد الخامس: أرشيف تقييمات وتجارب المشترين الموثوقة لمتجر ShopCoin.",
           tips: [
             "أرشيف تقييمات الدفعة السابقة.",
@@ -1810,8 +1836,10 @@
         },
         reviews4: {
           title: "هايلايت: آراء الزبائن 4 💬",
-          icon: "fa-user-large",
-          isSolid: true,
+          icon: "fa-star",
+          iconKey: "star",
+          badge: "4",
+          name: "آراء-الزبائن-4",
           desc: "المجلد الرابع: توثيقات ورسائل عملاء المتجر الدائمين وتجارب شحن الكوينز.",
           tips: [
             "أرشيف موثق لآراء المشترين.",
@@ -1820,8 +1848,10 @@
         },
         reviews3: {
           title: "هايلايت: آراء الزبائن 3 💬",
-          icon: "fa-user-large",
-          isSolid: true,
+          icon: "fa-star",
+          iconKey: "star",
+          badge: "3",
+          name: "آراء-الزبائن-3",
           desc: "المجلد الثالث: أرشيف محادثات وتقييمات العملاء السابقين.",
           tips: [
             "توثيقات وأرشيف تقييمات المتجر."
@@ -1829,66 +1859,46 @@
         }
       };
 
-      const item = titles[type] || {
-        title: "هايلايت إنستغرام",
-        icon: "fa-circle-notch",
-        desc: "محتوى الهايلايت المعتمد.",
-        tips: ["محتوى ستوري مخصص لمتجر ShopCoin."]
-      };
+      const item = titles[type] || titles.shipped;
+      const badgeHtml = item.badge ? `<span class="hl-badge-tag" style="bottom: 4px; left: 8px; width: 22px; height: 22px; font-size: 0.7rem;">${item.badge}</span>` : '';
 
-      let circleMarkup = '';
-      if (item.isCustom === 'shipped') {
-        circleMarkup = `
-          <div style="width: 86px; height: 86px; border-radius: 50%; border: 2.5px solid #cbd5e1; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; background: #ffffff; padding: 4px; box-shadow: 0 6px 18px rgba(14, 117, 108, 0.2);">
-            <div style="width: 100%; height: 100%; border-radius: 50%; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
-              <span style="font-size: 0.62rem; font-weight: 800; color: #0e756c; line-height: 1.1;">قبل الشحن</span>
-              <span style="font-size: 0.55rem; color: #64748b; font-weight: 700;">320 🪙</span>
-              <div style="width: 65%; height: 1px; background: #e2e8f0; margin: 2px 0;"></div>
-              <span style="font-size: 0.62rem; font-weight: 800; color: #0e756c; line-height: 1.1;">بعد الشحن</span>
-              <span style="font-size: 0.55rem; color: #eab308; font-weight: 800;">1.5M 🪙</span>
-            </div>
-          </div>
-        `;
-      } else if (item.isSolid) {
-        circleMarkup = `
-          <div style="width: 86px; height: 86px; border-radius: 50%; border: 2.5px solid #cbd5e1; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; background: #ffffff; padding: 4px; box-shadow: 0 6px 18px rgba(14, 117, 108, 0.2);">
-            <div style="width: 100%; height: 100%; border-radius: 50%; background: #0e756c; display: flex; align-items: center; justify-content: center; color: #fff;">
-              <i class="fas ${item.icon}" style="font-size: 2.2rem; color: #ffffff;"></i>
-            </div>
-          </div>
-        `;
-      } else {
-        circleMarkup = `
-          <div style="width: 86px; height: 86px; border-radius: 50%; border: 2.5px solid #cbd5e1; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; background: #ffffff; padding: 4px; box-shadow: 0 6px 18px rgba(14, 117, 108, 0.2);">
-            <div style="width: 100%; height: 100%; border-radius: 50%; background: #ffffff; display: flex; align-items: center; justify-content: center;">
-              <i class="fas ${item.icon}" style="font-size: 2.4rem; color: #0e756c;"></i>
-            </div>
-          </div>
-        `;
-      }
+      const circleMarkup = `
+        <div style="width: 90px; height: 90px; border-radius: 50%; border: 2.5px solid var(--brand-green); margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; background: #ffffff; position: relative; box-shadow: 0 8px 24px var(--brand-green-glow);">
+          <i class="fas ${item.icon}" style="font-size: 2.4rem; color: var(--brand-green-dark);"></i>
+          ${badgeHtml}
+        </div>
+      `;
 
       const tipsList = item.tips.map(t => `<li style="margin-bottom: 6px;">${t}</li>`).join('');
 
       content.innerHTML = `
-        <h3 style="font-size: 1.3rem; font-weight: 900; color: var(--brand-navy); margin-bottom: 6px;">${item.title}</h3>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+          <h3 style="font-size: 1.3rem; font-weight: 900; color: var(--brand-navy);">${item.title}</h3>
+          <button class="btn-action btn-action-primary" style="padding: 6px 14px; font-size: 0.8rem;" onclick="downloadHighlightCover('${item.name}', '${item.iconKey}', '${item.badge || ''}')">
+            <i class="fas fa-download"></i> تحميل الغلاف (1080×1080)
+          </button>
+        </div>
         <p style="color: var(--ig-text-secondary); font-size: 0.92rem; margin-bottom: 18px;">${item.desc}</p>
         
         <div style="background: #f8fafc; border: 1.5px solid var(--ig-border); border-radius: 16px; padding: 22px; text-align: center; margin-bottom: 20px;">
           ${circleMarkup}
-          <strong style="color: var(--brand-navy); font-size: 0.98rem; display: block;">غلاف الهايلايت المعتمد بالحساب الرسمي</strong>
-          <p style="color: var(--ig-text-secondary); font-size: 0.84rem; margin-top: 4px;">إطار دائري مزدوج مع خلفية خضراء زمردية (#0e756c) وتصميم مطابق لبروفايل إنستغرام الخاص بك.</p>
+          <strong style="color: var(--brand-navy); font-size: 0.98rem; display: block;">غلاف الهايلايت الفاخر المعتمد</strong>
+          <p style="color: var(--ig-text-secondary); font-size: 0.84rem; margin-top: 4px;">خلفية بيضاء نقية + أيقونة خضراء زمردية جذابة (#059669) بدقة عالية متناسقة للجميع.</p>
         </div>
 
-        <div style="background: rgba(14, 117, 108, 0.05); border: 1px solid rgba(14, 117, 108, 0.2); border-radius: 14px; padding: 16px; margin-bottom: 20px; text-align: right;">
-          <strong style="color: #0e756c; font-size: 0.88rem; display: block; margin-bottom: 8px;"><i class="fas fa-lightbulb"></i> أفكار محتوى مقترحة لستوريات هذا الهايلايت:</strong>
+        <div style="background: var(--brand-green-light); border: 1px solid var(--brand-green-border); border-radius: 14px; padding: 16px; margin-bottom: 20px; text-align: right;">
+          <strong style="color: var(--brand-green-dark); font-size: 0.88rem; display: block; margin-bottom: 8px;"><i class="fas fa-lightbulb"></i> أفكار محتوى مقترحة لستوريات هذا الهايلايت:</strong>
           <ul style="padding-right: 20px; font-size: 0.88rem; color: #334155; line-height: 1.7;">
             ${tipsList}
           </ul>
         </div>
 
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
-          <button class="btn-action btn-action-primary" style="background: linear-gradient(135deg, #0e756c, #094e48);" onclick="closePostModal()">
-            <i class="fas fa-check"></i> حسناً، تم الفهم
+          <button class="btn-action btn-action-outline" onclick="closePostModal()">
+            <i class="fas fa-times"></i> إغلاق
+          </button>
+          <button class="btn-action btn-action-primary" onclick="downloadHighlightCover('${item.name}', '${item.iconKey}', '${item.badge || ''}')">
+            <i class="fas fa-download"></i> تحميل صورة الغلاف
           </button>
         </div>
       `;
