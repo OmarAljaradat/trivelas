@@ -431,13 +431,18 @@
       gap: 6px;
     }
 
+    .ig-highlights-tray-wrap {
+      position: relative;
+      margin-bottom: 24px;
+    }
     .ig-highlights-tray {
       display: flex;
-      gap: 24px;
+      gap: 20px;
       overflow-x: auto;
-      padding: 8px 4px 26px;
+      padding: 10px 6px 20px;
       border-bottom: 1px solid var(--ig-border);
       scrollbar-width: none;
+      scroll-behavior: smooth;
     }
     .ig-highlights-tray::-webkit-scrollbar {
       display: none;
@@ -449,7 +454,7 @@
       gap: 10px;
       cursor: pointer;
       flex-shrink: 0;
-      width: 86px;
+      width: 90px;
       text-align: center;
       transition: var(--trans);
     }
@@ -457,34 +462,117 @@
       transform: translateY(-3px);
     }
 
-    /* Requested: White Background & Beautiful Emerald Green Icons */
+    /* Concentric Double-Ring Circle matching the uploaded image */
     .highlight-circle {
-      width: 72px;
-      height: 72px;
+      width: 78px;
+      height: 78px;
       border-radius: 50%;
-      background: #ffffff; /* Clean White */
-      border: 2px solid #e2e8f0;
+      background: #ffffff;
+      border: 2.5px solid #cbd5e1;
+      padding: 3.5px;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
       transition: var(--trans);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
     }
     .highlight-item:hover .highlight-circle {
-      border-color: var(--brand-green);
-      box-shadow: 0 6px 20px var(--brand-green-glow);
-      background: #fcfdfd;
+      border-color: #0e756c;
+      box-shadow: 0 6px 20px rgba(14, 117, 108, 0.25);
     }
-    .highlight-icon {
-      font-size: 1.65rem;
-      color: var(--brand-green-dark); /* Beautiful Green */
+
+    /* Solid Teal Circle for icons (مهم جداً، الويب اب، آراء الزبائن) */
+    .hl-badge-solid {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #0e756c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
       transition: var(--trans);
     }
-    .highlight-item:hover .highlight-icon {
-      transform: scale(1.1);
-      color: var(--brand-green);
+    .hl-badge-solid i {
+      font-size: 1.75rem;
+      color: #ffffff;
+      transition: var(--trans);
     }
+    .highlight-item:hover .hl-badge-solid i {
+      transform: scale(1.1);
+    }
+
+    /* Outline Teal Icon for "طرق الدفع" */
+    .hl-badge-outline {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0e756c;
+      transition: var(--trans);
+    }
+    .hl-badge-outline i {
+      font-size: 1.85rem;
+      color: #0e756c;
+      transition: var(--trans);
+    }
+    .highlight-item:hover .hl-badge-outline i {
+      transform: scale(1.1);
+    }
+
+    /* Mini Card representation for "تم الشحن" (Before / After Coin balance) */
+    .hl-shipped-card {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    .hl-shipped-row {
+      width: 88%;
+      text-align: center;
+    }
+    .hl-shipped-tag {
+      font-size: 0.52rem;
+      font-weight: 800;
+      color: #0e756c;
+      display: block;
+      line-height: 1.1;
+      margin-bottom: 1px;
+    }
+    .hl-shipped-box {
+      background: #0f172a;
+      border-radius: 4px;
+      padding: 1px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #e2e8f0;
+      font-size: 0.44rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      direction: ltr;
+    }
+    .hl-shipped-box .coin-num {
+      color: #eab308;
+    }
+    .hl-shipped-divider {
+      width: 65%;
+      height: 1px;
+      background: #cbd5e1;
+      margin: 2px 0;
+    }
+
     .highlight-name {
       font-size: 0.8rem;
       font-weight: 800;
@@ -492,7 +580,32 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 84px;
+      max-width: 88px;
+    }
+
+    /* Scroll button like the arrow in user's image */
+    .tray-scroll-btn {
+      position: absolute;
+      left: 0px;
+      top: 32px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+      border: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: var(--trans);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+    .tray-scroll-btn:hover {
+      background: rgba(15, 23, 42, 0.95);
+      transform: scale(1.1);
     }
 
     /* ==========================================
@@ -703,8 +816,8 @@
     }
     .covers-preview-grid {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 16px;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 14px;
       text-align: center;
     }
     .cover-item {
@@ -996,56 +1109,114 @@
         </div>
       </div>
 
-      <!-- Highlights Tray (White background with Beautiful Green Icons) -->
+      <!-- Highlights Tray: Matching User's Exact Instagram Highlights -->
       <div class="highlights-section-title">
-        <span><i class="fas fa-sparkles" style="color: var(--brand-green);"></i> أغلفة الهايلايتس الدائرية (خلفية بيضاء بأيقونات خضراء جذابة):</span>
+        <span><i class="fas fa-sparkles" style="color: #0e756c;"></i> هايلايتس حسابك الرسمية (نمط الحساب المعتمد):</span>
         <button class="btn-action btn-action-outline" style="padding: 4px 12px; font-size: 0.75rem;" onclick="copyAllHighlightsNames()">
           <i class="fas fa-copy"></i> نسخ أسماء الهايلايت
         </button>
       </div>
 
-      <div class="ig-highlights-tray">
-        <div class="highlight-item" onclick="openHighlightModal('guarantee')">
-          <div class="highlight-circle">
-            <i class="fas fa-shield-halved highlight-icon"></i>
+      <div class="ig-highlights-tray-wrap">
+        <div class="ig-highlights-tray" id="highlightsTray">
+          
+          <!-- 1: تم الشحن -->
+          <div class="highlight-item" onclick="openHighlightModal('shipped')">
+            <div class="highlight-circle">
+              <div class="hl-shipped-card">
+                <div class="hl-shipped-row">
+                  <span class="hl-shipped-tag">قبل الشحن</span>
+                  <div class="hl-shipped-box">
+                    <span>Lyon SC</span>
+                    <span class="coin-num">320 🪙</span>
+                  </div>
+                </div>
+                <div class="hl-shipped-divider"></div>
+                <div class="hl-shipped-row">
+                  <span class="hl-shipped-tag">بعد الشحن</span>
+                  <div class="hl-shipped-box">
+                    <span>Lyon SC</span>
+                    <span class="coin-num">1.5M 🪙</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span class="highlight-name">تم الشحن</span>
           </div>
-          <span class="highlight-name">الضمان 🛡️</span>
+
+          <!-- 2: مهم جداً -->
+          <div class="highlight-item" onclick="openHighlightModal('important')">
+            <div class="highlight-circle">
+              <div class="hl-badge-solid">
+                <i class="fas fa-triangle-exclamation"></i>
+              </div>
+            </div>
+            <span class="highlight-name">مهم جداً</span>
+          </div>
+
+          <!-- 3: الويب اب -->
+          <div class="highlight-item" onclick="openHighlightModal('webapp')">
+            <div class="highlight-circle">
+              <div class="hl-badge-solid">
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+            <span class="highlight-name">الويب اب</span>
+          </div>
+
+          <!-- 4: طرق الدفع -->
+          <div class="highlight-item" onclick="openHighlightModal('payment')">
+            <div class="highlight-circle">
+              <div class="hl-badge-outline">
+                <i class="fas fa-wallet"></i>
+              </div>
+            </div>
+            <span class="highlight-name">طرق الدفع</span>
+          </div>
+
+          <!-- 5: آراء الزبائن 6 -->
+          <div class="highlight-item" onclick="openHighlightModal('reviews6')">
+            <div class="highlight-circle">
+              <div class="hl-badge-solid">
+                <i class="fas fa-user-large"></i>
+              </div>
+            </div>
+            <span class="highlight-name">آراء الزبائن 6</span>
+          </div>
+
+          <!-- 6: آراء الزبائن 5 -->
+          <div class="highlight-item" onclick="openHighlightModal('reviews5')">
+            <div class="highlight-circle">
+              <div class="hl-badge-solid">
+                <i class="fas fa-user-large"></i>
+              </div>
+            </div>
+            <span class="highlight-name">آراء الزبائن 5</span>
+          </div>
+
+          <!-- 7: آراء الزبائن 4 -->
+          <div class="highlight-item" onclick="openHighlightModal('reviews4')">
+            <div class="highlight-circle">
+              <div class="hl-badge-solid">
+                <i class="fas fa-user-large"></i>
+              </div>
+            </div>
+            <span class="highlight-name">آراء الزبائن 4</span>
+          </div>
+
+          <!-- 8: آراء الزبائن 3 (Archive) -->
+          <div class="highlight-item" onclick="openHighlightModal('reviews3')">
+            <div class="highlight-circle">
+              <div class="hl-badge-solid" style="opacity: 0.85;">
+                <i class="fas fa-user-large"></i>
+              </div>
+            </div>
+            <span class="highlight-name">آراء الزبائن 3</span>
+          </div>
+
         </div>
 
-        <div class="highlight-item" onclick="openHighlightModal('reviews')">
-          <div class="highlight-circle">
-            <i class="fas fa-star highlight-icon"></i>
-          </div>
-          <span class="highlight-name">آراء العملاء ⭐</span>
-        </div>
-
-        <div class="highlight-item" onclick="openHighlightModal('prices')">
-          <div class="highlight-circle">
-            <i class="fas fa-coins highlight-icon"></i>
-          </div>
-          <span class="highlight-name">الأسعار 💰</span>
-        </div>
-
-        <div class="highlight-item" onclick="openHighlightModal('how')">
-          <div class="highlight-circle">
-            <i class="fas fa-bolt highlight-icon"></i>
-          </div>
-          <span class="highlight-name">طريقة الشحن ⚡</span>
-        </div>
-
-        <div class="highlight-item" onclick="openHighlightModal('payment')">
-          <div class="highlight-circle">
-            <i class="fas fa-credit-card highlight-icon"></i>
-          </div>
-          <span class="highlight-name">طرق الدفع 💳</span>
-        </div>
-
-        <div class="highlight-item" onclick="openHighlightModal('faq')">
-          <div class="highlight-circle">
-            <i class="fas fa-circle-question highlight-icon"></i>
-          </div>
-          <span class="highlight-name">الأسئلة ❓</span>
-        </div>
+        <button class="tray-scroll-btn" onclick="scrollTray('left')" title="عرض باقي الهايلايتس"><i class="fas fa-chevron-left"></i></button>
       </div>
 
       <!-- Feed Tabs -->
@@ -1265,43 +1436,66 @@
     <div class="highlight-export-panel">
       <div class="panel-header">
         <div class="panel-title">
-          <i class="fas fa-circle-notch" style="color: var(--brand-green);"></i>
-          <span>معاينة أغلفة الهايلايتس (White × Emerald Green):</span>
+          <i class="fas fa-circle-notch" style="color: #0e756c;"></i>
+          <span>معاينة أغلفة الهايلايتس الرسمية (مطابقة لصورة حسابك):</span>
         </div>
         <span style="font-size: 0.8rem; color: var(--ig-text-secondary); font-weight: 700;">
-          خلفية بيضاء نقية + أيقونة خضراء زمردية (#10b981) + حواف دائرية فخمة
+          إطار دائري مزدوج + أخضر زمردي فاخر (#0e756c) + خلفية فاتحة وأنيقة
         </span>
       </div>
 
       <div class="covers-preview-grid">
-        <div class="cover-item">
-          <div class="cover-art-circle"><i class="fas fa-shield-halved"></i></div>
-          <span class="cover-title">الضمان</span>
+        <div class="cover-item" onclick="openHighlightModal('shipped')">
+          <div class="cover-art-circle" style="background: #ffffff; border-color: #cbd5e1;">
+            <div style="font-size: 0.58rem; font-weight: 800; color: #0e756c; line-height: 1.15; text-align: center;">
+              <div>قبل الشحن</div>
+              <div style="color: #cbd5e1; font-size: 0.45rem;">━━━━</div>
+              <div>بعد الشحن</div>
+            </div>
+          </div>
+          <span class="cover-title">تم الشحن</span>
         </div>
 
-        <div class="cover-item">
-          <div class="cover-art-circle"><i class="fas fa-star"></i></div>
-          <span class="cover-title">آراء العملاء</span>
+        <div class="cover-item" onclick="openHighlightModal('important')">
+          <div class="cover-art-circle" style="background: #0e756c; border-color: #cbd5e1;">
+            <i class="fas fa-triangle-exclamation" style="color: #fff; font-size: 1.35rem;"></i>
+          </div>
+          <span class="cover-title">مهم جداً</span>
         </div>
 
-        <div class="cover-item">
-          <div class="cover-art-circle"><i class="fas fa-coins"></i></div>
-          <span class="cover-title">الأسعار</span>
+        <div class="cover-item" onclick="openHighlightModal('webapp')">
+          <div class="cover-art-circle" style="background: #0e756c; border-color: #cbd5e1;">
+            <i class="fas fa-star" style="color: #fff; font-size: 1.35rem;"></i>
+          </div>
+          <span class="cover-title">الويب اب</span>
         </div>
 
-        <div class="cover-item">
-          <div class="cover-art-circle"><i class="fas fa-bolt"></i></div>
-          <span class="cover-title">طريقة الشحن</span>
-        </div>
-
-        <div class="cover-item">
-          <div class="cover-art-circle"><i class="fas fa-credit-card"></i></div>
+        <div class="cover-item" onclick="openHighlightModal('payment')">
+          <div class="cover-art-circle" style="background: #ffffff; border-color: #cbd5e1;">
+            <i class="fas fa-wallet" style="color: #0e756c; font-size: 1.4rem;"></i>
+          </div>
           <span class="cover-title">طرق الدفع</span>
         </div>
 
-        <div class="cover-item">
-          <div class="cover-art-circle"><i class="fas fa-circle-question"></i></div>
-          <span class="cover-title">الأسئلة</span>
+        <div class="cover-item" onclick="openHighlightModal('reviews6')">
+          <div class="cover-art-circle" style="background: #0e756c; border-color: #cbd5e1;">
+            <i class="fas fa-user-large" style="color: #fff; font-size: 1.35rem;"></i>
+          </div>
+          <span class="cover-title">آراء الزبائن 6</span>
+        </div>
+
+        <div class="cover-item" onclick="openHighlightModal('reviews5')">
+          <div class="cover-art-circle" style="background: #0e756c; border-color: #cbd5e1;">
+            <i class="fas fa-user-large" style="color: #fff; font-size: 1.35rem;"></i>
+          </div>
+          <span class="cover-title">آراء الزبائن 5</span>
+        </div>
+
+        <div class="cover-item" onclick="openHighlightModal('reviews4')">
+          <div class="cover-art-circle" style="background: #0e756c; border-color: #cbd5e1;">
+            <i class="fas fa-user-large" style="color: #fff; font-size: 1.35rem;"></i>
+          </div>
+          <span class="cover-title">آراء الزبائن 4</span>
         </div>
       </div>
     </div>
@@ -1493,10 +1687,18 @@
     }
 
     function copyAllHighlightsNames() {
-      const names = "الضمان 🛡️ | آراء العملاء ⭐ | الأسعار 💰 | طريقة الشحن ⚡ | طرق الدفع 💳 | الأسئلة ❓";
+      const names = "تم الشحن | مهم جداً | الويب اب | طرق الدفع | آراء الزبائن 6 | آراء الزبائن 5 | آراء الزبائن 4";
       navigator.clipboard.writeText(names).then(() => {
-        showToast('تم نسخ أسماء الهايلايتس الستة!');
+        showToast('تم نسخ أسماء الهايلايت السبعة بنجاح!');
       });
+    }
+
+    function scrollTray(dir) {
+      const tray = document.getElementById('highlightsTray');
+      if (tray) {
+        const delta = dir === 'left' ? -240 : 240;
+        tray.scrollBy({ left: delta, behavior: 'smooth' });
+      }
     }
 
     function openPostModal(id) {
@@ -1539,31 +1741,154 @@
       const content = document.getElementById('modalContent');
       
       const titles = {
-        guarantee: { title: "هايلايت: الضمان 🛡️", icon: "fa-shield-halved", desc: "قصص وستوريات توضح الأمان وعدم وجود أي باند." },
-        reviews: { title: "هايلايت: آراء العملاء ⭐", icon: "fa-star", desc: "سكرينات من محادثات الواتساب وتقييمات العملاء بعد الشحن." },
-        prices: { title: "هايلايت: الأسعار 💰", icon: "fa-coins", desc: "جداول أسعار الكوينز محدثة يومياً للـ PS5 والـ Xbox والـ PC." },
-        how: { title: "هايلايت: طريقة الشحن ⚡", icon: "fa-bolt", desc: "فيديو سريع أو صور توضح سهولة تحويل واستلام الكوينز." },
-        payment: { title: "هايلايت: طرق الدفع 💳", icon: "fa-credit-card", desc: "أرقام وبيانات الدفع لكليك وزين كاش و STC Pay و USDT." },
-        faq: { title: "هايلايت: الأسئلة الشائعة ❓", icon: "fa-circle-question", desc: "إجابات نموذجية عن سرعة التوصيل والضمان والاسترجاع." }
+        shipped: {
+          title: "هايلايت: تم الشحن 📦",
+          icon: "fa-circle-check",
+          isCustom: "shipped",
+          desc: "إثباتات وتوثيق تسليم الكوينز لحسابات المشترين (سكرينات رصيد الكوينز قبل الشحن وبعد الشحن).",
+          tips: [
+            "سكرين شوت من الويب اب أو الجهاز قبل البدء بالشحن (يوضح اسم النادي ورصيد الكوينز المبدئي).",
+            "سكرين شوت بعد الانتهاء من الشحن يوضح وصول كامل كمية الكوينز بدقة.",
+            "إضافة ستيكر وقت التنفيذ السريع (مثال: تم الإنجاز في 17 دقيقة ⚡)."
+          ]
+        },
+        important: {
+          title: "هايلايت: مهم جداً ⚠️",
+          icon: "fa-triangle-exclamation",
+          isSolid: true,
+          desc: "تعليمات الأمان وإرشادات الحفاظ على سلامة الحساب قبل وأثناء وبعد الشحن.",
+          tips: [
+            "تنبيه صارم: عدم تسجيل الدخول إطلاقاً للحساب أو تطبيق Companion حتى استلام إشعار الانتهاء.",
+            "تغيير كلمة المرور فور استلام رسالة إتمام الطلب من فريق الدعم الفني.",
+            "التأكد من توفير حد أدنى في النادي (5,000 كوينز) لتسهيل شراء اللاعبين عبر سوق الانتقالات.",
+            "نصيحة أمان: عدم الشحن من مصادر مجهولة لتجنب التصفير أو الباند النهائي."
+          ]
+        },
+        webapp: {
+          title: "هايلايت: الويب اب ⭐",
+          icon: "fa-star",
+          isSolid: true,
+          desc: "دليل فتح وتجهيز سوق الانتقالات في تطبيق الويب اب (EA Web App / Companion).",
+          tips: [
+            "كيف تفتح سوق الانتقالات؟ لعب ما بين 15 إلى 25 مباراة نشطة بأيام متتالية دون الخروج من المباريات.",
+            "كيف تتأكد أن الحساب جاهز للشحن؟ ظهور علامة سوق الانتقالات مفتوحة وبدون رمز القفل.",
+            "طريقة استخراج الأكواد الاحتياطية (Backup Codes) من صفحة أمان حساب EA لتسريع الشحن."
+          ]
+        },
+        payment: {
+          title: "هايلايت: طرق الدفع 💳",
+          icon: "fa-wallet",
+          isOutline: true,
+          desc: "بيانات وقنوات الدفع المعتمدة لدى متجر ShopCoin في الأردن ودول الخليج والعالم.",
+          tips: [
+            "الأردن: خدمة كليك CliQ الفورية بدون أي عمولة (الاسم المستعار ورقم الهاتف).",
+            "الأردن: محفظة زين كاش ZainCash مع إمكانية الإيداع من أي نقطة أو صراف.",
+            "السعودية والخليج: تحويلات بنكية مباشرة و STC Pay.",
+            "عالمياً: العملات الرقمية USDT (شبكة TRC20 أو Binance Pay) بدون عمولات إضافية."
+          ]
+        },
+        reviews6: {
+          title: "هايلايت: آراء الزبائن 6 💬",
+          icon: "fa-user-large",
+          isSolid: true,
+          desc: "المجلد السادس: أحدث محادثات وتقييمات العملاء ورسائل الشكر بعد استلام الكوينز بنجاح.",
+          tips: [
+            "سكرينات محادثات الواتساب مع العملاء بعد تأكيد وصول الكوينز.",
+            "صور تشكيلات المشترين بعد شراء اللاعبين الجدد بالكوينز المستلمة.",
+            "تجارب المشترين وتأكيدهم على سرعة الخدمة وأمان الحساب."
+          ]
+        },
+        reviews5: {
+          title: "هايلايت: آراء الزبائن 5 💬",
+          icon: "fa-user-large",
+          isSolid: true,
+          desc: "المجلد الخامس: أرشيف تقييمات وتجارب المشترين الموثوقة لمتجر ShopCoin.",
+          tips: [
+            "أرشيف تقييمات الدفعة السابقة.",
+            "محادثات تأكيد الرضا والضمان ضد الباند."
+          ]
+        },
+        reviews4: {
+          title: "هايلايت: آراء الزبائن 4 💬",
+          icon: "fa-user-large",
+          isSolid: true,
+          desc: "المجلد الرابع: توثيقات ورسائل عملاء المتجر الدائمين وتجارب شحن الكوينز.",
+          tips: [
+            "أرشيف موثق لآراء المشترين.",
+            "تقييمات سرعة خدمة العملاء والمتابعة الفورية."
+          ]
+        },
+        reviews3: {
+          title: "هايلايت: آراء الزبائن 3 💬",
+          icon: "fa-user-large",
+          isSolid: true,
+          desc: "المجلد الثالث: أرشيف محادثات وتقييمات العملاء السابقين.",
+          tips: [
+            "توثيقات وأرشيف تقييمات المتجر."
+          ]
+        }
       };
 
-      const item = titles[type] || { title: "هايلايت إنستغرام", icon: "fa-circle-notch", desc: "محتوى الهايلايت المعتمد." };
+      const item = titles[type] || {
+        title: "هايلايت إنستغرام",
+        icon: "fa-circle-notch",
+        desc: "محتوى الهايلايت المعتمد.",
+        tips: ["محتوى ستوري مخصص لمتجر ShopCoin."]
+      };
+
+      let circleMarkup = '';
+      if (item.isCustom === 'shipped') {
+        circleMarkup = `
+          <div style="width: 86px; height: 86px; border-radius: 50%; border: 2.5px solid #cbd5e1; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; background: #ffffff; padding: 4px; box-shadow: 0 6px 18px rgba(14, 117, 108, 0.2);">
+            <div style="width: 100%; height: 100%; border-radius: 50%; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
+              <span style="font-size: 0.62rem; font-weight: 800; color: #0e756c; line-height: 1.1;">قبل الشحن</span>
+              <span style="font-size: 0.55rem; color: #64748b; font-weight: 700;">320 🪙</span>
+              <div style="width: 65%; height: 1px; background: #e2e8f0; margin: 2px 0;"></div>
+              <span style="font-size: 0.62rem; font-weight: 800; color: #0e756c; line-height: 1.1;">بعد الشحن</span>
+              <span style="font-size: 0.55rem; color: #eab308; font-weight: 800;">1.5M 🪙</span>
+            </div>
+          </div>
+        `;
+      } else if (item.isSolid) {
+        circleMarkup = `
+          <div style="width: 86px; height: 86px; border-radius: 50%; border: 2.5px solid #cbd5e1; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; background: #ffffff; padding: 4px; box-shadow: 0 6px 18px rgba(14, 117, 108, 0.2);">
+            <div style="width: 100%; height: 100%; border-radius: 50%; background: #0e756c; display: flex; align-items: center; justify-content: center; color: #fff;">
+              <i class="fas ${item.icon}" style="font-size: 2.2rem; color: #ffffff;"></i>
+            </div>
+          </div>
+        `;
+      } else {
+        circleMarkup = `
+          <div style="width: 86px; height: 86px; border-radius: 50%; border: 2.5px solid #cbd5e1; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; background: #ffffff; padding: 4px; box-shadow: 0 6px 18px rgba(14, 117, 108, 0.2);">
+            <div style="width: 100%; height: 100%; border-radius: 50%; background: #ffffff; display: flex; align-items: center; justify-content: center;">
+              <i class="fas ${item.icon}" style="font-size: 2.4rem; color: #0e756c;"></i>
+            </div>
+          </div>
+        `;
+      }
+
+      const tipsList = item.tips.map(t => `<li style="margin-bottom: 6px;">${t}</li>`).join('');
 
       content.innerHTML = `
         <h3 style="font-size: 1.3rem; font-weight: 900; color: var(--brand-navy); margin-bottom: 6px;">${item.title}</h3>
-        <p style="color: var(--ig-text-secondary); font-size: 0.92rem; margin-bottom: 22px;">${item.desc}</p>
+        <p style="color: var(--ig-text-secondary); font-size: 0.92rem; margin-bottom: 18px;">${item.desc}</p>
         
-        <div style="background: #f8fafc; border: 1.5px solid var(--ig-border); border-radius: 16px; padding: 26px; text-align: center; margin-bottom: 22px;">
-          <div style="width: 86px; height: 86px; border-radius: 50%; border: 2.5px solid var(--brand-green); margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; background: #ffffff; box-shadow: 0 6px 18px var(--brand-green-glow);">
-            <i class="fas ${item.icon}" style="font-size: 2.2rem; color: var(--brand-green-dark);"></i>
-          </div>
-          <strong style="color: var(--brand-navy); font-size: 1rem; display: block;">غلاف الهايلايت الدائري المعتمد</strong>
-          <p style="color: var(--ig-text-secondary); font-size: 0.85rem; margin-top: 4px;">خلفية بيضاء نقية + أيقونة خضراء زمردية جذابة (#10b981) بنمط ShopCoin الفاتح.</p>
+        <div style="background: #f8fafc; border: 1.5px solid var(--ig-border); border-radius: 16px; padding: 22px; text-align: center; margin-bottom: 20px;">
+          ${circleMarkup}
+          <strong style="color: var(--brand-navy); font-size: 0.98rem; display: block;">غلاف الهايلايت المعتمد بالحساب الرسمي</strong>
+          <p style="color: var(--ig-text-secondary); font-size: 0.84rem; margin-top: 4px;">إطار دائري مزدوج مع خلفية خضراء زمردية (#0e756c) وتصميم مطابق لبروفايل إنستغرام الخاص بك.</p>
+        </div>
+
+        <div style="background: rgba(14, 117, 108, 0.05); border: 1px solid rgba(14, 117, 108, 0.2); border-radius: 14px; padding: 16px; margin-bottom: 20px; text-align: right;">
+          <strong style="color: #0e756c; font-size: 0.88rem; display: block; margin-bottom: 8px;"><i class="fas fa-lightbulb"></i> أفكار محتوى مقترحة لستوريات هذا الهايلايت:</strong>
+          <ul style="padding-right: 20px; font-size: 0.88rem; color: #334155; line-height: 1.7;">
+            ${tipsList}
+          </ul>
         </div>
 
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
-          <button class="btn-action btn-action-primary" onclick="closePostModal()">
-            <i class="fas fa-check"></i> تم، إغلاق
+          <button class="btn-action btn-action-primary" style="background: linear-gradient(135deg, #0e756c, #094e48);" onclick="closePostModal()">
+            <i class="fas fa-check"></i> حسناً، تم الفهم
           </button>
         </div>
       `;
