@@ -1285,6 +1285,22 @@
             <span class="highlight-name">آراء الزبائن 3</span>
           </div>
 
+          <!-- 9: آراء الزبائن 2 -->
+          <div class="highlight-item" onclick="openHighlightModal('reviews2')">
+            <div class="highlight-circle">
+              <img src="highlights/highlight-reviews-2.png" alt="آراء الزبائن 2" />
+            </div>
+            <span class="highlight-name">آراء الزبائن 2</span>
+          </div>
+
+          <!-- 10: آراء الزبائن 1 -->
+          <div class="highlight-item" onclick="openHighlightModal('reviews1')">
+            <div class="highlight-circle">
+              <img src="highlights/highlight-reviews-1.png" alt="آراء الزبائن 1" />
+            </div>
+            <span class="highlight-name">آراء الزبائن 1</span>
+          </div>
+
         </div>
 
         <button class="tray-scroll-btn" onclick="scrollTray('left')" title="عرض باقي الهايلايتس"><i class="fas fa-chevron-left"></i></button>
@@ -1787,9 +1803,9 @@
     }
 
     function copyAllHighlightsNames() {
-      const names = "تم الشحن | مهم جداً | الويب اب | طرق الدفع | آراء الزبائن 6 | آراء الزبائن 5 | آراء الزبائن 4";
+      const names = "تم الشحن | مهم جداً | الويب اب | طرق الدفع | آراء الزبائن 6 | آراء الزبائن 5 | آراء الزبائن 4 | آراء الزبائن 3 | آراء الزبائن 2 | آراء الزبائن 1";
       navigator.clipboard.writeText(names).then(() => {
-        showToast('تم نسخ أسماء الهايلايت السبعة بنجاح!');
+        showToast('تم نسخ أسماء الهايلايت العشرة بنجاح!');
       });
     }
 
@@ -1948,11 +1964,41 @@
           tips: [
             "توثيقات وأرشيف تقييمات المتجر."
           ]
+        },
+        reviews2: {
+          id: "reviews-2",
+          title: "هايلايت: آراء الزبائن 2 💬",
+          icon: "fa-star",
+          badge: "2",
+          name: "آراء-الزبائن-2",
+          desc: "المجلد الثاني: أرشيف تقييمات العملاء الموثقة وتجارب شحن الكوينز السريعة.",
+          tips: [
+            "سكرينات محادثات إتمام وتسليم الطلبات بنجاح.",
+            "توثيقات سرعة استجابة الدعم الفني ورضا العملاء."
+          ]
+        },
+        reviews1: {
+          id: "reviews-1",
+          title: "هايلايت: آراء الزبائن 1 💬",
+          icon: "fa-star",
+          badge: "1",
+          name: "آراء-الزبائن-1",
+          desc: "المجلد الأول: البدايات والأرشيف التأسيسي لآراء وتقييمات عملاء متجر ShopCoin.",
+          tips: [
+            "أولى تجارب وتقييمات المشترين المعتمدة في المتجر.",
+            "رسائل الشكر وتأكيد سرعة التنفيذ والأمان الفوري."
+          ]
         }
       };
 
       const item = titles[type] || titles.shipped;
       const tipsList = item.tips.map(t => `<li style="margin-bottom: 6px;">${t}</li>`).join('');
+
+      const userAltBtn = (item.badge === '1' || item.badge === '2') ? `
+        <a href="highlights/highlight-user-${item.badge}.png" download="ShopCoin-Highlight-${item.name}-User.png" class="btn-action btn-action-outline" title="تحميل بنمط أيقونة المستخدم من حسابك القديم">
+          <i class="fas fa-user"></i> تحميل بنمط المستخدم
+        </a>
+      ` : '';
 
       content.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
@@ -1982,6 +2028,7 @@
           <button class="btn-action btn-action-outline" onclick="closePostModal()">
             <i class="fas fa-times"></i> إغلاق
           </button>
+          ${userAltBtn}
           <a href="highlights/ShopCoin-Highlights-All.zip" download="ShopCoin-Highlights-All.zip" class="btn-action btn-action-outline">
             <i class="fas fa-file-zipper"></i> تحميل جميع الأغلفة (ZIP)
           </a>
