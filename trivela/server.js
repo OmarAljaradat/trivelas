@@ -106,7 +106,7 @@ async function readDatabase() {
       try { settings[row.key] = JSON.parse(row.value); } catch { settings[row.key] = row.value; }
     }
     if (!settings.whatsappPhone) settings.whatsappPhone = '962775585112';
-    if (!settings.instagramUrl) settings.instagramUrl = 'https://instagram.com/ShopCoin';
+    if (!settings.instagramUrl) settings.instagramUrl = 'https://www.instagram.com/shop_coin15/';
     if (settings.maintenanceMode === undefined) settings.maintenanceMode = false;
     if (!settings.baseRateConsole) settings.baseRateConsole = 2.80;
     if (!settings.baseRatePC) settings.baseRatePC = 2.40;
