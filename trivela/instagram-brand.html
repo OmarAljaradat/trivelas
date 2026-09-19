@@ -588,11 +588,23 @@
       position: relative;
       transition: var(--trans);
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+    }
+    .highlight-circle img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      transition: var(--trans);
     }
     .highlight-item:hover .highlight-circle {
       border-color: var(--brand-green);
       box-shadow: 0 8px 24px var(--brand-green-glow);
       transform: translateY(-2px);
+    }
+    .highlight-item:hover .highlight-circle img {
+      transform: scale(1.06);
     }
     .highlight-icon {
       font-size: 1.85rem;
@@ -1195,10 +1207,15 @@
 
       <!-- Highlights Tray: Clean White Background with Beautiful Emerald Green Icons -->
       <div class="highlights-section-title">
-        <span><i class="fas fa-sparkles" style="color: var(--brand-green);"></i> أغلفة الهايلايتس لحسابك (خلفية بيضاء مع أيقونات خضراء زمردية جذابة):</span>
-        <button class="btn-action btn-action-outline" style="padding: 4px 12px; font-size: 0.75rem;" onclick="copyAllHighlightsNames()">
-          <i class="fas fa-copy"></i> نسخ أسماء الهايلايت
-        </button>
+        <span><i class="fas fa-sparkles" style="color: var(--brand-green);"></i> أغلفة الهايلايتس لحسابك (خلفية بيضاء مع أيقونات خضراء زمردية جذابة بدقة 1080p):</span>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <a href="highlights/ShopCoin-Highlights-All.zip" download="ShopCoin-Highlights-All.zip" class="btn-action btn-action-primary" style="padding: 4px 12px; font-size: 0.75rem;">
+            <i class="fas fa-file-zipper"></i> تحميل جميع الأغلفة (ZIP)
+          </a>
+          <button class="btn-action btn-action-outline" style="padding: 4px 12px; font-size: 0.75rem;" onclick="copyAllHighlightsNames()">
+            <i class="fas fa-copy"></i> نسخ أسماء الهايلايت
+          </button>
+        </div>
       </div>
 
       <div class="ig-highlights-tray-wrap">
@@ -1207,7 +1224,7 @@
           <!-- 1: تم الشحن -->
           <div class="highlight-item" onclick="openHighlightModal('shipped')">
             <div class="highlight-circle">
-              <i class="fas fa-truck-fast highlight-icon"></i>
+              <img src="highlights/highlight-shipped.png" alt="تم الشحن" />
             </div>
             <span class="highlight-name">تم الشحن</span>
           </div>
@@ -1215,7 +1232,7 @@
           <!-- 2: مهم جداً -->
           <div class="highlight-item" onclick="openHighlightModal('important')">
             <div class="highlight-circle">
-              <i class="fas fa-triangle-exclamation highlight-icon"></i>
+              <img src="highlights/highlight-important.png" alt="مهم جداً" />
             </div>
             <span class="highlight-name">مهم جداً</span>
           </div>
@@ -1223,7 +1240,7 @@
           <!-- 3: الويب اب -->
           <div class="highlight-item" onclick="openHighlightModal('webapp')">
             <div class="highlight-circle">
-              <i class="fas fa-globe highlight-icon"></i>
+              <img src="highlights/highlight-webapp.png" alt="الويب اب" />
             </div>
             <span class="highlight-name">الويب اب</span>
           </div>
@@ -1231,7 +1248,7 @@
           <!-- 4: طرق الدفع -->
           <div class="highlight-item" onclick="openHighlightModal('payment')">
             <div class="highlight-circle">
-              <i class="fas fa-credit-card highlight-icon"></i>
+              <img src="highlights/highlight-payment.png" alt="طرق الدفع" />
             </div>
             <span class="highlight-name">طرق الدفع</span>
           </div>
@@ -1239,8 +1256,7 @@
           <!-- 5: آراء الزبائن 6 -->
           <div class="highlight-item" onclick="openHighlightModal('reviews6')">
             <div class="highlight-circle">
-              <i class="fas fa-star highlight-icon"></i>
-              <span class="hl-badge-tag">6</span>
+              <img src="highlights/highlight-reviews-6.png" alt="آراء الزبائن 6" />
             </div>
             <span class="highlight-name">آراء الزبائن 6</span>
           </div>
@@ -1248,8 +1264,7 @@
           <!-- 6: آراء الزبائن 5 -->
           <div class="highlight-item" onclick="openHighlightModal('reviews5')">
             <div class="highlight-circle">
-              <i class="fas fa-star highlight-icon"></i>
-              <span class="hl-badge-tag">5</span>
+              <img src="highlights/highlight-reviews-5.png" alt="آراء الزبائن 5" />
             </div>
             <span class="highlight-name">آراء الزبائن 5</span>
           </div>
@@ -1257,8 +1272,7 @@
           <!-- 7: آراء الزبائن 4 -->
           <div class="highlight-item" onclick="openHighlightModal('reviews4')">
             <div class="highlight-circle">
-              <i class="fas fa-star highlight-icon"></i>
-              <span class="hl-badge-tag">4</span>
+              <img src="highlights/highlight-reviews-4.png" alt="آراء الزبائن 4" />
             </div>
             <span class="highlight-name">آراء الزبائن 4</span>
           </div>
@@ -1266,8 +1280,7 @@
           <!-- 8: آراء الزبائن 3 (Archive) -->
           <div class="highlight-item" onclick="openHighlightModal('reviews3')">
             <div class="highlight-circle">
-              <i class="fas fa-star highlight-icon" style="opacity: 0.85;"></i>
-              <span class="hl-badge-tag">3</span>
+              <img src="highlights/highlight-reviews-3.png" alt="آراء الزبائن 3" />
             </div>
             <span class="highlight-name">آراء الزبائن 3</span>
           </div>
@@ -1823,79 +1836,14 @@
       if (modal) modal.classList.remove('open');
     }
 
-    function downloadHighlightCover(name, iconType, badgeNum) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1080;
-      canvas.height = 1080;
-      const ctx = canvas.getContext('2d');
-
-      // 1. Background: Pure clean white
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, 1080, 1080);
-
-      // 2. Subtle luxury concentric rings
-      ctx.beginPath();
-      ctx.arc(540, 540, 480, 0, Math.PI * 2);
-      ctx.strokeStyle = '#f1f5f9';
-      ctx.lineWidth = 8;
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.arc(540, 540, 430, 0, Math.PI * 2);
-      ctx.strokeStyle = '#e2e8f0';
-      ctx.lineWidth = 14;
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.arc(540, 540, 405, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(16, 185, 129, 0.25)';
-      ctx.lineWidth = 6;
-      ctx.stroke();
-
-      // SVG path map for FontAwesome icons
-      const iconPaths = {
-        truck: "M280 64H160c-17.7 0-32 14.3-32 32v224H64c-17.7 0-32 14.3-32 32v96c0 17.7 14.3 32 32 32h16c0 35.3 28.7 64 64 64s64-28.7 64-64h128c0 35.3 28.7 64 64 64s64-28.7 64-64h48c17.7 0 32-14.3 32-32V320l-64-128H384V96c0-17.7-14.3-32-32-32h-72zM432 448c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm-288 0c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z",
-        alert: "M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z",
-        globe: "M352 256c0 22.2-1.2 43.6-3.3 64H163.3c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64H348.7c2.2 20.4 3.3 41.8 3.3 64zm28.8-64H503.9c17 40.8 26.6 86 27.9 133.5-.8 3.5-1.9 6.9-3.2 10.2L424.3 320c-5.8-43.2-22.1-83.3-43.5-128zM256 0C114.6 0 0 114.6 0 256s114.6 256 256 256 256-114.6 256-256S397.4 0 256 0z",
-        card: "M0 96C0 60.7 28.7 32 64 32H512c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM48 160H528V96c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16v64zm0 80V416c0 8.8 7.2 16 16 16H512c8.8 0 16-7.2 16-16V240H48z",
-        star: "M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.1 23 46 46.4 33.7L288 439.6l130.7 68.7c23.4 12.3 50.9-7.6 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-      };
-
-      const pathData = iconPaths[iconType] || iconPaths.star;
-      const path2D = new Path2D(pathData);
-
-      // Draw Icon in Center
-      ctx.save();
-      const scale = 0.70;
-      const offset = (1080 - 512 * scale) / 2;
-      ctx.translate(offset, offset);
-      ctx.scale(scale, scale);
-      ctx.fillStyle = '#059669';
-      ctx.fill(path2D);
-      ctx.restore();
-
-      // Optional Badge Number for Reviews
-      if (badgeNum) {
-        ctx.beginPath();
-        ctx.arc(740, 740, 110, 0, Math.PI * 2);
-        ctx.fillStyle = '#059669';
-        ctx.fill();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 18;
-        ctx.stroke();
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 120px Cairo, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(badgeNum, 740, 745);
-      }
-
+    function downloadHighlightCover(name, id) {
       const link = document.createElement('a');
       link.download = `ShopCoin-Highlight-${name}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.href = `highlights/highlight-${id}.png`;
+      document.body.appendChild(link);
       link.click();
-      showToast(`تم تحميل غلاف "${name}" بدقة 1080x1080 بنجاح!`);
+      document.body.removeChild(link);
+      showToast(`تم تحميل غلاف "${name}" الأصلي بدقة 1080x1080 بنجاح!`);
     }
 
     function openHighlightModal(type) {
@@ -1904,9 +1852,9 @@
       
       const titles = {
         shipped: {
+          id: "shipped",
           title: "هايلايت: تم الشحن 📦",
           icon: "fa-truck-fast",
-          iconKey: "truck",
           name: "تم-الشحن",
           desc: "إثباتات وتوثيق تسليم وشحن الكوينز لحسابات العملاء (سكرينات رصيد الكوينز قبل وبعد الشحن).",
           tips: [
@@ -1916,9 +1864,9 @@
           ]
         },
         important: {
+          id: "important",
           title: "هايلايت: مهم جداً ⚠️",
           icon: "fa-triangle-exclamation",
-          iconKey: "alert",
           name: "مهم-جدا",
           desc: "تعليمات الأمان وإرشادات الحفاظ على سلامة الحساب قبل وأثناء وبعد الشحن.",
           tips: [
@@ -1929,9 +1877,9 @@
           ]
         },
         webapp: {
+          id: "webapp",
           title: "هايلايت: الويب اب ⭐",
           icon: "fa-globe",
-          iconKey: "globe",
           name: "الويب-اب",
           desc: "دليل فتح وتجهيز سوق الانتقالات في تطبيق الويب اب (EA Web App / Companion).",
           tips: [
@@ -1941,9 +1889,9 @@
           ]
         },
         payment: {
+          id: "payment",
           title: "هايلايت: طرق الدفع 💳",
           icon: "fa-credit-card",
-          iconKey: "card",
           name: "طرق-الدفع",
           desc: "بيانات وقنوات الدفع المعتمدة لدى متجر ShopCoin في الأردن ودول الخليج والعالم.",
           tips: [
@@ -1954,9 +1902,9 @@
           ]
         },
         reviews6: {
+          id: "reviews-6",
           title: "هايلايت: آراء الزبائن 6 💬",
           icon: "fa-star",
-          iconKey: "star",
           badge: "6",
           name: "آراء-الزبائن-6",
           desc: "المجلد السادس: أحدث محادثات وتقييمات العملاء ورسائل الشكر بعد استلام الكوينز بنجاح.",
@@ -1967,9 +1915,9 @@
           ]
         },
         reviews5: {
+          id: "reviews-5",
           title: "هايلايت: آراء الزبائن 5 💬",
           icon: "fa-star",
-          iconKey: "star",
           badge: "5",
           name: "آراء-الزبائن-5",
           desc: "المجلد الخامس: أرشيف تقييمات وتجارب المشترين الموثوقة لمتجر ShopCoin.",
@@ -1979,9 +1927,9 @@
           ]
         },
         reviews4: {
+          id: "reviews-4",
           title: "هايلايت: آراء الزبائن 4 💬",
           icon: "fa-star",
-          iconKey: "star",
           badge: "4",
           name: "آراء-الزبائن-4",
           desc: "المجلد الرابع: توثيقات ورسائل عملاء المتجر الدائمين وتجارب شحن الكوينز.",
@@ -1991,9 +1939,9 @@
           ]
         },
         reviews3: {
+          id: "reviews-3",
           title: "هايلايت: آراء الزبائن 3 💬",
           icon: "fa-star",
-          iconKey: "star",
           badge: "3",
           name: "آراء-الزبائن-3",
           desc: "المجلد الثالث: أرشيف محادثات وتقييمات العملاء السابقين.",
@@ -2004,30 +1952,23 @@
       };
 
       const item = titles[type] || titles.shipped;
-      const badgeHtml = item.badge ? `<span class="hl-badge-tag" style="bottom: 4px; left: 8px; width: 22px; height: 22px; font-size: 0.7rem;">${item.badge}</span>` : '';
-
-      const circleMarkup = `
-        <div style="width: 90px; height: 90px; border-radius: 50%; border: 2.5px solid var(--brand-green); margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; background: #ffffff; position: relative; box-shadow: 0 8px 24px var(--brand-green-glow);">
-          <i class="fas ${item.icon}" style="font-size: 2.4rem; color: var(--brand-green-dark);"></i>
-          ${badgeHtml}
-        </div>
-      `;
-
       const tipsList = item.tips.map(t => `<li style="margin-bottom: 6px;">${t}</li>`).join('');
 
       content.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
           <h3 style="font-size: 1.3rem; font-weight: 900; color: var(--brand-navy);">${item.title}</h3>
-          <button class="btn-action btn-action-primary" style="padding: 6px 14px; font-size: 0.8rem;" onclick="downloadHighlightCover('${item.name}', '${item.iconKey}', '${item.badge || ''}')">
+          <button class="btn-action btn-action-primary" style="padding: 6px 14px; font-size: 0.8rem;" onclick="downloadHighlightCover('${item.name}', '${item.id}')">
             <i class="fas fa-download"></i> تحميل الغلاف (1080×1080)
           </button>
         </div>
         <p style="color: var(--ig-text-secondary); font-size: 0.92rem; margin-bottom: 18px;">${item.desc}</p>
         
-        <div style="background: #f8fafc; border: 1.5px solid var(--ig-border); border-radius: 16px; padding: 22px; text-align: center; margin-bottom: 20px;">
-          ${circleMarkup}
-          <strong style="color: var(--brand-navy); font-size: 0.98rem; display: block;">غلاف الهايلايت الفاخر المعتمد</strong>
-          <p style="color: var(--ig-text-secondary); font-size: 0.84rem; margin-top: 4px;">خلفية بيضاء نقية + أيقونة خضراء زمردية جذابة (#059669) بدقة عالية متناسقة للجميع.</p>
+        <div style="background: #f8fafc; border: 1.5px solid var(--ig-border); border-radius: 20px; padding: 22px; text-align: center; margin-bottom: 20px;">
+          <div style="width: 170px; height: 170px; margin: 0 auto 14px; border-radius: 50%; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); background: #ffffff;">
+            <img src="highlights/highlight-${item.id}.png" alt="${item.title}" style="width: 100%; height: 100%; object-fit: contain;" />
+          </div>
+          <strong style="color: var(--brand-navy); font-size: 0.98rem; display: block;">معاينة الغلاف الفعلي بدقة Ultra HD (1080×1080)</strong>
+          <p style="color: var(--ig-text-secondary); font-size: 0.84rem; margin-top: 4px;">خلفية بيضاء نقية + إطار دائري ناعم + أيقونة خضراء زمردية جذابة (#059669) مطابقة 100% للشاشة.</p>
         </div>
 
         <div style="background: var(--brand-green-light); border: 1px solid var(--brand-green-border); border-radius: 14px; padding: 16px; margin-bottom: 20px; text-align: right;">
@@ -2037,12 +1978,15 @@
           </ul>
         </div>
 
-        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
           <button class="btn-action btn-action-outline" onclick="closePostModal()">
             <i class="fas fa-times"></i> إغلاق
           </button>
-          <button class="btn-action btn-action-primary" onclick="downloadHighlightCover('${item.name}', '${item.iconKey}', '${item.badge || ''}')">
-            <i class="fas fa-download"></i> تحميل صورة الغلاف
+          <a href="highlights/ShopCoin-Highlights-All.zip" download="ShopCoin-Highlights-All.zip" class="btn-action btn-action-outline">
+            <i class="fas fa-file-zipper"></i> تحميل جميع الأغلفة (ZIP)
+          </a>
+          <button class="btn-action btn-action-primary" onclick="downloadHighlightCover('${item.name}', '${item.id}')">
+            <i class="fas fa-download"></i> تحميل صورة الغلاف HD (1080×1080)
           </button>
         </div>
       `;
