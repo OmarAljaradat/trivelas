@@ -1321,12 +1321,12 @@ function applyCMSContent() {
 function applyServiceToggles(settings) {
   const toggles = {
     'coins': settings.enableServiceCoins !== false,
-    'sbc': settings.enableServiceSBC !== false,
-    'rivals': settings.enableServiceRivals !== false,
-    'champions': settings.enableServiceChampions !== false,
-    'coaching': settings.enableServiceCoaching !== false,
-    'packages': settings.enableServicePackages !== false,
-    'objectives': settings.enableServiceObjectives !== false
+    'sbc': settings.enableServiceSBC === true,
+    'rivals': settings.enableServiceRivals === true,
+    'champions': settings.enableServiceChampions === true,
+    'coaching': settings.enableServiceCoaching === true,
+    'packages': settings.enableServicePackages === true,
+    'objectives': settings.enableServiceObjectives === true
   };
 
   const mappings = [
@@ -1354,6 +1354,60 @@ function applyServiceToggles(settings) {
       });
     });
   });
+
+  // Toggle Other Products (SBC, Rivals, Champions, Objectives) Section
+  const anySecondaryEnabled = toggles.sbc || toggles.rivals || toggles.champions || toggles.objectives;
+  const otherProductsSection = document.getElementById('other-products');
+  if (otherProductsSection) {
+    otherProductsSection.style.setProperty('display', anySecondaryEnabled ? '' : 'none', 'important');
+  }
+
+  // Toggle Coaching Section
+  const coachingSection = document.getElementById('coaching-section');
+  if (coachingSection) {
+    coachingSection.style.setProperty('display', toggles.coaching ? '' : 'none', 'important');
+  }
+
+  // Toggle Navbar Dropdown: simplify if only Coins is active
+  const anyServiceDropdownEnabled = anySecondaryEnabled || toggles.coaching;
+  const navDropdown = document.querySelector('.nav-menu .dropdown');
+  if (navDropdown && !anyServiceDropdownEnabled) {
+    navDropdown.innerHTML = `
+      <a href="#coins-device" class="nav-link">
+        <i class="fas fa-coins" style="color: var(--gold-coin, #eab308);"></i>
+        <span>شحن الكوينز</span>
+      </a>
+    `;
+    navDropdown.classList.remove('dropdown');
+  }
+
+  // Clean Ticker items for disabled services
+  document.querySelectorAll('.ticker-inner span').forEach(span => {
+    const text = span.textContent || '';
+    if ((text.includes('SBC') && !toggles.sbc) ||
+        (text.includes('رايفلز') && !toggles.rivals) ||
+        (text.includes('Champions') && !toggles.champions) ||
+        (text.includes('مهام') && !toggles.objectives)) {
+      span.style.display = 'none';
+      if (span.nextElementSibling && span.nextElementSibling.classList.contains('tk-dot')) {
+        span.nextElementSibling.style.display = 'none';
+      }
+    }
+  });
+
+  // Mobile Bottom Bar adjustments
+  const btnServicesMini = document.getElementById('btnServicesMiniMenu');
+  if (btnServicesMini && !anyServiceDropdownEnabled) {
+    btnServicesMini.onclick = function(e) {
+      e.preventDefault();
+      const devEl = document.getElementById('coins-device');
+      if (devEl) devEl.scrollIntoView({ behavior: 'smooth' });
+    };
+    const label = btnServicesMini.querySelector('span');
+    if (label) label.textContent = 'الكوينز';
+    const icon = btnServicesMini.querySelector('i');
+    if (icon) icon.className = 'fas fa-coins';
+  }
 
   // Hide order tracking links if disabled
   const isTrackingEnabled = settings.enableOrderTracking !== false;

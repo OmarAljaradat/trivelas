@@ -118,17 +118,24 @@ async function readDatabase() {
       { minCoins: 500000, percent: -5 },
       { minCoins: 100000, percent: -10 }
     ];
+    if (settings.enableServiceCoins === undefined) settings.enableServiceCoins = true;
+    if (settings.enableServiceSBC === undefined) settings.enableServiceSBC = false;
+    if (settings.enableServiceRivals === undefined) settings.enableServiceRivals = false;
+    if (settings.enableServiceChampions === undefined) settings.enableServiceChampions = false;
+    if (settings.enableServiceObjectives === undefined) settings.enableServiceObjectives = false;
+    if (settings.enableServiceCoaching === undefined) settings.enableServiceCoaching = false;
+    if (settings.enableServicePackages === undefined) settings.enableServicePackages = false;
     if (!settings.content) {
       settings.content = {
         landing: {
           heroTitle: "وجهتك الأولى لخدمات فيفا 27 سرعة، أمان، وأفضل الأسعار",
-          heroSubTitle: "خدمات فيفا 27 الاحترافية بين يديك: شحن كوينز آمن، حل تحديات SBC، ورفع تصنيفك في الرايفلز والفوت تشامبيونز مع تسليم فوري ودعم فني متواصل 24/7.",
+          heroSubTitle: "خدمات فيفا 27 الاحترافية بين يديك: شحن كوينز آمن وسريع بأعلى معايير الحماية وضمان 100% ضد الباند، مع تسليم فوري ودعم فني متواصل 24/7.",
           statOrdersCount: "1,500+",
           statOrdersLabel: "عميل موثق",
           statDeliveryTime: "60 دقيقة",
           statDeliveryLabel: "متوسط سرعة التوصيل",
           statSecurityLabel: "أمان وحماية 100%",
-          guaranteeBadge: "استشارات فنية",
+          guaranteeBadge: "شحن فوري",
         }
       };
     }
@@ -388,6 +395,22 @@ app.use(async (req, res, next) => {
 
   if (lowered.includes('admin') || lowered.includes('maintenance')) {
     return res.sendFile(path.resolve(found), err => { if (err) next(); });
+  }
+
+  // Graceful redirect if service is currently disabled by admin
+  const serviceFileMap = {
+    'buy-sbc.html': 'enableServiceSBC',
+    'buy-sbc-detail.html': 'enableServiceSBC',
+    'buy-rivals.html': 'enableServiceRivals',
+    'buy-champions.html': 'enableServiceChampions',
+    'buy-objectives.html': 'enableServiceObjectives',
+    'buy-coaching.html': 'enableServiceCoaching'
+  };
+  if (serviceFileMap[lowered]) {
+    const isEnabled = await getSetting(serviceFileMap[lowered], false);
+    if (!isEnabled) {
+      return res.redirect('/?notice=service_disabled');
+    }
   }
 
   try {

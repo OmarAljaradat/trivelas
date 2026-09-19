@@ -4566,12 +4566,12 @@
 
             // Populate service toggles
             if (document.getElementById('toggleServiceCoins')) document.getElementById('toggleServiceCoins').checked = settings.enableServiceCoins !== false;
-            if (document.getElementById('toggleServiceSBC')) document.getElementById('toggleServiceSBC').checked = settings.enableServiceSBC !== false;
-            if (document.getElementById('toggleServiceRivals')) document.getElementById('toggleServiceRivals').checked = settings.enableServiceRivals !== false;
-            if (document.getElementById('toggleServiceChampions')) document.getElementById('toggleServiceChampions').checked = settings.enableServiceChampions !== false;
-            if (document.getElementById('toggleServiceObjectives')) document.getElementById('toggleServiceObjectives').checked = settings.enableServiceObjectives !== false;
-            if (document.getElementById('toggleServicePackages')) document.getElementById('toggleServicePackages').checked = settings.enableServicePackages !== false;
-            if (document.getElementById('toggleServiceCoaching')) document.getElementById('toggleServiceCoaching').checked = settings.enableServiceCoaching !== false;
+            if (document.getElementById('toggleServiceSBC')) document.getElementById('toggleServiceSBC').checked = settings.enableServiceSBC === true;
+            if (document.getElementById('toggleServiceRivals')) document.getElementById('toggleServiceRivals').checked = settings.enableServiceRivals === true;
+            if (document.getElementById('toggleServiceChampions')) document.getElementById('toggleServiceChampions').checked = settings.enableServiceChampions === true;
+            if (document.getElementById('toggleServiceObjectives')) document.getElementById('toggleServiceObjectives').checked = settings.enableServiceObjectives === true;
+            if (document.getElementById('toggleServicePackages')) document.getElementById('toggleServicePackages').checked = settings.enableServicePackages === true;
+            if (document.getElementById('toggleServiceCoaching')) document.getElementById('toggleServiceCoaching').checked = settings.enableServiceCoaching === true;
 
             // Populate exchange rates
             const rates = settings.customExchangeRates || {};

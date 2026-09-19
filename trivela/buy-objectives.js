@@ -131,6 +131,11 @@ function fetchSettings() {
     .then(data => {
       if (data && data.settings) {
         dynamicSettings = Object.assign(dynamicSettings, data.settings);
+        if (dynamicSettings.enableServiceObjectives !== true) {
+          alert("عذراً، خدمة المهام متوقفة حالياً. سيتم تحويلك للرئيسية.");
+          window.location.href = "/";
+          return;
+        }
         if (dynamicSettings.customExchangeRates) {
           for (const code in dynamicSettings.customExchangeRates) {
             if (CURRENCIES[code]) {

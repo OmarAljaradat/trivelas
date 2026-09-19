@@ -345,17 +345,17 @@ async function loadStoreSettings() {
     const toggleCoins = document.getElementById('toggleServiceCoins');
     if (toggleCoins) toggleCoins.checked = settings.enableServiceCoins !== false;
     const toggleSBC = document.getElementById('toggleServiceSBC');
-    if (toggleSBC) toggleSBC.checked = settings.enableServiceSBC !== false;
+    if (toggleSBC) toggleSBC.checked = settings.enableServiceSBC === true;
     const toggleRivals = document.getElementById('toggleServiceRivals');
-    if (toggleRivals) toggleRivals.checked = settings.enableServiceRivals !== false;
+    if (toggleRivals) toggleRivals.checked = settings.enableServiceRivals === true;
     const toggleChampions = document.getElementById('toggleServiceChampions');
-    if (toggleChampions) toggleChampions.checked = settings.enableServiceChampions !== false;
+    if (toggleChampions) toggleChampions.checked = settings.enableServiceChampions === true;
     const toggleObjectives = document.getElementById('toggleServiceObjectives');
-    if (toggleObjectives) toggleObjectives.checked = settings.enableServiceObjectives !== false;
+    if (toggleObjectives) toggleObjectives.checked = settings.enableServiceObjectives === true;
     const togglePackages = document.getElementById('toggleServicePackages');
-    if (togglePackages) togglePackages.checked = settings.enableServicePackages !== false;
+    if (togglePackages) togglePackages.checked = settings.enableServicePackages === true;
     const toggleCoaching = document.getElementById('toggleServiceCoaching');
-    if (toggleCoaching) toggleCoaching.checked = settings.enableServiceCoaching !== false;
+    if (toggleCoaching) toggleCoaching.checked = settings.enableServiceCoaching === true;
 
     const toggleLoyalty = document.getElementById('toggleEnableLoyaltyPoints');
     if (toggleLoyalty) toggleLoyalty.checked = settings.enableLoyaltyPoints !== false;
