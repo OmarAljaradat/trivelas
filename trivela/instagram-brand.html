@@ -877,47 +877,93 @@
       align-items: center;
       gap: 10px;
     }
+    .covers-filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .cover-filter-btn {
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--ig-border);
+      background: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--ig-text-secondary);
+      transition: var(--trans);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cover-filter-btn.active, .cover-filter-btn:hover {
+      background: var(--brand-green);
+      color: #ffffff;
+      border-color: var(--brand-green);
+      box-shadow: 0 4px 12px var(--brand-green-glow);
+    }
     .covers-preview-grid {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
       gap: 14px;
       text-align: center;
     }
     .cover-item {
       background: #f8fafc;
-      border: 1px solid var(--ig-border);
+      border: 1.5px solid var(--ig-border);
       border-radius: 16px;
-      padding: 16px 10px;
+      padding: 14px 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       transition: var(--trans);
+      position: relative;
     }
     .cover-item:hover {
       border-color: var(--brand-green);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.12);
     }
     .cover-art-circle {
-      width: 60px;
-      height: 60px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
       background: #ffffff;
-      border: 2px solid var(--brand-green);
+      border: 2px solid #e2e8f0;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 10px var(--brand-green-glow);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      cursor: pointer;
+      transition: var(--trans);
     }
-    .cover-art-circle i {
-      font-size: 1.45rem;
-      color: var(--brand-green-dark);
+    .cover-item:hover .cover-art-circle {
+      border-color: var(--brand-green);
+      transform: scale(1.05);
+    }
+    .cover-art-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
     .cover-title {
       font-size: 0.78rem;
       font-weight: 800;
       color: var(--brand-navy);
+      line-height: 1.3;
+    }
+    .cover-badge-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--brand-green-dark);
+      background: var(--brand-green-light);
+      padding: 2px 7px;
+      border-radius: 6px;
+      border: 1px solid var(--brand-green-border);
     }
 
     /* ==========================================
@@ -1521,94 +1567,217 @@
          HIGHLIGHT COVERS SPECIFICATIONS PANEL
          ========================================== -->
     <div class="highlight-export-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <i class="fas fa-arrow-down-to-bracket" style="color: var(--brand-green);"></i>
-          <span>استوديو تحميل أغلفة الهايلايتس (خلفية بيضاء × أيقونات خضراء زمردية):</span>
+      <div class="panel-header" style="flex-wrap: wrap; gap: 12px;">
+        <div>
+          <div class="panel-title">
+            <i class="fas fa-arrow-down-to-bracket" style="color: var(--brand-green);"></i>
+            <span>استوديو تحميل أغلفة الهايلايتس الرسمية (1080×1080 Ultra HD):</span>
+          </div>
+          <span style="font-size: 0.82rem; color: var(--ig-text-secondary); font-weight: 700; display: block; margin-top: 2px;">
+            خلفية بيضاء نقية 100% بدون أي إطارات مشوهة — دائرة إنستغرام تؤطرها تلقائياً بدون أي تداخل أو فراغات
+          </span>
         </div>
-        <span style="font-size: 0.82rem; color: var(--ig-text-secondary); font-weight: 700;">
-          دقة عالية جاهزة لإنستغرام (1080×1080) — اضغط "تحميل الغلاف" للحفظ فوراً
-        </span>
+        <a href="highlights/ShopCoin-Highlights-All.zip" download="ShopCoin-Highlights-All.zip" class="btn-action btn-action-primary" style="padding: 8px 18px; font-size: 0.85rem;">
+          <i class="fas fa-file-zipper"></i> تحميل الحزمة الشاملة كاملة (ZIP)
+        </a>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="covers-filter-bar">
+        <button class="cover-filter-btn active" onclick="filterCovers('all', this)">
+          <i class="fas fa-layer-group"></i> الكل (16 غلاف)
+        </button>
+        <button class="cover-filter-btn" onclick="filterCovers('general', this)">
+          <i class="fas fa-th-large"></i> الهايلايتس الأساسية (4)
+        </button>
+        <button class="cover-filter-btn" onclick="filterCovers('star', this)">
+          <i class="fas fa-star"></i> آراء الزبائن — نمط النجوم (6)
+        </button>
+        <button class="cover-filter-btn" onclick="filterCovers('user', this)">
+          <i class="fas fa-user"></i> آراء الزبائن — نمط المستخدم (6)
+        </button>
       </div>
 
       <div class="covers-preview-grid">
         
         <!-- 1: تم الشحن -->
-        <div class="cover-item">
+        <div class="cover-item" data-cat="general">
           <div class="cover-art-circle" onclick="openHighlightModal('shipped')">
-            <i class="fas fa-truck-fast"></i>
+            <img src="highlights/highlight-shipped.png" alt="تم الشحن" />
           </div>
           <span class="cover-title">تم الشحن</span>
-          <button class="cover-btn-download" onclick="downloadHighlightCover('تم-الشحن', 'truck')">
+          <span class="cover-badge-tag">أساسي</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('تم-الشحن', 'shipped')">
             <i class="fas fa-download"></i> تحميل HD
           </button>
         </div>
 
         <!-- 2: مهم جداً -->
-        <div class="cover-item">
+        <div class="cover-item" data-cat="general">
           <div class="cover-art-circle" onclick="openHighlightModal('important')">
-            <i class="fas fa-triangle-exclamation"></i>
+            <img src="highlights/highlight-important.png" alt="مهم جداً" />
           </div>
           <span class="cover-title">مهم جداً</span>
-          <button class="cover-btn-download" onclick="downloadHighlightCover('مهم-جدا', 'alert')">
+          <span class="cover-badge-tag">أساسي</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('مهم-جدا', 'important')">
             <i class="fas fa-download"></i> تحميل HD
           </button>
         </div>
 
         <!-- 3: الويب اب -->
-        <div class="cover-item">
+        <div class="cover-item" data-cat="general">
           <div class="cover-art-circle" onclick="openHighlightModal('webapp')">
-            <i class="fas fa-globe"></i>
+            <img src="highlights/highlight-webapp.png" alt="الويب اب" />
           </div>
           <span class="cover-title">الويب اب</span>
-          <button class="cover-btn-download" onclick="downloadHighlightCover('الويب-اب', 'globe')">
+          <span class="cover-badge-tag">أساسي</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('الويب-اب', 'webapp')">
             <i class="fas fa-download"></i> تحميل HD
           </button>
         </div>
 
         <!-- 4: طرق الدفع -->
-        <div class="cover-item">
+        <div class="cover-item" data-cat="general">
           <div class="cover-art-circle" onclick="openHighlightModal('payment')">
-            <i class="fas fa-credit-card"></i>
+            <img src="highlights/highlight-payment.png" alt="طرق الدفع" />
           </div>
           <span class="cover-title">طرق الدفع</span>
-          <button class="cover-btn-download" onclick="downloadHighlightCover('طرق-الدفع', 'card')">
+          <span class="cover-badge-tag">أساسي</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('طرق-الدفع', 'payment')">
             <i class="fas fa-download"></i> تحميل HD
           </button>
         </div>
 
-        <!-- 5: آراء الزبائن 6 -->
-        <div class="cover-item">
+        <!-- Star Reviews: 6 to 1 -->
+        <div class="cover-item" data-cat="star">
           <div class="cover-art-circle" onclick="openHighlightModal('reviews6')">
-            <i class="fas fa-star"></i>
-            <span class="hl-badge-tag" style="bottom: 2px; left: 4px; width: 19px; height: 19px; font-size: 0.62rem;">6</span>
+            <img src="highlights/highlight-reviews-6.png" alt="آراء الزبائن 6" />
           </div>
           <span class="cover-title">آراء الزبائن 6</span>
-          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-6', 'star', '6')">
+          <span class="cover-badge-tag">نجوم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-6', 'reviews-6')">
             <i class="fas fa-download"></i> تحميل HD
           </button>
         </div>
 
-        <!-- 6: آراء الزبائن 5 -->
-        <div class="cover-item">
+        <div class="cover-item" data-cat="star">
           <div class="cover-art-circle" onclick="openHighlightModal('reviews5')">
-            <i class="fas fa-star"></i>
-            <span class="hl-badge-tag" style="bottom: 2px; left: 4px; width: 19px; height: 19px; font-size: 0.62rem;">5</span>
+            <img src="highlights/highlight-reviews-5.png" alt="آراء الزبائن 5" />
           </div>
           <span class="cover-title">آراء الزبائن 5</span>
-          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-5', 'star', '5')">
+          <span class="cover-badge-tag">نجوم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-5', 'reviews-5')">
             <i class="fas fa-download"></i> تحميل HD
           </button>
         </div>
 
-        <!-- 7: آراء الزبائن 4 -->
-        <div class="cover-item">
+        <div class="cover-item" data-cat="star">
           <div class="cover-art-circle" onclick="openHighlightModal('reviews4')">
-            <i class="fas fa-star"></i>
-            <span class="hl-badge-tag" style="bottom: 2px; left: 4px; width: 19px; height: 19px; font-size: 0.62rem;">4</span>
+            <img src="highlights/highlight-reviews-4.png" alt="آراء الزبائن 4" />
           </div>
           <span class="cover-title">آراء الزبائن 4</span>
-          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-4', 'star', '4')">
+          <span class="cover-badge-tag">نجوم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-4', 'reviews-4')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
+        </div>
+
+        <div class="cover-item" data-cat="star">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews3')">
+            <img src="highlights/highlight-reviews-3.png" alt="آراء الزبائن 3" />
+          </div>
+          <span class="cover-title">آراء الزبائن 3</span>
+          <span class="cover-badge-tag">نجوم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-3', 'reviews-3')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
+        </div>
+
+        <div class="cover-item" data-cat="star">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews2')">
+            <img src="highlights/highlight-reviews-2.png" alt="آراء الزبائن 2" />
+          </div>
+          <span class="cover-title">آراء الزبائن 2</span>
+          <span class="cover-badge-tag">نجوم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-2', 'reviews-2')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
+        </div>
+
+        <div class="cover-item" data-cat="star">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews1')">
+            <img src="highlights/highlight-reviews-1.png" alt="آراء الزبائن 1" />
+          </div>
+          <span class="cover-title">آراء الزبائن 1</span>
+          <span class="cover-badge-tag">نجوم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-1', 'reviews-1')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
+        </div>
+
+        <!-- User Reviews: 6 to 1 -->
+        <div class="cover-item" data-cat="user">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews6'); switchModalHighlightStyle('6', 'user', 'آراء-الزبائن-6');">
+            <img src="highlights/highlight-user-6.png" alt="آراء الزبائن 6 (مستخدم)" />
+          </div>
+          <span class="cover-title">آراء الزبائن 6</span>
+          <span class="cover-badge-tag">مستخدم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-6-مستخدم', 'user-6')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
+        </div>
+
+        <div class="cover-item" data-cat="user">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews5'); switchModalHighlightStyle('5', 'user', 'آراء-الزبائن-5');">
+            <img src="highlights/highlight-user-5.png" alt="آراء الزبائن 5 (مستخدم)" />
+          </div>
+          <span class="cover-title">آراء الزبائن 5</span>
+          <span class="cover-badge-tag">مستخدم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-5-مستخدم', 'user-5')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
+        </div>
+
+        <div class="cover-item" data-cat="user">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews4'); switchModalHighlightStyle('4', 'user', 'آراء-الزبائن-4');">
+            <img src="highlights/highlight-user-4.png" alt="آراء الزبائن 4 (مستخدم)" />
+          </div>
+          <span class="cover-title">آراء الزبائن 4</span>
+          <span class="cover-badge-tag">مستخدم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-4-مستخدم', 'user-4')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
+        </div>
+
+        <div class="cover-item" data-cat="user">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews3'); switchModalHighlightStyle('3', 'user', 'آراء-الزبائن-3');">
+            <img src="highlights/highlight-user-3.png" alt="آراء الزبائن 3 (مستخدم)" />
+          </div>
+          <span class="cover-title">آراء الزبائن 3</span>
+          <span class="cover-badge-tag">مستخدم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-3-مستخدم', 'user-3')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
+        </div>
+
+        <div class="cover-item" data-cat="user">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews2'); switchModalHighlightStyle('2', 'user', 'آراء-الزبائن-2');">
+            <img src="highlights/highlight-user-2.png" alt="آراء الزبائن 2 (مستخدم)" />
+          </div>
+          <span class="cover-title">آراء الزبائن 2</span>
+          <span class="cover-badge-tag">مستخدم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-2-مستخدم', 'user-2')">
+            <i class="fas fa-download"></i> تحميل HD
+          </button>
+        </div>
+
+        <div class="cover-item" data-cat="user">
+          <div class="cover-art-circle" onclick="openHighlightModal('reviews1'); switchModalHighlightStyle('1', 'user', 'آراء-الزبائن-1');">
+            <img src="highlights/highlight-user-1.png" alt="آراء الزبائن 1 (مستخدم)" />
+          </div>
+          <span class="cover-title">آراء الزبائن 1</span>
+          <span class="cover-badge-tag">مستخدم</span>
+          <button class="cover-btn-download" onclick="downloadHighlightCover('آراء-الزبائن-1-مستخدم', 'user-1')">
             <i class="fas fa-download"></i> تحميل HD
           </button>
         </div>
@@ -1853,13 +2022,86 @@
     }
 
     function downloadHighlightCover(name, id) {
+      const map = {
+        'truck': 'shipped',
+        'shipped': 'shipped',
+        'تم-الشحن': 'shipped',
+        'alert': 'important',
+        'important': 'important',
+        'مهم-جدا': 'important',
+        'globe': 'webapp',
+        'webapp': 'webapp',
+        'الويب-اب': 'webapp',
+        'card': 'payment',
+        'payment': 'payment',
+        'طرق-الدفع': 'payment',
+        'reviews6': 'reviews-6',
+        'reviews5': 'reviews-5',
+        'reviews4': 'reviews-4',
+        'reviews3': 'reviews-3',
+        'reviews2': 'reviews-2',
+        'reviews1': 'reviews-1',
+        'star-6': 'reviews-6',
+        'star-5': 'reviews-5',
+        'star-4': 'reviews-4',
+        'star-3': 'reviews-3',
+        'star-2': 'reviews-2',
+        'star-1': 'reviews-1'
+      };
+      let fileId = map[id] || id;
+      if (fileId.startsWith('star')) fileId = 'reviews-' + fileId.replace('star', '').replace('-', '');
       const link = document.createElement('a');
       link.download = `ShopCoin-Highlight-${name}.png`;
-      link.href = `highlights/highlight-${id}.png`;
+      link.href = `highlights/highlight-${fileId}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       showToast(`تم تحميل غلاف "${name}" الأصلي بدقة 1080x1080 بنجاح!`);
+    }
+
+    function switchModalHighlightStyle(badgeNum, style, baseName) {
+      const img = document.getElementById('modalCoverImg');
+      const btnStar = document.getElementById('btnStyleStar');
+      const btnUser = document.getElementById('btnStyleUser');
+      const dlBtn = document.getElementById('modalPrimaryDlBtn');
+      const dlHeaderBtn = document.getElementById('modalHeaderDlBtn');
+      if (!img) return;
+
+      if (style === 'user') {
+        img.src = `highlights/highlight-user-${badgeNum}.png`;
+        if (btnStar) { btnStar.className = 'btn-action btn-action-outline'; btnStar.style.borderColor = 'var(--ig-border)'; }
+        if (btnUser) { btnUser.className = 'btn-action btn-action-primary'; }
+        if (dlBtn) {
+          dlBtn.onclick = () => downloadHighlightCover(`${baseName}-مستخدم`, `user-${badgeNum}`);
+        }
+        if (dlHeaderBtn) {
+          dlHeaderBtn.onclick = () => downloadHighlightCover(`${baseName}-مستخدم`, `user-${badgeNum}`);
+        }
+      } else {
+        img.src = `highlights/highlight-reviews-${badgeNum}.png`;
+        if (btnStar) { btnStar.className = 'btn-action btn-action-primary'; }
+        if (btnUser) { btnUser.className = 'btn-action btn-action-outline'; btnUser.style.borderColor = 'var(--ig-border)'; }
+        if (dlBtn) {
+          dlBtn.onclick = () => downloadHighlightCover(baseName, `reviews-${badgeNum}`);
+        }
+        if (dlHeaderBtn) {
+          dlHeaderBtn.onclick = () => downloadHighlightCover(baseName, `reviews-${badgeNum}`);
+        }
+      }
+    }
+
+    function filterCovers(type, btn) {
+      document.querySelectorAll('.cover-filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const items = document.querySelectorAll('.cover-item');
+      items.forEach(item => {
+        const cat = item.getAttribute('data-cat') || 'general';
+        if (type === 'all' || cat === type) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
     }
 
     function openHighlightModal(type) {
@@ -1994,27 +2236,42 @@
       const item = titles[type] || titles.shipped;
       const tipsList = item.tips.map(t => `<li style="margin-bottom: 6px;">${t}</li>`).join('');
 
-      const userAltBtn = (item.badge === '1' || item.badge === '2') ? `
-        <a href="highlights/highlight-user-${item.badge}.png" download="ShopCoin-Highlight-${item.name}-User.png" class="btn-action btn-action-outline" title="تحميل بنمط أيقونة المستخدم من حسابك القديم">
-          <i class="fas fa-user"></i> تحميل بنمط المستخدم
-        </a>
-      ` : '';
+      let styleToggleHtml = '';
+      let initialFile = `highlight-${item.id}.png`;
+      if (item.badge) {
+        styleToggleHtml = `
+          <div style="margin-bottom: 14px;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--ig-text-secondary); display: block; margin-bottom: 6px;">اختر نمط الأيقونة المفضل:</span>
+            <div style="display: inline-flex; background: #e2e8f0; padding: 3px; border-radius: 12px; gap: 4px;">
+              <button id="btnStyleStar" class="btn-action btn-action-primary" style="padding: 5px 14px; font-size: 0.8rem;" onclick="switchModalHighlightStyle('${item.badge}', 'star', '${item.name}')">
+                <i class="fas fa-star"></i> نمط النجوم (العصري)
+              </button>
+              <button id="btnStyleUser" class="btn-action btn-action-outline" style="padding: 5px 14px; font-size: 0.8rem; background: #fff;" onclick="switchModalHighlightStyle('${item.badge}', 'user', '${item.name}')">
+                <i class="fas fa-user"></i> نمط المستخدم (الكلاسيكي)
+              </button>
+            </div>
+          </div>
+        `;
+      }
 
       content.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
           <h3 style="font-size: 1.3rem; font-weight: 900; color: var(--brand-navy);">${item.title}</h3>
-          <button class="btn-action btn-action-primary" style="padding: 6px 14px; font-size: 0.8rem;" onclick="downloadHighlightCover('${item.name}', '${item.id}')">
+          <button id="modalHeaderDlBtn" class="btn-action btn-action-primary" style="padding: 6px 14px; font-size: 0.8rem;" onclick="downloadHighlightCover('${item.name}', '${item.id}')">
             <i class="fas fa-download"></i> تحميل الغلاف (1080×1080)
           </button>
         </div>
         <p style="color: var(--ig-text-secondary); font-size: 0.92rem; margin-bottom: 18px;">${item.desc}</p>
         
         <div style="background: #f8fafc; border: 1.5px solid var(--ig-border); border-radius: 20px; padding: 22px; text-align: center; margin-bottom: 20px;">
-          <div style="width: 170px; height: 170px; margin: 0 auto 14px; border-radius: 50%; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); background: #ffffff;">
-            <img src="highlights/highlight-${item.id}.png" alt="${item.title}" style="width: 100%; height: 100%; object-fit: contain;" />
+          ${styleToggleHtml}
+          <div style="width: 170px; height: 170px; margin: 0 auto 14px; border-radius: 50%; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); background: #ffffff; border: 2px solid var(--brand-green);">
+            <img id="modalCoverImg" src="highlights/${initialFile}" alt="${item.title}" style="width: 100%; height: 100%; object-fit: contain;" />
           </div>
           <strong style="color: var(--brand-navy); font-size: 0.98rem; display: block;">معاينة الغلاف الفعلي بدقة Ultra HD (1080×1080)</strong>
-          <p style="color: var(--ig-text-secondary); font-size: 0.84rem; margin-top: 4px;">خلفية بيضاء نقية + إطار دائري ناعم + أيقونة خضراء زمردية جذابة (#059669) مطابقة 100% للشاشة.</p>
+          <p style="color: var(--ig-text-secondary); font-size: 0.84rem; margin-top: 4px;">
+            خلفية بيضاء نقية بنسبة 100% بدون أي إطارات مشوهة — متوافقة تماماً مع دائرة إنستغرام بدون أي تداخل أو حلقات مزدوجة.
+          </p>
         </div>
 
         <div style="background: var(--brand-green-light); border: 1px solid var(--brand-green-border); border-radius: 14px; padding: 16px; margin-bottom: 20px; text-align: right;">
@@ -2028,11 +2285,10 @@
           <button class="btn-action btn-action-outline" onclick="closePostModal()">
             <i class="fas fa-times"></i> إغلاق
           </button>
-          ${userAltBtn}
           <a href="highlights/ShopCoin-Highlights-All.zip" download="ShopCoin-Highlights-All.zip" class="btn-action btn-action-outline">
             <i class="fas fa-file-zipper"></i> تحميل جميع الأغلفة (ZIP)
           </a>
-          <button class="btn-action btn-action-primary" onclick="downloadHighlightCover('${item.name}', '${item.id}')">
+          <button id="modalPrimaryDlBtn" class="btn-action btn-action-primary" onclick="downloadHighlightCover('${item.name}', '${item.id}')">
             <i class="fas fa-download"></i> تحميل صورة الغلاف HD (1080×1080)
           </button>
         </div>
