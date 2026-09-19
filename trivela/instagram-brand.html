@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>هوية ودليل إنستغرام الرسمي — @shop_coin15 | ShopCoin</title>
   <meta name="description" content="محاكي ودليل الهوية البصرية الفاتحة لإنستغرام متجر ShopCoin الرسمي: البايو، المنشورات، أغلفة الهايلايت البيضاء باللون الأخضر الجذاب، والكابشنز." />
-  <link rel="icon" type="image/png" href="logo-official.png" />
+  <link rel="icon" type="image/png" href="shopcoin-profile-hd.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet" />
@@ -263,7 +263,31 @@
       background: #ffffff;
       border: 3.5px solid #ffffff;
       object-fit: contain;
-      padding: 10px;
+      padding: 6px;
+    }
+    .avatar-dl-badge-btn {
+      margin-top: 10px;
+      background: #ffffff;
+      border: 1.5px solid var(--brand-green-border);
+      color: var(--brand-green-dark);
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--trans);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      text-decoration: none;
+    }
+    .avatar-dl-badge-btn:hover {
+      background: var(--brand-green);
+      color: #ffffff;
+      border-color: var(--brand-green);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px var(--brand-green-glow);
     }
 
     /* Info Column */
@@ -325,6 +349,19 @@
     }
     .ig-btn-wa:hover {
       opacity: 0.92;
+    }
+    .ig-btn-avatar {
+      background: var(--brand-green-light);
+      color: var(--brand-green-dark);
+      border: 1.5px solid var(--brand-green-border);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ig-btn-avatar:hover {
+      background: var(--brand-green);
+      color: #ffffff;
+      border-color: var(--brand-green);
     }
 
     /* Stats Counter */
@@ -411,6 +448,80 @@
       background: var(--brand-green);
       color: #ffffff;
       border-color: var(--brand-green);
+    }
+
+    /* ==========================================
+       PROFILE AVATAR BANNER & DOWNLOAD BAR
+       ========================================== */
+    .profile-avatar-banner {
+      background: #ffffff;
+      border: 1.5px solid var(--brand-green-border);
+      border-radius: 18px;
+      padding: 18px 24px;
+      margin: 10px 0 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.08);
+    }
+    .pab-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .pab-thumb-wrap {
+      position: relative;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: 2.5px solid var(--brand-green);
+      background: #ffffff;
+      box-shadow: 0 4px 14px var(--brand-green-glow);
+      flex-shrink: 0;
+    }
+    .pab-thumb {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: contain;
+      padding: 4px;
+    }
+    .pab-badge-hd {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      background: linear-gradient(135deg, var(--brand-green), var(--brand-green-dark));
+      color: #ffffff;
+      font-size: 0.65rem;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 10px;
+      letter-spacing: 0.5px;
+      border: 1.5px solid #ffffff;
+    }
+    .pab-info h4 {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--brand-navy);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pab-info p {
+      font-size: 0.86rem;
+      color: var(--ig-text-secondary);
+      max-width: 560px;
+      line-height: 1.55;
+    }
+    .pab-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
     /* ==========================================
@@ -956,7 +1067,7 @@
     <div class="top-bar-inner">
       <a href="index.html" class="bar-brand">
         <div class="bar-logo">
-          <img src="logo-official.png" alt="ShopCoin" />
+          <img src="shopcoin-profile-hd.png" alt="ShopCoin" />
         </div>
         <div class="bar-title">
           <span>ShopCoin</span>
@@ -965,11 +1076,15 @@
       </a>
 
       <div class="top-actions">
+        <button class="btn-action btn-action-primary" onclick="openAvatarModal()">
+          <i class="fas fa-camera"></i>
+          <span>صورة البروفايل HD</span>
+        </button>
         <a href="brand.html" class="btn-action btn-action-outline">
           <i class="fas fa-palette"></i>
           <span>الهوية العامة (Brand)</span>
         </a>
-        <a href="https://www.instagram.com/shop_coin15/" target="_blank" class="btn-action btn-action-primary">
+        <a href="https://www.instagram.com/shop_coin15/" target="_blank" class="btn-action btn-action-outline">
           <i class="fab fa-instagram"></i>
           <span>فتح الحساب (@shop_coin15)</span>
         </a>
@@ -986,7 +1101,11 @@
         <h2><i class="fas fa-sun" style="color: var(--brand-gold);"></i> محاكي إنستغرام بالثيم الفاتح والأخضر الراقي (@shop_coin15)</h2>
         <p>تصميم ناصع ومشرق (Light Luxury) يحاكي واجهة إنستغرام الرسمية بألوان بيضاء نقية وأيقونات هايلايت خضراء زمردية جذابة مخصصة لشحن كوينز FIFA 27.</p>
       </div>
-      <div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn-action btn-action-primary" onclick="openAvatarModal()">
+          <i class="fas fa-arrow-down-to-bracket"></i>
+          <span>تحميل صورة الصفحة HD</span>
+        </button>
         <button class="btn-action btn-action-outline" onclick="copyAllBio()">
           <i class="fas fa-copy"></i>
           <span>نسخ بيانات البايو</span>
@@ -1005,10 +1124,12 @@
         
         <!-- Avatar with Story Glow Ring -->
         <div class="ig-avatar-wrap">
-          <div class="ig-avatar-ring" onclick="showStoryPreview()" title="انقر لعرض ستوري تجريبي">
-            <img src="logo-official.png" alt="ShopCoin Avatar" class="ig-avatar-img" />
+          <div class="ig-avatar-ring" onclick="openAvatarModal()" title="انقر لمعاينة وتحميل صورة البروفايل بدقة 1080×1080">
+            <img src="shopcoin-profile-hd.png" alt="ShopCoin Avatar" class="ig-avatar-img" />
           </div>
-          <span style="font-size: 0.72rem; color: var(--ig-text-secondary); margin-top: 8px; font-weight: 700;">اضغط لمعاينة الستوري</span>
+          <button class="avatar-dl-badge-btn" onclick="openAvatarModal()">
+            <i class="fas fa-download"></i> صورة البروفايل HD
+          </button>
         </div>
 
         <!-- Info Column -->
@@ -1018,6 +1139,7 @@
             <i class="fas fa-circle-check ig-verified-icon" title="موثق"></i>
             
             <div class="ig-header-btns">
+              <button class="ig-btn-sm ig-btn-avatar" onclick="openAvatarModal()"><i class="fas fa-image"></i> صورة البروفايل HD</button>
               <button class="ig-btn-sm ig-btn-follow" onclick="copyProfileLink()"><i class="fas fa-link"></i> نسخ رابط الحساب</button>
               <a href="https://wa.me/962775585112" target="_blank" class="ig-btn-sm ig-btn-wa"><i class="fab fa-whatsapp"></i> مراسلة واتساب</a>
             </div>
@@ -1046,6 +1168,28 @@
               <i class="fas fa-link"></i> wa.me/962775585112
             </a>
           </div>
+        </div>
+      </div>
+
+      <!-- Official HD Avatar Quick-Download Bar -->
+      <div class="profile-avatar-banner">
+        <div class="pab-left">
+          <div class="pab-thumb-wrap">
+            <img src="shopcoin-profile-hd.png" alt="ShopCoin Avatar" class="pab-thumb" />
+            <span class="pab-badge-hd">1080p HD</span>
+          </div>
+          <div class="pab-info">
+            <h4><i class="fas fa-shield-halved" style="color: var(--brand-green);"></i> صورة البروفايل الرسمية لصفحة الإنستغرام (@shop_coin15)</h4>
+            <p>خلفية بيضاء ناصعة 100% (#FFFFFF) مع تاج الشعار الزمردي الراقي ورمز SC — متناسقة تماماً مع إطار القص الدائري بدون أي اقتطاع.</p>
+          </div>
+        </div>
+        <div class="pab-actions">
+          <a href="shopcoin-profile-hd.png" download="ShopCoin-Profile-Avatar-1080x1080.png" class="btn-action btn-action-primary">
+            <i class="fas fa-download"></i> تحميل صورة البروفايل HD (1080×1080)
+          </a>
+          <button class="btn-action btn-action-outline" onclick="openAvatarModal()">
+            <i class="fas fa-expand"></i> معاينة خيارات الدقة والقص
+          </button>
         </div>
       </div>
 
@@ -1907,6 +2051,117 @@
 
     function showStoryPreview() {
       showToast('عرض الستوري: شحن كوينز فوري وآمن 100% عبر الواتساب!');
+    }
+
+    function openAvatarModal() {
+      const modal = document.getElementById('postModal');
+      const content = document.getElementById('modalContent');
+
+      content.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+          <h3 style="font-size: 1.35rem; font-weight: 900; color: var(--brand-navy); display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-shield-halved" style="color: var(--brand-green);"></i>
+            صورة البروفايل الرسمية لإنستغرام (@shop_coin15)
+          </h3>
+          <span style="background: var(--brand-green-light); color: var(--brand-green-dark); border: 1px solid var(--brand-green-border); font-size: 0.76rem; font-weight: 800; padding: 4px 12px; border-radius: 20px;">
+            Ultra HD 1080×1080
+          </span>
+        </div>
+        <p style="color: var(--ig-text-secondary); font-size: 0.92rem; margin-bottom: 20px; line-height: 1.6;">
+          تم تصميم الصورة خصيصاً لتناسب هوية الحساب الجديدة: <strong>خلفية بيضاء ناصعة 100% (#FFFFFF)</strong> مع <strong>شعار التاج ورمز SC باللون الأخضر الزمردي الراقي (#059669)</strong>، مع مراعاة منطقة الأمان للقص الدائري في إنستغرام لضمان عدم اقتطاع أي جزء من التاج أو الحروف.
+        </p>
+
+        <!-- Live Circle / Square Switcher -->
+        <div style="background: #f8fafc; border: 1.5px solid var(--ig-border); border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 22px;">
+          
+          <div style="display: inline-flex; background: #ffffff; border: 1px solid var(--ig-border); border-radius: 12px; padding: 4px; margin-bottom: 18px; gap: 4px;">
+            <button id="previewCircleBtn" onclick="toggleAvatarPreview('circle')" class="btn-action btn-action-primary" style="padding: 6px 16px; font-size: 0.82rem;">
+              <i class="fas fa-circle-notch"></i> معاينة القص الدائري (إنستغرام)
+            </button>
+            <button id="previewSquareBtn" onclick="toggleAvatarPreview('square')" class="btn-action btn-action-outline" style="padding: 6px 16px; font-size: 0.82rem;">
+              <i class="fas fa-square"></i> معاينة المربع الكامل (1080×1080)
+            </button>
+          </div>
+
+          <!-- Avatar Preview Container -->
+          <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0 16px;">
+            <div id="avatarPreviewContainer" style="width: 220px; height: 220px; border-radius: 50%; padding: 5px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); box-shadow: 0 12px 32px rgba(220, 39, 67, 0.25); transition: all 0.3s ease;">
+              <div id="avatarInnerCrop" style="width: 100%; height: 100%; border-radius: 50%; background: #ffffff; border: 4px solid #ffffff; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <img src="shopcoin-profile-hd.png" alt="ShopCoin HD Avatar" style="width: 100%; height: 100%; object-fit: contain;" />
+              </div>
+            </div>
+          </div>
+
+          <span id="previewLegend" style="font-size: 0.82rem; color: var(--brand-green-dark); font-weight: 700;">
+            <i class="fas fa-check-circle" style="color: var(--brand-green);"></i> التاج وحروف SC تظهر بالكامل وبوضوح داخل دائرة إنستغرام مع مسافة أمان متناسقة
+          </span>
+        </div>
+
+        <!-- Specs Badges -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;">
+          <div style="background: #ffffff; border: 1px solid var(--ig-border); border-radius: 12px; padding: 12px; text-align: center;">
+            <span style="display: block; font-size: 0.74rem; color: var(--ig-text-dim); font-weight: 700;">أبعاد الصورة المعتمدة</span>
+            <strong style="font-size: 0.95rem; color: var(--brand-navy);">1080 × 1080 px</strong>
+          </div>
+          <div style="background: #ffffff; border: 1px solid var(--ig-border); border-radius: 12px; padding: 12px; text-align: center;">
+            <span style="display: block; font-size: 0.74rem; color: var(--ig-text-dim); font-weight: 700;">لون الخلفية</span>
+            <strong style="font-size: 0.95rem; color: var(--brand-navy);">أبيض ناصع #FFFFFF</strong>
+          </div>
+          <div style="background: #ffffff; border: 1px solid var(--ig-border); border-radius: 12px; padding: 12px; text-align: center;">
+            <span style="display: block; font-size: 0.74rem; color: var(--ig-text-dim); font-weight: 700;">شعار التاج</span>
+            <strong style="font-size: 0.95rem; color: var(--brand-green-dark);">أخضر زمردي راقي</strong>
+          </div>
+        </div>
+
+        <!-- Download Actions -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; border-top: 1px solid var(--ig-border); padding-top: 18px;">
+          <button class="btn-action btn-action-outline" onclick="closePostModal()">
+            <i class="fas fa-times"></i> إغلاق
+          </button>
+          <a href="shopcoin-vector.svg" download="ShopCoin-Emblem-Vector.svg" class="btn-action btn-action-outline" onclick="showToast('تم بدء تحميل ملف SVG الفيكتور!')">
+            <i class="fas fa-bezier-curve"></i> تحميل فيكتور SVG
+          </a>
+          <a href="shopcoin-profile-4k.png" download="ShopCoin-Profile-4K-2048x2048.png" class="btn-action btn-action-outline" onclick="showToast('تم بدء تحميل صورة 4K بدقة 2048x2048!')">
+            <i class="fas fa-sparkles"></i> تحميل فائقة الدقة 4K (2048p)
+          </a>
+          <a href="shopcoin-profile-hd.png" download="ShopCoin-Profile-Avatar-1080x1080.png" class="btn-action btn-action-primary" onclick="showToast('تم بدء تحميل صورة البروفايل الرسمية HD (1080×1080)!')">
+            <i class="fas fa-download"></i> تحميل صورة البروفايل HD (1080×1080)
+          </a>
+        </div>
+      `;
+      modal.classList.add('open');
+    }
+
+    function toggleAvatarPreview(mode) {
+      const container = document.getElementById('avatarPreviewContainer');
+      const inner = document.getElementById('avatarInnerCrop');
+      const circleBtn = document.getElementById('previewCircleBtn');
+      const squareBtn = document.getElementById('previewSquareBtn');
+      const legend = document.getElementById('previewLegend');
+
+      if (mode === 'circle') {
+        container.style.borderRadius = '50%';
+        container.style.padding = '5px';
+        container.style.background = 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)';
+        container.style.boxShadow = '0 12px 32px rgba(220, 39, 67, 0.25)';
+        inner.style.borderRadius = '50%';
+        inner.style.border = '4px solid #ffffff';
+        circleBtn.className = 'btn-action btn-action-primary';
+        squareBtn.className = 'btn-action btn-action-outline';
+        legend.innerHTML = '<i class="fas fa-check-circle" style="color: var(--brand-green);"></i> التاج وحروف SC تظهر بالكامل وبوضوح داخل دائرة إنستغرام مع مسافة أمان متناسقة';
+        legend.style.color = 'var(--brand-green-dark)';
+      } else {
+        container.style.borderRadius = '16px';
+        container.style.padding = '0';
+        container.style.background = 'none';
+        container.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.08)';
+        inner.style.borderRadius = '16px';
+        inner.style.border = '2.5px dashed var(--brand-green)';
+        circleBtn.className = 'btn-action btn-action-outline';
+        squareBtn.className = 'btn-action btn-action-primary';
+        legend.innerHTML = '<i class="fas fa-expand" style="color: var(--brand-navy);"></i> المعاينة المربعة الأصلية بدقة 1080×1080 كاملة مع حواف بيضاء نقية';
+        legend.style.color = 'var(--brand-navy)';
+      }
     }
   </script>
 </body>
