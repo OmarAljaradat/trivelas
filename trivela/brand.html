@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>دليل الهوية البصرية ونظام التصميم — ShopCoin Brand Guidelines</title>
+  <meta name="description" content="الدليل المرجعي الشامل للهوية البصرية، نظام التصميم الرقمي، وقواعد استخدام علامة ShopCoin الرسمية." />
+  <link rel="icon" type="image/png" href="logo-official.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  
+  <style>
+    :root {
+      /* Brand Color Tokens */
+      --bg-base: #080c14;
+      --bg-surface: #0f1624;
+      --bg-surface-elevated: #162033;
+      --bg-card: rgba(22, 32, 51, 0.7);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(59, 130, 246, 0.3);
+      
+      /* Primary Brand Colors */
+      --blue-navy: #1b355a;
+      --blue-cyber: #2563eb;
+      --blue-bright: #38bdf8;
+      --gold-coin: #eab308;
+      --gold-light: #fef08a;
+      --gold-glow: rgba(234, 179, 8, 0.25);
+      --emerald-safe: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --rose-champions: #ec4899;
+      --purple-sbc: #8b5cf6;
+      
+      /* Text Colors */
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      /* Fonts */
+      --font-ar: 'Cairo', system-ui, -apple-system, sans-serif;
+      --font-en: 'Montserrat', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      /* Geometry */
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --trans: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-ar);
+      line-height: 1.65;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(234, 179, 8, 0.08) 0%, transparent 40%),
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    /* Ambient Glow Effects */
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 { width: 500px; height: 500px; background: rgba(37, 99, 235, 0.15); top: -150px; right: -150px; }
+    .orb-2 { width: 400px; height: 400px; background: rgba(234, 179, 8, 0.1); bottom: 10%; left: -100px; }
+
+    /* Top Navbar */
+    .brand-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 12, 20, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 14px 24px;
+    }
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .nav-logo-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .nav-logo-wrap img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+    .brand-title-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-name {
+      font-family: var(--font-en);
+      font-weight: 900;
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .brand-tag {
+      font-size: 0.72rem;
+      color: var(--blue-bright);
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: var(--trans);
+      cursor: pointer;
+    }
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 20px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--blue-cyber), #1d4ed8);
+      color: #ffffff;
+      border: none;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+      transition: var(--trans);
+      cursor: pointer;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.55);
+      transform: translateY(-2px);
+    }
+
+    /* Main Grid Layout */
+    .brand-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Sidebar Navigation */
+    .brand-sidebar {
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+    .sidebar-header {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      transition: var(--trans);
+      border-right: 3px solid transparent;
+    }
+    .nav-item a i {
+      font-size: 0.95rem;
+      width: 20px;
+      text-align: center;
+      color: var(--text-dim);
+      transition: var(--trans);
+    }
+    .nav-item a:hover {
+      color: var(--text-main);
+      background: rgba(255,255,255,0.04);
+    }
+    .nav-item a.active {
+      color: #ffffff;
+      background: rgba(37, 99, 235, 0.15);
+      border-right-color: var(--blue-cyber);
+    }
+    .nav-item a.active i {
+      color: var(--blue-bright);
+    }
+
+    /* Hero Banner */
+    .brand-hero {
+      background: linear-gradient(135deg, rgba(27, 53, 90, 0.45) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid var(--border-glow);
+      border-radius: var(--radius-xl);
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      margin-bottom: 40px;
+    }
+    .brand-hero::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 30px;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--blue-bright);
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #ffffff 40%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .hero-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .meta-stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .meta-val {
+      font-family: var(--font-en);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--gold-coin);
+    }
+    .meta-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Content Sections */
+    .brand-content {
+      display: flex;
+      flex-direction: column;
+      gap: 50px;
+    }
+    .guide-section {
+      scroll-margin-top: 100px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 36px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .section-num {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--blue-bright);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-title i {
+      color: var(--blue-bright);
+      font-size: 1.3rem;
+    }
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
+    /* Sub-cards and Grid helpers */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    /* Brand Narrative Cards */
+    .pillar-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: var(--trans);
+    }
+    .pillar-card:hover {
+      border-color: rgba(255,255,255,0.2);
+      transform: translateY(-3px);
+    }
+    .pillar-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .pillar-icon.gold { background: rgba(234, 179, 8, 0.15); color: var(--gold-coin); }
+    .pillar-icon.emerald { background: rgba(16, 185, 129, 0.15); color: var(--emerald-safe); }
+    .pillar-icon.blue { background: rgba(37, 99, 235, 0.15); color: var(--blue-bright); }
+    .pillar-icon.purple { background: rgba(139, 92, 246, 0.15); color: var(--purple-sbc); }
+    .pillar-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .pillar-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Logo Showcase Box */
+    .logo-stage-box {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      background: var(--bg-surface);
+    }
+    .stage-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 14px;
+    }
+    .bg-switcher {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .bg-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: var(--trans);
+    }
+    .bg-dot.active {
+      border-color: var(--blue-bright);
+      transform: scale(1.15);
+    }
+    .bg-dot.dark { background: #080c14; }
+    .bg-dot.light { background: #ffffff; }
+    .bg-dot.navy { background: #1b355a; }
+    .bg-dot.checker {
+      background: conic-gradient(#334155 90deg, #1e293b 90deg 180deg, #334155 180deg 270deg, #1e293b 270deg);
+      background-size: 12px 12px;
+    }
+    .logo-canvas {
+      height: 220px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #080c14;
+      transition: background 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo-canvas img {
+      max-height: 120px;
+      max-width: 260px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+    }
+    .clearspace-overlay {
+      position: absolute;
+      border: 2px dashed rgba(56, 189, 248, 0.6);
+      border-radius: 8px;
+      padding: 20px;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .clearspace-label {
+      position: absolute;
+      top: -12px;
+      right: 12px;
+      background: var(--blue-cyber);
+      color: #fff;
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* Do's and Don'ts */
+    .rule-card {
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      font-size: 0.9rem;
+    }
+    .rule-card.do {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+    .rule-card.dont {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+    .rule-icon {
+      font-size: 1.3rem;
+      margin-top: 2px;
+    }
+    .rule-card.do .rule-icon { color: var(--emerald-safe); }
+    .rule-card.dont .rule-icon { color: #ef4444; }
+
+    /* Color Swatch Card */
+    .color-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: var(--trans);
+      position: relative;
+    }
+    .color-card:hover {
+      border-color: rgba(255,255,255,0.25);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .color-preview {
+      height: 110px;
+      width: 100%;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 10px;
+    }
+    .copy-badge {
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      opacity: 0;
+      transition: var(--trans);
+    }
+    .color-card:hover .copy-badge {
+      opacity: 1;
+    }
+    .color-details {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .color-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .color-role {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+    .color-codes {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+    .color-hex {
+      color: var(--blue-bright);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .color-rgb {
+      color: var(--text-dim);
+      font-size: 0.72rem;
+    }
+
+    /* Typography Playground */
+    .type-specimen {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .type-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .type-input {
+      flex: 1;
+      min-width: 260px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: #ffffff;
+      font-family: var(--font-ar);
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .type-input:focus {
+      border-color: var(--blue-cyber);
+    }
+    .range-slider {
+      accent-color: var(--blue-cyber);
+      cursor: pointer;
+    }
+    .type-sample-display {
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      line-height: 1.4;
+      font-weight: 800;
+      word-break: break-word;
+      transition: font-size 0.15s ease;
+      color: #ffffff;
+    }
+
+    /* UI Component Library Showcase */
+    .component-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .component-label {
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      color: var(--blue-bright);
+      text-transform: uppercase;
+    }
+    .btn-showcase {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .btn-brand-gold {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #eab308, #ca8a04);
+      color: #0b0f19;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border: none;
+      box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+      cursor: pointer;
+      transition: var(--trans);
+    }
+    .btn-brand-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(234, 179, 8, 0.45);
+    }
+    .btn-brand-wa {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border: none;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      cursor: pointer;
+      transition: var(--trans);
+    }
+    .btn-brand-wa:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.45);
+    }
+
+    /* Badge Showcase */
+    .badge-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .badge-gold {
+      background: rgba(234, 179, 8, 0.12);
+      border: 1px solid rgba(234, 179, 8, 0.35);
+      color: var(--gold-coin);
+    }
+    .badge-emerald {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--emerald-safe);
+    }
+    .badge-blue {
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(37, 99, 235, 0.35);
+      color: var(--blue-bright);
+    }
+    .badge-rose {
+      background: rgba(236, 72, 153, 0.12);
+      border: 1px solid rgba(236, 72, 153, 0.35);
+      color: var(--rose-champions);
+    }
+
+    /* Glass Card Mockup */
+    .sample-coin-card {
+      background: linear-gradient(135deg, rgba(27, 53, 90, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1.5px solid rgba(234, 179, 8, 0.35);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .sample-coin-card::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, #eab308, #38bdf8, #eab308);
+    }
+
+    /* Social Marketing Previews */
+    .social-simulator {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .post-mockup {
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border: 1px solid var(--border-glow);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    }
+    .post-glow-bg {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(234, 179, 8, 0.25) 0%, transparent 70%);
+      top: -40px;
+      left: -40px;
+      filter: blur(40px);
+    }
+    .post-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+    .post-center-info {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+    .post-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 12px;
+    }
+
+    /* Toast Notification */
+    .copy-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      z-index: 999999;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    .copy-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Footer */
+    .brand-footer {
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(8, 12, 20, 0.95);
+      padding: 40px 24px;
+      margin-top: 60px;
+    }
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .brand-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .brand-sidebar {
+        display: none;
+      }
+      .grid-3, .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .social-simulator {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+      }
+      .hero-title {
+        font-size: 1.85rem;
+      }
+      .guide-section {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <!-- ══════════ NAVBAR ══════════ -->
+  <header class="brand-nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-logo-wrap">
+          <img src="logo-official.png" alt="ShopCoin Logo" />
+        </div>
+        <div class="brand-title-group">
+          <span class="brand-name">ShopCoin</span>
+          <span class="brand-tag">Brand Guidelines</span>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <a href="index.html" class="btn-outline">
+          <i class="fas fa-store"></i>
+          <span>العودة للمتجر</span>
+        </a>
+        <a href="#media-kit" class="btn-primary">
+          <i class="fas fa-download"></i>
+          <span>تحميل حزمة الهوية</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════ WRAPPER ══════════ -->
+  <div class="brand-wrapper">
+
+    <!-- ══════════ STICKY SIDEBAR ══════════ -->
+    <aside class="brand-sidebar">
+      <div class="sidebar-header">
+        <i class="fas fa-compass"></i>
+        <span>أقسام الدليل المرجعي</span>
+      </div>
+      <ul class="nav-list" id="sidebarNav">
+        <li class="nav-item"><a href="#narrative" class="active"><i class="fas fa-bullseye"></i> قصة ورؤية العلامة</a></li>
+        <li class="nav-item"><a href="#logo-system"><i class="fas fa-certificate"></i> نظام الشعار واللوجو</a></li>
+        <li class="nav-item"><a href="#color-tokens"><i class="fas fa-palette"></i> لوحة الألوان الرسمية</a></li>
+        <li class="nav-item"><a href="#typography"><i class="fas fa-font"></i> نظام الخطوط والطباعة</a></li>
+        <li class="nav-item"><a href="#ui-components"><i class="fas fa-cubes"></i> مكتبة عناصر الواجهة (UI)</a></li>
+        <li class="nav-item"><a href="#tone-of-voice"><i class="fas fa-microphone"></i> نبرة الصوت وشخصية البراند</a></li>
+        <li class="nav-item"><a href="#social-marketing"><i class="fas fa-hashtag"></i> أصول السوشيال ميديا</a></li>
+        <li class="nav-item"><a href="#media-kit"><i class="fas fa-box-archive"></i> تحميل الأصول (Media Kit)</a></li>
+      </ul>
+    </aside>
+
+    <!-- ══════════ MAIN CONTENT ══════════ -->
+    <main class="brand-content">
+
+      <!-- Hero Header -->
+      <section class="brand-hero">
+        <div class="hero-pill">
+          <i class="fas fa-shield-halved"></i>
+          <span>الدليل الرسمي للعلامة التجارية — الإصدار 2.5</span>
+        </div>
+        <h1 class="hero-title">دليل الهوية البصرية ونظام التصميم الرقمي</h1>
+        <p class="hero-subtitle">
+          هذا الدليل يحدد القواعد البصرية، الرموز، لوحات الألوان، والأنماط التفاعلية لعلامة <strong>ShopCoin</strong>، لضمان تجربة مستخدم موحدة وفاخرة في جميع نقاط التماس الرقمية والتسويقية لمجتمع FIFA 27 و FC Ultimate Team.
+        </p>
+
+        <div class="hero-meta-row">
+          <div class="meta-stat">
+            <span class="meta-val">ShopCoin</span>
+            <span class="meta-label">الاسم التجاري المعتمد</span>
+          </div>
+          <div class="meta-stat">
+            <span class="meta-val">Cyber Esports</span>
+            <span class="meta-label">النمط البصري (Design System)</span>
+          </div>
+          <div class="meta-stat">
+            <span class="meta-val">Cairo & Montserrat</span>
+            <span class="meta-label">الخطوط الأساسية</span>
+          </div>
+          <div class="meta-stat">
+            <span class="meta-val">FC 27 Ready</span>
+            <span class="meta-label">جيل المنصة المدعوم</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════ SECTION 1: NARRATIVE & CORE ══════════ -->
+      <section id="narrative" class="guide-section">
+        <div class="section-header">
+          <div>
+            <span class="section-num">01 / OVERVIEW</span>
+            <h2 class="section-title"><i class="fas fa-chess-king"></i> قصة العلامة، الرؤية والرسالة</h2>
+            <p class="section-desc">المبادئ الجوهرية والوعود التي نبني عليها كل تفصيلة في هوية ShopCoin.</p>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="pillar-card" style="border-right: 4px solid var(--blue-cyber);">
+            <div class="pillar-title" style="font-size: 1.15rem;"><i class="fas fa-flag" style="color: var(--blue-bright); margin-left: 8px;"></i> الرسالة (Mission)</div>
+            <p class="pillar-desc">
+              تمكين مجتمع لاعبي EA Sports FC في العالم العربي من تحقيق أعلى مراتب المنافسة وبناء تشكيلاتهم الخيالية بأقصى سرعة ممكنة، وأعلى معايير الأمان المالي والتقني بدون أي مخاطرة بحظر الحساب.
+            </p>
+          </div>
+
+          <div class="pillar-card" style="border-right: 4px solid var(--gold-coin);">
+            <div class="pillar-title" style="font-size: 1.15rem;"><i class="fas fa-eye" style="color: var(--gold-coin); margin-left: 8px;"></i> الرؤية (Vision)</div>
+            <p class="pillar-desc">
+              أن نكون المرجع الأول والمنصة الأكثر ثقة واحترافية لكافة خدمات FC Ultimate Team (شحن الكوينز، تفويض الـ SBC، بطولات Champions، والدعم المباشر) في الشرق الأوسط.
+            </p>
+          </div>
+        </div>
+
+        <h3 style="font-size: 1.1rem; color: #ffffff; margin-bottom: 16px;">ركائز الهوية الأربعة (Brand Pillars):</h3>
+        <div class="grid-4">
+          <div class="pillar-card">
+            <div class="pillar-icon blue"><i class="fas fa-bolt"></i></div>
+            <div class="pillar-title">السرعة الفورية</div>
+            <div class="pillar-desc">تسليم الطلبات وحل التحديات في دقائق معدودة دون تأخير أو انتظار ممل.</div>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon emerald"><i class="fas fa-shield-virus"></i></div>
+            <div class="pillar-title">أمان 100% Anti-Ban</div>
+            <div class="pillar-desc">طرق نقل آمنة ومعتمدة تضمن سلامة حساب وسوق اللاعبين بأمان كامل.</div>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon gold"><i class="fas fa-crown"></i></div>
+            <div class="pillar-title">تجربة VIP</div>
+            <div class="pillar-desc">خدمة عملاء حية ومتابعة خطوة بخطوة عبر الواتساب على مدار الساعة.</div>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon purple"><i class="fas fa-gamepad"></i></div>
+            <div class="pillar-title">بأيدي لاعبين محترفين</div>
+            <div class="pillar-desc">فريق عمل يفهم اللعبة، استراتيجيات السوق، واللاعبين الأفضل لبناء التشكيلة.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════ SECTION 2: LOGO SYSTEM ══════════ -->
+      <section id="logo-system" class="guide-section">
+        <div class="section-header">
+          <div>
+            <span class="section-num">02 / LOGO GUIDELINES</span>
+            <h2 class="section-title"><i class="fas fa-certificate"></i> نظام الشعار واللوجو وقواعد الاستخدام</h2>
+            <p class="section-desc">عرض تفاعلي للشعار الرسمي، مساحة الأمان، وقواعد الحفاظ على تكامل العلامة.</p>
+          </div>
+        </div>
+
+        <!-- Interactive Logo Stage -->
+        <div class="logo-stage-box">
+          <div class="stage-toolbar">
+            <div class="bg-switcher">
+              <span>اختبر الشعار على خلفيات مختلفة:</span>
+              <div class="bg-dot dark active" onclick="switchLogoBg('#080c14', this)" title="Dark Surface"></div>
+              <div class="bg-dot navy" onclick="switchLogoBg('#1b355a', this)" title="Brand Navy"></div>
+              <div class="bg-dot checker" onclick="switchLogoBg('checker', this)" title="Transparent Checker"></div>
+              <div class="bg-dot light" onclick="switchLogoBg('#ffffff', this)" title="White Surface"></div>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-outline" onclick="toggleClearSpace()" style="padding: 6px 14px; font-size: 0.8rem;">
+                <i class="fas fa-border-none"></i>
+                <span id="clearspaceText">إظهار مساحة الأمان (Clear Space)</span>
+              </button>
+              <a href="logo-official.png" download="ShopCoin_Logo_Official.png" class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem;">
+                <i class="fas fa-file-arrow-down"></i>
+                <span>تحميل الشعار PNG</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="logo-canvas" id="logoCanvas">
+            <div class="clearspace-overlay" id="clearspaceBox" style="display: none;">
+              <span class="clearspace-label">Margin = 1X</span>
+              <img src="logo-official.png" alt="ShopCoin Primary Logo" />
+            </div>
+            <img id="mainLogoImg" src="logo-official.png" alt="ShopCoin Primary Logo" />
+          </div>
+
+          <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; color: var(--text-dim);">
+            <span>الحد الأدنى للأبعاد في الويب: <strong>120px عرضاً</strong></span>
+            <span>الحد الأدنى للأيقونة (Favicon): <strong>32×32px</strong></span>
+            <span>الامتداد الموصى به: <strong>PNG 32-bit (Transparent) أو SVG</strong></span>
+          </div>
+        </div>
+
+        <!-- Do's and Don'ts -->
+        <h3 style="font-size: 1.1rem; color: #ffffff; margin: 30px 0 16px;">إرشادات السلامة وتجنب التشويه (Logo Misuse):</h3>
+        <div class="grid-2">
+          <div class="rule-card do">
+            <i class="fas fa-circle-check rule-icon"></i>
+            <div>
+              <strong style="color: #ffffff; display: block; margin-bottom: 4px;">الاستخدام الصحيح المعتمد:</strong>
+              استخدم الشعار دائماً بنسب أبعاده الأصلية 1:1 أو كما هو بالملفات الرسمية، مع خلفية داكنة أو واضحة تضمن تبايناً حاداً ومريحاً للعين.
+            </div>
+          </div>
+
+          <div class="rule-card dont">
+            <i class="fas fa-circle-xmark rule-icon"></i>
+            <div>
+              <strong style="color: #ffffff; display: block; margin-bottom: 4px;">ممنوع: تشويه الأبعاد أو التمطيط:</strong>
+              يمنع تماماً تغيير أبعاد الشعار أفقياً أو عمودياً (Squashing/Stretching) حتى لا تفقد الأيقونة رونقها الهندسي.
+            </div>
+          </div>
+
+          <div class="rule-card dont">
+            <i class="fas fa-circle-xmark rule-icon"></i>
+            <div>
+              <strong style="color: #ffffff; display: block; margin-bottom: 4px;">ممنوع: تغيير الألوان الرسمية:</strong>
+              لا تضع تدرجات عشوائية أو فلاتر ألوان خارجية تغير درجات الأزرق الكحلي أو الذهبي الخاص بالبراند.
+            </div>
+          </div>
+
+          <div class="rule-card dont">
+            <i class="fas fa-circle-xmark rule-icon"></i>
+            <div>
+              <strong style="color: #ffffff; display: block; margin-bottom: 4px;">ممنوع: وضعه فوق صور معقدة أو مشتتة:</strong>
+              تجنب وضع الشعار فوق صور لعب مزدحمة بدون استخدام طبقة تعتيم (Overlay Gradient) كافية لعزل الشعار.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════ SECTION 3: COLOR PALETTE ══════════ -->
+      <section id="color-tokens" class="guide-section">
+        <div class="section-header">
+          <div>
+            <span class="section-num">03 / COLOR TOKENS</span>
+            <h2 class="section-title"><i class="fas fa-palette"></i> لوحة الألوان الرسمية والأكواد (Color Tokens)</h2>
+            <p class="section-desc">انقر على أي كود لنسخ قيمة الـ HEX فورياً لاستخدامها في تصاميمك.</p>
+          </div>
+        </div>
+
+        <h3 style="font-size: 1rem; color: var(--blue-bright); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px;">
+          1. ألوان الأساس والهوية الرئيسية (Primary & Brand Surfaces)
+        </h3>
+        <div class="grid-3" style="margin-bottom: 28px;">
+          <!-- Color 1 -->
+          <div class="color-card">
+            <div class="color-preview" style="background: #080c14;" onclick="copyColor('#080c14')">
+              <span class="copy-badge">نسخ HEX</span>
+            </div>
+            <div class="color-details">
+              <span class="color-name">Cyber Deep Navy</span>
+              <span class="color-role">الخلفية الأساسية للمتجر والواجهات</span>
+              <div class="color-codes">
+                <span class="color-hex" onclick="copyColor('#080c14')">#080C14</span>
+                <span class="color-rgb">RGB: 8, 12, 20</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Color 2 -->
+          <div class="color-card">
+            <div class="color-preview" style="background: #1b355a;" onclick="copyColor('#1b355a')">
+              <span class="copy-badge">نسخ HEX</span>
+            </div>
+            <div class="color-details">
+              <span class="color-name">ShopCoin Navy Blue</span>
+              <span class="color-role">الكحلي المؤسسي للبطاقات والهيدر</span>
+              <div class="color-codes">
+                <span class="color-hex" onclick="copyColor('#1b355a')">#1B355A</span>
+                <span class="color-rgb">RGB: 27, 53, 90</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Color 3 -->
+          <div class="color-card">
+            <div class="color-preview" style="background: #2563eb;" onclick="copyColor('#2563eb')">
+              <span class="copy-badge">نسخ HEX</span>
+            </div>
+            <div class="color-details">
+              <span class="color-name">Electric Cyber Blue</span>
+              <span class="color-role">أزرار الإجراء، الروابط، وحواف التوهج</span>
+              <div class="color-codes">
+                <span class="color-hex" onclick="copyColor('#2563eb')">#2563EB</span>
+                <span class="color-rgb">RGB: 37, 99, 235</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="font-size: 1rem; color: var(--gold-coin); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px;">
+          2. ألوان اللكنة والدلالات التفاعلية (Accent & Status Tokens)
+        </h3>
+        <div class="grid-3" style="margin-bottom: 28px;">
+          <!-- Color 4 -->
+          <div class="color-card">
+            <div class="color-preview" style="background: #eab308;" onclick="copyColor('#eab308')">
+              <span class="copy-badge">نسخ HEX</span>
+            </div>
+            <div class="color-details">
+              <span class="color-name">FIFA Coin Gold</span>
+              <span class="color-role">رمز الكوينز، باقات الفوز، وشارات التميز</span>
+              <div class="color-codes">
+                <span class="color-hex" onclick="copyColor('#eab308')">#EAB308</span>
+                <span class="color-rgb">RGB: 234, 179, 8</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Color 5 -->
+          <div class="color-card">
+            <div class="color-preview" style="background: #10b981;" onclick="copyColor('#10b981')">
+              <span class="copy-badge">نسخ HEX</span>
+            </div>
+            <div class="color-details">
+              <span class="color-name">Anti-Ban Emerald</span>
+              <span class="color-role">رمز الأمان والضمان، وأزرار الواتساب الحية</span>
+              <div class="color-codes">
+                <span class="color-hex" onclick="copyColor('#10b981')">#10B981</span>
+                <span class="color-rgb">RGB: 16, 185, 129</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Color 6 -->
+          <div class="color-card">
+            <div class="color-preview" style="background: #ec4899;" onclick="copyColor('#ec4899')">
+              <span class="copy-badge">نسخ HEX</span>
+            </div>
+            <div class="color-details">
+              <span class="color-name">Champions Rose</span>
+              <span class="color-role">بطولات الفوت شامبيونز والمنافسات النخبوية</span>
+              <div class="color-codes">
+                <span class="color-hex" onclick="copyColor('#ec4899')">#EC4899</span>
+                <span class="color-rgb">RGB: 236, 72, 153</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="font-size: 1rem; color: var(--text-muted); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px;">
+          3. ألوان النصوص والتباين (Typography & Contrasts)
+        </h3>
+        <div class="grid-3">
+          <div class="color-card">
+            <div class="color-preview" style="background: #ffffff;" onclick="copyColor('#ffffff')">
+              <span class="copy-badge" style="color: #000; background: rgba(255,255,255,0.85);">نسخ HEX</span>
+            </div>
+            <div class="color-details">
+              <span class="color-name">Pure White</span>
+              <span class="color-role">العناوين الرئيسية وأسماء المنتجات</span>
+              <div class="color-codes">
+                <span class="color-hex" onclick="copyColor('#ffffff')">#FFFFFF</span>
+                <span class="color-rgb">RGB: 255, 255, 255</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="color-card">
+            <div class="color-preview" style="background: #94a3b8;" onclick="copyColor('#94a3b8')">
+              <span class="copy-badge">نسخ HEX</span>
+            </div>
+            <div class="color-details">
+              <span class="color-name">Slate Muted</span>
+              <span class="color-role">النصوص الوصفية والفقرات الإرشادية</span>
+              <div class="color-codes">
+                <span class="color-hex" onclick="copyColor('#94a3b8')">#94A3B8</span>
+                <span class="color-rgb">RGB: 148, 163, 184</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="color-card">
+            <div class="color-preview" style="background: #1e293b;" onclick="copyColor('#1e293b')">
+              <span class="copy-badge">نسخ HEX</span>
+            </div>
+            <div class="color-details">
+              <span class="color-name">Border & Line Grey</span>
+              <span class="color-role">الفواصل وخطوط شبكة الواجهة</span>
+              <div class="color-codes">
+                <span class="color-hex" onclick="copyColor('#1e293b')">#1E293B</span>
+                <span class="color-rgb">RGB: 30, 41, 59</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════ SECTION 4: TYPOGRAPHY ══════════ -->
+      <section id="typography" class="guide-section">
+        <div class="section-header">
+          <div>
+            <span class="section-num">04 / TYPOGRAPHY</span>
+            <h2 class="section-title"><i class="fas fa-font"></i> نظام الخطوط والطباعة (Typography Hierarchy)</h2>
+            <p class="section-desc">مزيج متناغم بين خط Cairo العربي الرياضي الحديث وخط Montserrat اللاتيني للأرقام والأسعار.</p>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="pillar-card" style="border-top: 3px solid var(--blue-cyber);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="pillar-title" style="font-size: 1.2rem;">Cairo</span>
+              <span style="font-size: 0.75rem; background: rgba(56, 189, 248, 0.15); color: var(--blue-bright); padding: 2px 8px; border-radius: 4px;">الخط العربي الأساسي</span>
+            </div>
+            <p class="pillar-desc">
+              خط هندسي متوازن، يمنح واجهة المتجر مظهراً تقنياً وموجهاً لعشاق ألعاب الفيديو مع سهولة قراءة فائقة على شاشات الهواتف.
+            </p>
+            <div style="font-size: 0.85rem; color: var(--text-dim); margin-top: 8px;">
+              الأوزان المعتمدة: <strong>Black 900</strong> للعناوين، <strong>Bold 700</strong> للأزرار، و <strong>SemiBold 600</strong> للنصوص.
+            </div>
+          </div>
+
+          <div class="pillar-card" style="border-top: 3px solid var(--gold-coin);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="pillar-title" style="font-size: 1.2rem; font-family: var(--font-en);">Montserrat</span>
+              <span style="font-size: 0.75rem; background: rgba(234, 179, 8, 0.15); color: var(--gold-coin); padding: 2px 8px; border-radius: 4px;">الأرقام والأسعار</span>
+            </div>
+            <p class="pillar-desc">
+              خط لاتيني هندسي قوي، مخصص لعرض أرقام الكوينز، الأسعار (SAR / USD)، وتقييمات كروت اللاعبين (OVR) بقوة ووضوح بصري بارز.
+            </p>
+            <div style="font-size: 0.85rem; color: var(--text-dim); margin-top: 8px;">
+              الأوزان المعتمدة: <strong>Black 900</strong> و <strong>ExtraBold 800</strong>.
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Type Playground -->
+        <div class="type-specimen">
+          <div class="type-controls">
+            <div class="control-group" style="flex: 1;">
+              <label><i class="fas fa-keyboard"></i> اختبر نصك:</label>
+              <input type="text" id="typeTestInput" class="type-input" value="شحن كوينز FIFA 27 بأمان تام وضمان Anti-Ban فوري!" oninput="updateTypeSample()" />
+            </div>
+
+            <div class="control-group">
+              <label>الحجم: <span id="sizeValue" style="color: var(--blue-bright); font-family: var(--font-mono);">32px</span></label>
+              <input type="range" min="16" max="64" value="32" class="range-slider" id="sizeSlider" oninput="updateTypeSize(this.value)" />
+            </div>
+
+            <div class="control-group">
+              <label>الخط:</label>
+              <button class="btn-outline" id="fontToggleBtn" onclick="toggleSampleFont()" style="padding: 6px 12px; font-size: 0.8rem;">
+                تبديل إلى Montserrat
+              </button>
+            </div>
+          </div>
+
+          <div class="type-sample-display" id="typeSampleOutput" style="font-size: 32px;">
+            شحن كوينز FIFA 27 بأمان تام وضمان Anti-Ban فوري!
+          </div>
+
+          <div style="display: flex; gap: 20px; font-size: 0.8rem; color: var(--text-dim); border-top: 1px solid var(--border-subtle); padding-top: 12px;">
+            <span>نموذج أسعار: <strong style="color: var(--gold-coin); font-family: var(--font-en);">1,000,000 COINS — 18.50 $</strong></span>
+            <span>نموذج تقييم: <strong style="color: var(--emerald-safe); font-family: var(--font-en);">94 OVR · ST · CAM</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════ SECTION 5: UI COMPONENTS ══════════ -->
+      <section id="ui-components" class="guide-section">
+        <div class="section-header">
+          <div>
+            <span class="section-num">05 / UI KIT</span>
+            <h2 class="section-title"><i class="fas fa-cubes"></i> مكتبة مكونات الواجهة (UI Components)</h2>
+            <p class="section-desc">المكونات الرقمية الحية كما تظهر للمستخدمين داخل متجر ShopCoin.</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Buttons Showcase -->
+          <div class="component-card">
+            <span class="component-label">Button Hierarchy (أنماط الأزرار)</span>
+            <div class="btn-showcase">
+              <button class="btn-brand-gold">
+                <i class="fas fa-coins"></i>
+                <span>شراء كوينز فوراً</span>
+              </button>
+              <button class="btn-brand-wa">
+                <i class="fab fa-whatsapp"></i>
+                <span>إتمام الطلب عبر واتساب</span>
+              </button>
+            </div>
+            <div class="btn-showcase">
+              <button class="btn-primary">
+                <i class="fas fa-cart-shopping"></i>
+                <span>إضافة إلى السلة</span>
+              </button>
+              <button class="btn-outline">
+                <i class="fas fa-magnifying-glass"></i>
+                <span>تتبع الطلب</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Badges Showcase -->
+          <div class="component-card">
+            <span class="component-label">Trust & Status Badges (شارات الثقة)</span>
+            <div class="badge-wrap">
+              <span class="brand-badge badge-gold"><i class="fas fa-shield-alt"></i> ضمان 100% ضد الباند</span>
+              <span class="brand-badge badge-emerald"><i class="fas fa-bolt"></i> تسليم فوري (Instant)</span>
+              <span class="brand-badge badge-blue"><i class="fas fa-headset"></i> دعم VIP متواصل</span>
+              <span class="brand-badge badge-rose"><i class="fas fa-trophy"></i> تصنيف Rank 1</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 8px;">
+              تستخدم الشارات لتأكيد عوامل الأمان والسرعة للعميل أثناء تصفح الخدمات وسلة الشراء.
+            </p>
+          </div>
+        </div>
+
+        <!-- Sample Coin Card -->
+        <h3 style="font-size: 1.1rem; color: #ffffff; margin: 30px 0 16px;">نموذج بطاقة الخدمة ثلاثية الأبعاد (Glassmorphism Service Card):</h3>
+        <div class="sample-coin-card" style="max-width: 480px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="brand-badge badge-gold"><i class="fas fa-star"></i> الأكثر مبيعاً</span>
+            <span style="font-family: var(--font-en); font-weight: 800; font-size: 1.25rem; color: #ffffff;">500,000 COINS</span>
+          </div>
+
+          <div style="display: flex; align-items: baseline; gap: 8px;">
+            <span style="font-family: var(--font-en); font-size: 2.2rem; font-weight: 900; color: var(--emerald-safe);">12.50 $</span>
+            <span style="font-size: 0.95rem; color: var(--text-muted);">(46.80 ريال سعودي)</span>
+          </div>
+
+          <p style="font-size: 0.88rem; color: var(--text-muted);">
+            شحن آمن بنظام المزايدة المريحة (Comfort Trade) بدون أي تعب، مع ضمان الحماية الكاملة لجميع المنصات (PS5 / Xbox / PC).
+          </p>
+
+          <button class="btn-brand-gold" style="width: 100%; justify-content: center;">
+            <i class="fas fa-cart-plus"></i>
+            <span>إضافة للسلة والدفع عبر الواتساب</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ══════════ SECTION 6: TONE OF VOICE ══════════ -->
+      <section id="tone-of-voice" class="guide-section">
+        <div class="section-header">
+          <div>
+            <span class="section-num">06 / MESSAGING</span>
+            <h2 class="section-title"><i class="fas fa-microphone"></i> نبرة الصوت وشخصية التخاطب (Tone of Voice)</h2>
+            <p class="section-desc">كيف يتحدث متجر ShopCoin مع العملاء في الويب والرسائل والإعلانات.</p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="pillar-card">
+            <div class="pillar-icon gold"><i class="fas fa-fire"></i></div>
+            <div class="pillar-title">حماسي ورياضي (Gamer-Driven)</div>
+            <div class="pillar-desc">
+              نستخدم مصطلحات الجيمنج المألوفة لدى مجتمع FC (تشكيلة الأحلام، حسم الفوت، تكتيكات الفوز، تحديات الـ SBC). نتحدث كلغة اللاعب نفسه دون تكلف.
+            </div>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon emerald"><i class="fas fa-lock"></i></div>
+            <div class="pillar-title">واثق ومطمئن (Reassuring)</div>
+            <div class="pillar-desc">
+              نزرع الأمان دائماً. نؤكد على الحماية، الخصوصية، والضمان ضد الباند. العميل يجب أن يشعر أن حسابه في أيدٍ أمينة 100%.
+            </div>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon blue"><i class="fas fa-comments"></i></div>
+            <div class="pillar-title">مباشر وسريع (Concise & Helpful)</div>
+            <div class="pillar-desc">
+              لا نضيع وقت العميل بنصوص طويلة أو خطوات معقدة. الأسعار واضحة، وزر الواتساب ينقله مباشرة لموظف حقيقي جاهز للخدمة.
+            </div>
+          </div>
+        </div>
+
+        <!-- Terminology Guide -->
+        <h3 style="font-size: 1.1rem; color: #ffffff; margin: 30px 0 16px;">قاموس المصطلحات المعتمدة:</h3>
+        <div class="grid-2">
+          <div class="rule-card do">
+            <i class="fas fa-check-double rule-icon"></i>
+            <div>
+              <strong style="color: #ffffff;">المصطلحات الموصى بها:</strong>
+              "شحن فوري"، "ضمان ضد الباند 100%"، "حل تحديات SBC"، "رفع تصنيف Rivals"، "فوت شامبيونز"، "الدفع السهل عبر الواتساب".
+            </div>
+          </div>
+
+          <div class="rule-card dont">
+            <i class="fas fa-ban rule-icon"></i>
+            <div>
+              <strong style="color: #ffffff;">المصطلحات الممنوعة:</strong>
+              تجنب استخدام مصطلحات "هاك" أو "ثغرة" أو "تهكير كوينز"، وتجنب الأسماء القديمة الملغية كـ "تريفيلا".
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════ SECTION 7: SOCIAL MARKETING ══════════ -->
+      <section id="social-marketing" class="guide-section">
+        <div class="section-header">
+          <div>
+            <span class="section-num">07 / MARKETING ASSETS</span>
+            <h2 class="section-title"><i class="fas fa-hashtag"></i> أصول وقوالب السوشيال ميديا (Social Media Kit)</h2>
+            <p class="section-desc">معايير التصميم لحسابات Instagram و TikTok وتطبيقات التواصل.</p>
+          </div>
+        </div>
+
+        <div class="social-simulator">
+          <!-- Live CSS Post Mockup -->
+          <div class="post-mockup">
+            <div class="post-glow-bg"></div>
+
+            <div class="post-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <img src="logo-official.png" style="width: 28px; height: 28px; border-radius: 6px;" alt="Logo" />
+                <span style="font-family: var(--font-en); font-weight: 800; font-size: 0.9rem; color: #fff;">@shopcoin15</span>
+              </div>
+              <span class="brand-badge badge-gold" style="font-size: 0.7rem;">FC 27 COINS</span>
+            </div>
+
+            <div class="post-center-info">
+              <div style="font-size: 0.8rem; color: var(--gold-coin); font-weight: 800; letter-spacing: 1px;">تجهيز تشكيلة الأحلام</div>
+              <div style="font-family: var(--font-en); font-size: 1.8rem; font-weight: 900; color: #fff; margin: 6px 0;">1,000,000 COINS</div>
+              <div style="display: inline-block; background: rgba(16, 185, 129, 0.2); border: 1px solid var(--emerald-safe); color: var(--emerald-safe); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">
+                ضمان Anti-Ban 100%
+              </div>
+            </div>
+
+            <div class="post-footer">
+              <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fas fa-bolt" style="color: var(--gold-coin);"></i> تسليم فوري في 15 دقيقة</span>
+              <span style="font-size: 0.75rem; color: var(--blue-bright); font-weight: 700;">shopcoin.vercel.app</span>
+            </div>
+          </div>
+
+          <!-- Social Guidelines Specifications -->
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="pillar-card">
+              <div class="pillar-title" style="font-size: 1rem;"><i class="fab fa-instagram" style="color: #e1306c; margin-left: 6px;"></i> إنستغرام وتيك توك (Instagram & TikTok)</div>
+              <ul style="padding-right: 18px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.8;">
+                <li><strong>المنشور المربع (Square Post):</strong> 1080 × 1080 بكسل (نسبة 1:1) لعروض الكوينز والتقييمات.</li>
+                <li><strong>الستوري والريلز (Stories & Reels):</strong> 1080 × 1920 بكسل (نسبة 9:16) للفيديوهات ومراجعات العملاء.</li>
+                <li><strong>الهاشتاقات المعتمدة:</strong> #ShopCoin #FIFA27 #FC27 #FUT27 #كوينز_فيفا #تحديات_sbc</li>
+              </ul>
+            </div>
+
+            <div class="pillar-card">
+              <div class="pillar-title" style="font-size: 1rem;"><i class="fab fa-whatsapp" style="color: var(--emerald-safe); margin-left: 6px;"></i> شارة التواصل السريع (WhatsApp VIP Direct)</div>
+              <p class="pillar-desc">
+                رقم التواصل المعتمد للطلبات والتحويلات المباشرة هو: <strong style="color: var(--emerald-safe); font-family: var(--font-en);" dir="ltr">+962 7 7558 5112</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════ SECTION 8: MEDIA KIT ══════════ -->
+      <section id="media-kit" class="guide-section" style="border-color: rgba(37, 99, 235, 0.4);">
+        <div class="section-header">
+          <div>
+            <span class="section-num">08 / MEDIA KIT</span>
+            <h2 class="section-title"><i class="fas fa-box-archive"></i> تحميل حزمة أصول الهوية (Media Kit)</h2>
+            <p class="section-desc">تحميل الملفات والشعارات الأصلية بدقة عالية للاستخدام في التصاميم والحملات.</p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="pillar-card" style="align-items: center; text-align: center;">
+            <img src="logo-official.png" style="width: 64px; height: 64px; object-fit: contain; margin-bottom: 8px;" alt="Logo" />
+            <div class="pillar-title">الشعار الرسمي (Official Logo)</div>
+            <div class="pillar-desc">صيغة PNG عالية الدقة بخلفية شفافة</div>
+            <a href="logo-official.png" download="ShopCoin_Official_Logo.png" class="btn-primary" style="margin-top: 10px; width: 100%; justify-content: center;">
+              <i class="fas fa-download"></i>
+              <span>تحميل PNG</span>
+            </a>
+          </div>
+
+          <div class="pillar-card" style="align-items: center; text-align: center;">
+            <div style="width: 64px; height: 64px; background: rgba(56,189,248,0.15); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--blue-bright); font-size: 1.8rem; margin-bottom: 8px;">
+              <i class="fas fa-vector-square"></i>
+            </div>
+            <div class="pillar-title">المخطط المتجهي (Vector Logo)</div>
+            <div class="pillar-desc">صيغة SVG قابلة للتكبير دون فقد الجودة</div>
+            <a href="logo.svg" download="ShopCoin_Vector_Logo.svg" class="btn-outline" style="margin-top: 10px; width: 100%; justify-content: center;">
+              <i class="fas fa-code"></i>
+              <span>تحميل SVG</span>
+            </a>
+          </div>
+
+          <div class="pillar-card" style="align-items: center; text-align: center;">
+            <div style="width: 64px; height: 64px; background: rgba(234,179,8,0.15); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--gold-coin); font-size: 1.8rem; margin-bottom: 8px;">
+              <i class="fas fa-palette"></i>
+            </div>
+            <div class="pillar-title">حزمة الألوان والأصول كاملة</div>
+            <div class="pillar-desc">ملف CSS Variables وملفات التصميم المجمعة</div>
+            <button onclick="copyTokensSnippet()" class="btn-outline" style="margin-top: 10px; width: 100%; justify-content: center;">
+              <i class="fas fa-copy"></i>
+              <span>نسخ أكواد CSS Tokens</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ══════════ COPY TOAST NOTIFICATION ══════════ -->
+  <div class="copy-toast" id="copyToast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage">تم نسخ كود اللون بنجاح!</span>
+  </div>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer class="brand-footer">
+    <div class="footer-inner">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <img src="logo-official.png" alt="ShopCoin" style="width: 32px; height: 32px; object-fit: contain;" />
+        <div>
+          <strong style="color: #ffffff; font-family: var(--font-en);">ShopCoin Brand Guidelines</strong>
+          <div style="font-size: 0.8rem; color: var(--text-dim);">© 2026 ShopCoin — جميع حقوق الهوية محفوظة لمتجر شوب كوين.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <a href="index.html" class="btn-outline" style="font-size: 0.82rem;"><i class="fas fa-home"></i> المتجر الرئيسي</a>
+        <a href="policies.html" class="btn-outline" style="font-size: 0.82rem;"><i class="fas fa-file-contract"></i> سياسات المتجر</a>
+        <a href="https://wa.me/962775585112" target="_blank" class="btn-primary" style="font-size: 0.82rem;"><i class="fab fa-whatsapp"></i> تواصل مع الإدارة</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════ INTERACTIVE SCRIPTS ══════════ -->
+  <script>
+    // Copy Color Code to Clipboard with animated Toast
+    function copyColor(hex) {
+      navigator.clipboard.writeText(hex).then(() => {
+        showToast(`تم نسخ كود اللون: ${hex}`);
+      }).catch(() => {
+        showToast(`كود اللون: ${hex}`);
+      });
+    }
+
+    // Show Toast
+    function showToast(msg) {
+      const toast = document.getElementById('copyToast');
+      const msgEl = document.getElementById('toastMessage');
+      if (toast && msgEl) {
+        msgEl.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2200);
+      }
+    }
+
+    // Interactive Logo Background Switcher
+    function switchLogoBg(color, btn) {
+      const canvas = document.getElementById('logoCanvas');
+      if (!canvas) return;
+      
+      document.querySelectorAll('.bg-dot').forEach(d => d.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      if (color === 'checker') {
+        canvas.style.background = 'conic-gradient(#334155 90deg, #1e293b 90deg 180deg, #334155 180deg 270deg, #1e293b 270deg)';
+        canvas.style.backgroundSize = '16px 16px';
+      } else {
+        canvas.style.background = color;
+      }
+    }
+
+    // Toggle Clear Space Overlay
+    let clearSpaceVisible = false;
+    function toggleClearSpace() {
+      clearSpaceVisible = !clearSpaceVisible;
+      const box = document.getElementById('clearspaceBox');
+      const mainImg = document.getElementById('mainLogoImg');
+      const txt = document.getElementById('clearspaceText');
+      if (box && mainImg && txt) {
+        box.style.display = clearSpaceVisible ? 'flex' : 'none';
+        mainImg.style.display = clearSpaceVisible ? 'none' : 'block';
+        txt.textContent = clearSpaceVisible ? 'إخفاء مساحة الأمان' : 'إظهار مساحة الأمان (Clear Space)';
+      }
+    }
+
+    // Interactive Typography Playground
+    function updateTypeSample() {
+      const input = document.getElementById('typeTestInput');
+      const output = document.getElementById('typeSampleOutput');
+      if (input && output) {
+        output.textContent = input.value || 'ShopCoin FIFA 27 Ultimate Team';
+      }
+    }
+
+    function updateTypeSize(val) {
+      const output = document.getElementById('typeSampleOutput');
+      const sizeVal = document.getElementById('sizeValue');
+      if (output && sizeVal) {
+        output.style.fontSize = val + 'px';
+        sizeVal.textContent = val + 'px';
+      }
+    }
+
+    let isArabicFont = true;
+    function toggleSampleFont() {
+      isArabicFont = !isArabicFont;
+      const output = document.getElementById('typeSampleOutput');
+      const btn = document.getElementById('fontToggleBtn');
+      if (output && btn) {
+        if (isArabicFont) {
+          output.style.fontFamily = 'var(--font-ar)';
+          btn.textContent = 'تبديل إلى Montserrat';
+        } else {
+          output.style.fontFamily = 'var(--font-en)';
+          btn.textContent = 'تبديل إلى Cairo';
+        }
+      }
+    }
+
+    // Copy CSS Tokens snippet
+    function copyTokensSnippet() {
+      const cssSnippet = `/* ShopCoin Brand Design Tokens */
+:root {
+  --shopcoin-navy: #1b355a;
+  --shopcoin-deep: #080c14;
+  --shopcoin-blue: #2563eb;
+  --shopcoin-gold: #eab308;
+  --shopcoin-emerald: #10b981;
+  --shopcoin-rose: #ec4899;
+  --font-arabic: 'Cairo', sans-serif;
+  --font-latin: 'Montserrat', sans-serif;
+}`;
+      navigator.clipboard.writeText(cssSnippet).then(() => {
+        showToast('تم نسخ حزمة متغيرات CSS بنجاح!');
+      });
+    }
+
+    // ScrollSpy for Sidebar navigation
+    window.addEventListener('scroll', () => {
+      const sections = document.querySelectorAll('.guide-section');
+      const navLinks = document.querySelectorAll('#sidebarNav a');
+      let currentId = '';
+
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 140;
+        if (window.scrollY >= top) {
+          currentId = sec.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + currentId) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
